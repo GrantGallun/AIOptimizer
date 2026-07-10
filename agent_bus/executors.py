@@ -13,13 +13,16 @@
     for `verdict`/`fable` tasks so the loop hands judgment back (the human/Fable interrupt).
 
 Every `execute` returns `(ok: bool, result: str, cost: float)` — the same contract as SimExecutor.
+For real executors, `cost` is measured wall-clock execution time in seconds and includes any
+post-implementation acceptance command.
 """
 
 from __future__ import annotations
 
 import subprocess
+import time
 from pathlib import Path
-from typing import Any
+from typing import Any, Callable
 
 
 class NeedsHuman(Exception):
@@ -38,14 +41,14 @@ class ShellExecutor:
         self,
         cwd: str | Path,
         *,
-        cost: float = 0.02,
         timeout: int = 600,
         allowlist: list[str] | None = None,
+        clock: Callable[[], float] = time.perf_counter,
     ) -> None:
         self.cwd = str(cwd)
-        self.cost = cost
         self.timeout = timeout
         self.allowlist = allowlist
+        self.clock = clock
 
     def execute(self, task: dict[str, Any]) -> tuple[bool, str, float]:
         cmd = task.get("acceptance") or ""
@@ -55,43 +58,57 @@ class ShellExecutor:
             stripped = cmd.strip()
             if not any(stripped.startswith(prefix) for prefix in self.allowlist):
                 return False, "blocked: command not allowlisted", 0.0
+        started = self.clock()
         try:
             proc = subprocess.run(
                 cmd, shell=True, cwd=self.cwd, capture_output=True, text=True, timeout=self.timeout
             )
         except subprocess.TimeoutExpired:
-            return False, f"timeout after {self.timeout}s", self.cost
+            return False, f"timeout after {self.timeout}s", max(self.clock() - started, 0.0)
         ok = proc.returncode == 0
-        return ok, f"exit {proc.returncode}: {_tail(proc.stdout + proc.stderr)}", self.cost
+        return ok, f"exit {proc.returncode}: {_tail(proc.stdout + proc.stderr)}", max(self.clock() - started, 0.0)
 
 
 class CodexExecutor:
     """Drive `codex exec` for an impl task. Requires codex on PATH + auto-approve configured."""
 
-    def __init__(self, cwd: str | Path, *, codex: str = "codex", extra_args: list[str] | None = None, cost: float = 0.4, timeout: int = 1800) -> None:
+    def __init__(
+        self,
+        cwd: str | Path,
+        *,
+        codex: str = "codex",
+        extra_args: list[str] | None = None,
+        timeout: int = 1800,
+        clock: Callable[[], float] = time.perf_counter,
+    ) -> None:
         self.cwd = str(cwd)
         self.codex = codex
         self.extra_args = extra_args or []  # e.g. ["--full-auto"] or sandbox flags
-        self.cost = cost
         self.timeout = timeout
+        self.clock = clock
 
     def execute(self, task: dict[str, Any]) -> tuple[bool, str, float]:
         prompt = task.get("spec") or task.get("title") or ""
         cmd = [self.codex, "exec", *self.extra_args, prompt]
+        started = self.clock()
         try:
             proc = subprocess.run(cmd, cwd=self.cwd, capture_output=True, text=True, timeout=self.timeout)
         except FileNotFoundError:
-            return False, f"codex binary '{self.codex}' not found on PATH", 0.0
+            return False, f"codex binary '{self.codex}' not found on PATH", max(self.clock() - started, 0.0)
         except subprocess.TimeoutExpired:
-            return False, f"codex exec timeout after {self.timeout}s", self.cost
+            return False, f"codex exec timeout after {self.timeout}s", max(self.clock() - started, 0.0)
         ok = proc.returncode == 0
         # If the task carries an acceptance check, the code must also pass it.
         acceptance = task.get("acceptance")
         if ok and acceptance:
             check = subprocess.run(acceptance, shell=True, cwd=self.cwd, capture_output=True, text=True)
             ok = check.returncode == 0
-            return ok, f"codex exit 0; acceptance exit {check.returncode}: {_tail(check.stdout + check.stderr)}", self.cost
-        return ok, f"codex exit {proc.returncode}: {_tail(proc.stdout + proc.stderr)}", self.cost
+            return (
+                ok,
+                f"codex exit 0; acceptance exit {check.returncode}: {_tail(check.stdout + check.stderr)}",
+                max(self.clock() - started, 0.0),
+            )
+        return ok, f"codex exit {proc.returncode}: {_tail(proc.stdout + proc.stderr)}", max(self.clock() - started, 0.0)
 
 
 class RoutingExecutor:

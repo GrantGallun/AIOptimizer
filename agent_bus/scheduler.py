@@ -33,15 +33,17 @@ from agent_bus.board import Board, BoardConflict
 from agent_bus.cache import Cache
 from agent_bus.executors import NeedsHuman
 
-# Relative cost per core class (E-cores are ~free, the P-core is dear).
+# Estimated elapsed seconds used only for pre-admission and deterministic simulation.
+# Real executors return measured elapsed seconds, which the governor charges below.
 TIER_COST = {"fable": 1.0, "codex": 0.4, "sonnet": 0.1, "qwen": 0.01}
+COST_UNIT = "seconds"
 # Cross-check routing: reviewer is a *different* core class (ideally a different model family).
 REVIEWER = {"sonnet": "codex", "codex": "fable", "qwen": "codex", "fable": "codex"}
 GATE_OPS = ("test", "run", "verdict")
 
 
 class Governor:
-    """Cost accounting with a budget ceiling; trips a maskable interrupt when exceeded."""
+    """Elapsed-seconds accounting with a budget ceiling; trips an interrupt when exceeded."""
 
     def __init__(self, cache: Cache, budget: float) -> None:
         self.cache = cache
@@ -64,6 +66,7 @@ class Governor:
         # Surface the budget on the shared dashboard so the human can see the IRQ approach.
         self.cache.set("governor.budget", f"{self.budget:.2f}", writer="fable", scope="governor")
         self.cache.set("governor.spent", f"{self.spent:.2f}", writer="fable", scope="governor")
+        self.cache.set("governor.unit", COST_UNIT, writer="fable", scope="governor")
 
 
 class GitCommitter:

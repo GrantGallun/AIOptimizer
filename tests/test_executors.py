@@ -2,6 +2,8 @@ import sys
 import unittest
 from pathlib import Path
 from tempfile import TemporaryDirectory
+from types import SimpleNamespace
+from unittest.mock import patch
 
 from agent_bus.board import Board
 from agent_bus.executors import CodexExecutor, NeedsHuman, RoutingExecutor, ShellExecutor
@@ -51,6 +53,27 @@ class ShellExecutorTests(unittest.TestCase):
         ex = ShellExecutor(cwd=".")
         ok, result, _ = ex.execute({"acceptance": f'"{sys.executable}" -c "print(1)"'})
         self.assertTrue(ok, result)
+
+    def test_cost_is_measured_elapsed_seconds(self):
+        ticks = iter([10.0, 12.5])
+        ex = ShellExecutor(cwd=".", clock=lambda: next(ticks))
+        completed = SimpleNamespace(returncode=0, stdout="ok\n", stderr="")
+        with patch("agent_bus.executors.subprocess.run", return_value=completed):
+            ok, _, cost = ex.execute({"acceptance": "python -m unittest"})
+        self.assertTrue(ok)
+        self.assertEqual(cost, 2.5)
+
+
+class CodexExecutorCostTests(unittest.TestCase):
+    def test_cost_includes_codex_and_acceptance_elapsed_seconds(self):
+        ticks = iter([20.0, 23.75])
+        ex = CodexExecutor(cwd=".", clock=lambda: next(ticks))
+        completed = SimpleNamespace(returncode=0, stdout="ok\n", stderr="")
+        task = {"spec": "implement", "acceptance": "python -m unittest"}
+        with patch("agent_bus.executors.subprocess.run", side_effect=[completed, completed]):
+            ok, _, cost = ex.execute(task)
+        self.assertTrue(ok)
+        self.assertEqual(cost, 3.75)
 
 
 class RoutingTests(unittest.TestCase):

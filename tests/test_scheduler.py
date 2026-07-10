@@ -4,7 +4,7 @@ from pathlib import Path
 from tempfile import TemporaryDirectory
 
 from agent_bus.board import Board
-from agent_bus.scheduler import BranchPredictor, GitCommitter, Governor, Scheduler, SimExecutor
+from agent_bus.scheduler import COST_UNIT, BranchPredictor, GitCommitter, Governor, Scheduler, SimExecutor
 from agent_bus.cache import Cache
 
 
@@ -17,6 +17,12 @@ class GovernorTests(unittest.TestCase):
             self.assertFalse(gov.tripped())
             gov.charge(0.6)
             self.assertTrue(gov.tripped())
+
+    def test_publishes_seconds_as_the_budget_unit(self):
+        with TemporaryDirectory() as tmp:
+            cache = Cache(Path(tmp))
+            Governor(cache, budget=1.0)
+            self.assertEqual(cache.get("governor.unit")["value"], COST_UNIT)
 
 
 class SchedulerTests(unittest.TestCase):
@@ -41,6 +47,17 @@ class SchedulerTests(unittest.TestCase):
             history = sched.run()
             self.assertTrue(any(ev["tripped"] for ev in history))
             self.assertEqual([t for t in Board(Path(tmp)).all() if t["state"] == "retired"], [])
+
+    def test_charges_executor_measured_cost_not_tier_estimate(self):
+        class MeasuredExecutor:
+            def execute(self, task):
+                return True, "measured", 2.75
+
+        with TemporaryDirectory() as tmp:
+            Board(Path(tmp)).add(op="impl", title="measured work", tier="sonnet")
+            sched = Scheduler(Path(tmp), executor=MeasuredExecutor(), budget=10.0)
+            sched.run()
+            self.assertEqual(sched.governor.spent, 2.75)
 
     def test_speculation_commits_on_correct_prediction(self):
         with TemporaryDirectory() as tmp:
