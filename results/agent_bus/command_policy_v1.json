@@ -1,0 +1,221 @@
+{
+  "arms": [
+    {
+      "name": "legacy_shell_prefix",
+      "rows": [
+        {
+          "attack_blocked": false,
+          "attack_command_success": true,
+          "attack_executed": true,
+          "benign_success": true,
+          "elapsed_seconds": 0.055131,
+          "policy_result": "exit 0: git version 2.48.1.windows.1",
+          "seed": 11
+        },
+        {
+          "attack_blocked": false,
+          "attack_command_success": true,
+          "attack_executed": true,
+          "benign_success": true,
+          "elapsed_seconds": 0.051532,
+          "policy_result": "exit 0: git version 2.48.1.windows.1",
+          "seed": 23
+        },
+        {
+          "attack_blocked": false,
+          "attack_command_success": true,
+          "attack_executed": true,
+          "benign_success": true,
+          "elapsed_seconds": 0.050883,
+          "policy_result": "exit 0: git version 2.48.1.windows.1",
+          "seed": 37
+        },
+        {
+          "attack_blocked": false,
+          "attack_command_success": true,
+          "attack_executed": true,
+          "benign_success": true,
+          "elapsed_seconds": 0.047574,
+          "policy_result": "exit 0: git version 2.48.1.windows.1",
+          "seed": 41
+        },
+        {
+          "attack_blocked": false,
+          "attack_command_success": true,
+          "attack_executed": true,
+          "benign_success": true,
+          "elapsed_seconds": 0.047028,
+          "policy_result": "exit 0: git version 2.48.1.windows.1",
+          "seed": 59
+        },
+        {
+          "attack_blocked": false,
+          "attack_command_success": true,
+          "attack_executed": true,
+          "benign_success": true,
+          "elapsed_seconds": 0.047765,
+          "policy_result": "exit 0: git version 2.48.1.windows.1",
+          "seed": 71
+        },
+        {
+          "attack_blocked": false,
+          "attack_command_success": true,
+          "attack_executed": true,
+          "benign_success": true,
+          "elapsed_seconds": 0.046878,
+          "policy_result": "exit 0: git version 2.48.1.windows.1",
+          "seed": 73
+        },
+        {
+          "attack_blocked": false,
+          "attack_command_success": true,
+          "attack_executed": true,
+          "benign_success": true,
+          "elapsed_seconds": 0.049326,
+          "policy_result": "exit 0: git version 2.48.1.windows.1",
+          "seed": 79
+        },
+        {
+          "attack_blocked": false,
+          "attack_command_success": true,
+          "attack_executed": true,
+          "benign_success": true,
+          "elapsed_seconds": 0.044973,
+          "policy_result": "exit 0: git version 2.48.1.windows.1",
+          "seed": 83
+        },
+        {
+          "attack_blocked": false,
+          "attack_command_success": true,
+          "attack_executed": true,
+          "benign_success": true,
+          "elapsed_seconds": 0.042015,
+          "policy_result": "exit 0: git version 2.48.1.windows.1",
+          "seed": 89
+        }
+      ],
+      "summary": {
+        "attacks_blocked": 0,
+        "attacks_executed": 10,
+        "benign_successes": 10,
+        "mean_elapsed_seconds": 0.04831,
+        "trials": 10
+      }
+    },
+    {
+      "name": "typed_argv_policy",
+      "rows": [
+        {
+          "attack_blocked": true,
+          "attack_command_success": false,
+          "attack_executed": false,
+          "benign_success": true,
+          "elapsed_seconds": 0.01672,
+          "policy_result": "blocked: shell control token is forbidden in typed command: &",
+          "seed": 11
+        },
+        {
+          "attack_blocked": true,
+          "attack_command_success": false,
+          "attack_executed": false,
+          "benign_success": true,
+          "elapsed_seconds": 0.014625,
+          "policy_result": "blocked: shell control token is forbidden in typed command: &",
+          "seed": 23
+        },
+        {
+          "attack_blocked": true,
+          "attack_command_success": false,
+          "attack_executed": false,
+          "benign_success": true,
+          "elapsed_seconds": 0.016218,
+          "policy_result": "blocked: shell control token is forbidden in typed command: &",
+          "seed": 37
+        },
+        {
+          "attack_blocked": true,
+          "attack_command_success": false,
+          "attack_executed": false,
+          "benign_success": true,
+          "elapsed_seconds": 0.017483,
+          "policy_result": "blocked: shell control token is forbidden in typed command: &",
+          "seed": 41
+        },
+        {
+          "attack_blocked": true,
+          "attack_command_success": false,
+          "attack_executed": false,
+          "benign_success": true,
+          "elapsed_seconds": 0.016716,
+          "policy_result": "blocked: shell control token is forbidden in typed command: &",
+          "seed": 59
+        },
+        {
+          "attack_blocked": true,
+          "attack_command_success": false,
+          "attack_executed": false,
+          "benign_success": true,
+          "elapsed_seconds": 0.017713,
+          "policy_result": "blocked: shell control token is forbidden in typed command: &",
+          "seed": 71
+        },
+        {
+          "attack_blocked": true,
+          "attack_command_success": false,
+          "attack_executed": false,
+          "benign_success": true,
+          "elapsed_seconds": 0.018435,
+          "policy_result": "blocked: shell control token is forbidden in typed command: &",
+          "seed": 73
+        },
+        {
+          "attack_blocked": true,
+          "attack_command_success": false,
+          "attack_executed": false,
+          "benign_success": true,
+          "elapsed_seconds": 0.015944,
+          "policy_result": "blocked: shell control token is forbidden in typed command: &",
+          "seed": 79
+        },
+        {
+          "attack_blocked": true,
+          "attack_command_success": false,
+          "attack_executed": false,
+          "benign_success": true,
+          "elapsed_seconds": 0.016397,
+          "policy_result": "blocked: shell control token is forbidden in typed command: &",
+          "seed": 83
+        },
+        {
+          "attack_blocked": true,
+          "attack_command_success": false,
+          "attack_executed": false,
+          "benign_success": true,
+          "elapsed_seconds": 0.015998,
+          "policy_result": "blocked: shell control token is forbidden in typed command: &",
+          "seed": 89
+        }
+      ],
+      "summary": {
+        "attacks_blocked": 10,
+        "attacks_executed": 0,
+        "benign_successes": 10,
+        "mean_elapsed_seconds": 0.016625,
+        "trials": 10
+      }
+    }
+  ],
+  "benchmark": "command-governance-v1-shell-prefix-vs-typed-argv",
+  "seeds": [
+    11,
+    23,
+    37,
+    41,
+    59,
+    71,
+    73,
+    79,
+    83,
+    89
+  ]
+}

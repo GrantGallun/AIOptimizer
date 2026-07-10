@@ -80,7 +80,9 @@ class Board:
                     task["state"] = "ready"
 
     # -- issue ---------------------------------------------------------------
-    def add(self, *, op: str, title: str, tier: str, spec: str = "", acceptance: str = "", deps: list[str] | None = None, writes: list[str] | None = None, speculative: bool = False, branch: str | None = None) -> dict[str, Any]:
+    def add(self, *, op: str, title: str, tier: str, spec: str = "", acceptance: str = "", command: list[str] | None = None, deps: list[str] | None = None, writes: list[str] | None = None, speculative: bool = False, branch: str | None = None) -> dict[str, Any]:
+        if command is not None and (not isinstance(command, list) or not command or not all(isinstance(value, str) and value for value in command)):
+            raise ValueError("command must be a non-empty list of non-empty strings")
         with self._lock():
             state = self._load()
             state["seq"] += 1
@@ -93,6 +95,7 @@ class Board:
                 "title": title,
                 "spec": spec,
                 "acceptance": acceptance,
+                "command": list(command) if command is not None else None,
                 "deps": deps or [],
                 "writes": sorted(set(writes or [])),
                 "state": "queued",
@@ -299,9 +302,10 @@ def build_parser() -> argparse.ArgumentParser:
     a.add_argument("--tier", required=True, choices=TIERS)
     a.add_argument("--spec", default="")
     a.add_argument("--acceptance", default="")
+    a.add_argument("--command-json", default="", help="Typed argv as a JSON string array.")
     a.add_argument("--deps", default="", help="Comma-separated task ids this depends on.")
     a.add_argument("--writes", default="", help="Comma-separated workspace paths this task may edit.")
-    a.set_defaults(func=lambda b, ns: print(f"issued {b.add(op=ns.op, title=ns.title, tier=ns.tier, spec=ns.spec, acceptance=ns.acceptance, deps=[d for d in ns.deps.split(',') if d], writes=[p for p in ns.writes.split(',') if p])['id']}"))
+    a.set_defaults(func=lambda b, ns: print(f"issued {b.add(op=ns.op, title=ns.title, tier=ns.tier, spec=ns.spec, acceptance=ns.acceptance, command=json.loads(ns.command_json) if ns.command_json else None, deps=[d for d in ns.deps.split(',') if d], writes=[p for p in ns.writes.split(',') if p])['id']}"))
 
     d = sub.add_parser("next", help="Dispatch the oldest ready task for a tier (a worker claims it).")
     d.add_argument("--tier", required=True, choices=TIERS)

@@ -28,6 +28,14 @@ class ScoreboardTests(unittest.TestCase):
             self.assertEqual(task["writes"], ["src/parser.py", "tests/test_parser.py"])
             self.assertEqual(b.get(task["id"])["writes"], task["writes"])
 
+    def test_typed_command_is_validated_and_persisted(self):
+        with TemporaryDirectory() as tmp:
+            b = Board(Path(tmp))
+            task = b.add(op="test", title="typed", tier="qwen", command=["python", "-m", "unittest"])
+            self.assertEqual(b.get(task["id"])["command"], ["python", "-m", "unittest"])
+            with self.assertRaises(ValueError):
+                b.add(op="test", title="empty", tier="qwen", command=[])
+
     def test_defer_requires_current_owner_and_makes_task_ready(self):
         with TemporaryDirectory() as tmp:
             b = Board(Path(tmp))

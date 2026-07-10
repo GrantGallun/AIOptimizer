@@ -25,13 +25,53 @@ from pathlib import Path
 from typing import Any, Callable
 
 
+SHELL_CONTROL_TOKENS = frozenset({"&", "&&", "|", "||", ">", ">>", "<", "<<"})
+
+
 class NeedsHuman(Exception):
     """The task requires Fable/human judgment (a verdict) and cannot be auto-executed."""
+
+
+class CommandRejected(Exception):
+    """A typed command violates the configured deterministic execution policy."""
+
+
+class CommandPolicy:
+    """Allow typed argv commands by prefix while rejecting shell-control tokens."""
+
+    def __init__(self, allowed_prefixes: list[list[str]] | None = None) -> None:
+        self.allowed_prefixes = [self._canonical(prefix) for prefix in (allowed_prefixes or [])]
+        if any(not prefix for prefix in self.allowed_prefixes):
+            raise ValueError("command prefixes must be non-empty")
+
+    @staticmethod
+    def _canonical(argv: list[str]) -> tuple[str, ...]:
+        if not isinstance(argv, list) or not argv or not all(isinstance(value, str) and value for value in argv):
+            raise CommandRejected("command must be a non-empty list of non-empty strings")
+        return (Path(argv[0]).name.casefold(), *argv[1:])
+
+    def validate(self, argv: list[str]) -> list[str]:
+        canonical = self._canonical(argv)
+        for value in argv:
+            if "\x00" in value or "\n" in value or "\r" in value:
+                raise CommandRejected("command contains a forbidden control character")
+            if value in SHELL_CONTROL_TOKENS:
+                raise CommandRejected(f"shell control token is forbidden in typed command: {value}")
+        if not any(canonical[: len(prefix)] == prefix for prefix in self.allowed_prefixes):
+            raise CommandRejected("command prefix is not allowlisted")
+        return list(argv)
 
 
 def _tail(text: str, n: int = 3) -> str:
     lines = [ln for ln in text.strip().splitlines() if ln.strip()]
     return " / ".join(lines[-n:]) if lines else ""
+
+
+def _typed_argv(command: Any, policy: CommandPolicy | None) -> list[str]:
+    if policy is not None:
+        return policy.validate(command)
+    CommandPolicy._canonical(command)
+    return list(command)
 
 
 class ShellExecutor:
@@ -43,17 +83,41 @@ class ShellExecutor:
         *,
         timeout: int = 600,
         allowlist: list[str] | None = None,
+        command_policy: CommandPolicy | None = None,
+        allow_legacy_shell: bool = True,
         clock: Callable[[], float] = time.perf_counter,
     ) -> None:
         self.cwd = str(cwd)
         self.timeout = timeout
         self.allowlist = allowlist
+        self.command_policy = command_policy
+        self.allow_legacy_shell = allow_legacy_shell
         self.clock = clock
 
     def execute(self, task: dict[str, Any]) -> tuple[bool, str, float]:
+        command = task.get("command")
+        if command is not None:
+            try:
+                argv = _typed_argv(command, self.command_policy)
+            except CommandRejected as exc:
+                return False, f"blocked: {exc}", 0.0
+            started = self.clock()
+            try:
+                proc = subprocess.run(
+                    argv, cwd=self.cwd, capture_output=True, text=True, timeout=self.timeout
+                )
+            except FileNotFoundError:
+                return False, f"command not found: {argv[0]}", max(self.clock() - started, 0.0)
+            except subprocess.TimeoutExpired:
+                return False, f"timeout after {self.timeout}s", max(self.clock() - started, 0.0)
+            ok = proc.returncode == 0
+            return ok, f"exit {proc.returncode}: {_tail(proc.stdout + proc.stderr)}", max(self.clock() - started, 0.0)
+
         cmd = task.get("acceptance") or ""
         if not cmd:
-            return False, "no acceptance command to run", 0.0
+            return False, "no acceptance command or typed command to run", 0.0
+        if not self.allow_legacy_shell:
+            return False, "blocked: legacy shell execution is disabled", 0.0
         if self.allowlist is not None:
             stripped = cmd.strip()
             if not any(stripped.startswith(prefix) for prefix in self.allowlist):
@@ -79,12 +143,16 @@ class CodexExecutor:
         codex: str = "codex",
         extra_args: list[str] | None = None,
         timeout: int = 1800,
+        command_policy: CommandPolicy | None = None,
+        allow_legacy_shell: bool = True,
         clock: Callable[[], float] = time.perf_counter,
     ) -> None:
         self.cwd = str(cwd)
         self.codex = codex
         self.extra_args = extra_args or []  # e.g. ["--full-auto"] or sandbox flags
         self.timeout = timeout
+        self.command_policy = command_policy
+        self.allow_legacy_shell = allow_legacy_shell
         self.clock = clock
 
     def execute(self, task: dict[str, Any]) -> tuple[bool, str, float]:
@@ -99,8 +167,28 @@ class CodexExecutor:
             return False, f"codex exec timeout after {self.timeout}s", max(self.clock() - started, 0.0)
         ok = proc.returncode == 0
         # If the task carries an acceptance check, the code must also pass it.
+        command = task.get("command")
         acceptance = task.get("acceptance")
+        if ok and command is not None:
+            try:
+                argv = _typed_argv(command, self.command_policy)
+            except CommandRejected as exc:
+                return False, f"codex exit 0; acceptance blocked: {exc}", max(self.clock() - started, 0.0)
+            try:
+                check = subprocess.run(argv, cwd=self.cwd, capture_output=True, text=True, timeout=self.timeout)
+            except FileNotFoundError:
+                return False, f"codex exit 0; acceptance command not found: {argv[0]}", max(self.clock() - started, 0.0)
+            except subprocess.TimeoutExpired:
+                return False, f"codex exit 0; acceptance timeout after {self.timeout}s", max(self.clock() - started, 0.0)
+            ok = check.returncode == 0
+            return (
+                ok,
+                f"codex exit 0; acceptance exit {check.returncode}: {_tail(check.stdout + check.stderr)}",
+                max(self.clock() - started, 0.0),
+            )
         if ok and acceptance:
+            if not self.allow_legacy_shell:
+                return False, "codex exit 0; acceptance blocked: legacy shell execution is disabled", max(self.clock() - started, 0.0)
             check = subprocess.run(acceptance, shell=True, cwd=self.cwd, capture_output=True, text=True)
             ok = check.returncode == 0
             return (
