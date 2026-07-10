@@ -12,6 +12,26 @@ Brain Runtime v0 is a deterministic external cognition layer for AI workers. It 
 - Task hooks for unresolved hypotheses and contradiction pressure.
 - Consolidation/replay that promotes useful memories and forgets weak low-utility ones.
 
+## Cross-session snapshots
+
+`session_runtime.py` adds a versioned persistence boundary without changing the v0 retrieval
+or benchmark implementation. It preserves working, long-term, and shared-cache membership;
+shared object identity; evidence and links; contradiction/task records; scope; clock; and ID
+counters across processes.
+
+```python
+from experiments.brain_runtime.session_runtime import PersistentBrainRuntime
+
+runtime = PersistentBrainRuntime()
+runtime.remember("parser", "Use structured JSON parsing.", kind="procedure")
+runtime.save("state/session.json")
+
+later = PersistentBrainRuntime.load("state/session.json")
+```
+
+Snapshots declare the `brain-runtime-session-v1` schema and reject unknown versions or dangling
+store references. Run `python -m unittest tests.test_session_runtime` for the persistence contract.
+
 ## Benchmark
 
 The synthetic benchmark compares `BrainRuntime` against a `VanillaLoop` that uses append-only notes and first-match retrieval. It tests:
