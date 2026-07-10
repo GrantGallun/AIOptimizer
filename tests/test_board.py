@@ -1,3 +1,4 @@
+import threading
 import unittest
 from pathlib import Path
 from tempfile import TemporaryDirectory
@@ -59,6 +60,52 @@ class ScoreboardTests(unittest.TestCase):
             self.assertEqual(b.watchdog(), [t["id"]])
             # reclaimed -> dispatchable again
             self.assertIsNotNone(b.dispatch(tier="sonnet", worker="s2"))
+
+    def test_concurrent_add_no_lost_seq(self):
+        with TemporaryDirectory() as tmp:
+            b = Board(Path(tmp))
+
+            def worker():
+                for _ in range(10):
+                    b.add(op="impl", title="x", tier="sonnet")
+
+            threads = [threading.Thread(target=worker) for _ in range(4)]
+            for t in threads:
+                t.start()
+            for t in threads:
+                t.join()
+            tasks = b.all()
+            self.assertEqual(len(tasks), 40)
+            ids = {t["id"] for t in tasks}
+            self.assertEqual(ids, {f"t{i:04d}" for i in range(1, 41)})
+
+    def test_concurrent_dispatch_no_double_claim(self):
+        with TemporaryDirectory() as tmp:
+            b = Board(Path(tmp))
+            expected_ids = {b.add(op="impl", title="x", tier="sonnet")["id"] for _ in range(20)}
+
+            collected: list[str] = []
+            lock = threading.Lock()
+
+            def worker(name):
+                while True:
+                    task = b.dispatch(tier="sonnet", worker=name)
+                    if task is None:
+                        break
+                    with lock:
+                        collected.append(task["id"])
+
+            threads = [threading.Thread(target=worker, args=(f"w{n}",)) for n in range(4)]
+            for t in threads:
+                t.start()
+            for t in threads:
+                t.join()
+
+            self.assertEqual(len(collected), 20)
+            self.assertEqual(set(collected), expected_ids)
+            self.assertEqual(len(collected), len(set(collected)))  # no duplicates
+            for task_id in expected_ids:
+                self.assertIsNotNone(b.get(task_id)["owner"])
 
 
 if __name__ == "__main__":

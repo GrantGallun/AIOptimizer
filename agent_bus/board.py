@@ -33,6 +33,7 @@ if str(_REPO_ROOT) not in sys.path:
     sys.path.insert(0, str(_REPO_ROOT))
 
 from agent_bus.bus import _now
+from agent_bus.cache import _cross_process_lock
 
 OPS = ("spec", "impl", "test", "run", "review", "verdict", "integrate")
 TIERS = ("fable", "codex", "sonnet", "qwen")
@@ -51,6 +52,10 @@ class Board:
         self.root = Path(root)
         self.store = self.root / "board.json"
         self.md = self.root / "BOARD.md"
+        self.lockfile = self.root / ".board.lock"
+
+    def _lock(self):
+        return _cross_process_lock(self.lockfile)
 
     def _load(self) -> dict[str, Any]:
         if self.store.exists():
@@ -75,148 +80,158 @@ class Board:
 
     # -- issue ---------------------------------------------------------------
     def add(self, *, op: str, title: str, tier: str, spec: str = "", acceptance: str = "", deps: list[str] | None = None, speculative: bool = False, branch: str | None = None) -> dict[str, Any]:
-        state = self._load()
-        state["seq"] += 1
-        task_id = f"t{state['seq']:04d}"
-        task = {
-            "id": task_id,
-            "seq": state["seq"],
-            "op": op,
-            "tier": tier,
-            "title": title,
-            "spec": spec,
-            "acceptance": acceptance,
-            "deps": deps or [],
-            "state": "queued",
-            "owner": None,
-            "reviewer": None,
-            "result": None,
-            "speculative": speculative,
-            "branch": branch,
-            "ts": _now(),
-        }
-        state["tasks"][task_id] = task
-        self._save(state)
-        return task
+        with self._lock():
+            state = self._load()
+            state["seq"] += 1
+            task_id = f"t{state['seq']:04d}"
+            task = {
+                "id": task_id,
+                "seq": state["seq"],
+                "op": op,
+                "tier": tier,
+                "title": title,
+                "spec": spec,
+                "acceptance": acceptance,
+                "deps": deps or [],
+                "state": "queued",
+                "owner": None,
+                "reviewer": None,
+                "result": None,
+                "speculative": speculative,
+                "branch": branch,
+                "ts": _now(),
+            }
+            state["tasks"][task_id] = task
+            self._save(state)
+            return task
 
     def all(self) -> list[dict[str, Any]]:
         return sorted(self._load()["tasks"].values(), key=lambda t: t["seq"])
 
     def speculate(self, task_id: str, *, branch: str) -> dict[str, Any]:
         """Branch prediction: let a blocked task run ahead speculatively on a predicted branch."""
-        state = self._load()
-        task = self._require(state, task_id)
-        task["state"] = "ready"
-        task["speculative"] = True
-        task["branch"] = branch
-        self._save(state)
-        return task
+        with self._lock():
+            state = self._load()
+            task = self._require(state, task_id)
+            task["state"] = "ready"
+            task["speculative"] = True
+            task["branch"] = branch
+            self._save(state)
+            return task
 
     def commit(self, task_id: str) -> dict[str, Any]:
         """Prediction confirmed: clear the speculative flag so the task can eventually retire."""
-        state = self._load()
-        task = self._require(state, task_id)
-        task["speculative"] = False
-        self._save(state)
-        return task
+        with self._lock():
+            state = self._load()
+            task = self._require(state, task_id)
+            task["speculative"] = False
+            self._save(state)
+            return task
 
     # -- scoreboard dispatch (out-of-order issue) ----------------------------
     def dispatch(self, *, tier: str, worker: str) -> dict[str, Any] | None:
-        state = self._load()
-        ready = [
-            t for t in state["tasks"].values()
-            if t["state"] == "ready" and t["tier"] == tier and t["owner"] is None
-        ]
-        if not ready:
-            return None
-        task = min(ready, key=lambda t: t["seq"])  # oldest ready first; blocked elders skipped
-        task["state"] = "dispatched"
-        task["owner"] = worker
-        task["ts"] = _now()
-        self._save(state)
-        return task
+        with self._lock():
+            state = self._load()
+            ready = [
+                t for t in state["tasks"].values()
+                if t["state"] == "ready" and t["tier"] == tier and t["owner"] is None
+            ]
+            if not ready:
+                return None
+            task = min(ready, key=lambda t: t["seq"])  # oldest ready first; blocked elders skipped
+            task["state"] = "dispatched"
+            task["owner"] = worker
+            task["ts"] = _now()
+            self._save(state)
+            return task
 
     def submit(self, task_id: str, *, worker: str, result: str) -> dict[str, Any]:
-        state = self._load()
-        task = self._require(state, task_id)
-        if task["owner"] != worker:
-            raise BoardConflict(f"{task_id} is owned by {task['owner']}, not {worker}.")
-        task["state"] = "executed"
-        task["result"] = result
-        task["ts"] = _now()
-        self._save(state)
-        return task
+        with self._lock():
+            state = self._load()
+            task = self._require(state, task_id)
+            if task["owner"] != worker:
+                raise BoardConflict(f"{task_id} is owned by {task['owner']}, not {worker}.")
+            task["state"] = "executed"
+            task["result"] = result
+            task["ts"] = _now()
+            self._save(state)
+            return task
 
     # -- dual-modular redundancy (cross-check) -------------------------------
     def review(self, task_id: str, *, reviewer: str, ok: bool, note: str = "") -> dict[str, Any]:
-        state = self._load()
-        task = self._require(state, task_id)
-        if reviewer == task["owner"]:
-            raise BoardConflict(f"{task_id} cannot be reviewed by its producer ({reviewer}); need a different core.")
-        if task["state"] != "executed":
-            raise BoardConflict(f"{task_id} is {task['state']}, not executed; nothing to review.")
-        task["reviewer"] = reviewer
-        task["state"] = "verified" if ok else "failed"
-        task["result"] = f"{task['result']} | review({reviewer}): {'OK' if ok else 'REJECT'} {note}".strip()
-        task["ts"] = _now()
-        self._save(state)
-        return task
+        with self._lock():
+            state = self._load()
+            task = self._require(state, task_id)
+            if reviewer == task["owner"]:
+                raise BoardConflict(f"{task_id} cannot be reviewed by its producer ({reviewer}); need a different core.")
+            if task["state"] != "executed":
+                raise BoardConflict(f"{task_id} is {task['state']}, not executed; nothing to review.")
+            task["reviewer"] = reviewer
+            task["state"] = "verified" if ok else "failed"
+            task["result"] = f"{task['result']} | review({reviewer}): {'OK' if ok else 'REJECT'} {note}".strip()
+            task["ts"] = _now()
+            self._save(state)
+            return task
 
     # -- reorder buffer (in-order retirement, Fable only) --------------------
     def retire(self, task_id: str, *, by: str) -> dict[str, Any]:
         if by != "fable":
             raise BoardConflict("retirement commits the research record; Fable only.")
-        state = self._load()
-        task = self._require(state, task_id)
-        if task.get("speculative"):
-            raise BoardConflict(f"{task_id} is still speculative; commit it once its branch resolves.")
-        if task["state"] != "verified":
-            raise BoardConflict(f"{task_id} is {task['state']}, not verified; cannot retire.")
-        # In-order commit: any earlier task not yet on a terminal off-ramp blocks retirement.
-        earlier = [t for t in state["tasks"].values() if t["seq"] < task["seq"] and t["state"] not in ("retired", "squashed", "failed")]
-        if earlier:
-            oldest = min(earlier, key=lambda t: t["seq"])
-            raise BoardConflict(
-                f"in-order retirement: {oldest['id']} (seq {oldest['seq']}) is still {oldest['state']}; retire it first."
-            )
-        task["state"] = "retired"
-        task["ts"] = _now()
-        self._save(state)
-        return task
+        with self._lock():
+            state = self._load()
+            task = self._require(state, task_id)
+            if task.get("speculative"):
+                raise BoardConflict(f"{task_id} is still speculative; commit it once its branch resolves.")
+            if task["state"] != "verified":
+                raise BoardConflict(f"{task_id} is {task['state']}, not verified; cannot retire.")
+            # In-order commit: any earlier task not yet on a terminal off-ramp blocks retirement.
+            earlier = [t for t in state["tasks"].values() if t["seq"] < task["seq"] and t["state"] not in ("retired", "squashed", "failed")]
+            if earlier:
+                oldest = min(earlier, key=lambda t: t["seq"])
+                raise BoardConflict(
+                    f"in-order retirement: {oldest['id']} (seq {oldest['seq']}) is still {oldest['state']}; retire it first."
+                )
+            task["state"] = "retired"
+            task["ts"] = _now()
+            self._save(state)
+            return task
 
     def park(self, task_id: str, *, reason: str = "") -> dict[str, Any]:
         """Set aside a task that needs the human/Fable (e.g. a verdict). Not redispatched."""
-        state = self._load()
-        task = self._require(state, task_id)
-        task["state"] = "blocked"
-        task["result"] = f"awaiting: {reason}"
-        task["ts"] = _now()
-        self._save(state)
-        return task
+        with self._lock():
+            state = self._load()
+            task = self._require(state, task_id)
+            task["state"] = "blocked"
+            task["result"] = f"awaiting: {reason}"
+            task["ts"] = _now()
+            self._save(state)
+            return task
 
     def squash(self, task_id: str, *, reason: str = "") -> dict[str, Any]:
-        state = self._load()
-        task = self._require(state, task_id)
-        task["state"] = "squashed"
-        task["result"] = f"squashed: {reason}"
-        task["ts"] = _now()
-        self._save(state)
-        return task
+        with self._lock():
+            state = self._load()
+            task = self._require(state, task_id)
+            task["state"] = "squashed"
+            task["result"] = f"squashed: {reason}"
+            task["ts"] = _now()
+            self._save(state)
+            return task
 
     # -- watchdog ------------------------------------------------------------
     def watchdog(self) -> list[str]:
         """Reclaim tasks stuck in 'dispatched' (a crashed core). Time-agnostic: reclaims all;
         callers gate by policy. Returns reclaimed ids."""
-        state = self._load()
-        reclaimed = []
-        for task in state["tasks"].values():
-            if task["state"] == "dispatched":
-                task["state"] = "ready"
-                task["owner"] = None
-                reclaimed.append(task["id"])
-        if reclaimed:
-            self._save(state)
-        return reclaimed
+        with self._lock():
+            state = self._load()
+            reclaimed = []
+            for task in state["tasks"].values():
+                if task["state"] == "dispatched":
+                    task["state"] = "ready"
+                    task["owner"] = None
+                    reclaimed.append(task["id"])
+            if reclaimed:
+                self._save(state)
+            return reclaimed
 
     def get(self, task_id: str) -> dict[str, Any] | None:
         return self._load()["tasks"].get(task_id)
