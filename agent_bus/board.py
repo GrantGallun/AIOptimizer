@@ -25,6 +25,7 @@ import argparse
 import json
 import os
 import sys
+import time
 from pathlib import Path
 from typing import Any
 
@@ -79,7 +80,7 @@ class Board:
                     task["state"] = "ready"
 
     # -- issue ---------------------------------------------------------------
-    def add(self, *, op: str, title: str, tier: str, spec: str = "", acceptance: str = "", deps: list[str] | None = None, speculative: bool = False, branch: str | None = None) -> dict[str, Any]:
+    def add(self, *, op: str, title: str, tier: str, spec: str = "", acceptance: str = "", deps: list[str] | None = None, writes: list[str] | None = None, speculative: bool = False, branch: str | None = None) -> dict[str, Any]:
         with self._lock():
             state = self._load()
             state["seq"] += 1
@@ -93,6 +94,7 @@ class Board:
                 "spec": spec,
                 "acceptance": acceptance,
                 "deps": deps or [],
+                "writes": sorted(set(writes or [])),
                 "state": "queued",
                 "owner": None,
                 "reviewer": None,
@@ -100,6 +102,7 @@ class Board:
                 "speculative": speculative,
                 "branch": branch,
                 "ts": _now(),
+                "lease_expires_at": None,
             }
             state["tasks"][task_id] = task
             self._save(state)
@@ -129,7 +132,9 @@ class Board:
             return task
 
     # -- scoreboard dispatch (out-of-order issue) ----------------------------
-    def dispatch(self, *, tier: str, worker: str) -> dict[str, Any] | None:
+    def dispatch(self, *, tier: str, worker: str, lease_seconds: float = 900.0) -> dict[str, Any] | None:
+        if lease_seconds <= 0:
+            raise ValueError("lease_seconds must be positive")
         with self._lock():
             state = self._load()
             ready = [
@@ -142,6 +147,7 @@ class Board:
             task["state"] = "dispatched"
             task["owner"] = worker
             task["ts"] = _now()
+            task["lease_expires_at"] = time.time() + lease_seconds
             self._save(state)
             return task
 
@@ -154,6 +160,22 @@ class Board:
             task["state"] = "executed"
             task["result"] = result
             task["ts"] = _now()
+            task["lease_expires_at"] = None
+            self._save(state)
+            return task
+
+    def defer(self, task_id: str, *, worker: str, reason: str = "") -> dict[str, Any]:
+        """Return a dispatched task to ready when an external resource is unavailable."""
+        with self._lock():
+            state = self._load()
+            task = self._require(state, task_id)
+            if task["state"] != "dispatched" or task["owner"] != worker:
+                raise BoardConflict(f"{task_id} cannot be deferred by {worker}; owner/state changed.")
+            task["state"] = "ready"
+            task["owner"] = None
+            task["result"] = f"deferred: {reason}"
+            task["ts"] = _now()
+            task["lease_expires_at"] = None
             self._save(state)
             return task
 
@@ -218,16 +240,18 @@ class Board:
             return task
 
     # -- watchdog ------------------------------------------------------------
-    def watchdog(self) -> list[str]:
-        """Reclaim tasks stuck in 'dispatched' (a crashed core). Time-agnostic: reclaims all;
-        callers gate by policy. Returns reclaimed ids."""
+    def watchdog(self, *, now: float | None = None) -> list[str]:
+        """Reclaim only dispatch leases that have expired; return reclaimed task ids."""
         with self._lock():
             state = self._load()
+            current = time.time() if now is None else now
             reclaimed = []
             for task in state["tasks"].values():
-                if task["state"] == "dispatched":
+                expires = task.get("lease_expires_at")
+                if task["state"] == "dispatched" and expires is not None and expires <= current:
                     task["state"] = "ready"
                     task["owner"] = None
+                    task["lease_expires_at"] = None
                     reclaimed.append(task["id"])
             if reclaimed:
                 self._save(state)
@@ -276,7 +300,8 @@ def build_parser() -> argparse.ArgumentParser:
     a.add_argument("--spec", default="")
     a.add_argument("--acceptance", default="")
     a.add_argument("--deps", default="", help="Comma-separated task ids this depends on.")
-    a.set_defaults(func=lambda b, ns: print(f"issued {b.add(op=ns.op, title=ns.title, tier=ns.tier, spec=ns.spec, acceptance=ns.acceptance, deps=[d for d in ns.deps.split(',') if d])['id']}"))
+    a.add_argument("--writes", default="", help="Comma-separated workspace paths this task may edit.")
+    a.set_defaults(func=lambda b, ns: print(f"issued {b.add(op=ns.op, title=ns.title, tier=ns.tier, spec=ns.spec, acceptance=ns.acceptance, deps=[d for d in ns.deps.split(',') if d], writes=[p for p in ns.writes.split(',') if p])['id']}"))
 
     d = sub.add_parser("next", help="Dispatch the oldest ready task for a tier (a worker claims it).")
     d.add_argument("--tier", required=True, choices=TIERS)

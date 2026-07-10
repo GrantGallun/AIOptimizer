@@ -20,8 +20,10 @@ from __future__ import annotations
 
 import argparse
 import json
+import os
 import subprocess
 import sys
+import uuid
 from pathlib import Path
 from typing import Any, Callable
 
@@ -32,6 +34,7 @@ if str(_REPO_ROOT) not in sys.path:
 from agent_bus.board import Board, BoardConflict
 from agent_bus.cache import Cache
 from agent_bus.executors import NeedsHuman
+from agent_bus.workspace import WorkspaceClaims, WorkspaceConflict
 
 # Estimated elapsed seconds used only for pre-admission and deterministic simulation.
 # Real executors return measured elapsed seconds, which the governor charges below.
@@ -129,6 +132,10 @@ class Scheduler:
         budget: float = 10.0,
         predictor: BranchPredictor | None = None,
         on_retire: Callable[[dict[str, Any]], Any] | None = None,
+        workspace_root: Path | None = None,
+        lease_ttl_seconds: float = 3600.0,
+        dispatch_lease_seconds: float = 3600.0,
+        scheduler_id: str | None = None,
     ) -> None:
         self.board = Board(root)
         self.cache = Cache(root)
@@ -137,6 +144,10 @@ class Scheduler:
         self.governor = Governor(self.cache, budget)
         self.predictor = predictor or BranchPredictor()
         self.on_retire = on_retire  # e.g. GitCommitter: durable commit per retired task
+        self.workspace_claims = WorkspaceClaims(workspace_root or root, state_root=root)
+        self.lease_ttl_seconds = lease_ttl_seconds
+        self.dispatch_lease_seconds = dispatch_lease_seconds
+        self.scheduler_id = scheduler_id or f"{os.getpid()}-{uuid.uuid4().hex[:8]}"
 
     def _reviewer_for(self, task: dict[str, Any]) -> str:
         return f"{REVIEWER.get(task['tier'], 'codex')}-review"
@@ -175,7 +186,7 @@ class Scheduler:
                     break  # an earlier task hasn't retired yet; stop (in-order commit)
 
     def tick(self) -> dict[str, Any]:
-        events = {k: [] for k in ("dispatched", "executed", "verified", "retired", "squashed", "speculated", "committed", "awaiting")}
+        events = {k: [] for k in ("dispatched", "executed", "verified", "retired", "squashed", "speculated", "committed", "awaiting", "deferred")}
         events["tripped"] = False
         self.board.watchdog()
         if self.governor.tripped():
@@ -183,19 +194,41 @@ class Scheduler:
             return events
         for tier, capacity in self.cores.items():
             estimated = TIER_COST.get(tier, 0.5)
-            for _ in range(capacity):
+            for slot in range(capacity):
                 if self.governor.would_exceed(estimated):
                     events["tripped"] = True  # power/cost budget: won't admit this core's work
                     break
-                task = self.board.dispatch(tier=tier, worker=f"{tier}-core")
+                worker = f"{tier}-{self.scheduler_id}-{slot}"
+                task = self.board.dispatch(
+                    tier=tier,
+                    worker=worker,
+                    lease_seconds=self.dispatch_lease_seconds,
+                )
                 if task is None:
                     break
+                writes = task.get("writes", [])
+                lease_owner = f"{task['owner']}:{task['id']}"
+                if writes:
+                    try:
+                        self.workspace_claims.claim(
+                            writes,
+                            owner=lease_owner,
+                            ttl_seconds=self.lease_ttl_seconds,
+                        )
+                    except WorkspaceConflict as exc:
+                        self.board.defer(task["id"], worker=task["owner"], reason=str(exc))
+                        events["deferred"].append(task["id"])
+                        continue
                 try:
-                    ok, result, cost = self.executor.execute(task)
-                except NeedsHuman:
-                    self.board.park(task["id"], reason="needs Fable/human")
-                    events["awaiting"].append(task["id"])  # human interrupt: judgment handed back
-                    continue
+                    try:
+                        ok, result, cost = self.executor.execute(task)
+                    except NeedsHuman:
+                        self.board.park(task["id"], reason="needs Fable/human")
+                        events["awaiting"].append(task["id"])  # human interrupt: judgment handed back
+                        continue
+                finally:
+                    if writes:
+                        self.workspace_claims.release(writes, owner=lease_owner)
                 if task["op"] in GATE_OPS:
                     self._speculate_dependents(task, events)
                 self.governor.charge(cost)
@@ -225,7 +258,7 @@ class Scheduler:
 
 def _summarize(history: list[dict[str, Any]]) -> dict[str, Any]:
     agg: dict[str, Any] = {"ticks": len(history)}
-    for key in ("dispatched", "executed", "verified", "retired", "squashed", "speculated", "committed", "awaiting"):
+    for key in ("dispatched", "executed", "verified", "retired", "squashed", "speculated", "committed", "awaiting", "deferred"):
         agg[key] = sum(len(ev[key]) for ev in history)
     agg["tripped"] = any(ev["tripped"] for ev in history)
     return agg

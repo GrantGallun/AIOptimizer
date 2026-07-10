@@ -16,6 +16,30 @@ class ScoreboardTests(unittest.TestCase):
             self.assertIsNotNone(b.dispatch(tier="sonnet", worker="s1"))     # gets t1
             self.assertIsNone(b.dispatch(tier="sonnet", worker="s2"))        # t2 not ready
 
+    def test_declared_write_set_is_deduplicated_and_persisted(self):
+        with TemporaryDirectory() as tmp:
+            b = Board(Path(tmp))
+            task = b.add(
+                op="impl",
+                title="edit parser",
+                tier="codex",
+                writes=["src/parser.py", "src/parser.py", "tests/test_parser.py"],
+            )
+            self.assertEqual(task["writes"], ["src/parser.py", "tests/test_parser.py"])
+            self.assertEqual(b.get(task["id"])["writes"], task["writes"])
+
+    def test_defer_requires_current_owner_and_makes_task_ready(self):
+        with TemporaryDirectory() as tmp:
+            b = Board(Path(tmp))
+            task = b.add(op="impl", title="edit", tier="codex")
+            dispatched = b.dispatch(tier="codex", worker="codex-a")
+            with self.assertRaises(BoardConflict):
+                b.defer(task["id"], worker="codex-b")
+            deferred = b.defer(task["id"], worker=dispatched["owner"], reason="path busy")
+            self.assertEqual(deferred["state"], "ready")
+            self.assertIsNone(deferred["owner"])
+            self.assertIn("path busy", deferred["result"])
+
     def test_out_of_order_issue_skips_blocked_elder(self):
         with TemporaryDirectory() as tmp:
             b = Board(Path(tmp))
@@ -56,8 +80,9 @@ class ScoreboardTests(unittest.TestCase):
         with TemporaryDirectory() as tmp:
             b = Board(Path(tmp))
             t = b.add(op="impl", title="x", tier="sonnet")
-            b.dispatch(tier="sonnet", worker="ghost")
-            self.assertEqual(b.watchdog(), [t["id"]])
+            dispatched = b.dispatch(tier="sonnet", worker="ghost", lease_seconds=10)
+            self.assertEqual(b.watchdog(now=dispatched["lease_expires_at"] - 1), [])
+            self.assertEqual(b.watchdog(now=dispatched["lease_expires_at"]), [t["id"]])
             # reclaimed -> dispatchable again
             self.assertIsNotNone(b.dispatch(tier="sonnet", worker="s2"))
 

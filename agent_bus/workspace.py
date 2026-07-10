@@ -23,10 +23,17 @@ class WorkspaceConflict(Exception):
 
 
 class WorkspaceClaims:
-    def __init__(self, root: Path, *, clock: Callable[[], float] = time.time) -> None:
+    def __init__(
+        self,
+        root: Path,
+        *,
+        state_root: Path | None = None,
+        clock: Callable[[], float] = time.time,
+    ) -> None:
         self.root = Path(root).resolve()
-        self.store = self.root / "workspace_claims.json"
-        self.lockfile = self.root / ".workspace_claims.lock"
+        state_directory = Path(state_root).resolve() if state_root is not None else self.root
+        self.store = state_directory / "workspace_claims.json"
+        self.lockfile = state_directory / ".workspace_claims.lock"
         self.clock = clock
 
     def _load(self) -> dict[str, Any]:
@@ -35,7 +42,7 @@ class WorkspaceClaims:
         return {"revision": 0, "claims": {}}
 
     def _save(self, state: dict[str, Any]) -> None:
-        self.root.mkdir(parents=True, exist_ok=True)
+        self.store.parent.mkdir(parents=True, exist_ok=True)
         temporary = self.store.with_suffix(".json.tmp")
         temporary.write_text(json.dumps(state, indent=2, sort_keys=True) + "\n", encoding="utf-8")
         os.replace(temporary, self.store)

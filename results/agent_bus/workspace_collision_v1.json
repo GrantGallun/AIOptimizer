@@ -1,0 +1,271 @@
+{
+  "arms": [
+    {
+      "name": "unleased",
+      "rows": [
+        {
+          "content": "base:B",
+          "deferred": 0,
+          "integrity": false,
+          "lost_updates": 1,
+          "seed": 11,
+          "task_ids": [
+            "t0001",
+            "t0002"
+          ]
+        },
+        {
+          "content": "base:B",
+          "deferred": 0,
+          "integrity": false,
+          "lost_updates": 1,
+          "seed": 23,
+          "task_ids": [
+            "t0001",
+            "t0002"
+          ]
+        },
+        {
+          "content": "base:B",
+          "deferred": 0,
+          "integrity": false,
+          "lost_updates": 1,
+          "seed": 37,
+          "task_ids": [
+            "t0001",
+            "t0002"
+          ]
+        },
+        {
+          "content": "base:B",
+          "deferred": 0,
+          "integrity": false,
+          "lost_updates": 1,
+          "seed": 41,
+          "task_ids": [
+            "t0001",
+            "t0002"
+          ]
+        },
+        {
+          "content": "base:B",
+          "deferred": 0,
+          "integrity": false,
+          "lost_updates": 1,
+          "seed": 59,
+          "task_ids": [
+            "t0001",
+            "t0002"
+          ]
+        },
+        {
+          "content": "base:B",
+          "deferred": 0,
+          "integrity": false,
+          "lost_updates": 1,
+          "seed": 71,
+          "task_ids": [
+            "t0001",
+            "t0002"
+          ]
+        },
+        {
+          "content": "base:B",
+          "deferred": 0,
+          "integrity": false,
+          "lost_updates": 1,
+          "seed": 73,
+          "task_ids": [
+            "t0001",
+            "t0002"
+          ]
+        },
+        {
+          "content": "base:B",
+          "deferred": 0,
+          "integrity": false,
+          "lost_updates": 1,
+          "seed": 79,
+          "task_ids": [
+            "t0001",
+            "t0002"
+          ]
+        },
+        {
+          "content": "base:B",
+          "deferred": 0,
+          "integrity": false,
+          "lost_updates": 1,
+          "seed": 83,
+          "task_ids": [
+            "t0001",
+            "t0002"
+          ]
+        },
+        {
+          "content": "base:B",
+          "deferred": 0,
+          "integrity": false,
+          "lost_updates": 1,
+          "seed": 89,
+          "task_ids": [
+            "t0001",
+            "t0002"
+          ]
+        }
+      ],
+      "summary": {
+        "deferred": 0,
+        "integrity_successes": 0,
+        "lost_updates": 10,
+        "trials": 10
+      }
+    },
+    {
+      "name": "leased_write_sets",
+      "rows": [
+        {
+          "content": "base:AB",
+          "deferred": 1,
+          "executor_b_calls": 1,
+          "integrity": true,
+          "lost_updates": 0,
+          "seed": 11,
+          "task_ids": [
+            "t0001",
+            "t0002"
+          ]
+        },
+        {
+          "content": "base:AB",
+          "deferred": 1,
+          "executor_b_calls": 1,
+          "integrity": true,
+          "lost_updates": 0,
+          "seed": 23,
+          "task_ids": [
+            "t0001",
+            "t0002"
+          ]
+        },
+        {
+          "content": "base:AB",
+          "deferred": 1,
+          "executor_b_calls": 1,
+          "integrity": true,
+          "lost_updates": 0,
+          "seed": 37,
+          "task_ids": [
+            "t0001",
+            "t0002"
+          ]
+        },
+        {
+          "content": "base:AB",
+          "deferred": 1,
+          "executor_b_calls": 1,
+          "integrity": true,
+          "lost_updates": 0,
+          "seed": 41,
+          "task_ids": [
+            "t0001",
+            "t0002"
+          ]
+        },
+        {
+          "content": "base:AB",
+          "deferred": 1,
+          "executor_b_calls": 1,
+          "integrity": true,
+          "lost_updates": 0,
+          "seed": 59,
+          "task_ids": [
+            "t0001",
+            "t0002"
+          ]
+        },
+        {
+          "content": "base:AB",
+          "deferred": 1,
+          "executor_b_calls": 1,
+          "integrity": true,
+          "lost_updates": 0,
+          "seed": 71,
+          "task_ids": [
+            "t0001",
+            "t0002"
+          ]
+        },
+        {
+          "content": "base:AB",
+          "deferred": 1,
+          "executor_b_calls": 1,
+          "integrity": true,
+          "lost_updates": 0,
+          "seed": 73,
+          "task_ids": [
+            "t0001",
+            "t0002"
+          ]
+        },
+        {
+          "content": "base:AB",
+          "deferred": 1,
+          "executor_b_calls": 1,
+          "integrity": true,
+          "lost_updates": 0,
+          "seed": 79,
+          "task_ids": [
+            "t0001",
+            "t0002"
+          ]
+        },
+        {
+          "content": "base:AB",
+          "deferred": 1,
+          "executor_b_calls": 1,
+          "integrity": true,
+          "lost_updates": 0,
+          "seed": 83,
+          "task_ids": [
+            "t0001",
+            "t0002"
+          ]
+        },
+        {
+          "content": "base:AB",
+          "deferred": 1,
+          "executor_b_calls": 1,
+          "integrity": true,
+          "lost_updates": 0,
+          "seed": 89,
+          "task_ids": [
+            "t0001",
+            "t0002"
+          ]
+        }
+      ],
+      "summary": {
+        "deferred": 10,
+        "integrity_successes": 10,
+        "lost_updates": 0,
+        "trials": 10
+      }
+    }
+  ],
+  "benchmark": "workspace-collision-v1-two-scheduler-drivers",
+  "elapsed_seconds": 1.710582,
+  "mechanism": "atomic declared write-set leases",
+  "seeds": [
+    11,
+    23,
+    37,
+    41,
+    59,
+    71,
+    73,
+    79,
+    83,
+    89
+  ]
+}

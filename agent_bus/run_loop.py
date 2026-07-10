@@ -47,7 +47,13 @@ def main() -> None:
     codex = CodexExecutor(args.repo, codex=args.codex_bin, extra_args=shlex.split(args.codex_args)) if args.codex else None
     router = RoutingExecutor(shell=shell, codex=codex)
     on_retire = GitCommitter(args.repo) if args.commit else None
-    sched = Scheduler(Path(args.root), executor=router, budget=args.budget, on_retire=on_retire)
+    sched = Scheduler(
+        Path(args.root),
+        executor=router,
+        budget=args.budget,
+        on_retire=on_retire,
+        workspace_root=Path(args.repo),
+    )
 
     history = sched.run(max_ticks=args.max_ticks)
     summary = _summarize(history)

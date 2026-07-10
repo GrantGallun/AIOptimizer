@@ -6,6 +6,7 @@ from tempfile import TemporaryDirectory
 from agent_bus.board import Board
 from agent_bus.scheduler import COST_UNIT, BranchPredictor, GitCommitter, Governor, Scheduler, SimExecutor
 from agent_bus.cache import Cache
+from agent_bus.workspace import WorkspaceClaims
 
 
 class GovernorTests(unittest.TestCase):
@@ -58,6 +59,35 @@ class SchedulerTests(unittest.TestCase):
             sched = Scheduler(Path(tmp), executor=MeasuredExecutor(), budget=10.0)
             sched.run()
             self.assertEqual(sched.governor.spent, 2.75)
+
+    def test_declared_write_conflict_defers_without_execution(self):
+        class RecordingExecutor:
+            def __init__(self):
+                self.calls = []
+
+            def execute(self, task):
+                self.calls.append(task["id"])
+                return True, "done", 0.1
+
+        with TemporaryDirectory() as tmp:
+            root = Path(tmp)
+            board = Board(root)
+            task = board.add(op="impl", title="edit", tier="codex", writes=["src/a.py"])
+            external = WorkspaceClaims(root, state_root=root)
+            external.claim(["src/a.py"], owner="other-driver")
+            executor = RecordingExecutor()
+            sched = Scheduler(root, executor=executor, budget=10.0, scheduler_id="test")
+
+            events = sched.tick()
+            self.assertEqual(events["deferred"], [task["id"]])
+            self.assertEqual(executor.calls, [])
+            self.assertEqual(board.get(task["id"])["state"], "ready")
+
+            external.release(["src/a.py"], owner="other-driver")
+            sched.run()
+            self.assertEqual(executor.calls, [task["id"]])
+            self.assertEqual(board.get(task["id"])["state"], "retired")
+            self.assertEqual(external.list()["claims"], {})
 
     def test_speculation_commits_on_correct_prediction(self):
         with TemporaryDirectory() as tmp:
