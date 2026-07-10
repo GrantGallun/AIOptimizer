@@ -64,7 +64,8 @@ Created: 2026-07-09
 - Status: Testing
 - Source: Current session (novelty-seeking direction: the seam between the steering and Brain Runtime threads)
 - Summary: Deliver the same retrieved memory two ways -- in-context text vs a residual-stream steering vector derived identically from the memory text -- and test the pre-registered crossover: activation wins for procedural memory (how to act), in-context wins for factual memory (a specific fact). This fuses IDEA-03 (activation-based retrieval) with the steering thread instead of leaving them separate.
-- Next test: Run the `hf` backend on SmolLM2-135M: tune layer/coefficient on `tasks_dev.jsonl` only, then report the single selected config on hidden/adversarial and record the gate verdict. Then repeat on a 1-3B instruct model before any headline claim.
+- Status update (2026-07-10): naive mean-pooled version REFUTED on SmolLM2-135M (HYP-AM-01, graveyard). Only worth reviving with a stronger vector derivation (last-token / learned probe / per-layer) on a 1-3B model; the mean-pooled-vector-vs-in-context question is answered (in-context wins at 135M).
+- Next test (if revived): last-token or learned-probe memory vector on a 1-3B instruct model, same pre-registered crossover gate.
 - Links: IDEA-20260709-03, IDEA-20260709-05, IDEA-20260709-06, HYP-20260709-07, `experiments/activation_memory`, `experiments/activation_memory/PREREGISTRATION.md`
 - Last touched: 2026-07-09
 
@@ -90,9 +91,8 @@ Created: 2026-07-09
 
 ## Candidate Hypotheses
 
-### HYP-AM-01 (pre-registered, untested): The best memory-delivery channel depends on memory type -- activation injection beats in-context for procedural memory, and in-context beats activation for factual memory (a crossover interaction with gap >= 0.5 on hidden).
-- Registered: 2026-07-09 in `experiments/activation_memory/PREREGISTRATION.md`
-- Status: Registered; toy plumbing passes the gate by construction; no confirmatory HF run yet.
+### HYP-AM-01: (TESTED 2026-07-10 -> graveyard, Refuted) The best memory-delivery channel depends on memory type.
+- Refuted on SmolLM2-135M: no layer/coefficient produced the crossover (max interaction gap -2.51 vs +0.5 needed); mean-pooled activation injection barely moves the model, and in-context beats it for BOTH types. See graveyard HYP-AM-01. Does not rule out larger models / stronger vector derivations.
 - Links: IDEA-20260709-07
 
 ## Open Questions

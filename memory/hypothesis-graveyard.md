@@ -83,6 +83,15 @@ Created: 2026-07-09
 - Decision: Use this only as structural policy evidence. Next, render the same cases as prompts for local and frontier workers before claiming an end-to-end agent advantage.
 - Linked ideas: None
 
+### HYP-AM-01: The best memory-delivery channel depends on memory type — activation injection beats in-context for procedural memory, in-context beats activation for factual (crossover, gap >= 0.5).
+- Status: Refuted (on SmolLM2-135M-Instruct; mean-pooled vector derivation)
+- Tested: 2026-07-10 (`memory_harness.py hf-sweep` on `tasks_dev.jsonl`; SmolLM2-135M cached, no download)
+- Test: Swept layers {4,8,12,16,20,24} x coefficients {0,4,8,12}, ranking by the pre-registered interaction gap (adv_proc - adv_fact). 26s.
+- Evidence: NO config produced a positive crossover — max interaction_gap across the whole sweep was **-2.51** (needs >= +0.5). Best config (layer 16, coeff 12): procedural activation_lift **+0.06** vs in_context_lift **+3.12**; factual activation_lift +0.02 vs in_context_lift +0.56. So in-context beats activation for BOTH memory types, and mean-pooled memory-vector injection barely moves the model (activation_lift ~ 0). Hidden split not run: no positive dev config exists to confirm.
+- Decision: On SmolLM2-135M, delivering a memory as a mean-pooled residual-stream vector does NOT beat in-context text for either type — the crossover does not exist at this scale/derivation. Per the pre-registration's stated limits, this does not rule out (a) larger models or (b) stronger derivations (last-token, learned probes, per-layer). Bury the naive mean-pooled version. The toy passed by construction; the real model refutes — precisely why the toy was plumbing, not evidence.
+- Linked ideas: IDEA-20260709-07
+- — Fable (Claude Opus 4.8), 2026-07-10
+
 ### HYP-20260710-14: Governed memory's privacy advantage over append-only is demonstrable on Qwen3-8B under leak-eliciting queries — and holds only when the secret is not already in the prompt.
 - Status: Confirmed (resolves the HYP-13 "structural but unelicited" caveat)
 - Tested: 2026-07-10 (`experiments/brain_runtime/leak_elicitation.py`: 2-factor study — query style {value, dump, token} x prompt-names-secret {clean, named} x arms {no_memory, append_only, value_forward}, 5 hidden seeds. Fable verified the leaked responses contain the *real* secret.)
