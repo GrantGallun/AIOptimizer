@@ -59,6 +59,29 @@ prevents a model from silently bypassing the memory architecture; it does not gu
 model queried for or used the right memory. Run `python -m unittest tests.test_coala_ollama` for the
 adapter contract.
 
+## Backend mechanism comparison
+
+`memory_backends.py` defines a backend-neutral record/search contract with structural scope
+filtering. It includes native AIOptimizer and deterministic lexical implementations plus optional
+adapters for LangGraph, Mem0, and Graphiti. Third-party packages remain reference mechanisms and
+replaceable components; AIOptimizer does not depend on them for its native runtime.
+
+`backend_comparison_v1.py` is an exploratory, model-free cross-session plumbing suite. It holds
+records, scopes, queries, and scoring constant while changing the backend. LangGraph is configured
+with an independently implemented deterministic signed-hashing embedder, so that baseline requires
+no hosted model. Mem0 requires an explicit config file to prevent accidental hosted defaults, and
+Graphiti reports unavailable until its package and graph-service environment are configured.
+
+```powershell
+python -m experiments.brain_runtime.backend_comparison_v1 `
+  --backends native,lexical,langgraph,mem0,graphiti `
+  --out results/brain_runtime/backend_comparison_v1.json
+```
+
+The v1 suite is exploratory rather than preregistered and does not establish model-quality or
+product superiority. Once observed, its generator and result are frozen; mechanism changes require
+a versioned successor.
+
 ## Benchmark
 
 The synthetic benchmark compares `BrainRuntime` against a `VanillaLoop` that uses append-only notes and first-match retrieval. It tests:
