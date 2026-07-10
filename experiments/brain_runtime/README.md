@@ -48,6 +48,17 @@ Run `python -m unittest tests.test_coala` for the decision-cycle contract. This 
 plumbing, not evidence that the controller improves model reasoning; that requires a separately
 specified real-model benchmark and gate.
 
+`coala_ollama.py` attaches that controller to the existing local Ollama worker through strict JSON
+actions. It rejects unknown fields, model-supplied scope changes, unavailable grounding actions,
+unbounded retrieval, and malformed learning metadata. Retrieved memories are rendered as JSON-line
+data and model outputs remain subject to the controller's scope and procedural-write checks.
+
+By default the adapter structurally requires at least one retrieval action before a terminal learn
+or ground action. This is reported as `forced_retrievals` in token/latency metrics. The invariant
+prevents a model from silently bypassing the memory architecture; it does not guarantee that the
+model queried for or used the right memory. Run `python -m unittest tests.test_coala_ollama` for the
+adapter contract.
+
 ## Benchmark
 
 The synthetic benchmark compares `BrainRuntime` against a `VanillaLoop` that uses append-only notes and first-match retrieval. It tests:
