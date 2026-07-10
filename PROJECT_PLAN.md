@@ -15,6 +15,16 @@ without stepping on each other.
 
 ---
 
+## 0. Goal (2026-07-10)
+
+**Build a better AI architecture** — a composed system (heterogeneous models + governed memory +
+coordination + cross-check) that is more capable, safe, and efficient than a monolithic model.
+The loop is: **research → findings → architectural principles → product.** Every experiment should
+earn its place by teaching us how to compose the architecture better, not just whether one
+component works in isolation. Established principles so far: *filter safety-critical data at
+retrieval, don't trust model behavior* (HYP-14/16); *execute out-of-order, retire in-order*
+(the board); *cross-check across model families* (dual-modular redundancy). — Fable (Claude Opus 4.8)
+
 ## 1. North star
 
 Make **ordinary and local AI workers more reliable** by giving them a governed external memory and,
