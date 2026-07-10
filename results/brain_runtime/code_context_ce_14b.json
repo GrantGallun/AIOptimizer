@@ -1,0 +1,1390 @@
+{
+  "benchmark": "brain-runtime-code-context",
+  "context_sizes": [
+    10,
+    40
+  ],
+  "elapsed_seconds": 107.018,
+  "k": 3,
+  "model": "qwen3:14b",
+  "n_functions": 284,
+  "n_qa": 12,
+  "paths": [
+    "agent_bus",
+    "experiments/brain_runtime"
+  ],
+  "render_only": false,
+  "rows": [
+    {
+      "N": 10,
+      "answer": "128",
+      "arm": "dump_all",
+      "correct": true,
+      "func": "deterministic_embeddings",
+      "param": "dimensions",
+      "qa_i": 0
+    },
+    {
+      "N": 10,
+      "answer": "128",
+      "arm": "selected",
+      "correct": true,
+      "func": "deterministic_embeddings",
+      "param": "dimensions",
+      "qa_i": 0
+    },
+    {
+      "N": 10,
+      "answer": "128",
+      "arm": "selected_ce",
+      "correct": true,
+      "func": "deterministic_embeddings",
+      "param": "dimensions",
+      "qa_i": 0
+    },
+    {
+      "N": 10,
+      "answer": "128",
+      "arm": "abstracted",
+      "correct": true,
+      "func": "deterministic_embeddings",
+      "param": "dimensions",
+      "qa_i": 0
+    },
+    {
+      "N": 10,
+      "answer": "128",
+      "arm": "random_k",
+      "correct": true,
+      "func": "deterministic_embeddings",
+      "param": "dimensions",
+      "qa_i": 0
+    },
+    {
+      "N": 10,
+      "answer": "128",
+      "arm": "oracle",
+      "correct": true,
+      "func": "deterministic_embeddings",
+      "param": "dimensions",
+      "qa_i": 0
+    },
+    {
+      "N": 40,
+      "answer": "128",
+      "arm": "dump_all",
+      "correct": false,
+      "func": "deterministic_embeddings",
+      "param": "dimensions",
+      "qa_i": 0
+    },
+    {
+      "N": 40,
+      "answer": "128",
+      "arm": "selected",
+      "correct": true,
+      "func": "deterministic_embeddings",
+      "param": "dimensions",
+      "qa_i": 0
+    },
+    {
+      "N": 40,
+      "answer": "128",
+      "arm": "selected_ce",
+      "correct": true,
+      "func": "deterministic_embeddings",
+      "param": "dimensions",
+      "qa_i": 0
+    },
+    {
+      "N": 40,
+      "answer": "128",
+      "arm": "abstracted",
+      "correct": true,
+      "func": "deterministic_embeddings",
+      "param": "dimensions",
+      "qa_i": 0
+    },
+    {
+      "N": 40,
+      "answer": "128",
+      "arm": "random_k",
+      "correct": false,
+      "func": "deterministic_embeddings",
+      "param": "dimensions",
+      "qa_i": 0
+    },
+    {
+      "N": 40,
+      "answer": "128",
+      "arm": "oracle",
+      "correct": true,
+      "func": "deterministic_embeddings",
+      "param": "dimensions",
+      "qa_i": 0
+    },
+    {
+      "N": 10,
+      "answer": "5",
+      "arm": "dump_all",
+      "correct": true,
+      "func": "run",
+      "param": "reps",
+      "qa_i": 1
+    },
+    {
+      "N": 10,
+      "answer": "5",
+      "arm": "selected",
+      "correct": false,
+      "func": "run",
+      "param": "reps",
+      "qa_i": 1
+    },
+    {
+      "N": 10,
+      "answer": "5",
+      "arm": "selected_ce",
+      "correct": true,
+      "func": "run",
+      "param": "reps",
+      "qa_i": 1
+    },
+    {
+      "N": 10,
+      "answer": "5",
+      "arm": "abstracted",
+      "correct": false,
+      "func": "run",
+      "param": "reps",
+      "qa_i": 1
+    },
+    {
+      "N": 10,
+      "answer": "5",
+      "arm": "random_k",
+      "correct": true,
+      "func": "run",
+      "param": "reps",
+      "qa_i": 1
+    },
+    {
+      "N": 10,
+      "answer": "5",
+      "arm": "oracle",
+      "correct": true,
+      "func": "run",
+      "param": "reps",
+      "qa_i": 1
+    },
+    {
+      "N": 40,
+      "answer": "5",
+      "arm": "dump_all",
+      "correct": true,
+      "func": "run",
+      "param": "reps",
+      "qa_i": 1
+    },
+    {
+      "N": 40,
+      "answer": "5",
+      "arm": "selected",
+      "correct": false,
+      "func": "run",
+      "param": "reps",
+      "qa_i": 1
+    },
+    {
+      "N": 40,
+      "answer": "5",
+      "arm": "selected_ce",
+      "correct": true,
+      "func": "run",
+      "param": "reps",
+      "qa_i": 1
+    },
+    {
+      "N": 40,
+      "answer": "5",
+      "arm": "abstracted",
+      "correct": false,
+      "func": "run",
+      "param": "reps",
+      "qa_i": 1
+    },
+    {
+      "N": 40,
+      "answer": "5",
+      "arm": "random_k",
+      "correct": false,
+      "func": "run",
+      "param": "reps",
+      "qa_i": 1
+    },
+    {
+      "N": 40,
+      "answer": "5",
+      "arm": "oracle",
+      "correct": true,
+      "func": "run",
+      "param": "reps",
+      "qa_i": 1
+    },
+    {
+      "N": 10,
+      "answer": "",
+      "arm": "dump_all",
+      "correct": false,
+      "func": "defer",
+      "param": "reason",
+      "qa_i": 2
+    },
+    {
+      "N": 10,
+      "answer": "",
+      "arm": "selected",
+      "correct": false,
+      "func": "defer",
+      "param": "reason",
+      "qa_i": 2
+    },
+    {
+      "N": 10,
+      "answer": "",
+      "arm": "selected_ce",
+      "correct": false,
+      "func": "defer",
+      "param": "reason",
+      "qa_i": 2
+    },
+    {
+      "N": 10,
+      "answer": "",
+      "arm": "abstracted",
+      "correct": false,
+      "func": "defer",
+      "param": "reason",
+      "qa_i": 2
+    },
+    {
+      "N": 10,
+      "answer": "",
+      "arm": "random_k",
+      "correct": false,
+      "func": "defer",
+      "param": "reason",
+      "qa_i": 2
+    },
+    {
+      "N": 10,
+      "answer": "",
+      "arm": "oracle",
+      "correct": false,
+      "func": "defer",
+      "param": "reason",
+      "qa_i": 2
+    },
+    {
+      "N": 40,
+      "answer": "",
+      "arm": "dump_all",
+      "correct": false,
+      "func": "defer",
+      "param": "reason",
+      "qa_i": 2
+    },
+    {
+      "N": 40,
+      "answer": "",
+      "arm": "selected",
+      "correct": false,
+      "func": "defer",
+      "param": "reason",
+      "qa_i": 2
+    },
+    {
+      "N": 40,
+      "answer": "",
+      "arm": "selected_ce",
+      "correct": false,
+      "func": "defer",
+      "param": "reason",
+      "qa_i": 2
+    },
+    {
+      "N": 40,
+      "answer": "",
+      "arm": "abstracted",
+      "correct": false,
+      "func": "defer",
+      "param": "reason",
+      "qa_i": 2
+    },
+    {
+      "N": 40,
+      "answer": "",
+      "arm": "random_k",
+      "correct": false,
+      "func": "defer",
+      "param": "reason",
+      "qa_i": 2
+    },
+    {
+      "N": 40,
+      "answer": "",
+      "arm": "oracle",
+      "correct": false,
+      "func": "defer",
+      "param": "reason",
+      "qa_i": 2
+    },
+    {
+      "N": 10,
+      "answer": "project",
+      "arm": "dump_all",
+      "correct": true,
+      "func": "run_cycle",
+      "param": "scope",
+      "qa_i": 3
+    },
+    {
+      "N": 10,
+      "answer": "project",
+      "arm": "selected",
+      "correct": true,
+      "func": "run_cycle",
+      "param": "scope",
+      "qa_i": 3
+    },
+    {
+      "N": 10,
+      "answer": "project",
+      "arm": "selected_ce",
+      "correct": true,
+      "func": "run_cycle",
+      "param": "scope",
+      "qa_i": 3
+    },
+    {
+      "N": 10,
+      "answer": "project",
+      "arm": "abstracted",
+      "correct": true,
+      "func": "run_cycle",
+      "param": "scope",
+      "qa_i": 3
+    },
+    {
+      "N": 10,
+      "answer": "project",
+      "arm": "random_k",
+      "correct": false,
+      "func": "run_cycle",
+      "param": "scope",
+      "qa_i": 3
+    },
+    {
+      "N": 10,
+      "answer": "project",
+      "arm": "oracle",
+      "correct": true,
+      "func": "run_cycle",
+      "param": "scope",
+      "qa_i": 3
+    },
+    {
+      "N": 40,
+      "answer": "project",
+      "arm": "dump_all",
+      "correct": false,
+      "func": "run_cycle",
+      "param": "scope",
+      "qa_i": 3
+    },
+    {
+      "N": 40,
+      "answer": "project",
+      "arm": "selected",
+      "correct": true,
+      "func": "run_cycle",
+      "param": "scope",
+      "qa_i": 3
+    },
+    {
+      "N": 40,
+      "answer": "project",
+      "arm": "selected_ce",
+      "correct": true,
+      "func": "run_cycle",
+      "param": "scope",
+      "qa_i": 3
+    },
+    {
+      "N": 40,
+      "answer": "project",
+      "arm": "abstracted",
+      "correct": true,
+      "func": "run_cycle",
+      "param": "scope",
+      "qa_i": 3
+    },
+    {
+      "N": 40,
+      "answer": "project",
+      "arm": "random_k",
+      "correct": false,
+      "func": "run_cycle",
+      "param": "scope",
+      "qa_i": 3
+    },
+    {
+      "N": 40,
+      "answer": "project",
+      "arm": "oracle",
+      "correct": true,
+      "func": "run_cycle",
+      "param": "scope",
+      "qa_i": 3
+    },
+    {
+      "N": 10,
+      "answer": "0.5",
+      "arm": "dump_all",
+      "correct": true,
+      "func": "remember",
+      "param": "confidence",
+      "qa_i": 4
+    },
+    {
+      "N": 10,
+      "answer": "0.5",
+      "arm": "selected",
+      "correct": true,
+      "func": "remember",
+      "param": "confidence",
+      "qa_i": 4
+    },
+    {
+      "N": 10,
+      "answer": "0.5",
+      "arm": "selected_ce",
+      "correct": true,
+      "func": "remember",
+      "param": "confidence",
+      "qa_i": 4
+    },
+    {
+      "N": 10,
+      "answer": "0.5",
+      "arm": "abstracted",
+      "correct": true,
+      "func": "remember",
+      "param": "confidence",
+      "qa_i": 4
+    },
+    {
+      "N": 10,
+      "answer": "0.5",
+      "arm": "random_k",
+      "correct": false,
+      "func": "remember",
+      "param": "confidence",
+      "qa_i": 4
+    },
+    {
+      "N": 10,
+      "answer": "0.5",
+      "arm": "oracle",
+      "correct": true,
+      "func": "remember",
+      "param": "confidence",
+      "qa_i": 4
+    },
+    {
+      "N": 40,
+      "answer": "0.5",
+      "arm": "dump_all",
+      "correct": false,
+      "func": "remember",
+      "param": "confidence",
+      "qa_i": 4
+    },
+    {
+      "N": 40,
+      "answer": "0.5",
+      "arm": "selected",
+      "correct": true,
+      "func": "remember",
+      "param": "confidence",
+      "qa_i": 4
+    },
+    {
+      "N": 40,
+      "answer": "0.5",
+      "arm": "selected_ce",
+      "correct": true,
+      "func": "remember",
+      "param": "confidence",
+      "qa_i": 4
+    },
+    {
+      "N": 40,
+      "answer": "0.5",
+      "arm": "abstracted",
+      "correct": true,
+      "func": "remember",
+      "param": "confidence",
+      "qa_i": 4
+    },
+    {
+      "N": 40,
+      "answer": "0.5",
+      "arm": "random_k",
+      "correct": true,
+      "func": "remember",
+      "param": "confidence",
+      "qa_i": 4
+    },
+    {
+      "N": 40,
+      "answer": "0.5",
+      "arm": "oracle",
+      "correct": true,
+      "func": "remember",
+      "param": "confidence",
+      "qa_i": 4
+    },
+    {
+      "N": 10,
+      "answer": "0.5",
+      "arm": "dump_all",
+      "correct": true,
+      "func": "publish_cache",
+      "param": "utility",
+      "qa_i": 5
+    },
+    {
+      "N": 10,
+      "answer": "0.5",
+      "arm": "selected",
+      "correct": true,
+      "func": "publish_cache",
+      "param": "utility",
+      "qa_i": 5
+    },
+    {
+      "N": 10,
+      "answer": "0.5",
+      "arm": "selected_ce",
+      "correct": true,
+      "func": "publish_cache",
+      "param": "utility",
+      "qa_i": 5
+    },
+    {
+      "N": 10,
+      "answer": "0.5",
+      "arm": "abstracted",
+      "correct": true,
+      "func": "publish_cache",
+      "param": "utility",
+      "qa_i": 5
+    },
+    {
+      "N": 10,
+      "answer": "0.5",
+      "arm": "random_k",
+      "correct": false,
+      "func": "publish_cache",
+      "param": "utility",
+      "qa_i": 5
+    },
+    {
+      "N": 10,
+      "answer": "0.5",
+      "arm": "oracle",
+      "correct": true,
+      "func": "publish_cache",
+      "param": "utility",
+      "qa_i": 5
+    },
+    {
+      "N": 40,
+      "answer": "0.5",
+      "arm": "dump_all",
+      "correct": true,
+      "func": "publish_cache",
+      "param": "utility",
+      "qa_i": 5
+    },
+    {
+      "N": 40,
+      "answer": "0.5",
+      "arm": "selected",
+      "correct": true,
+      "func": "publish_cache",
+      "param": "utility",
+      "qa_i": 5
+    },
+    {
+      "N": 40,
+      "answer": "0.5",
+      "arm": "selected_ce",
+      "correct": true,
+      "func": "publish_cache",
+      "param": "utility",
+      "qa_i": 5
+    },
+    {
+      "N": 40,
+      "answer": "0.5",
+      "arm": "abstracted",
+      "correct": true,
+      "func": "publish_cache",
+      "param": "utility",
+      "qa_i": 5
+    },
+    {
+      "N": 40,
+      "answer": "0.5",
+      "arm": "random_k",
+      "correct": false,
+      "func": "publish_cache",
+      "param": "utility",
+      "qa_i": 5
+    },
+    {
+      "N": 40,
+      "answer": "0.5",
+      "arm": "oracle",
+      "correct": true,
+      "func": "publish_cache",
+      "param": "utility",
+      "qa_i": 5
+    },
+    {
+      "N": 10,
+      "answer": "8",
+      "arm": "dump_all",
+      "correct": true,
+      "func": "__init__",
+      "param": "max_internal_actions",
+      "qa_i": 6
+    },
+    {
+      "N": 10,
+      "answer": "8",
+      "arm": "selected",
+      "correct": true,
+      "func": "__init__",
+      "param": "max_internal_actions",
+      "qa_i": 6
+    },
+    {
+      "N": 10,
+      "answer": "8",
+      "arm": "selected_ce",
+      "correct": true,
+      "func": "__init__",
+      "param": "max_internal_actions",
+      "qa_i": 6
+    },
+    {
+      "N": 10,
+      "answer": "8",
+      "arm": "abstracted",
+      "correct": true,
+      "func": "__init__",
+      "param": "max_internal_actions",
+      "qa_i": 6
+    },
+    {
+      "N": 10,
+      "answer": "8",
+      "arm": "random_k",
+      "correct": true,
+      "func": "__init__",
+      "param": "max_internal_actions",
+      "qa_i": 6
+    },
+    {
+      "N": 10,
+      "answer": "8",
+      "arm": "oracle",
+      "correct": true,
+      "func": "__init__",
+      "param": "max_internal_actions",
+      "qa_i": 6
+    },
+    {
+      "N": 40,
+      "answer": "8",
+      "arm": "dump_all",
+      "correct": false,
+      "func": "__init__",
+      "param": "max_internal_actions",
+      "qa_i": 6
+    },
+    {
+      "N": 40,
+      "answer": "8",
+      "arm": "selected",
+      "correct": true,
+      "func": "__init__",
+      "param": "max_internal_actions",
+      "qa_i": 6
+    },
+    {
+      "N": 40,
+      "answer": "8",
+      "arm": "selected_ce",
+      "correct": true,
+      "func": "__init__",
+      "param": "max_internal_actions",
+      "qa_i": 6
+    },
+    {
+      "N": 40,
+      "answer": "8",
+      "arm": "abstracted",
+      "correct": true,
+      "func": "__init__",
+      "param": "max_internal_actions",
+      "qa_i": 6
+    },
+    {
+      "N": 40,
+      "answer": "8",
+      "arm": "random_k",
+      "correct": false,
+      "func": "__init__",
+      "param": "max_internal_actions",
+      "qa_i": 6
+    },
+    {
+      "N": 40,
+      "answer": "8",
+      "arm": "oracle",
+      "correct": true,
+      "func": "__init__",
+      "param": "max_internal_actions",
+      "qa_i": 6
+    },
+    {
+      "N": 10,
+      "answer": "900.0",
+      "arm": "dump_all",
+      "correct": true,
+      "func": "claim",
+      "param": "ttl_seconds",
+      "qa_i": 7
+    },
+    {
+      "N": 10,
+      "answer": "900.0",
+      "arm": "selected",
+      "correct": true,
+      "func": "claim",
+      "param": "ttl_seconds",
+      "qa_i": 7
+    },
+    {
+      "N": 10,
+      "answer": "900.0",
+      "arm": "selected_ce",
+      "correct": true,
+      "func": "claim",
+      "param": "ttl_seconds",
+      "qa_i": 7
+    },
+    {
+      "N": 10,
+      "answer": "900.0",
+      "arm": "abstracted",
+      "correct": true,
+      "func": "claim",
+      "param": "ttl_seconds",
+      "qa_i": 7
+    },
+    {
+      "N": 10,
+      "answer": "900.0",
+      "arm": "random_k",
+      "correct": false,
+      "func": "claim",
+      "param": "ttl_seconds",
+      "qa_i": 7
+    },
+    {
+      "N": 10,
+      "answer": "900.0",
+      "arm": "oracle",
+      "correct": true,
+      "func": "claim",
+      "param": "ttl_seconds",
+      "qa_i": 7
+    },
+    {
+      "N": 40,
+      "answer": "900.0",
+      "arm": "dump_all",
+      "correct": true,
+      "func": "claim",
+      "param": "ttl_seconds",
+      "qa_i": 7
+    },
+    {
+      "N": 40,
+      "answer": "900.0",
+      "arm": "selected",
+      "correct": true,
+      "func": "claim",
+      "param": "ttl_seconds",
+      "qa_i": 7
+    },
+    {
+      "N": 40,
+      "answer": "900.0",
+      "arm": "selected_ce",
+      "correct": true,
+      "func": "claim",
+      "param": "ttl_seconds",
+      "qa_i": 7
+    },
+    {
+      "N": 40,
+      "answer": "900.0",
+      "arm": "abstracted",
+      "correct": true,
+      "func": "claim",
+      "param": "ttl_seconds",
+      "qa_i": 7
+    },
+    {
+      "N": 40,
+      "answer": "900.0",
+      "arm": "random_k",
+      "correct": false,
+      "func": "claim",
+      "param": "ttl_seconds",
+      "qa_i": 7
+    },
+    {
+      "N": 40,
+      "answer": "900.0",
+      "arm": "oracle",
+      "correct": true,
+      "func": "claim",
+      "param": "ttl_seconds",
+      "qa_i": 7
+    },
+    {
+      "N": 10,
+      "answer": "5",
+      "arm": "dump_all",
+      "correct": true,
+      "func": "build_sequence",
+      "param": "reps",
+      "qa_i": 8
+    },
+    {
+      "N": 10,
+      "answer": "5",
+      "arm": "selected",
+      "correct": true,
+      "func": "build_sequence",
+      "param": "reps",
+      "qa_i": 8
+    },
+    {
+      "N": 10,
+      "answer": "5",
+      "arm": "selected_ce",
+      "correct": true,
+      "func": "build_sequence",
+      "param": "reps",
+      "qa_i": 8
+    },
+    {
+      "N": 10,
+      "answer": "5",
+      "arm": "abstracted",
+      "correct": true,
+      "func": "build_sequence",
+      "param": "reps",
+      "qa_i": 8
+    },
+    {
+      "N": 10,
+      "answer": "5",
+      "arm": "random_k",
+      "correct": false,
+      "func": "build_sequence",
+      "param": "reps",
+      "qa_i": 8
+    },
+    {
+      "N": 10,
+      "answer": "5",
+      "arm": "oracle",
+      "correct": true,
+      "func": "build_sequence",
+      "param": "reps",
+      "qa_i": 8
+    },
+    {
+      "N": 40,
+      "answer": "5",
+      "arm": "dump_all",
+      "correct": false,
+      "func": "build_sequence",
+      "param": "reps",
+      "qa_i": 8
+    },
+    {
+      "N": 40,
+      "answer": "5",
+      "arm": "selected",
+      "correct": true,
+      "func": "build_sequence",
+      "param": "reps",
+      "qa_i": 8
+    },
+    {
+      "N": 40,
+      "answer": "5",
+      "arm": "selected_ce",
+      "correct": true,
+      "func": "build_sequence",
+      "param": "reps",
+      "qa_i": 8
+    },
+    {
+      "N": 40,
+      "answer": "5",
+      "arm": "abstracted",
+      "correct": true,
+      "func": "build_sequence",
+      "param": "reps",
+      "qa_i": 8
+    },
+    {
+      "N": 40,
+      "answer": "5",
+      "arm": "random_k",
+      "correct": false,
+      "func": "build_sequence",
+      "param": "reps",
+      "qa_i": 8
+    },
+    {
+      "N": 40,
+      "answer": "5",
+      "arm": "oracle",
+      "correct": true,
+      "func": "build_sequence",
+      "param": "reps",
+      "qa_i": 8
+    },
+    {
+      "N": 10,
+      "answer": "",
+      "arm": "dump_all",
+      "correct": false,
+      "func": "set",
+      "param": "note",
+      "qa_i": 9
+    },
+    {
+      "N": 10,
+      "answer": "",
+      "arm": "selected",
+      "correct": false,
+      "func": "set",
+      "param": "note",
+      "qa_i": 9
+    },
+    {
+      "N": 10,
+      "answer": "",
+      "arm": "selected_ce",
+      "correct": false,
+      "func": "set",
+      "param": "note",
+      "qa_i": 9
+    },
+    {
+      "N": 10,
+      "answer": "",
+      "arm": "abstracted",
+      "correct": false,
+      "func": "set",
+      "param": "note",
+      "qa_i": 9
+    },
+    {
+      "N": 10,
+      "answer": "",
+      "arm": "random_k",
+      "correct": false,
+      "func": "set",
+      "param": "note",
+      "qa_i": 9
+    },
+    {
+      "N": 10,
+      "answer": "",
+      "arm": "oracle",
+      "correct": false,
+      "func": "set",
+      "param": "note",
+      "qa_i": 9
+    },
+    {
+      "N": 40,
+      "answer": "",
+      "arm": "dump_all",
+      "correct": false,
+      "func": "set",
+      "param": "note",
+      "qa_i": 9
+    },
+    {
+      "N": 40,
+      "answer": "",
+      "arm": "selected",
+      "correct": false,
+      "func": "set",
+      "param": "note",
+      "qa_i": 9
+    },
+    {
+      "N": 40,
+      "answer": "",
+      "arm": "selected_ce",
+      "correct": false,
+      "func": "set",
+      "param": "note",
+      "qa_i": 9
+    },
+    {
+      "N": 40,
+      "answer": "",
+      "arm": "abstracted",
+      "correct": false,
+      "func": "set",
+      "param": "note",
+      "qa_i": 9
+    },
+    {
+      "N": 40,
+      "answer": "",
+      "arm": "random_k",
+      "correct": false,
+      "func": "set",
+      "param": "note",
+      "qa_i": 9
+    },
+    {
+      "N": 40,
+      "answer": "",
+      "arm": "oracle",
+      "correct": false,
+      "func": "set",
+      "param": "note",
+      "qa_i": 9
+    },
+    {
+      "N": 10,
+      "answer": "8",
+      "arm": "dump_all",
+      "correct": true,
+      "func": "__init__",
+      "param": "working_memory_limit",
+      "qa_i": 10
+    },
+    {
+      "N": 10,
+      "answer": "8",
+      "arm": "selected",
+      "correct": true,
+      "func": "__init__",
+      "param": "working_memory_limit",
+      "qa_i": 10
+    },
+    {
+      "N": 10,
+      "answer": "8",
+      "arm": "selected_ce",
+      "correct": true,
+      "func": "__init__",
+      "param": "working_memory_limit",
+      "qa_i": 10
+    },
+    {
+      "N": 10,
+      "answer": "8",
+      "arm": "abstracted",
+      "correct": true,
+      "func": "__init__",
+      "param": "working_memory_limit",
+      "qa_i": 10
+    },
+    {
+      "N": 10,
+      "answer": "8",
+      "arm": "random_k",
+      "correct": false,
+      "func": "__init__",
+      "param": "working_memory_limit",
+      "qa_i": 10
+    },
+    {
+      "N": 10,
+      "answer": "8",
+      "arm": "oracle",
+      "correct": true,
+      "func": "__init__",
+      "param": "working_memory_limit",
+      "qa_i": 10
+    },
+    {
+      "N": 40,
+      "answer": "8",
+      "arm": "dump_all",
+      "correct": true,
+      "func": "__init__",
+      "param": "working_memory_limit",
+      "qa_i": 10
+    },
+    {
+      "N": 40,
+      "answer": "8",
+      "arm": "selected",
+      "correct": true,
+      "func": "__init__",
+      "param": "working_memory_limit",
+      "qa_i": 10
+    },
+    {
+      "N": 40,
+      "answer": "8",
+      "arm": "selected_ce",
+      "correct": true,
+      "func": "__init__",
+      "param": "working_memory_limit",
+      "qa_i": 10
+    },
+    {
+      "N": 40,
+      "answer": "8",
+      "arm": "abstracted",
+      "correct": true,
+      "func": "__init__",
+      "param": "working_memory_limit",
+      "qa_i": 10
+    },
+    {
+      "N": 40,
+      "answer": "8",
+      "arm": "random_k",
+      "correct": false,
+      "func": "__init__",
+      "param": "working_memory_limit",
+      "qa_i": 10
+    },
+    {
+      "N": 40,
+      "answer": "8",
+      "arm": "oracle",
+      "correct": true,
+      "func": "__init__",
+      "param": "working_memory_limit",
+      "qa_i": 10
+    },
+    {
+      "N": 10,
+      "answer": "50",
+      "arm": "dump_all",
+      "correct": true,
+      "func": "run",
+      "param": "max_ticks",
+      "qa_i": 11
+    },
+    {
+      "N": 10,
+      "answer": "50",
+      "arm": "selected",
+      "correct": true,
+      "func": "run",
+      "param": "max_ticks",
+      "qa_i": 11
+    },
+    {
+      "N": 10,
+      "answer": "50",
+      "arm": "selected_ce",
+      "correct": true,
+      "func": "run",
+      "param": "max_ticks",
+      "qa_i": 11
+    },
+    {
+      "N": 10,
+      "answer": "50",
+      "arm": "abstracted",
+      "correct": true,
+      "func": "run",
+      "param": "max_ticks",
+      "qa_i": 11
+    },
+    {
+      "N": 10,
+      "answer": "50",
+      "arm": "random_k",
+      "correct": true,
+      "func": "run",
+      "param": "max_ticks",
+      "qa_i": 11
+    },
+    {
+      "N": 10,
+      "answer": "50",
+      "arm": "oracle",
+      "correct": true,
+      "func": "run",
+      "param": "max_ticks",
+      "qa_i": 11
+    },
+    {
+      "N": 40,
+      "answer": "50",
+      "arm": "dump_all",
+      "correct": true,
+      "func": "run",
+      "param": "max_ticks",
+      "qa_i": 11
+    },
+    {
+      "N": 40,
+      "answer": "50",
+      "arm": "selected",
+      "correct": true,
+      "func": "run",
+      "param": "max_ticks",
+      "qa_i": 11
+    },
+    {
+      "N": 40,
+      "answer": "50",
+      "arm": "selected_ce",
+      "correct": true,
+      "func": "run",
+      "param": "max_ticks",
+      "qa_i": 11
+    },
+    {
+      "N": 40,
+      "answer": "50",
+      "arm": "abstracted",
+      "correct": true,
+      "func": "run",
+      "param": "max_ticks",
+      "qa_i": 11
+    },
+    {
+      "N": 40,
+      "answer": "50",
+      "arm": "random_k",
+      "correct": false,
+      "func": "run",
+      "param": "max_ticks",
+      "qa_i": 11
+    },
+    {
+      "N": 40,
+      "answer": "50",
+      "arm": "oracle",
+      "correct": true,
+      "func": "run",
+      "param": "max_ticks",
+      "qa_i": 11
+    }
+  ],
+  "seed": 0,
+  "summary": {
+    "abstracted|10": {
+      "N": 10,
+      "accuracy": 0.75,
+      "arm": "abstracted",
+      "n": 12
+    },
+    "abstracted|40": {
+      "N": 40,
+      "accuracy": 0.75,
+      "arm": "abstracted",
+      "n": 12
+    },
+    "dump_all|10": {
+      "N": 10,
+      "accuracy": 0.8333333333333334,
+      "arm": "dump_all",
+      "n": 12
+    },
+    "dump_all|40": {
+      "N": 40,
+      "accuracy": 0.4166666666666667,
+      "arm": "dump_all",
+      "n": 12
+    },
+    "oracle|10": {
+      "N": 10,
+      "accuracy": 0.8333333333333334,
+      "arm": "oracle",
+      "n": 12
+    },
+    "oracle|40": {
+      "N": 40,
+      "accuracy": 0.8333333333333334,
+      "arm": "oracle",
+      "n": 12
+    },
+    "random_k|10": {
+      "N": 10,
+      "accuracy": 0.3333333333333333,
+      "arm": "random_k",
+      "n": 12
+    },
+    "random_k|40": {
+      "N": 40,
+      "accuracy": 0.08333333333333333,
+      "arm": "random_k",
+      "n": 12
+    },
+    "selected_ce|10": {
+      "N": 10,
+      "accuracy": 0.8333333333333334,
+      "arm": "selected_ce",
+      "n": 12
+    },
+    "selected_ce|40": {
+      "N": 40,
+      "accuracy": 0.8333333333333334,
+      "arm": "selected_ce",
+      "n": 12
+    },
+    "selected|10": {
+      "N": 10,
+      "accuracy": 0.75,
+      "arm": "selected",
+      "n": 12
+    },
+    "selected|40": {
+      "N": 40,
+      "accuracy": 0.75,
+      "arm": "selected",
+      "n": 12
+    }
+  }
+}

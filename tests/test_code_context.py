@@ -6,6 +6,7 @@ from experiments.brain_runtime.code_context import (
     extract_functions,
     functions_with_defaults,
     graded,
+    select_topk_ce,
 )
 
 
@@ -63,6 +64,27 @@ class CodeContextTests(unittest.TestCase):
     def test_graded_lenient_containment(self):
         self.assertTrue(graded("the value is 900", "900"))
         self.assertFalse(graded("nope", "900"))
+
+    def test_select_topk_ce_ranks_relevant(self):
+        target = "def dispatch(self, *, lease_seconds=900.0):\n    return lease_seconds"
+        others = [
+            "def render_context(target, haystack, arm, k):\n    return arm",
+            "def build_qa(functions, seed, n):\n    return functions",
+            "def abstract(func):\n    return func['signature']",
+            "def graded(response, answer):\n    return answer in response",
+            "def extract_functions(paths):\n    return paths",
+            "def print_matrix(summary, context_sizes):\n    return summary",
+            "def build_prompt(context, query):\n    return context + query",
+            "def main():\n    return None",
+        ]
+        try:
+            result = select_topk_ce("lease_seconds default", [target] + others, 3)
+        except Exception:
+            self.skipTest("cross-encoder unavailable")
+            return
+
+        self.assertEqual(len(result), 3)
+        self.assertIn(target, result)
 
 
 if __name__ == "__main__":

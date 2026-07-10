@@ -38,7 +38,67 @@ from experiments.brain_runtime.context_selection import select_topk
 from experiments.local_worker.ollama_client import DEFAULT_MODEL, OllamaClient
 
 
-ARMS: tuple[str, ...] = ("dump_all", "selected", "abstracted", "random_k", "oracle")
+ARMS: tuple[str, ...] = ("dump_all", "selected", "selected_ce", "abstracted", "random_k", "oracle")
+
+
+_ce = None
+
+
+def _cross_encoder():
+    """Lazily load the `cross-encoder/ms-marco-MiniLM-L-6-v2` model via `transformers`.
+
+    Returns a (torch, tokenizer, model) tuple, cached in the module-level `_ce`.
+    Raises RuntimeError with a clear message if the model can't be loaded/downloaded.
+    """
+    global _ce
+    if _ce is None:
+        try:
+            import torch
+            from transformers import AutoTokenizer, AutoModelForSequenceClassification
+
+            tok = AutoTokenizer.from_pretrained("cross-encoder/ms-marco-MiniLM-L-6-v2")
+            mdl = AutoModelForSequenceClassification.from_pretrained(
+                "cross-encoder/ms-marco-MiniLM-L-6-v2"
+            )
+            mdl.eval()
+            _ce = (torch, tok, mdl)
+        except Exception as exc:  # noqa: BLE001 - surface any load/download failure uniformly
+            raise RuntimeError(
+                "cross-encoder/ms-marco-MiniLM-L-6-v2 could not be loaded (model download or "
+                "`transformers`/`torch` import failed)"
+            ) from exc
+    return _ce
+
+
+def select_topk_ce(query: str, texts: list[str], k: int) -> list[str]:
+    """The k texts most relevant to `query` per a cross-encoder, ranked descending.
+
+    Unlike `select_topk` (bi-encoder: query and text embedded separately, then
+    compared by cosine similarity), this scores each (query, text) pair jointly
+    through the cross-encoder's attention, which is typically more accurate but
+    more expensive (no precomputable text embeddings).
+
+    If there are k or fewer texts, returns them unchanged (no ranking needed).
+    """
+    if len(texts) <= k:
+        return list(texts)
+
+    torch, tok, mdl = _cross_encoder()
+    queries = [query] * len(texts)
+    inputs = tok(
+        queries,
+        list(texts),
+        padding=True,
+        truncation=True,
+        max_length=512,
+        return_tensors="pt",
+    )
+    with torch.no_grad():
+        logits = mdl(**inputs).logits
+    scores = logits[:, 0].tolist()
+    ranked = sorted(range(len(texts)), key=lambda i: scores[i], reverse=True)
+    top_indices = ranked[:k]
+    return [texts[i] for i in top_indices]
 
 
 def _constant_value(node: ast.AST | None) -> Any:
@@ -185,6 +245,15 @@ def render_context(
         top_set = set(top_sources)
         parts = [f["source"] if f["source"] in top_set else abstract(f) for f in haystack]
         return "\n\n".join(parts)
+
+    if arm == "selected_ce":
+        if qa is not None:
+            query = f"{qa['func']} {qa['param']} default"
+        else:
+            query = target["name"]
+        chosen = select_topk_ce(query, [f["source"] for f in haystack], k)
+        rules = chosen
+        return "\n\n".join(rules)
 
     if arm == "random_k":
         chooser = rng if rng is not None else random.Random()
