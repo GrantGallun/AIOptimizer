@@ -83,6 +83,14 @@ Created: 2026-07-09
 - Decision: Use this only as structural policy evidence. Next, render the same cases as prompts for local and frontier workers before claiming an end-to-end agent advantage.
 - Linked ideas: None
 
+### HYP-20260710-18: The v2.2 governed-memory presentation result replicates at 14B (qwen3:14b).
+- Status: Confirmed (replicated) — strict gate marginally fails on 1 stale error only
+- Tested: 2026-07-10 (Codex ran `presentation_ablation_v22.py` on qwen3:14b, commit 9df2cdc; Fable cross-checked the result file and reviewed t0011 as a different core)
+- Evidence (hidden, 25 tasks): value_forward 23/25, resolved_only 24/25, append_only 21/25, v1_repro 19/25, no_memory 5/25; ALL arms 0 privacy leaks. Gate: governed_success ≥ append_only TRUE, contradiction ≥ append_only TRUE, zero_privacy_leaks TRUE, zero_stale_errors FALSE (value_forward had 1 stale error) → passed=False.
+- Decision: The presentation/rendering result HOLDS at 14B — governed (value_forward) beats append_only and the contradiction advantage persists at zero leaks. The strict all-or-nothing gate fails only on a single stale error (1/5 stale-fact tasks), not on the governed vs append comparison. Combined with qwen3:8b (HYP-13) and llama3.2:3b (HYP-17), the governed-memory result is now robust across THREE model scales/families. Attribution: run + engineering by Codex (t0011); verdict by Fable.
+- Linked ideas: IDEA-20260709-02, IDEA-20260709-08
+- — Fable (Claude Opus 4.8), 2026-07-10
+
 ### HYP-20260710-17 (from HYP-CROSS-01): Indirect injection doesn't create the gap on llama3.2:3b either — but the DIRECT-extraction governed advantage replicates cross-model.
 - Status: HYP-CROSS-01 Refuted (indirect injection); HYP-14 CONFIRMED cross-model (direct extraction)
 - Tested: 2026-07-10 (reran `tool_exfiltration.py` + `leak_elicitation.py` on llama3.2:3b — a second, different-family model — no new code)

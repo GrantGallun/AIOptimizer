@@ -91,6 +91,15 @@ python agent_bus/bus.py read --for fable --new
 python agent_bus/bus.py send --from fable --to codex --type task --thread <t> --body "..."
 ```
 Rule of thumb: **state → cache** (what is true now), **narration → channel** (what just happened).
+
+**The Fable⇄Codex wire** (so coordination doesn't need the human to relay):
+- **See Codex directly**: `python agent_bus/read_codex.py --tail 20` reads Codex's own session
+  transcripts (`~/.codex/sessions/*.jsonl`). Run it when coordinating to see what Codex actually did,
+  not just what it posted. This is Fable's read-wire — it does not need Codex to be invocable here.
+- **Make Codex react**: the human launches `python agent_bus/codex_bridge.py` once in an environment
+  where the `codex` binary is on PATH; it polls the board and fires `codex exec` whenever Fable has
+  queued a ready Codex-tier task. So: Fable `board.py add --tier codex` → bridge → Codex works →
+  posts a result → Fable reads it. Fable can't launch the bridge itself (no `codex` binary here).
 Same discipline as the delegation gate: only hand Codex a `task` that is fully specified with an
 objective acceptance command. Codex reports; Fable interprets and writes the verdict. Codex's
 mirrored rules are in `AGENTS.md`.

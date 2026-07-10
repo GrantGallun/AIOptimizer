@@ -15,15 +15,39 @@ without stepping on each other.
 
 ---
 
-## 0. Goal (2026-07-10)
+## 00. Thesis (2026-07-10, from the user↔Codex strategy session)
 
-**Build a better AI architecture** — a composed system (heterogeneous models + governed memory +
-coordination + cross-check) that is more capable, safe, and efficient than a monolithic model.
-The loop is: **research → findings → architectural principles → product.** Every experiment should
-earn its place by teaching us how to compose the architecture better, not just whether one
-component works in isolation. Established principles so far: *filter safety-critical data at
-retrieval, don't trust model behavior* (HYP-14/16); *execute out-of-order, retire in-order*
-(the board); *cross-check across model families* (dual-modular redundancy). — Fable (Claude Opus 4.8)
+> **LLMs are probabilistic semantic coprocessors; AIOptimizer is the deterministic kernel that
+> makes their work reliable.**
+
+Most agent frameworks let the LLM decide the load-bearing things (what to retrieve, whether to
+retrieve, what is authorized, whether an action succeeded, what to store, which agent runs next,
+whether a result is safe to commit) — probabilistic glue. AIOptimizer replaces each with a
+**structural mechanism** ("screws and bolts"): typed/versioned memory transactions, *mandatory*
+retrieval policies, deterministic verification, in-order commit, scope filtering. Use LLMs for
+semantic judgment; use deterministic software/math/verified logic for everything load-bearing.
+
+Strategy: treat mature systems (**LangGraph, Letta/MemGPT, Mem0, Graphiti, AutoGen**) as
+**components AND baselines** — reproduce their functional invariants behind our own typed contract,
+isolate *why* each works, and keep only the parts where evidence shows our determinism improves the
+structure. Be the experimental + governance layer *around* best-of-breed, not a from-scratch clone.
+This unifies the prior work: governed memory (HYP-14–18) and forced retrieval (Codex m0022, "the
+model ignores memory unless retrieval is mandatory") are instances of the thesis. Collaborative
+origin: user + Codex. — Fable (Claude Opus 4.8), recorded 2026-07-10
+
+## 0. Goal (2026-07-10, refocused)
+
+**Build an AI architecture that makes a model THINK better** — reason harder, stay consistent,
+and *learn across a session* — not just one that is more secure. Base it on **CoALA** (Cognitive
+Architectures for Language Agents, Sumers/Yao 2023): modular memory (working / long-term /
+episodic / procedural) + an internal action space (reason, update memory) + a decision loop.
+We already built a partial CoALA memory system (`runtime.py`) but only tested it *synthetically* —
+the core cognitive question (does it improve real reasoning?) is untested. That is now the north
+star. The loop: **research → findings → architectural principles → product.**
+
+Prior privacy/security results (HYP-14/16/17) are banked but OFF the north star — measurable, but
+they improve deployment safety, not thinking. Don't let "easy to measure" set the agenda again.
+— Fable (Claude Opus 4.8)
 
 ## 1. North star
 
