@@ -1,0 +1,352 @@
+{
+  "benchmark": "brain-runtime-code-context",
+  "context_sizes": [
+    10,
+    40
+  ],
+  "elapsed_seconds": 8.994,
+  "k": 3,
+  "model": "qwen3:8b",
+  "n_functions": 282,
+  "n_qa": 3,
+  "paths": [
+    "agent_bus",
+    "experiments/brain_runtime"
+  ],
+  "render_only": true,
+  "rows": [
+    {
+      "N": 10,
+      "answer": "128",
+      "arm": "dump_all",
+      "correct": false,
+      "func": "deterministic_embeddings",
+      "param": "dimensions",
+      "qa_i": 0
+    },
+    {
+      "N": 10,
+      "answer": "128",
+      "arm": "selected",
+      "correct": false,
+      "func": "deterministic_embeddings",
+      "param": "dimensions",
+      "qa_i": 0
+    },
+    {
+      "N": 10,
+      "answer": "128",
+      "arm": "abstracted",
+      "correct": false,
+      "func": "deterministic_embeddings",
+      "param": "dimensions",
+      "qa_i": 0
+    },
+    {
+      "N": 10,
+      "answer": "128",
+      "arm": "random_k",
+      "correct": false,
+      "func": "deterministic_embeddings",
+      "param": "dimensions",
+      "qa_i": 0
+    },
+    {
+      "N": 10,
+      "answer": "128",
+      "arm": "oracle",
+      "correct": false,
+      "func": "deterministic_embeddings",
+      "param": "dimensions",
+      "qa_i": 0
+    },
+    {
+      "N": 40,
+      "answer": "128",
+      "arm": "dump_all",
+      "correct": false,
+      "func": "deterministic_embeddings",
+      "param": "dimensions",
+      "qa_i": 0
+    },
+    {
+      "N": 40,
+      "answer": "128",
+      "arm": "selected",
+      "correct": false,
+      "func": "deterministic_embeddings",
+      "param": "dimensions",
+      "qa_i": 0
+    },
+    {
+      "N": 40,
+      "answer": "128",
+      "arm": "abstracted",
+      "correct": false,
+      "func": "deterministic_embeddings",
+      "param": "dimensions",
+      "qa_i": 0
+    },
+    {
+      "N": 40,
+      "answer": "128",
+      "arm": "random_k",
+      "correct": false,
+      "func": "deterministic_embeddings",
+      "param": "dimensions",
+      "qa_i": 0
+    },
+    {
+      "N": 40,
+      "answer": "128",
+      "arm": "oracle",
+      "correct": false,
+      "func": "deterministic_embeddings",
+      "param": "dimensions",
+      "qa_i": 0
+    },
+    {
+      "N": 10,
+      "answer": "5",
+      "arm": "dump_all",
+      "correct": false,
+      "func": "run",
+      "param": "reps",
+      "qa_i": 1
+    },
+    {
+      "N": 10,
+      "answer": "5",
+      "arm": "selected",
+      "correct": false,
+      "func": "run",
+      "param": "reps",
+      "qa_i": 1
+    },
+    {
+      "N": 10,
+      "answer": "5",
+      "arm": "abstracted",
+      "correct": false,
+      "func": "run",
+      "param": "reps",
+      "qa_i": 1
+    },
+    {
+      "N": 10,
+      "answer": "5",
+      "arm": "random_k",
+      "correct": false,
+      "func": "run",
+      "param": "reps",
+      "qa_i": 1
+    },
+    {
+      "N": 10,
+      "answer": "5",
+      "arm": "oracle",
+      "correct": false,
+      "func": "run",
+      "param": "reps",
+      "qa_i": 1
+    },
+    {
+      "N": 40,
+      "answer": "5",
+      "arm": "dump_all",
+      "correct": false,
+      "func": "run",
+      "param": "reps",
+      "qa_i": 1
+    },
+    {
+      "N": 40,
+      "answer": "5",
+      "arm": "selected",
+      "correct": false,
+      "func": "run",
+      "param": "reps",
+      "qa_i": 1
+    },
+    {
+      "N": 40,
+      "answer": "5",
+      "arm": "abstracted",
+      "correct": false,
+      "func": "run",
+      "param": "reps",
+      "qa_i": 1
+    },
+    {
+      "N": 40,
+      "answer": "5",
+      "arm": "random_k",
+      "correct": false,
+      "func": "run",
+      "param": "reps",
+      "qa_i": 1
+    },
+    {
+      "N": 40,
+      "answer": "5",
+      "arm": "oracle",
+      "correct": false,
+      "func": "run",
+      "param": "reps",
+      "qa_i": 1
+    },
+    {
+      "N": 10,
+      "answer": "",
+      "arm": "dump_all",
+      "correct": false,
+      "func": "defer",
+      "param": "reason",
+      "qa_i": 2
+    },
+    {
+      "N": 10,
+      "answer": "",
+      "arm": "selected",
+      "correct": false,
+      "func": "defer",
+      "param": "reason",
+      "qa_i": 2
+    },
+    {
+      "N": 10,
+      "answer": "",
+      "arm": "abstracted",
+      "correct": false,
+      "func": "defer",
+      "param": "reason",
+      "qa_i": 2
+    },
+    {
+      "N": 10,
+      "answer": "",
+      "arm": "random_k",
+      "correct": false,
+      "func": "defer",
+      "param": "reason",
+      "qa_i": 2
+    },
+    {
+      "N": 10,
+      "answer": "",
+      "arm": "oracle",
+      "correct": false,
+      "func": "defer",
+      "param": "reason",
+      "qa_i": 2
+    },
+    {
+      "N": 40,
+      "answer": "",
+      "arm": "dump_all",
+      "correct": false,
+      "func": "defer",
+      "param": "reason",
+      "qa_i": 2
+    },
+    {
+      "N": 40,
+      "answer": "",
+      "arm": "selected",
+      "correct": false,
+      "func": "defer",
+      "param": "reason",
+      "qa_i": 2
+    },
+    {
+      "N": 40,
+      "answer": "",
+      "arm": "abstracted",
+      "correct": false,
+      "func": "defer",
+      "param": "reason",
+      "qa_i": 2
+    },
+    {
+      "N": 40,
+      "answer": "",
+      "arm": "random_k",
+      "correct": false,
+      "func": "defer",
+      "param": "reason",
+      "qa_i": 2
+    },
+    {
+      "N": 40,
+      "answer": "",
+      "arm": "oracle",
+      "correct": false,
+      "func": "defer",
+      "param": "reason",
+      "qa_i": 2
+    }
+  ],
+  "seed": 0,
+  "summary": {
+    "abstracted|10": {
+      "N": 10,
+      "accuracy": 0.0,
+      "arm": "abstracted",
+      "n": 3
+    },
+    "abstracted|40": {
+      "N": 40,
+      "accuracy": 0.0,
+      "arm": "abstracted",
+      "n": 3
+    },
+    "dump_all|10": {
+      "N": 10,
+      "accuracy": 0.0,
+      "arm": "dump_all",
+      "n": 3
+    },
+    "dump_all|40": {
+      "N": 40,
+      "accuracy": 0.0,
+      "arm": "dump_all",
+      "n": 3
+    },
+    "oracle|10": {
+      "N": 10,
+      "accuracy": 0.0,
+      "arm": "oracle",
+      "n": 3
+    },
+    "oracle|40": {
+      "N": 40,
+      "accuracy": 0.0,
+      "arm": "oracle",
+      "n": 3
+    },
+    "random_k|10": {
+      "N": 10,
+      "accuracy": 0.0,
+      "arm": "random_k",
+      "n": 3
+    },
+    "random_k|40": {
+      "N": 40,
+      "accuracy": 0.0,
+      "arm": "random_k",
+      "n": 3
+    },
+    "selected|10": {
+      "N": 10,
+      "accuracy": 0.0,
+      "arm": "selected",
+      "n": 3
+    },
+    "selected|40": {
+      "N": 40,
+      "accuracy": 0.0,
+      "arm": "selected",
+      "n": 3
+    }
+  }
+}

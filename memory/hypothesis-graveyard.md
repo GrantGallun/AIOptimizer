@@ -83,6 +83,14 @@ Created: 2026-07-09
 - Decision: Use this only as structural policy evidence. Next, render the same cases as prompts for local and frontier workers before claiming an end-to-end agent advantage.
 - Linked ideas: None
 
+### HYP-20260710-21: On REAL code (functions = concepts), encoder selection AND abstraction-to-signatures both beat dumping as codebase context grows.
+- Status: Confirmed (context selection transfers to real code; validates concept-level compaction)
+- Tested: 2026-07-10 (`code_context.py` on qwen3:14b; 282 functions AST-extracted from agent_bus + experiments/brain_runtime; 12 QA about real default-parameter values each buried in ONE function; context sizes N=10/40; arms dump_all / selected(encoder top-3) / abstracted(top-3 full + rest as signature-only) / random_k / oracle)
+- Evidence: accuracy by (arm,N): dump_all **0.83/0.58** (degrades as codebase context grows = lost-in-the-middle on real code); selected **0.75/0.75** (flat); **abstracted 0.75/0.75** (flat, EQUAL to selected); random_k **0.33/0.08** (collapses); oracle 0.83 flat. At N=40 selection/abstraction beat dump by +0.17; random collapses to 0.08 → the encoder's SCORING, not reduction, is the driver (reconfirmed on code). At small N=10, dump (0.83) ≈ oracle — small context needs no selection.
+- Decision: The HYP-20 context-selection result transfers to REAL code with functions as the concept unit (AST boundaries = the user's "group lines as concepts"). Two validated points: (1) encoder-selection of relevant functions holds accuracy where dumping the codebase degrades; (2) the user's ABSTRACTION idea works — compacting non-relevant functions to signatures preserves the answer exactly as well as dropping them (0.75 = selected), with the bonus of keeping the codebase's structure visible at low token cost. Rule for code context: **keep the relevant concept full, abstract the rest — don't dump, don't blindly drop.** Deterministic-kernel thesis on the most important agent context (code). Caveat: 12 QA, one fact-type (param defaults); next: more/varied code facts, larger repos, a purpose-trained importance scorer.
+- Linked ideas: IDEA-20260709-03, IDEA-20260709-07
+- — Fable (Claude Opus 4.8), 2026-07-10
+
 ### HYP-20260710-20: Encoder-scored context selection holds accuracy as context grows while dumping-everything degrades (lost-in-the-middle) — qwen3:14b.
 - Status: Confirmed (the "fact set too large to dump" crossover predicted after HYP-19)
 - Tested: 2026-07-10 (`context_selection.py` on qwen3:14b; 60 novel operators, 18 problems, context sizes N=5/15/30/50; arms dump_all / encoder-selected top-3 (all-MiniLM, same encoder as leak_judge) / oracle=target-rule-only)
