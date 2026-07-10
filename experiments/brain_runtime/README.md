@@ -82,6 +82,13 @@ The v1 suite is exploratory rather than preregistered and does not establish mod
 product superiority. Once observed, its generator and result are frozen; mechanism changes require
 a versioned successor.
 
+The frozen v1 result exposed cache pollution in native retrieval: repeated use could outweigh a
+better scenario-specific match. `memory_backends_v2.py` replaces that weighted blend with an
+explicit priority order: authorization, relevance, contradiction validity, evidence, recency, then
+frequency as a final tie-breaker. `backend_comparison_v2.py` fixes dev seeds
+`11,23,37,41,59` and hidden seeds `101,103,107,109,113`; the policy is selected and committed from
+dev before hidden is run. The versioned dev result is `backend_comparison_v2_dev.json`.
+
 ## Benchmark
 
 The synthetic benchmark compares `BrainRuntime` against a `VanillaLoop` that uses append-only notes and first-match retrieval. It tests:

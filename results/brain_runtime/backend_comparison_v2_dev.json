@@ -1,0 +1,5299 @@
+{
+  "backend_versions": {
+    "langgraph": "1.2.9"
+  },
+  "benchmark": "brain-runtime-backend-comparison-v2-priority-retrieval",
+  "design_rationale": "Global frequency is a tie-breaker after relevance, validity, evidence, and recency; it cannot override a better query match.",
+  "frozen_v1_suite": "backend_comparison_v1.py",
+  "results": [
+    {
+      "backend": "aioptimizer_native",
+      "requested_name": "native_v1",
+      "rows": [
+        {
+          "case": "stale",
+          "expected_terms": [
+            "authorization"
+          ],
+          "forbidden_terms": [
+            "x-api-key"
+          ],
+          "hits": [
+            {
+              "backend_metadata": {
+                "memory_id": "mem-0002",
+                "uses": 1
+              },
+              "content": "Scenario s11 verified integration test: auth header is authorization.",
+              "id": "s11-new",
+              "scope": "project",
+              "score": 0.6372588235294118,
+              "source": "integration-test"
+            },
+            {
+              "backend_metadata": {
+                "memory_id": "mem-0005",
+                "uses": 1
+              },
+              "content": "For scenario s11, validate changes with python -m unittest discover -s tests before commit.",
+              "id": "s11-procedure",
+              "scope": "project",
+              "score": 0.47488888888888886,
+              "source": "verified-procedure"
+            },
+            {
+              "backend_metadata": {
+                "memory_id": "mem-0007",
+                "uses": 1
+              },
+              "content": "Scenario s11 approved public deployment region is us-central.",
+              "id": "s11-public",
+              "scope": "project",
+              "score": 0.4291428571428571,
+              "source": "deployment-test"
+            }
+          ],
+          "kind": "stale",
+          "latency_seconds": 8.5e-05,
+          "privacy_leak": false,
+          "query": "For scenario s11, what header should the auth use according to the verified integration test?",
+          "scope": "worker-a",
+          "seed": 11,
+          "stale_error": false,
+          "success": true
+        },
+        {
+          "case": "episodic-transfer",
+          "expected_terms": [
+            "structured",
+            "json"
+          ],
+          "forbidden_terms": [],
+          "hits": [
+            {
+              "backend_metadata": {
+                "memory_id": "mem-0004",
+                "uses": 1
+              },
+              "content": "Scenario s11 previous attempt failed because regex parsed nested payloads incorrectly; the successful fix used structured JSON parsing.",
+              "id": "s11-episode",
+              "scope": "project",
+              "score": 0.5710000000000001,
+              "source": "test-retrospective"
+            },
+            {
+              "backend_metadata": {
+                "memory_id": "mem-0005",
+                "uses": 2
+              },
+              "content": "For scenario s11, validate changes with python -m unittest discover -s tests before commit.",
+              "id": "s11-procedure",
+              "scope": "project",
+              "score": 0.4926666666666667,
+              "source": "verified-procedure"
+            },
+            {
+              "backend_metadata": {
+                "memory_id": "mem-0002",
+                "uses": 2
+              },
+              "content": "Scenario s11 verified integration test: auth header is authorization.",
+              "id": "s11-new",
+              "scope": "project",
+              "score": 0.48734285714285713,
+              "source": "integration-test"
+            }
+          ],
+          "kind": "episodic",
+          "latency_seconds": 5.4e-05,
+          "privacy_leak": false,
+          "query": "For scenario s11, how should nested payload parsing avoid the previous failed approach?",
+          "scope": "worker-a",
+          "seed": 11,
+          "stale_error": false,
+          "success": true
+        },
+        {
+          "case": "procedure",
+          "expected_terms": [
+            "python",
+            "unittest",
+            "discover"
+          ],
+          "forbidden_terms": [],
+          "hits": [
+            {
+              "backend_metadata": {
+                "memory_id": "mem-0005",
+                "uses": 3
+              },
+              "content": "For scenario s11, validate changes with python -m unittest discover -s tests before commit.",
+              "id": "s11-procedure",
+              "scope": "project",
+              "score": 0.6374285714285713,
+              "source": "verified-procedure"
+            },
+            {
+              "backend_metadata": {
+                "memory_id": "mem-0002",
+                "uses": 3
+              },
+              "content": "Scenario s11 verified integration test: auth header is authorization.",
+              "id": "s11-new",
+              "scope": "project",
+              "score": 0.5368666666666667,
+              "source": "integration-test"
+            },
+            {
+              "backend_metadata": {
+                "memory_id": "mem-0007",
+                "uses": 2
+              },
+              "content": "Scenario s11 approved public deployment region is us-central.",
+              "id": "s11-public",
+              "scope": "project",
+              "score": 0.48258823529411765,
+              "source": "deployment-test"
+            }
+          ],
+          "kind": "procedural",
+          "latency_seconds": 4.7e-05,
+          "privacy_leak": false,
+          "query": "For scenario s11, what command validates this project before commit?",
+          "scope": "worker-a",
+          "seed": 11,
+          "stale_error": false,
+          "success": true
+        },
+        {
+          "case": "privacy",
+          "expected_terms": [
+            "us-central"
+          ],
+          "forbidden_terms": [
+            "secret-8629"
+          ],
+          "hits": [
+            {
+              "backend_metadata": {
+                "memory_id": "mem-0007",
+                "uses": 3
+              },
+              "content": "Scenario s11 approved public deployment region is us-central.",
+              "id": "s11-public",
+              "scope": "project",
+              "score": 0.6990588235294117,
+              "source": "deployment-test"
+            },
+            {
+              "backend_metadata": {
+                "memory_id": "mem-0002",
+                "uses": 4
+              },
+              "content": "Scenario s11 verified integration test: auth header is authorization.",
+              "id": "s11-new",
+              "scope": "project",
+              "score": 0.5520181818181819,
+              "source": "integration-test"
+            },
+            {
+              "backend_metadata": {
+                "memory_id": "mem-0005",
+                "uses": 4
+              },
+              "content": "For scenario s11, validate changes with python -m unittest discover -s tests before commit.",
+              "id": "s11-procedure",
+              "scope": "project",
+              "score": 0.5280689655172414,
+              "source": "verified-procedure"
+            }
+          ],
+          "kind": "privacy",
+          "latency_seconds": 5e-05,
+          "privacy_leak": false,
+          "query": "For scenario s11, which public deployment region is approved? Do not expose private worker data.",
+          "scope": "worker-a",
+          "seed": 11,
+          "stale_error": false,
+          "success": true
+        },
+        {
+          "case": "stale",
+          "expected_terms": [
+            "zstd"
+          ],
+          "forbidden_terms": [
+            "gzip"
+          ],
+          "hits": [
+            {
+              "backend_metadata": {
+                "memory_id": "mem-0010",
+                "uses": 1
+              },
+              "content": "Scenario s23 verified integration test: archive codec is zstd.",
+              "id": "s23-new",
+              "scope": "project",
+              "score": 0.6372588235294118,
+              "source": "integration-test"
+            },
+            {
+              "backend_metadata": {
+                "memory_id": "mem-0002",
+                "uses": 5
+              },
+              "content": "Scenario s11 verified integration test: auth header is authorization.",
+              "id": "s11-new",
+              "scope": "project",
+              "score": 0.5902000000000001,
+              "source": "integration-test"
+            },
+            {
+              "backend_metadata": {
+                "memory_id": "mem-0005",
+                "uses": 5
+              },
+              "content": "For scenario s11, validate changes with python -m unittest discover -s tests before commit.",
+              "id": "s11-procedure",
+              "scope": "project",
+              "score": 0.5302857142857142,
+              "source": "verified-procedure"
+            }
+          ],
+          "kind": "stale",
+          "latency_seconds": 8.7e-05,
+          "privacy_leak": false,
+          "query": "For scenario s23, what codec should the archive use according to the verified integration test?",
+          "scope": "worker-a",
+          "seed": 23,
+          "stale_error": false,
+          "success": true
+        },
+        {
+          "case": "episodic-transfer",
+          "expected_terms": [
+            "structured",
+            "json"
+          ],
+          "forbidden_terms": [],
+          "hits": [
+            {
+              "backend_metadata": {
+                "memory_id": "mem-0005",
+                "uses": 6
+              },
+              "content": "For scenario s11, validate changes with python -m unittest discover -s tests before commit.",
+              "id": "s11-procedure",
+              "scope": "project",
+              "score": 0.5088571428571429,
+              "source": "verified-procedure"
+            },
+            {
+              "backend_metadata": {
+                "memory_id": "mem-0012",
+                "uses": 1
+              },
+              "content": "Scenario s23 previous attempt failed because regex parsed nested payloads incorrectly; the successful fix used structured JSON parsing.",
+              "id": "s23-episode",
+              "scope": "project",
+              "score": 0.5710000000000001,
+              "source": "test-retrospective"
+            },
+            {
+              "backend_metadata": {
+                "memory_id": "mem-0002",
+                "uses": 6
+              },
+              "content": "Scenario s11 verified integration test: auth header is authorization.",
+              "id": "s11-new",
+              "scope": "project",
+              "score": 0.4974727272727273,
+              "source": "integration-test"
+            }
+          ],
+          "kind": "episodic",
+          "latency_seconds": 8e-05,
+          "privacy_leak": false,
+          "query": "For scenario s23, how should nested payload parsing avoid the previous failed approach?",
+          "scope": "worker-a",
+          "seed": 23,
+          "stale_error": false,
+          "success": false
+        },
+        {
+          "case": "procedure",
+          "expected_terms": [
+            "python",
+            "unittest",
+            "discover"
+          ],
+          "forbidden_terms": [],
+          "hits": [
+            {
+              "backend_metadata": {
+                "memory_id": "mem-0005",
+                "uses": 7
+              },
+              "content": "For scenario s11, validate changes with python -m unittest discover -s tests before commit.",
+              "id": "s11-procedure",
+              "scope": "project",
+              "score": 0.6023636363636364,
+              "source": "verified-procedure"
+            },
+            {
+              "backend_metadata": {
+                "memory_id": "mem-0002",
+                "uses": 7
+              },
+              "content": "Scenario s11 verified integration test: auth header is authorization.",
+              "id": "s11-new",
+              "scope": "project",
+              "score": 0.5017789473684211,
+              "source": "integration-test"
+            },
+            {
+              "backend_metadata": {
+                "memory_id": "mem-0013",
+                "uses": 1
+              },
+              "content": "For scenario s23, validate changes with python -m unittest discover -s tests before commit.",
+              "id": "s23-procedure",
+              "scope": "project",
+              "score": 0.5574285714285714,
+              "source": "verified-procedure"
+            }
+          ],
+          "kind": "procedural",
+          "latency_seconds": 7.3e-05,
+          "privacy_leak": false,
+          "query": "For scenario s23, what command validates this project before commit?",
+          "scope": "worker-a",
+          "seed": 23,
+          "stale_error": false,
+          "success": true
+        },
+        {
+          "case": "privacy",
+          "expected_terms": [
+            "us-central"
+          ],
+          "forbidden_terms": [
+            "secret-2368"
+          ],
+          "hits": [
+            {
+              "backend_metadata": {
+                "memory_id": "mem-0007",
+                "uses": 4
+              },
+              "content": "Scenario s11 approved public deployment region is us-central.",
+              "id": "s11-public",
+              "scope": "project",
+              "score": 0.652,
+              "source": "deployment-test"
+            },
+            {
+              "backend_metadata": {
+                "memory_id": "mem-0015",
+                "uses": 1
+              },
+              "content": "Scenario s23 approved public deployment region is us-central.",
+              "id": "s23-public",
+              "scope": "project",
+              "score": 0.6190588235294118,
+              "source": "deployment-test"
+            },
+            {
+              "backend_metadata": {
+                "memory_id": "mem-0002",
+                "uses": 8
+              },
+              "content": "Scenario s11 verified integration test: auth header is authorization.",
+              "id": "s11-new",
+              "scope": "project",
+              "score": 0.5223739130434782,
+              "source": "integration-test"
+            }
+          ],
+          "kind": "privacy",
+          "latency_seconds": 7.9e-05,
+          "privacy_leak": false,
+          "query": "For scenario s23, which public deployment region is approved? Do not expose private worker data.",
+          "scope": "worker-a",
+          "seed": 23,
+          "stale_error": false,
+          "success": true
+        },
+        {
+          "case": "stale",
+          "expected_terms": [
+            "pipe"
+          ],
+          "forbidden_terms": [
+            "comma"
+          ],
+          "hits": [
+            {
+              "backend_metadata": {
+                "memory_id": "mem-0018",
+                "uses": 1
+              },
+              "content": "Scenario s37 verified integration test: parser delimiter is pipe.",
+              "id": "s37-new",
+              "scope": "project",
+              "score": 0.6372588235294118,
+              "source": "integration-test"
+            },
+            {
+              "backend_metadata": {
+                "memory_id": "mem-0002",
+                "uses": 9
+              },
+              "content": "Scenario s11 verified integration test: auth header is authorization.",
+              "id": "s11-new",
+              "scope": "project",
+              "score": 0.5902000000000001,
+              "source": "integration-test"
+            },
+            {
+              "backend_metadata": {
+                "memory_id": "mem-0005",
+                "uses": 8
+              },
+              "content": "For scenario s11, validate changes with python -m unittest discover -s tests before commit.",
+              "id": "s11-procedure",
+              "scope": "project",
+              "score": 0.5302857142857142,
+              "source": "verified-procedure"
+            }
+          ],
+          "kind": "stale",
+          "latency_seconds": 0.000116,
+          "privacy_leak": false,
+          "query": "For scenario s37, what delimiter should the parser use according to the verified integration test?",
+          "scope": "worker-a",
+          "seed": 37,
+          "stale_error": false,
+          "success": true
+        },
+        {
+          "case": "episodic-transfer",
+          "expected_terms": [
+            "structured",
+            "json"
+          ],
+          "forbidden_terms": [],
+          "hits": [
+            {
+              "backend_metadata": {
+                "memory_id": "mem-0005",
+                "uses": 9
+              },
+              "content": "For scenario s11, validate changes with python -m unittest discover -s tests before commit.",
+              "id": "s11-procedure",
+              "scope": "project",
+              "score": 0.5088571428571429,
+              "source": "verified-procedure"
+            },
+            {
+              "backend_metadata": {
+                "memory_id": "mem-0020",
+                "uses": 1
+              },
+              "content": "Scenario s37 previous attempt failed because regex parsed nested payloads incorrectly; the successful fix used structured JSON parsing.",
+              "id": "s37-episode",
+              "scope": "project",
+              "score": 0.5710000000000001,
+              "source": "test-retrospective"
+            },
+            {
+              "backend_metadata": {
+                "memory_id": "mem-0002",
+                "uses": 10
+              },
+              "content": "Scenario s11 verified integration test: auth header is authorization.",
+              "id": "s11-new",
+              "scope": "project",
+              "score": 0.4974727272727273,
+              "source": "integration-test"
+            }
+          ],
+          "kind": "episodic",
+          "latency_seconds": 0.000109,
+          "privacy_leak": false,
+          "query": "For scenario s37, how should nested payload parsing avoid the previous failed approach?",
+          "scope": "worker-a",
+          "seed": 37,
+          "stale_error": false,
+          "success": false
+        },
+        {
+          "case": "procedure",
+          "expected_terms": [
+            "python",
+            "unittest",
+            "discover"
+          ],
+          "forbidden_terms": [],
+          "hits": [
+            {
+              "backend_metadata": {
+                "memory_id": "mem-0005",
+                "uses": 10
+              },
+              "content": "For scenario s11, validate changes with python -m unittest discover -s tests before commit.",
+              "id": "s11-procedure",
+              "scope": "project",
+              "score": 0.6023636363636364,
+              "source": "verified-procedure"
+            },
+            {
+              "backend_metadata": {
+                "memory_id": "mem-0002",
+                "uses": 11
+              },
+              "content": "Scenario s11 verified integration test: auth header is authorization.",
+              "id": "s11-new",
+              "scope": "project",
+              "score": 0.5017789473684211,
+              "source": "integration-test"
+            },
+            {
+              "backend_metadata": {
+                "memory_id": "mem-0021",
+                "uses": 1
+              },
+              "content": "For scenario s37, validate changes with python -m unittest discover -s tests before commit.",
+              "id": "s37-procedure",
+              "scope": "project",
+              "score": 0.5574285714285714,
+              "source": "verified-procedure"
+            }
+          ],
+          "kind": "procedural",
+          "latency_seconds": 9.8e-05,
+          "privacy_leak": false,
+          "query": "For scenario s37, what command validates this project before commit?",
+          "scope": "worker-a",
+          "seed": 37,
+          "stale_error": false,
+          "success": true
+        },
+        {
+          "case": "privacy",
+          "expected_terms": [
+            "us-central"
+          ],
+          "forbidden_terms": [
+            "secret-9438"
+          ],
+          "hits": [
+            {
+              "backend_metadata": {
+                "memory_id": "mem-0007",
+                "uses": 5
+              },
+              "content": "Scenario s11 approved public deployment region is us-central.",
+              "id": "s11-public",
+              "scope": "project",
+              "score": 0.652,
+              "source": "deployment-test"
+            },
+            {
+              "backend_metadata": {
+                "memory_id": "mem-0023",
+                "uses": 1
+              },
+              "content": "Scenario s37 approved public deployment region is us-central.",
+              "id": "s37-public",
+              "scope": "project",
+              "score": 0.6190588235294118,
+              "source": "deployment-test"
+            },
+            {
+              "backend_metadata": {
+                "memory_id": "mem-0015",
+                "uses": 2
+              },
+              "content": "Scenario s23 approved public deployment region is us-central.",
+              "id": "s23-public",
+              "scope": "project",
+              "score": 0.612,
+              "source": "deployment-test"
+            }
+          ],
+          "kind": "privacy",
+          "latency_seconds": 0.000107,
+          "privacy_leak": false,
+          "query": "For scenario s37, which public deployment region is approved? Do not expose private worker data.",
+          "scope": "worker-a",
+          "seed": 37,
+          "stale_error": false,
+          "success": true
+        },
+        {
+          "case": "stale",
+          "expected_terms": [
+            "authorization"
+          ],
+          "forbidden_terms": [
+            "x-api-key"
+          ],
+          "hits": [
+            {
+              "backend_metadata": {
+                "memory_id": "mem-0002",
+                "uses": 12
+              },
+              "content": "Scenario s11 verified integration test: auth header is authorization.",
+              "id": "s11-new",
+              "scope": "project",
+              "score": 0.6702,
+              "source": "integration-test"
+            },
+            {
+              "backend_metadata": {
+                "memory_id": "mem-0026",
+                "uses": 1
+              },
+              "content": "Scenario s41 verified integration test: auth header is authorization.",
+              "id": "s41-new",
+              "scope": "project",
+              "score": 0.6372588235294118,
+              "source": "integration-test"
+            },
+            {
+              "backend_metadata": {
+                "memory_id": "mem-0005",
+                "uses": 11
+              },
+              "content": "For scenario s11, validate changes with python -m unittest discover -s tests before commit.",
+              "id": "s11-procedure",
+              "scope": "project",
+              "score": 0.5302857142857142,
+              "source": "verified-procedure"
+            }
+          ],
+          "kind": "stale",
+          "latency_seconds": 0.000179,
+          "privacy_leak": false,
+          "query": "For scenario s41, what header should the auth use according to the verified integration test?",
+          "scope": "worker-a",
+          "seed": 41,
+          "stale_error": false,
+          "success": true
+        },
+        {
+          "case": "episodic-transfer",
+          "expected_terms": [
+            "structured",
+            "json"
+          ],
+          "forbidden_terms": [],
+          "hits": [
+            {
+              "backend_metadata": {
+                "memory_id": "mem-0005",
+                "uses": 12
+              },
+              "content": "For scenario s11, validate changes with python -m unittest discover -s tests before commit.",
+              "id": "s11-procedure",
+              "scope": "project",
+              "score": 0.5088571428571429,
+              "source": "verified-procedure"
+            },
+            {
+              "backend_metadata": {
+                "memory_id": "mem-0028",
+                "uses": 1
+              },
+              "content": "Scenario s41 previous attempt failed because regex parsed nested payloads incorrectly; the successful fix used structured JSON parsing.",
+              "id": "s41-episode",
+              "scope": "project",
+              "score": 0.5710000000000001,
+              "source": "test-retrospective"
+            },
+            {
+              "backend_metadata": {
+                "memory_id": "mem-0002",
+                "uses": 13
+              },
+              "content": "Scenario s11 verified integration test: auth header is authorization.",
+              "id": "s11-new",
+              "scope": "project",
+              "score": 0.4974727272727273,
+              "source": "integration-test"
+            }
+          ],
+          "kind": "episodic",
+          "latency_seconds": 0.00018,
+          "privacy_leak": false,
+          "query": "For scenario s41, how should nested payload parsing avoid the previous failed approach?",
+          "scope": "worker-a",
+          "seed": 41,
+          "stale_error": false,
+          "success": false
+        },
+        {
+          "case": "procedure",
+          "expected_terms": [
+            "python",
+            "unittest",
+            "discover"
+          ],
+          "forbidden_terms": [],
+          "hits": [
+            {
+              "backend_metadata": {
+                "memory_id": "mem-0005",
+                "uses": 13
+              },
+              "content": "For scenario s11, validate changes with python -m unittest discover -s tests before commit.",
+              "id": "s11-procedure",
+              "scope": "project",
+              "score": 0.6023636363636364,
+              "source": "verified-procedure"
+            },
+            {
+              "backend_metadata": {
+                "memory_id": "mem-0002",
+                "uses": 14
+              },
+              "content": "Scenario s11 verified integration test: auth header is authorization.",
+              "id": "s11-new",
+              "scope": "project",
+              "score": 0.5017789473684211,
+              "source": "integration-test"
+            },
+            {
+              "backend_metadata": {
+                "memory_id": "mem-0029",
+                "uses": 1
+              },
+              "content": "For scenario s41, validate changes with python -m unittest discover -s tests before commit.",
+              "id": "s41-procedure",
+              "scope": "project",
+              "score": 0.5574285714285714,
+              "source": "verified-procedure"
+            }
+          ],
+          "kind": "procedural",
+          "latency_seconds": 0.000131,
+          "privacy_leak": false,
+          "query": "For scenario s41, what command validates this project before commit?",
+          "scope": "worker-a",
+          "seed": 41,
+          "stale_error": false,
+          "success": true
+        },
+        {
+          "case": "privacy",
+          "expected_terms": [
+            "us-central"
+          ],
+          "forbidden_terms": [
+            "secret-6443"
+          ],
+          "hits": [
+            {
+              "backend_metadata": {
+                "memory_id": "mem-0007",
+                "uses": 6
+              },
+              "content": "Scenario s11 approved public deployment region is us-central.",
+              "id": "s11-public",
+              "scope": "project",
+              "score": 0.652,
+              "source": "deployment-test"
+            },
+            {
+              "backend_metadata": {
+                "memory_id": "mem-0031",
+                "uses": 1
+              },
+              "content": "Scenario s41 approved public deployment region is us-central.",
+              "id": "s41-public",
+              "scope": "project",
+              "score": 0.6190588235294118,
+              "source": "deployment-test"
+            },
+            {
+              "backend_metadata": {
+                "memory_id": "mem-0015",
+                "uses": 3
+              },
+              "content": "Scenario s23 approved public deployment region is us-central.",
+              "id": "s23-public",
+              "scope": "project",
+              "score": 0.652,
+              "source": "deployment-test"
+            }
+          ],
+          "kind": "privacy",
+          "latency_seconds": 0.000136,
+          "privacy_leak": false,
+          "query": "For scenario s41, which public deployment region is approved? Do not expose private worker data.",
+          "scope": "worker-a",
+          "seed": 41,
+          "stale_error": false,
+          "success": true
+        },
+        {
+          "case": "stale",
+          "expected_terms": [
+            "json"
+          ],
+          "forbidden_terms": [
+            "csv"
+          ],
+          "hits": [
+            {
+              "backend_metadata": {
+                "memory_id": "mem-0034",
+                "uses": 1
+              },
+              "content": "Scenario s59 verified integration test: export format is json.",
+              "id": "s59-new",
+              "scope": "project",
+              "score": 0.6372588235294118,
+              "source": "integration-test"
+            },
+            {
+              "backend_metadata": {
+                "memory_id": "mem-0002",
+                "uses": 15
+              },
+              "content": "Scenario s11 verified integration test: auth header is authorization.",
+              "id": "s11-new",
+              "scope": "project",
+              "score": 0.5902000000000001,
+              "source": "integration-test"
+            },
+            {
+              "backend_metadata": {
+                "memory_id": "mem-0005",
+                "uses": 14
+              },
+              "content": "For scenario s11, validate changes with python -m unittest discover -s tests before commit.",
+              "id": "s11-procedure",
+              "scope": "project",
+              "score": 0.5302857142857142,
+              "source": "verified-procedure"
+            }
+          ],
+          "kind": "stale",
+          "latency_seconds": 0.000179,
+          "privacy_leak": false,
+          "query": "For scenario s59, what format should the export use according to the verified integration test?",
+          "scope": "worker-a",
+          "seed": 59,
+          "stale_error": false,
+          "success": true
+        },
+        {
+          "case": "episodic-transfer",
+          "expected_terms": [
+            "structured",
+            "json"
+          ],
+          "forbidden_terms": [],
+          "hits": [
+            {
+              "backend_metadata": {
+                "memory_id": "mem-0005",
+                "uses": 15
+              },
+              "content": "For scenario s11, validate changes with python -m unittest discover -s tests before commit.",
+              "id": "s11-procedure",
+              "scope": "project",
+              "score": 0.5088571428571429,
+              "source": "verified-procedure"
+            },
+            {
+              "backend_metadata": {
+                "memory_id": "mem-0036",
+                "uses": 1
+              },
+              "content": "Scenario s59 previous attempt failed because regex parsed nested payloads incorrectly; the successful fix used structured JSON parsing.",
+              "id": "s59-episode",
+              "scope": "project",
+              "score": 0.5710000000000001,
+              "source": "test-retrospective"
+            },
+            {
+              "backend_metadata": {
+                "memory_id": "mem-0002",
+                "uses": 16
+              },
+              "content": "Scenario s11 verified integration test: auth header is authorization.",
+              "id": "s11-new",
+              "scope": "project",
+              "score": 0.4974727272727273,
+              "source": "integration-test"
+            }
+          ],
+          "kind": "episodic",
+          "latency_seconds": 0.000164,
+          "privacy_leak": false,
+          "query": "For scenario s59, how should nested payload parsing avoid the previous failed approach?",
+          "scope": "worker-a",
+          "seed": 59,
+          "stale_error": false,
+          "success": false
+        },
+        {
+          "case": "procedure",
+          "expected_terms": [
+            "python",
+            "unittest",
+            "discover"
+          ],
+          "forbidden_terms": [],
+          "hits": [
+            {
+              "backend_metadata": {
+                "memory_id": "mem-0005",
+                "uses": 16
+              },
+              "content": "For scenario s11, validate changes with python -m unittest discover -s tests before commit.",
+              "id": "s11-procedure",
+              "scope": "project",
+              "score": 0.6023636363636364,
+              "source": "verified-procedure"
+            },
+            {
+              "backend_metadata": {
+                "memory_id": "mem-0002",
+                "uses": 17
+              },
+              "content": "Scenario s11 verified integration test: auth header is authorization.",
+              "id": "s11-new",
+              "scope": "project",
+              "score": 0.5017789473684211,
+              "source": "integration-test"
+            },
+            {
+              "backend_metadata": {
+                "memory_id": "mem-0037",
+                "uses": 1
+              },
+              "content": "For scenario s59, validate changes with python -m unittest discover -s tests before commit.",
+              "id": "s59-procedure",
+              "scope": "project",
+              "score": 0.5574285714285714,
+              "source": "verified-procedure"
+            }
+          ],
+          "kind": "procedural",
+          "latency_seconds": 0.00015,
+          "privacy_leak": false,
+          "query": "For scenario s59, what command validates this project before commit?",
+          "scope": "worker-a",
+          "seed": 59,
+          "stale_error": false,
+          "success": true
+        },
+        {
+          "case": "privacy",
+          "expected_terms": [
+            "us-central"
+          ],
+          "forbidden_terms": [
+            "secret-2386"
+          ],
+          "hits": [
+            {
+              "backend_metadata": {
+                "memory_id": "mem-0015",
+                "uses": 4
+              },
+              "content": "Scenario s23 approved public deployment region is us-central.",
+              "id": "s23-public",
+              "scope": "project",
+              "score": 0.652,
+              "source": "deployment-test"
+            },
+            {
+              "backend_metadata": {
+                "memory_id": "mem-0007",
+                "uses": 7
+              },
+              "content": "Scenario s11 approved public deployment region is us-central.",
+              "id": "s11-public",
+              "scope": "project",
+              "score": 0.652,
+              "source": "deployment-test"
+            },
+            {
+              "backend_metadata": {
+                "memory_id": "mem-0039",
+                "uses": 1
+              },
+              "content": "Scenario s59 approved public deployment region is us-central.",
+              "id": "s59-public",
+              "scope": "project",
+              "score": 0.6190588235294118,
+              "source": "deployment-test"
+            }
+          ],
+          "kind": "privacy",
+          "latency_seconds": 0.00017,
+          "privacy_leak": false,
+          "query": "For scenario s59, which public deployment region is approved? Do not expose private worker data.",
+          "scope": "worker-a",
+          "seed": 59,
+          "stale_error": false,
+          "success": true
+        }
+      ],
+      "summary": {
+        "elapsed_seconds": 0.003273,
+        "mean_query_latency_seconds": 0.000114,
+        "privacy_leaks": 0,
+        "stale_errors": 0,
+        "success_rate": 0.8,
+        "successes": 16,
+        "tasks": 20
+      }
+    },
+    {
+      "backend": "aioptimizer_priority_v2",
+      "requested_name": "native_priority_v2",
+      "rows": [
+        {
+          "case": "stale",
+          "expected_terms": [
+            "authorization"
+          ],
+          "forbidden_terms": [
+            "x-api-key"
+          ],
+          "hits": [
+            {
+              "backend_metadata": {
+                "memory_id": "mem-0002",
+                "priority_order": [
+                  "relevance",
+                  "not_contradicted",
+                  "evidence",
+                  "recency",
+                  "uses",
+                  "created_at"
+                ],
+                "rank": {
+                  "created_at": 2,
+                  "evidence": 0.6799999999999999,
+                  "not_contradicted": 1,
+                  "recency": 0.5,
+                  "relevance": 0.4117647058823529,
+                  "uses": 0
+                }
+              },
+              "content": "Scenario s11 verified integration test: auth header is authorization.",
+              "id": "s11-new",
+              "scope": "project",
+              "score": 0.4117647058823529,
+              "source": "integration-test"
+            },
+            {
+              "backend_metadata": {
+                "memory_id": "mem-0001",
+                "priority_order": [
+                  "relevance",
+                  "not_contradicted",
+                  "evidence",
+                  "recency",
+                  "uses",
+                  "created_at"
+                ],
+                "rank": {
+                  "created_at": 1,
+                  "evidence": 0.2159072756745594,
+                  "not_contradicted": 0,
+                  "recency": 0.4454493590701697,
+                  "relevance": 0.19047619047619047,
+                  "uses": 0
+                }
+              },
+              "content": "Scenario s11 old specification: auth header is x-api-key.",
+              "id": "s11-old",
+              "scope": "project",
+              "score": 0.19047619047619047,
+              "source": "old-spec"
+            },
+            {
+              "backend_metadata": {
+                "memory_id": "mem-0003",
+                "priority_order": [
+                  "relevance",
+                  "not_contradicted",
+                  "evidence",
+                  "recency",
+                  "uses",
+                  "created_at"
+                ],
+                "rank": {
+                  "created_at": 3,
+                  "evidence": 0.06612310241546865,
+                  "not_contradicted": 1,
+                  "recency": 0.5612310241546865,
+                  "relevance": 0.16666666666666666,
+                  "uses": 0
+                }
+              },
+              "content": "Scenario s11 unverified scratch note repeats x-api-key for an unrelated prototype.",
+              "id": "s11-scratch",
+              "scope": "project",
+              "score": 0.16666666666666666,
+              "source": "scratch"
+            }
+          ],
+          "kind": "stale",
+          "latency_seconds": 6.7e-05,
+          "privacy_leak": false,
+          "query": "For scenario s11, what header should the auth use according to the verified integration test?",
+          "scope": "worker-a",
+          "seed": 11,
+          "stale_error": false,
+          "success": true
+        },
+        {
+          "case": "episodic-transfer",
+          "expected_terms": [
+            "structured",
+            "json"
+          ],
+          "forbidden_terms": [],
+          "hits": [
+            {
+              "backend_metadata": {
+                "memory_id": "mem-0004",
+                "priority_order": [
+                  "relevance",
+                  "not_contradicted",
+                  "evidence",
+                  "recency",
+                  "uses",
+                  "created_at"
+                ],
+                "rank": {
+                  "created_at": 4,
+                  "evidence": 0.7784624987000648,
+                  "not_contradicted": 1,
+                  "recency": 0.6299605249474366,
+                  "relevance": 0.32,
+                  "uses": 0
+                }
+              },
+              "content": "Scenario s11 previous attempt failed because regex parsed nested payloads incorrectly; the successful fix used structured JSON parsing.",
+              "id": "s11-episode",
+              "scope": "project",
+              "score": 0.32,
+              "source": "test-retrospective"
+            },
+            {
+              "backend_metadata": {
+                "memory_id": "mem-0003",
+                "priority_order": [
+                  "relevance",
+                  "not_contradicted",
+                  "evidence",
+                  "recency",
+                  "uses",
+                  "created_at"
+                ],
+                "rank": {
+                  "created_at": 3,
+                  "evidence": 0.06612310241546865,
+                  "not_contradicted": 1,
+                  "recency": 1.0,
+                  "relevance": 0.125,
+                  "uses": 1
+                }
+              },
+              "content": "Scenario s11 unverified scratch note repeats x-api-key for an unrelated prototype.",
+              "id": "s11-scratch",
+              "scope": "project",
+              "score": 0.125,
+              "source": "scratch"
+            },
+            {
+              "backend_metadata": {
+                "memory_id": "mem-0005",
+                "priority_order": [
+                  "relevance",
+                  "not_contradicted",
+                  "evidence",
+                  "recency",
+                  "uses",
+                  "created_at"
+                ],
+                "rank": {
+                  "created_at": 5,
+                  "evidence": 0.8617514421272201,
+                  "not_contradicted": 1,
+                  "recency": 0.7071067811865476,
+                  "relevance": 0.1111111111111111,
+                  "uses": 0
+                }
+              },
+              "content": "For scenario s11, validate changes with python -m unittest discover -s tests before commit.",
+              "id": "s11-procedure",
+              "scope": "project",
+              "score": 0.1111111111111111,
+              "source": "verified-procedure"
+            }
+          ],
+          "kind": "episodic",
+          "latency_seconds": 5.3e-05,
+          "privacy_leak": false,
+          "query": "For scenario s11, how should nested payload parsing avoid the previous failed approach?",
+          "scope": "worker-a",
+          "seed": 11,
+          "stale_error": false,
+          "success": true
+        },
+        {
+          "case": "procedure",
+          "expected_terms": [
+            "python",
+            "unittest",
+            "discover"
+          ],
+          "forbidden_terms": [],
+          "hits": [
+            {
+              "backend_metadata": {
+                "memory_id": "mem-0005",
+                "priority_order": [
+                  "relevance",
+                  "not_contradicted",
+                  "evidence",
+                  "recency",
+                  "uses",
+                  "created_at"
+                ],
+                "rank": {
+                  "created_at": 5,
+                  "evidence": 0.8617514421272201,
+                  "not_contradicted": 1,
+                  "recency": 1.0,
+                  "relevance": 0.2857142857142857,
+                  "uses": 1
+                }
+              },
+              "content": "For scenario s11, validate changes with python -m unittest discover -s tests before commit.",
+              "id": "s11-procedure",
+              "scope": "project",
+              "score": 0.2857142857142857,
+              "source": "verified-procedure"
+            },
+            {
+              "backend_metadata": {
+                "memory_id": "mem-0003",
+                "priority_order": [
+                  "relevance",
+                  "not_contradicted",
+                  "evidence",
+                  "recency",
+                  "uses",
+                  "created_at"
+                ],
+                "rank": {
+                  "created_at": 3,
+                  "evidence": 0.06612310241546865,
+                  "not_contradicted": 1,
+                  "recency": 1.0,
+                  "relevance": 0.14285714285714285,
+                  "uses": 2
+                }
+              },
+              "content": "Scenario s11 unverified scratch note repeats x-api-key for an unrelated prototype.",
+              "id": "s11-scratch",
+              "scope": "project",
+              "score": 0.14285714285714285,
+              "source": "scratch"
+            },
+            {
+              "backend_metadata": {
+                "memory_id": "mem-0007",
+                "priority_order": [
+                  "relevance",
+                  "not_contradicted",
+                  "evidence",
+                  "recency",
+                  "uses",
+                  "created_at"
+                ],
+                "rank": {
+                  "created_at": 7,
+                  "evidence": 1.0,
+                  "not_contradicted": 1,
+                  "recency": 0.8908987181403393,
+                  "relevance": 0.11764705882352941,
+                  "uses": 0
+                }
+              },
+              "content": "Scenario s11 approved public deployment region is us-central.",
+              "id": "s11-public",
+              "scope": "project",
+              "score": 0.11764705882352941,
+              "source": "deployment-test"
+            }
+          ],
+          "kind": "procedural",
+          "latency_seconds": 4.8e-05,
+          "privacy_leak": false,
+          "query": "For scenario s11, what command validates this project before commit?",
+          "scope": "worker-a",
+          "seed": 11,
+          "stale_error": false,
+          "success": true
+        },
+        {
+          "case": "privacy",
+          "expected_terms": [
+            "us-central"
+          ],
+          "forbidden_terms": [
+            "secret-8629"
+          ],
+          "hits": [
+            {
+              "backend_metadata": {
+                "memory_id": "mem-0007",
+                "priority_order": [
+                  "relevance",
+                  "not_contradicted",
+                  "evidence",
+                  "recency",
+                  "uses",
+                  "created_at"
+                ],
+                "rank": {
+                  "created_at": 7,
+                  "evidence": 1.0,
+                  "not_contradicted": 1,
+                  "recency": 1.0,
+                  "relevance": 0.4117647058823529,
+                  "uses": 1
+                }
+              },
+              "content": "Scenario s11 approved public deployment region is us-central.",
+              "id": "s11-public",
+              "scope": "project",
+              "score": 0.4117647058823529,
+              "source": "deployment-test"
+            },
+            {
+              "backend_metadata": {
+                "memory_id": "mem-0008",
+                "priority_order": [
+                  "relevance",
+                  "not_contradicted",
+                  "evidence",
+                  "recency",
+                  "uses",
+                  "created_at"
+                ],
+                "rank": {
+                  "created_at": 8,
+                  "evidence": 0.74,
+                  "not_contradicted": 1,
+                  "recency": 1.0,
+                  "relevance": 0.14285714285714285,
+                  "uses": 0
+                }
+              },
+              "content": "Scenario s11 dashboard accent color is violet.",
+              "id": "s11-noise",
+              "scope": "project",
+              "score": 0.14285714285714285,
+              "source": "design-note"
+            },
+            {
+              "backend_metadata": {
+                "memory_id": "mem-0002",
+                "priority_order": [
+                  "relevance",
+                  "not_contradicted",
+                  "evidence",
+                  "recency",
+                  "uses",
+                  "created_at"
+                ],
+                "rank": {
+                  "created_at": 2,
+                  "evidence": 0.6799999999999999,
+                  "not_contradicted": 1,
+                  "recency": 1.0,
+                  "relevance": 0.13636363636363635,
+                  "uses": 1
+                }
+              },
+              "content": "Scenario s11 verified integration test: auth header is authorization.",
+              "id": "s11-new",
+              "scope": "project",
+              "score": 0.13636363636363635,
+              "source": "integration-test"
+            }
+          ],
+          "kind": "privacy",
+          "latency_seconds": 5.1e-05,
+          "privacy_leak": false,
+          "query": "For scenario s11, which public deployment region is approved? Do not expose private worker data.",
+          "scope": "worker-a",
+          "seed": 11,
+          "stale_error": false,
+          "success": true
+        },
+        {
+          "case": "stale",
+          "expected_terms": [
+            "zstd"
+          ],
+          "forbidden_terms": [
+            "gzip"
+          ],
+          "hits": [
+            {
+              "backend_metadata": {
+                "memory_id": "mem-0010",
+                "priority_order": [
+                  "relevance",
+                  "not_contradicted",
+                  "evidence",
+                  "recency",
+                  "uses",
+                  "created_at"
+                ],
+                "rank": {
+                  "created_at": 10,
+                  "evidence": 0.6799999999999999,
+                  "not_contradicted": 1,
+                  "recency": 0.5,
+                  "relevance": 0.4117647058823529,
+                  "uses": 0
+                }
+              },
+              "content": "Scenario s23 verified integration test: archive codec is zstd.",
+              "id": "s23-new",
+              "scope": "project",
+              "score": 0.4117647058823529,
+              "source": "integration-test"
+            },
+            {
+              "backend_metadata": {
+                "memory_id": "mem-0009",
+                "priority_order": [
+                  "relevance",
+                  "not_contradicted",
+                  "evidence",
+                  "recency",
+                  "uses",
+                  "created_at"
+                ],
+                "rank": {
+                  "created_at": 9,
+                  "evidence": 0.2159072756745594,
+                  "not_contradicted": 0,
+                  "recency": 0.4454493590701697,
+                  "relevance": 0.21052631578947367,
+                  "uses": 0
+                }
+              },
+              "content": "Scenario s23 old specification: archive codec is gzip.",
+              "id": "s23-old",
+              "scope": "project",
+              "score": 0.21052631578947367,
+              "source": "old-spec"
+            },
+            {
+              "backend_metadata": {
+                "memory_id": "mem-0002",
+                "priority_order": [
+                  "relevance",
+                  "not_contradicted",
+                  "evidence",
+                  "recency",
+                  "uses",
+                  "created_at"
+                ],
+                "rank": {
+                  "created_at": 2,
+                  "evidence": 0.38445662886610443,
+                  "not_contradicted": 1,
+                  "recency": 0.3968502629920499,
+                  "relevance": 0.2,
+                  "uses": 2
+                }
+              },
+              "content": "Scenario s11 verified integration test: auth header is authorization.",
+              "id": "s11-new",
+              "scope": "project",
+              "score": 0.2,
+              "source": "integration-test"
+            }
+          ],
+          "kind": "stale",
+          "latency_seconds": 0.000135,
+          "privacy_leak": false,
+          "query": "For scenario s23, what codec should the archive use according to the verified integration test?",
+          "scope": "worker-a",
+          "seed": 23,
+          "stale_error": false,
+          "success": true
+        },
+        {
+          "case": "episodic-transfer",
+          "expected_terms": [
+            "structured",
+            "json"
+          ],
+          "forbidden_terms": [],
+          "hits": [
+            {
+              "backend_metadata": {
+                "memory_id": "mem-0012",
+                "priority_order": [
+                  "relevance",
+                  "not_contradicted",
+                  "evidence",
+                  "recency",
+                  "uses",
+                  "created_at"
+                ],
+                "rank": {
+                  "created_at": 12,
+                  "evidence": 0.7784624987000648,
+                  "not_contradicted": 1,
+                  "recency": 0.6299605249474366,
+                  "relevance": 0.32,
+                  "uses": 0
+                }
+              },
+              "content": "Scenario s23 previous attempt failed because regex parsed nested payloads incorrectly; the successful fix used structured JSON parsing.",
+              "id": "s23-episode",
+              "scope": "project",
+              "score": 0.32,
+              "source": "test-retrospective"
+            },
+            {
+              "backend_metadata": {
+                "memory_id": "mem-0004",
+                "priority_order": [
+                  "relevance",
+                  "not_contradicted",
+                  "evidence",
+                  "recency",
+                  "uses",
+                  "created_at"
+                ],
+                "rank": {
+                  "created_at": 4,
+                  "evidence": 0.4175,
+                  "not_contradicted": 1,
+                  "recency": 0.3968502629920499,
+                  "relevance": 0.2692307692307692,
+                  "uses": 1
+                }
+              },
+              "content": "Scenario s11 previous attempt failed because regex parsed nested payloads incorrectly; the successful fix used structured JSON parsing.",
+              "id": "s11-episode",
+              "scope": "project",
+              "score": 0.2692307692307692,
+              "source": "test-retrospective"
+            },
+            {
+              "backend_metadata": {
+                "memory_id": "mem-0011",
+                "priority_order": [
+                  "relevance",
+                  "not_contradicted",
+                  "evidence",
+                  "recency",
+                  "uses",
+                  "created_at"
+                ],
+                "rank": {
+                  "created_at": 11,
+                  "evidence": 0.06612310241546865,
+                  "not_contradicted": 1,
+                  "recency": 0.5612310241546865,
+                  "relevance": 0.13636363636363635,
+                  "uses": 0
+                }
+              },
+              "content": "Scenario s23 unverified scratch note repeats gzip for an unrelated prototype.",
+              "id": "s23-scratch",
+              "scope": "project",
+              "score": 0.13636363636363635,
+              "source": "scratch"
+            }
+          ],
+          "kind": "episodic",
+          "latency_seconds": 0.000135,
+          "privacy_leak": false,
+          "query": "For scenario s23, how should nested payload parsing avoid the previous failed approach?",
+          "scope": "worker-a",
+          "seed": 23,
+          "stale_error": false,
+          "success": true
+        },
+        {
+          "case": "procedure",
+          "expected_terms": [
+            "python",
+            "unittest",
+            "discover"
+          ],
+          "forbidden_terms": [],
+          "hits": [
+            {
+              "backend_metadata": {
+                "memory_id": "mem-0013",
+                "priority_order": [
+                  "relevance",
+                  "not_contradicted",
+                  "evidence",
+                  "recency",
+                  "uses",
+                  "created_at"
+                ],
+                "rank": {
+                  "created_at": 13,
+                  "evidence": 0.8617514421272201,
+                  "not_contradicted": 1,
+                  "recency": 0.7071067811865476,
+                  "relevance": 0.2857142857142857,
+                  "uses": 0
+                }
+              },
+              "content": "For scenario s23, validate changes with python -m unittest discover -s tests before commit.",
+              "id": "s23-procedure",
+              "scope": "project",
+              "score": 0.2857142857142857,
+              "source": "verified-procedure"
+            },
+            {
+              "backend_metadata": {
+                "memory_id": "mem-0005",
+                "priority_order": [
+                  "relevance",
+                  "not_contradicted",
+                  "evidence",
+                  "recency",
+                  "uses",
+                  "created_at"
+                ],
+                "rank": {
+                  "created_at": 5,
+                  "evidence": 0.456584736473476,
+                  "not_contradicted": 1,
+                  "recency": 0.3968502629920499,
+                  "relevance": 0.22727272727272727,
+                  "uses": 2
+                }
+              },
+              "content": "For scenario s11, validate changes with python -m unittest discover -s tests before commit.",
+              "id": "s11-procedure",
+              "scope": "project",
+              "score": 0.22727272727272727,
+              "source": "verified-procedure"
+            },
+            {
+              "backend_metadata": {
+                "memory_id": "mem-0011",
+                "priority_order": [
+                  "relevance",
+                  "not_contradicted",
+                  "evidence",
+                  "recency",
+                  "uses",
+                  "created_at"
+                ],
+                "rank": {
+                  "created_at": 11,
+                  "evidence": 0.06612310241546865,
+                  "not_contradicted": 1,
+                  "recency": 1.0,
+                  "relevance": 0.15789473684210525,
+                  "uses": 1
+                }
+              },
+              "content": "Scenario s23 unverified scratch note repeats gzip for an unrelated prototype.",
+              "id": "s23-scratch",
+              "scope": "project",
+              "score": 0.15789473684210525,
+              "source": "scratch"
+            }
+          ],
+          "kind": "procedural",
+          "latency_seconds": 0.000131,
+          "privacy_leak": false,
+          "query": "For scenario s23, what command validates this project before commit?",
+          "scope": "worker-a",
+          "seed": 23,
+          "stale_error": false,
+          "success": true
+        },
+        {
+          "case": "privacy",
+          "expected_terms": [
+            "us-central"
+          ],
+          "forbidden_terms": [
+            "secret-2368"
+          ],
+          "hits": [
+            {
+              "backend_metadata": {
+                "memory_id": "mem-0015",
+                "priority_order": [
+                  "relevance",
+                  "not_contradicted",
+                  "evidence",
+                  "recency",
+                  "uses",
+                  "created_at"
+                ],
+                "rank": {
+                  "created_at": 15,
+                  "evidence": 1.0,
+                  "not_contradicted": 1,
+                  "recency": 0.8908987181403393,
+                  "relevance": 0.4117647058823529,
+                  "uses": 0
+                }
+              },
+              "content": "Scenario s23 approved public deployment region is us-central.",
+              "id": "s23-public",
+              "scope": "project",
+              "score": 0.4117647058823529,
+              "source": "deployment-test"
+            },
+            {
+              "backend_metadata": {
+                "memory_id": "mem-0007",
+                "priority_order": [
+                  "relevance",
+                  "not_contradicted",
+                  "evidence",
+                  "recency",
+                  "uses",
+                  "created_at"
+                ],
+                "rank": {
+                  "created_at": 7,
+                  "evidence": 0.5058757210636101,
+                  "not_contradicted": 1,
+                  "recency": 0.3968502629920499,
+                  "relevance": 0.3333333333333333,
+                  "uses": 2
+                }
+              },
+              "content": "Scenario s11 approved public deployment region is us-central.",
+              "id": "s11-public",
+              "scope": "project",
+              "score": 0.3333333333333333,
+              "source": "deployment-test"
+            },
+            {
+              "backend_metadata": {
+                "memory_id": "mem-0016",
+                "priority_order": [
+                  "relevance",
+                  "not_contradicted",
+                  "evidence",
+                  "recency",
+                  "uses",
+                  "created_at"
+                ],
+                "rank": {
+                  "created_at": 16,
+                  "evidence": 0.74,
+                  "not_contradicted": 1,
+                  "recency": 1.0,
+                  "relevance": 0.14285714285714285,
+                  "uses": 0
+                }
+              },
+              "content": "Scenario s23 dashboard accent color is violet.",
+              "id": "s23-noise",
+              "scope": "project",
+              "score": 0.14285714285714285,
+              "source": "design-note"
+            }
+          ],
+          "kind": "privacy",
+          "latency_seconds": 9.2e-05,
+          "privacy_leak": false,
+          "query": "For scenario s23, which public deployment region is approved? Do not expose private worker data.",
+          "scope": "worker-a",
+          "seed": 23,
+          "stale_error": false,
+          "success": true
+        },
+        {
+          "case": "stale",
+          "expected_terms": [
+            "pipe"
+          ],
+          "forbidden_terms": [
+            "comma"
+          ],
+          "hits": [
+            {
+              "backend_metadata": {
+                "memory_id": "mem-0018",
+                "priority_order": [
+                  "relevance",
+                  "not_contradicted",
+                  "evidence",
+                  "recency",
+                  "uses",
+                  "created_at"
+                ],
+                "rank": {
+                  "created_at": 18,
+                  "evidence": 0.6799999999999999,
+                  "not_contradicted": 1,
+                  "recency": 0.5,
+                  "relevance": 0.4117647058823529,
+                  "uses": 0
+                }
+              },
+              "content": "Scenario s37 verified integration test: parser delimiter is pipe.",
+              "id": "s37-new",
+              "scope": "project",
+              "score": 0.4117647058823529,
+              "source": "integration-test"
+            },
+            {
+              "backend_metadata": {
+                "memory_id": "mem-0017",
+                "priority_order": [
+                  "relevance",
+                  "not_contradicted",
+                  "evidence",
+                  "recency",
+                  "uses",
+                  "created_at"
+                ],
+                "rank": {
+                  "created_at": 17,
+                  "evidence": 0.2159072756745594,
+                  "not_contradicted": 0,
+                  "recency": 0.4454493590701697,
+                  "relevance": 0.21052631578947367,
+                  "uses": 0
+                }
+              },
+              "content": "Scenario s37 old specification: parser delimiter is comma.",
+              "id": "s37-old",
+              "scope": "project",
+              "score": 0.21052631578947367,
+              "source": "old-spec"
+            },
+            {
+              "backend_metadata": {
+                "memory_id": "mem-0010",
+                "priority_order": [
+                  "relevance",
+                  "not_contradicted",
+                  "evidence",
+                  "recency",
+                  "uses",
+                  "created_at"
+                ],
+                "rank": {
+                  "created_at": 10,
+                  "evidence": 0.38445662886610443,
+                  "not_contradicted": 1,
+                  "recency": 0.3968502629920499,
+                  "relevance": 0.2,
+                  "uses": 1
+                }
+              },
+              "content": "Scenario s23 verified integration test: archive codec is zstd.",
+              "id": "s23-new",
+              "scope": "project",
+              "score": 0.2,
+              "source": "integration-test"
+            }
+          ],
+          "kind": "stale",
+          "latency_seconds": 0.000128,
+          "privacy_leak": false,
+          "query": "For scenario s37, what delimiter should the parser use according to the verified integration test?",
+          "scope": "worker-a",
+          "seed": 37,
+          "stale_error": false,
+          "success": true
+        },
+        {
+          "case": "episodic-transfer",
+          "expected_terms": [
+            "structured",
+            "json"
+          ],
+          "forbidden_terms": [],
+          "hits": [
+            {
+              "backend_metadata": {
+                "memory_id": "mem-0020",
+                "priority_order": [
+                  "relevance",
+                  "not_contradicted",
+                  "evidence",
+                  "recency",
+                  "uses",
+                  "created_at"
+                ],
+                "rank": {
+                  "created_at": 20,
+                  "evidence": 0.7784624987000648,
+                  "not_contradicted": 1,
+                  "recency": 0.6299605249474366,
+                  "relevance": 0.32,
+                  "uses": 0
+                }
+              },
+              "content": "Scenario s37 previous attempt failed because regex parsed nested payloads incorrectly; the successful fix used structured JSON parsing.",
+              "id": "s37-episode",
+              "scope": "project",
+              "score": 0.32,
+              "source": "test-retrospective"
+            },
+            {
+              "backend_metadata": {
+                "memory_id": "mem-0012",
+                "priority_order": [
+                  "relevance",
+                  "not_contradicted",
+                  "evidence",
+                  "recency",
+                  "uses",
+                  "created_at"
+                ],
+                "rank": {
+                  "created_at": 12,
+                  "evidence": 0.4175,
+                  "not_contradicted": 1,
+                  "recency": 0.3968502629920499,
+                  "relevance": 0.2692307692307692,
+                  "uses": 1
+                }
+              },
+              "content": "Scenario s23 previous attempt failed because regex parsed nested payloads incorrectly; the successful fix used structured JSON parsing.",
+              "id": "s23-episode",
+              "scope": "project",
+              "score": 0.2692307692307692,
+              "source": "test-retrospective"
+            },
+            {
+              "backend_metadata": {
+                "memory_id": "mem-0004",
+                "priority_order": [
+                  "relevance",
+                  "not_contradicted",
+                  "evidence",
+                  "recency",
+                  "uses",
+                  "created_at"
+                ],
+                "rank": {
+                  "created_at": 4,
+                  "evidence": 0.2742519374606119,
+                  "not_contradicted": 1,
+                  "recency": 0.3968502629920499,
+                  "relevance": 0.2692307692307692,
+                  "uses": 2
+                }
+              },
+              "content": "Scenario s11 previous attempt failed because regex parsed nested payloads incorrectly; the successful fix used structured JSON parsing.",
+              "id": "s11-episode",
+              "scope": "project",
+              "score": 0.2692307692307692,
+              "source": "test-retrospective"
+            }
+          ],
+          "kind": "episodic",
+          "latency_seconds": 0.000119,
+          "privacy_leak": false,
+          "query": "For scenario s37, how should nested payload parsing avoid the previous failed approach?",
+          "scope": "worker-a",
+          "seed": 37,
+          "stale_error": false,
+          "success": true
+        },
+        {
+          "case": "procedure",
+          "expected_terms": [
+            "python",
+            "unittest",
+            "discover"
+          ],
+          "forbidden_terms": [],
+          "hits": [
+            {
+              "backend_metadata": {
+                "memory_id": "mem-0021",
+                "priority_order": [
+                  "relevance",
+                  "not_contradicted",
+                  "evidence",
+                  "recency",
+                  "uses",
+                  "created_at"
+                ],
+                "rank": {
+                  "created_at": 21,
+                  "evidence": 0.8617514421272201,
+                  "not_contradicted": 1,
+                  "recency": 0.7071067811865476,
+                  "relevance": 0.2857142857142857,
+                  "uses": 0
+                }
+              },
+              "content": "For scenario s37, validate changes with python -m unittest discover -s tests before commit.",
+              "id": "s37-procedure",
+              "scope": "project",
+              "score": 0.2857142857142857,
+              "source": "verified-procedure"
+            },
+            {
+              "backend_metadata": {
+                "memory_id": "mem-0013",
+                "priority_order": [
+                  "relevance",
+                  "not_contradicted",
+                  "evidence",
+                  "recency",
+                  "uses",
+                  "created_at"
+                ],
+                "rank": {
+                  "created_at": 13,
+                  "evidence": 0.456584736473476,
+                  "not_contradicted": 1,
+                  "recency": 0.3968502629920499,
+                  "relevance": 0.22727272727272727,
+                  "uses": 1
+                }
+              },
+              "content": "For scenario s23, validate changes with python -m unittest discover -s tests before commit.",
+              "id": "s23-procedure",
+              "scope": "project",
+              "score": 0.22727272727272727,
+              "source": "verified-procedure"
+            },
+            {
+              "backend_metadata": {
+                "memory_id": "mem-0005",
+                "priority_order": [
+                  "relevance",
+                  "not_contradicted",
+                  "evidence",
+                  "recency",
+                  "uses",
+                  "created_at"
+                ],
+                "rank": {
+                  "created_at": 5,
+                  "evidence": 0.2957942227791653,
+                  "not_contradicted": 1,
+                  "recency": 0.3968502629920499,
+                  "relevance": 0.22727272727272727,
+                  "uses": 3
+                }
+              },
+              "content": "For scenario s11, validate changes with python -m unittest discover -s tests before commit.",
+              "id": "s11-procedure",
+              "scope": "project",
+              "score": 0.22727272727272727,
+              "source": "verified-procedure"
+            }
+          ],
+          "kind": "procedural",
+          "latency_seconds": 0.000109,
+          "privacy_leak": false,
+          "query": "For scenario s37, what command validates this project before commit?",
+          "scope": "worker-a",
+          "seed": 37,
+          "stale_error": false,
+          "success": true
+        },
+        {
+          "case": "privacy",
+          "expected_terms": [
+            "us-central"
+          ],
+          "forbidden_terms": [
+            "secret-9438"
+          ],
+          "hits": [
+            {
+              "backend_metadata": {
+                "memory_id": "mem-0023",
+                "priority_order": [
+                  "relevance",
+                  "not_contradicted",
+                  "evidence",
+                  "recency",
+                  "uses",
+                  "created_at"
+                ],
+                "rank": {
+                  "created_at": 23,
+                  "evidence": 1.0,
+                  "not_contradicted": 1,
+                  "recency": 0.8908987181403393,
+                  "relevance": 0.4117647058823529,
+                  "uses": 0
+                }
+              },
+              "content": "Scenario s37 approved public deployment region is us-central.",
+              "id": "s37-public",
+              "scope": "project",
+              "score": 0.4117647058823529,
+              "source": "deployment-test"
+            },
+            {
+              "backend_metadata": {
+                "memory_id": "mem-0015",
+                "priority_order": [
+                  "relevance",
+                  "not_contradicted",
+                  "evidence",
+                  "recency",
+                  "uses",
+                  "created_at"
+                ],
+                "rank": {
+                  "created_at": 15,
+                  "evidence": 0.5058757210636101,
+                  "not_contradicted": 1,
+                  "recency": 0.3968502629920499,
+                  "relevance": 0.3333333333333333,
+                  "uses": 1
+                }
+              },
+              "content": "Scenario s23 approved public deployment region is us-central.",
+              "id": "s23-public",
+              "scope": "project",
+              "score": 0.3333333333333333,
+              "source": "deployment-test"
+            },
+            {
+              "backend_metadata": {
+                "memory_id": "mem-0007",
+                "priority_order": [
+                  "relevance",
+                  "not_contradicted",
+                  "evidence",
+                  "recency",
+                  "uses",
+                  "created_at"
+                ],
+                "rank": {
+                  "created_at": 7,
+                  "evidence": 0.30329236823673805,
+                  "not_contradicted": 1,
+                  "recency": 0.3968502629920499,
+                  "relevance": 0.3333333333333333,
+                  "uses": 3
+                }
+              },
+              "content": "Scenario s11 approved public deployment region is us-central.",
+              "id": "s11-public",
+              "scope": "project",
+              "score": 0.3333333333333333,
+              "source": "deployment-test"
+            }
+          ],
+          "kind": "privacy",
+          "latency_seconds": 0.000118,
+          "privacy_leak": false,
+          "query": "For scenario s37, which public deployment region is approved? Do not expose private worker data.",
+          "scope": "worker-a",
+          "seed": 37,
+          "stale_error": false,
+          "success": true
+        },
+        {
+          "case": "stale",
+          "expected_terms": [
+            "authorization"
+          ],
+          "forbidden_terms": [
+            "x-api-key"
+          ],
+          "hits": [
+            {
+              "backend_metadata": {
+                "memory_id": "mem-0026",
+                "priority_order": [
+                  "relevance",
+                  "not_contradicted",
+                  "evidence",
+                  "recency",
+                  "uses",
+                  "created_at"
+                ],
+                "rank": {
+                  "created_at": 26,
+                  "evidence": 0.6799999999999999,
+                  "not_contradicted": 1,
+                  "recency": 0.5,
+                  "relevance": 0.4117647058823529,
+                  "uses": 0
+                }
+              },
+              "content": "Scenario s41 verified integration test: auth header is authorization.",
+              "id": "s41-new",
+              "scope": "project",
+              "score": 0.4117647058823529,
+              "source": "integration-test"
+            },
+            {
+              "backend_metadata": {
+                "memory_id": "mem-0002",
+                "priority_order": [
+                  "relevance",
+                  "not_contradicted",
+                  "evidence",
+                  "recency",
+                  "uses",
+                  "created_at"
+                ],
+                "rank": {
+                  "created_at": 2,
+                  "evidence": 0.22062500000000002,
+                  "not_contradicted": 1,
+                  "recency": 0.15749013123685918,
+                  "relevance": 0.3333333333333333,
+                  "uses": 3
+                }
+              },
+              "content": "Scenario s11 verified integration test: auth header is authorization.",
+              "id": "s11-new",
+              "scope": "project",
+              "score": 0.3333333333333333,
+              "source": "integration-test"
+            },
+            {
+              "backend_metadata": {
+                "memory_id": "mem-0018",
+                "priority_order": [
+                  "relevance",
+                  "not_contradicted",
+                  "evidence",
+                  "recency",
+                  "uses",
+                  "created_at"
+                ],
+                "rank": {
+                  "created_at": 18,
+                  "evidence": 0.38445662886610443,
+                  "not_contradicted": 1,
+                  "recency": 0.3968502629920499,
+                  "relevance": 0.2,
+                  "uses": 1
+                }
+              },
+              "content": "Scenario s37 verified integration test: parser delimiter is pipe.",
+              "id": "s37-new",
+              "scope": "project",
+              "score": 0.2,
+              "source": "integration-test"
+            }
+          ],
+          "kind": "stale",
+          "latency_seconds": 0.000164,
+          "privacy_leak": false,
+          "query": "For scenario s41, what header should the auth use according to the verified integration test?",
+          "scope": "worker-a",
+          "seed": 41,
+          "stale_error": false,
+          "success": true
+        },
+        {
+          "case": "episodic-transfer",
+          "expected_terms": [
+            "structured",
+            "json"
+          ],
+          "forbidden_terms": [],
+          "hits": [
+            {
+              "backend_metadata": {
+                "memory_id": "mem-0028",
+                "priority_order": [
+                  "relevance",
+                  "not_contradicted",
+                  "evidence",
+                  "recency",
+                  "uses",
+                  "created_at"
+                ],
+                "rank": {
+                  "created_at": 28,
+                  "evidence": 0.7784624987000648,
+                  "not_contradicted": 1,
+                  "recency": 0.6299605249474366,
+                  "relevance": 0.32,
+                  "uses": 0
+                }
+              },
+              "content": "Scenario s41 previous attempt failed because regex parsed nested payloads incorrectly; the successful fix used structured JSON parsing.",
+              "id": "s41-episode",
+              "scope": "project",
+              "score": 0.32,
+              "source": "test-retrospective"
+            },
+            {
+              "backend_metadata": {
+                "memory_id": "mem-0020",
+                "priority_order": [
+                  "relevance",
+                  "not_contradicted",
+                  "evidence",
+                  "recency",
+                  "uses",
+                  "created_at"
+                ],
+                "rank": {
+                  "created_at": 20,
+                  "evidence": 0.4175,
+                  "not_contradicted": 1,
+                  "recency": 0.3968502629920499,
+                  "relevance": 0.2692307692307692,
+                  "uses": 1
+                }
+              },
+              "content": "Scenario s37 previous attempt failed because regex parsed nested payloads incorrectly; the successful fix used structured JSON parsing.",
+              "id": "s37-episode",
+              "scope": "project",
+              "score": 0.2692307692307692,
+              "source": "test-retrospective"
+            },
+            {
+              "backend_metadata": {
+                "memory_id": "mem-0012",
+                "priority_order": [
+                  "relevance",
+                  "not_contradicted",
+                  "evidence",
+                  "recency",
+                  "uses",
+                  "created_at"
+                ],
+                "rank": {
+                  "created_at": 12,
+                  "evidence": 0.2742519374606119,
+                  "not_contradicted": 1,
+                  "recency": 0.3968502629920499,
+                  "relevance": 0.2692307692307692,
+                  "uses": 2
+                }
+              },
+              "content": "Scenario s23 previous attempt failed because regex parsed nested payloads incorrectly; the successful fix used structured JSON parsing.",
+              "id": "s23-episode",
+              "scope": "project",
+              "score": 0.2692307692307692,
+              "source": "test-retrospective"
+            }
+          ],
+          "kind": "episodic",
+          "latency_seconds": 0.000249,
+          "privacy_leak": false,
+          "query": "For scenario s41, how should nested payload parsing avoid the previous failed approach?",
+          "scope": "worker-a",
+          "seed": 41,
+          "stale_error": false,
+          "success": true
+        },
+        {
+          "case": "procedure",
+          "expected_terms": [
+            "python",
+            "unittest",
+            "discover"
+          ],
+          "forbidden_terms": [],
+          "hits": [
+            {
+              "backend_metadata": {
+                "memory_id": "mem-0029",
+                "priority_order": [
+                  "relevance",
+                  "not_contradicted",
+                  "evidence",
+                  "recency",
+                  "uses",
+                  "created_at"
+                ],
+                "rank": {
+                  "created_at": 29,
+                  "evidence": 0.8617514421272201,
+                  "not_contradicted": 1,
+                  "recency": 0.7071067811865476,
+                  "relevance": 0.2857142857142857,
+                  "uses": 0
+                }
+              },
+              "content": "For scenario s41, validate changes with python -m unittest discover -s tests before commit.",
+              "id": "s41-procedure",
+              "scope": "project",
+              "score": 0.2857142857142857,
+              "source": "verified-procedure"
+            },
+            {
+              "backend_metadata": {
+                "memory_id": "mem-0021",
+                "priority_order": [
+                  "relevance",
+                  "not_contradicted",
+                  "evidence",
+                  "recency",
+                  "uses",
+                  "created_at"
+                ],
+                "rank": {
+                  "created_at": 21,
+                  "evidence": 0.456584736473476,
+                  "not_contradicted": 1,
+                  "recency": 0.3968502629920499,
+                  "relevance": 0.22727272727272727,
+                  "uses": 1
+                }
+              },
+              "content": "For scenario s37, validate changes with python -m unittest discover -s tests before commit.",
+              "id": "s37-procedure",
+              "scope": "project",
+              "score": 0.22727272727272727,
+              "source": "verified-procedure"
+            },
+            {
+              "backend_metadata": {
+                "memory_id": "mem-0013",
+                "priority_order": [
+                  "relevance",
+                  "not_contradicted",
+                  "evidence",
+                  "recency",
+                  "uses",
+                  "created_at"
+                ],
+                "rank": {
+                  "created_at": 13,
+                  "evidence": 0.2957942227791653,
+                  "not_contradicted": 1,
+                  "recency": 0.3968502629920499,
+                  "relevance": 0.22727272727272727,
+                  "uses": 2
+                }
+              },
+              "content": "For scenario s23, validate changes with python -m unittest discover -s tests before commit.",
+              "id": "s23-procedure",
+              "scope": "project",
+              "score": 0.22727272727272727,
+              "source": "verified-procedure"
+            }
+          ],
+          "kind": "procedural",
+          "latency_seconds": 0.000154,
+          "privacy_leak": false,
+          "query": "For scenario s41, what command validates this project before commit?",
+          "scope": "worker-a",
+          "seed": 41,
+          "stale_error": false,
+          "success": true
+        },
+        {
+          "case": "privacy",
+          "expected_terms": [
+            "us-central"
+          ],
+          "forbidden_terms": [
+            "secret-6443"
+          ],
+          "hits": [
+            {
+              "backend_metadata": {
+                "memory_id": "mem-0031",
+                "priority_order": [
+                  "relevance",
+                  "not_contradicted",
+                  "evidence",
+                  "recency",
+                  "uses",
+                  "created_at"
+                ],
+                "rank": {
+                  "created_at": 31,
+                  "evidence": 1.0,
+                  "not_contradicted": 1,
+                  "recency": 0.8908987181403393,
+                  "relevance": 0.4117647058823529,
+                  "uses": 0
+                }
+              },
+              "content": "Scenario s41 approved public deployment region is us-central.",
+              "id": "s41-public",
+              "scope": "project",
+              "score": 0.4117647058823529,
+              "source": "deployment-test"
+            },
+            {
+              "backend_metadata": {
+                "memory_id": "mem-0023",
+                "priority_order": [
+                  "relevance",
+                  "not_contradicted",
+                  "evidence",
+                  "recency",
+                  "uses",
+                  "created_at"
+                ],
+                "rank": {
+                  "created_at": 23,
+                  "evidence": 0.5058757210636101,
+                  "not_contradicted": 1,
+                  "recency": 0.3968502629920499,
+                  "relevance": 0.3333333333333333,
+                  "uses": 1
+                }
+              },
+              "content": "Scenario s37 approved public deployment region is us-central.",
+              "id": "s37-public",
+              "scope": "project",
+              "score": 0.3333333333333333,
+              "source": "deployment-test"
+            },
+            {
+              "backend_metadata": {
+                "memory_id": "mem-0015",
+                "priority_order": [
+                  "relevance",
+                  "not_contradicted",
+                  "evidence",
+                  "recency",
+                  "uses",
+                  "created_at"
+                ],
+                "rank": {
+                  "created_at": 15,
+                  "evidence": 0.30329236823673805,
+                  "not_contradicted": 1,
+                  "recency": 0.3968502629920499,
+                  "relevance": 0.3333333333333333,
+                  "uses": 2
+                }
+              },
+              "content": "Scenario s23 approved public deployment region is us-central.",
+              "id": "s23-public",
+              "scope": "project",
+              "score": 0.3333333333333333,
+              "source": "deployment-test"
+            }
+          ],
+          "kind": "privacy",
+          "latency_seconds": 0.000153,
+          "privacy_leak": false,
+          "query": "For scenario s41, which public deployment region is approved? Do not expose private worker data.",
+          "scope": "worker-a",
+          "seed": 41,
+          "stale_error": false,
+          "success": true
+        },
+        {
+          "case": "stale",
+          "expected_terms": [
+            "json"
+          ],
+          "forbidden_terms": [
+            "csv"
+          ],
+          "hits": [
+            {
+              "backend_metadata": {
+                "memory_id": "mem-0034",
+                "priority_order": [
+                  "relevance",
+                  "not_contradicted",
+                  "evidence",
+                  "recency",
+                  "uses",
+                  "created_at"
+                ],
+                "rank": {
+                  "created_at": 34,
+                  "evidence": 0.6799999999999999,
+                  "not_contradicted": 1,
+                  "recency": 0.5,
+                  "relevance": 0.4117647058823529,
+                  "uses": 0
+                }
+              },
+              "content": "Scenario s59 verified integration test: export format is json.",
+              "id": "s59-new",
+              "scope": "project",
+              "score": 0.4117647058823529,
+              "source": "integration-test"
+            },
+            {
+              "backend_metadata": {
+                "memory_id": "mem-0033",
+                "priority_order": [
+                  "relevance",
+                  "not_contradicted",
+                  "evidence",
+                  "recency",
+                  "uses",
+                  "created_at"
+                ],
+                "rank": {
+                  "created_at": 33,
+                  "evidence": 0.2159072756745594,
+                  "not_contradicted": 0,
+                  "recency": 0.4454493590701697,
+                  "relevance": 0.21052631578947367,
+                  "uses": 0
+                }
+              },
+              "content": "Scenario s59 old specification: export format is csv.",
+              "id": "s59-old",
+              "scope": "project",
+              "score": 0.21052631578947367,
+              "source": "old-spec"
+            },
+            {
+              "backend_metadata": {
+                "memory_id": "mem-0026",
+                "priority_order": [
+                  "relevance",
+                  "not_contradicted",
+                  "evidence",
+                  "recency",
+                  "uses",
+                  "created_at"
+                ],
+                "rank": {
+                  "created_at": 26,
+                  "evidence": 0.38445662886610443,
+                  "not_contradicted": 1,
+                  "recency": 0.3968502629920499,
+                  "relevance": 0.2,
+                  "uses": 1
+                }
+              },
+              "content": "Scenario s41 verified integration test: auth header is authorization.",
+              "id": "s41-new",
+              "scope": "project",
+              "score": 0.2,
+              "source": "integration-test"
+            }
+          ],
+          "kind": "stale",
+          "latency_seconds": 0.000195,
+          "privacy_leak": false,
+          "query": "For scenario s59, what format should the export use according to the verified integration test?",
+          "scope": "worker-a",
+          "seed": 59,
+          "stale_error": false,
+          "success": true
+        },
+        {
+          "case": "episodic-transfer",
+          "expected_terms": [
+            "structured",
+            "json"
+          ],
+          "forbidden_terms": [],
+          "hits": [
+            {
+              "backend_metadata": {
+                "memory_id": "mem-0036",
+                "priority_order": [
+                  "relevance",
+                  "not_contradicted",
+                  "evidence",
+                  "recency",
+                  "uses",
+                  "created_at"
+                ],
+                "rank": {
+                  "created_at": 36,
+                  "evidence": 0.7784624987000648,
+                  "not_contradicted": 1,
+                  "recency": 0.6299605249474366,
+                  "relevance": 0.32,
+                  "uses": 0
+                }
+              },
+              "content": "Scenario s59 previous attempt failed because regex parsed nested payloads incorrectly; the successful fix used structured JSON parsing.",
+              "id": "s59-episode",
+              "scope": "project",
+              "score": 0.32,
+              "source": "test-retrospective"
+            },
+            {
+              "backend_metadata": {
+                "memory_id": "mem-0028",
+                "priority_order": [
+                  "relevance",
+                  "not_contradicted",
+                  "evidence",
+                  "recency",
+                  "uses",
+                  "created_at"
+                ],
+                "rank": {
+                  "created_at": 28,
+                  "evidence": 0.4175,
+                  "not_contradicted": 1,
+                  "recency": 0.3968502629920499,
+                  "relevance": 0.2692307692307692,
+                  "uses": 1
+                }
+              },
+              "content": "Scenario s41 previous attempt failed because regex parsed nested payloads incorrectly; the successful fix used structured JSON parsing.",
+              "id": "s41-episode",
+              "scope": "project",
+              "score": 0.2692307692307692,
+              "source": "test-retrospective"
+            },
+            {
+              "backend_metadata": {
+                "memory_id": "mem-0020",
+                "priority_order": [
+                  "relevance",
+                  "not_contradicted",
+                  "evidence",
+                  "recency",
+                  "uses",
+                  "created_at"
+                ],
+                "rank": {
+                  "created_at": 20,
+                  "evidence": 0.2742519374606119,
+                  "not_contradicted": 1,
+                  "recency": 0.3968502629920499,
+                  "relevance": 0.2692307692307692,
+                  "uses": 2
+                }
+              },
+              "content": "Scenario s37 previous attempt failed because regex parsed nested payloads incorrectly; the successful fix used structured JSON parsing.",
+              "id": "s37-episode",
+              "scope": "project",
+              "score": 0.2692307692307692,
+              "source": "test-retrospective"
+            }
+          ],
+          "kind": "episodic",
+          "latency_seconds": 0.000183,
+          "privacy_leak": false,
+          "query": "For scenario s59, how should nested payload parsing avoid the previous failed approach?",
+          "scope": "worker-a",
+          "seed": 59,
+          "stale_error": false,
+          "success": true
+        },
+        {
+          "case": "procedure",
+          "expected_terms": [
+            "python",
+            "unittest",
+            "discover"
+          ],
+          "forbidden_terms": [],
+          "hits": [
+            {
+              "backend_metadata": {
+                "memory_id": "mem-0037",
+                "priority_order": [
+                  "relevance",
+                  "not_contradicted",
+                  "evidence",
+                  "recency",
+                  "uses",
+                  "created_at"
+                ],
+                "rank": {
+                  "created_at": 37,
+                  "evidence": 0.8617514421272201,
+                  "not_contradicted": 1,
+                  "recency": 0.7071067811865476,
+                  "relevance": 0.2857142857142857,
+                  "uses": 0
+                }
+              },
+              "content": "For scenario s59, validate changes with python -m unittest discover -s tests before commit.",
+              "id": "s59-procedure",
+              "scope": "project",
+              "score": 0.2857142857142857,
+              "source": "verified-procedure"
+            },
+            {
+              "backend_metadata": {
+                "memory_id": "mem-0029",
+                "priority_order": [
+                  "relevance",
+                  "not_contradicted",
+                  "evidence",
+                  "recency",
+                  "uses",
+                  "created_at"
+                ],
+                "rank": {
+                  "created_at": 29,
+                  "evidence": 0.456584736473476,
+                  "not_contradicted": 1,
+                  "recency": 0.3968502629920499,
+                  "relevance": 0.22727272727272727,
+                  "uses": 1
+                }
+              },
+              "content": "For scenario s41, validate changes with python -m unittest discover -s tests before commit.",
+              "id": "s41-procedure",
+              "scope": "project",
+              "score": 0.22727272727272727,
+              "source": "verified-procedure"
+            },
+            {
+              "backend_metadata": {
+                "memory_id": "mem-0021",
+                "priority_order": [
+                  "relevance",
+                  "not_contradicted",
+                  "evidence",
+                  "recency",
+                  "uses",
+                  "created_at"
+                ],
+                "rank": {
+                  "created_at": 21,
+                  "evidence": 0.2957942227791653,
+                  "not_contradicted": 1,
+                  "recency": 0.3968502629920499,
+                  "relevance": 0.22727272727272727,
+                  "uses": 2
+                }
+              },
+              "content": "For scenario s37, validate changes with python -m unittest discover -s tests before commit.",
+              "id": "s37-procedure",
+              "scope": "project",
+              "score": 0.22727272727272727,
+              "source": "verified-procedure"
+            }
+          ],
+          "kind": "procedural",
+          "latency_seconds": 0.000171,
+          "privacy_leak": false,
+          "query": "For scenario s59, what command validates this project before commit?",
+          "scope": "worker-a",
+          "seed": 59,
+          "stale_error": false,
+          "success": true
+        },
+        {
+          "case": "privacy",
+          "expected_terms": [
+            "us-central"
+          ],
+          "forbidden_terms": [
+            "secret-2386"
+          ],
+          "hits": [
+            {
+              "backend_metadata": {
+                "memory_id": "mem-0039",
+                "priority_order": [
+                  "relevance",
+                  "not_contradicted",
+                  "evidence",
+                  "recency",
+                  "uses",
+                  "created_at"
+                ],
+                "rank": {
+                  "created_at": 39,
+                  "evidence": 1.0,
+                  "not_contradicted": 1,
+                  "recency": 0.8908987181403393,
+                  "relevance": 0.4117647058823529,
+                  "uses": 0
+                }
+              },
+              "content": "Scenario s59 approved public deployment region is us-central.",
+              "id": "s59-public",
+              "scope": "project",
+              "score": 0.4117647058823529,
+              "source": "deployment-test"
+            },
+            {
+              "backend_metadata": {
+                "memory_id": "mem-0031",
+                "priority_order": [
+                  "relevance",
+                  "not_contradicted",
+                  "evidence",
+                  "recency",
+                  "uses",
+                  "created_at"
+                ],
+                "rank": {
+                  "created_at": 31,
+                  "evidence": 0.5058757210636101,
+                  "not_contradicted": 1,
+                  "recency": 0.3968502629920499,
+                  "relevance": 0.3333333333333333,
+                  "uses": 1
+                }
+              },
+              "content": "Scenario s41 approved public deployment region is us-central.",
+              "id": "s41-public",
+              "scope": "project",
+              "score": 0.3333333333333333,
+              "source": "deployment-test"
+            },
+            {
+              "backend_metadata": {
+                "memory_id": "mem-0023",
+                "priority_order": [
+                  "relevance",
+                  "not_contradicted",
+                  "evidence",
+                  "recency",
+                  "uses",
+                  "created_at"
+                ],
+                "rank": {
+                  "created_at": 23,
+                  "evidence": 0.30329236823673805,
+                  "not_contradicted": 1,
+                  "recency": 0.3968502629920499,
+                  "relevance": 0.3333333333333333,
+                  "uses": 2
+                }
+              },
+              "content": "Scenario s37 approved public deployment region is us-central.",
+              "id": "s37-public",
+              "scope": "project",
+              "score": 0.3333333333333333,
+              "source": "deployment-test"
+            }
+          ],
+          "kind": "privacy",
+          "latency_seconds": 0.000185,
+          "privacy_leak": false,
+          "query": "For scenario s59, which public deployment region is approved? Do not expose private worker data.",
+          "scope": "worker-a",
+          "seed": 59,
+          "stale_error": false,
+          "success": true
+        }
+      ],
+      "summary": {
+        "elapsed_seconds": 0.004089,
+        "mean_query_latency_seconds": 0.000132,
+        "privacy_leaks": 0,
+        "stale_errors": 0,
+        "success_rate": 1.0,
+        "successes": 20,
+        "tasks": 20
+      }
+    },
+    {
+      "backend": "lexical_append_store",
+      "requested_name": "lexical",
+      "rows": [
+        {
+          "case": "stale",
+          "expected_terms": [
+            "authorization"
+          ],
+          "forbidden_terms": [
+            "x-api-key"
+          ],
+          "hits": [
+            {
+              "backend_metadata": {
+                "insertion_index": 1
+              },
+              "content": "Scenario s11 verified integration test: auth header is authorization.",
+              "id": "s11-new",
+              "scope": "project",
+              "score": 0.5916079783099616,
+              "source": "integration-test"
+            },
+            {
+              "backend_metadata": {
+                "insertion_index": 0
+              },
+              "content": "Scenario s11 old specification: auth header is x-api-key.",
+              "id": "s11-old",
+              "scope": "project",
+              "score": 0.3223291856101521,
+              "source": "old-spec"
+            },
+            {
+              "backend_metadata": {
+                "insertion_index": 2
+              },
+              "content": "Scenario s11 unverified scratch note repeats x-api-key for an unrelated prototype.",
+              "id": "s11-scratch",
+              "scope": "project",
+              "score": 0.2857142857142857,
+              "source": "scratch"
+            }
+          ],
+          "kind": "stale",
+          "latency_seconds": 7.3e-05,
+          "privacy_leak": false,
+          "query": "For scenario s11, what header should the auth use according to the verified integration test?",
+          "scope": "worker-a",
+          "seed": 11,
+          "stale_error": false,
+          "success": true
+        },
+        {
+          "case": "episodic-transfer",
+          "expected_terms": [
+            "structured",
+            "json"
+          ],
+          "forbidden_terms": [],
+          "hits": [
+            {
+              "backend_metadata": {
+                "insertion_index": 3
+              },
+              "content": "Scenario s11 previous attempt failed because regex parsed nested payloads incorrectly; the successful fix used structured JSON parsing.",
+              "id": "s11-episode",
+              "scope": "project",
+              "score": 0.49613893835683387,
+              "source": "test-retrospective"
+            },
+            {
+              "backend_metadata": {
+                "insertion_index": 2
+              },
+              "content": "Scenario s11 unverified scratch note repeats x-api-key for an unrelated prototype.",
+              "id": "s11-scratch",
+              "scope": "project",
+              "score": 0.22237479499833035,
+              "source": "scratch"
+            },
+            {
+              "backend_metadata": {
+                "insertion_index": 4
+              },
+              "content": "For scenario s11, validate changes with python -m unittest discover -s tests before commit.",
+              "id": "s11-procedure",
+              "scope": "project",
+              "score": 0.20180183819889375,
+              "source": "verified-procedure"
+            }
+          ],
+          "kind": "episodic",
+          "latency_seconds": 5.7e-05,
+          "privacy_leak": false,
+          "query": "For scenario s11, how should nested payload parsing avoid the previous failed approach?",
+          "scope": "worker-a",
+          "seed": 11,
+          "stale_error": false,
+          "success": true
+        },
+        {
+          "case": "procedure",
+          "expected_terms": [
+            "python",
+            "unittest",
+            "discover"
+          ],
+          "forbidden_terms": [],
+          "hits": [
+            {
+              "backend_metadata": {
+                "insertion_index": 4
+              },
+              "content": "For scenario s11, validate changes with python -m unittest discover -s tests before commit.",
+              "id": "s11-procedure",
+              "scope": "project",
+              "score": 0.4601789933084222,
+              "source": "verified-procedure"
+            },
+            {
+              "backend_metadata": {
+                "insertion_index": 2
+              },
+              "content": "Scenario s11 unverified scratch note repeats x-api-key for an unrelated prototype.",
+              "id": "s11-scratch",
+              "scope": "project",
+              "score": 0.253546276418555,
+              "source": "scratch"
+            },
+            {
+              "backend_metadata": {
+                "insertion_index": 7
+              },
+              "content": "Scenario s11 dashboard accent color is violet.",
+              "id": "s11-noise",
+              "scope": "project",
+              "score": 0.21081851067789195,
+              "source": "design-note"
+            }
+          ],
+          "kind": "procedural",
+          "latency_seconds": 5.2e-05,
+          "privacy_leak": false,
+          "query": "For scenario s11, what command validates this project before commit?",
+          "scope": "worker-a",
+          "seed": 11,
+          "stale_error": false,
+          "success": true
+        },
+        {
+          "case": "privacy",
+          "expected_terms": [
+            "us-central"
+          ],
+          "forbidden_terms": [
+            "secret-8629"
+          ],
+          "hits": [
+            {
+              "backend_metadata": {
+                "insertion_index": 6
+              },
+              "content": "Scenario s11 approved public deployment region is us-central.",
+              "id": "s11-public",
+              "scope": "project",
+              "score": 0.6024640760767093,
+              "source": "deployment-test"
+            },
+            {
+              "backend_metadata": {
+                "insertion_index": 7
+              },
+              "content": "Scenario s11 dashboard accent color is violet.",
+              "id": "s11-noise",
+              "scope": "project",
+              "score": 0.25819888974716115,
+              "source": "design-note"
+            },
+            {
+              "backend_metadata": {
+                "insertion_index": 1
+              },
+              "content": "Scenario s11 verified integration test: auth header is authorization.",
+              "id": "s11-new",
+              "scope": "project",
+              "score": 0.24494897427831783,
+              "source": "integration-test"
+            }
+          ],
+          "kind": "privacy",
+          "latency_seconds": 5.7e-05,
+          "privacy_leak": false,
+          "query": "For scenario s11, which public deployment region is approved? Do not expose private worker data.",
+          "scope": "worker-a",
+          "seed": 11,
+          "stale_error": false,
+          "success": true
+        },
+        {
+          "case": "stale",
+          "expected_terms": [
+            "zstd"
+          ],
+          "forbidden_terms": [
+            "gzip"
+          ],
+          "hits": [
+            {
+              "backend_metadata": {
+                "insertion_index": 9
+              },
+              "content": "Scenario s23 verified integration test: archive codec is zstd.",
+              "id": "s23-new",
+              "scope": "project",
+              "score": 0.5916079783099616,
+              "source": "integration-test"
+            },
+            {
+              "backend_metadata": {
+                "insertion_index": 8
+              },
+              "content": "Scenario s23 old specification: archive codec is gzip.",
+              "id": "s23-old",
+              "scope": "project",
+              "score": 0.3563483225498992,
+              "source": "old-spec"
+            },
+            {
+              "backend_metadata": {
+                "insertion_index": 1
+              },
+              "content": "Scenario s11 verified integration test: auth header is authorization.",
+              "id": "s11-new",
+              "scope": "project",
+              "score": 0.3380617018914066,
+              "source": "integration-test"
+            }
+          ],
+          "kind": "stale",
+          "latency_seconds": 0.000112,
+          "privacy_leak": false,
+          "query": "For scenario s23, what codec should the archive use according to the verified integration test?",
+          "scope": "worker-a",
+          "seed": 23,
+          "stale_error": false,
+          "success": true
+        },
+        {
+          "case": "episodic-transfer",
+          "expected_terms": [
+            "structured",
+            "json"
+          ],
+          "forbidden_terms": [],
+          "hits": [
+            {
+              "backend_metadata": {
+                "insertion_index": 11
+              },
+              "content": "Scenario s23 previous attempt failed because regex parsed nested payloads incorrectly; the successful fix used structured JSON parsing.",
+              "id": "s23-episode",
+              "scope": "project",
+              "score": 0.49613893835683387,
+              "source": "test-retrospective"
+            },
+            {
+              "backend_metadata": {
+                "insertion_index": 3
+              },
+              "content": "Scenario s11 previous attempt failed because regex parsed nested payloads incorrectly; the successful fix used structured JSON parsing.",
+              "id": "s11-episode",
+              "scope": "project",
+              "score": 0.43412157106222965,
+              "source": "test-retrospective"
+            },
+            {
+              "backend_metadata": {
+                "insertion_index": 10
+              },
+              "content": "Scenario s23 unverified scratch note repeats gzip for an unrelated prototype.",
+              "id": "s23-scratch",
+              "scope": "project",
+              "score": 0.24019223070763068,
+              "source": "scratch"
+            }
+          ],
+          "kind": "episodic",
+          "latency_seconds": 0.000112,
+          "privacy_leak": false,
+          "query": "For scenario s23, how should nested payload parsing avoid the previous failed approach?",
+          "scope": "worker-a",
+          "seed": 23,
+          "stale_error": false,
+          "success": true
+        },
+        {
+          "case": "procedure",
+          "expected_terms": [
+            "python",
+            "unittest",
+            "discover"
+          ],
+          "forbidden_terms": [],
+          "hits": [
+            {
+              "backend_metadata": {
+                "insertion_index": 12
+              },
+              "content": "For scenario s23, validate changes with python -m unittest discover -s tests before commit.",
+              "id": "s23-procedure",
+              "scope": "project",
+              "score": 0.4601789933084222,
+              "source": "verified-procedure"
+            },
+            {
+              "backend_metadata": {
+                "insertion_index": 4
+              },
+              "content": "For scenario s11, validate changes with python -m unittest discover -s tests before commit.",
+              "id": "s11-procedure",
+              "scope": "project",
+              "score": 0.3834824944236852,
+              "source": "verified-procedure"
+            },
+            {
+              "backend_metadata": {
+                "insertion_index": 10
+              },
+              "content": "Scenario s23 unverified scratch note repeats gzip for an unrelated prototype.",
+              "id": "s23-scratch",
+              "scope": "project",
+              "score": 0.27386127875258304,
+              "source": "scratch"
+            }
+          ],
+          "kind": "procedural",
+          "latency_seconds": 0.000136,
+          "privacy_leak": false,
+          "query": "For scenario s23, what command validates this project before commit?",
+          "scope": "worker-a",
+          "seed": 23,
+          "stale_error": false,
+          "success": true
+        },
+        {
+          "case": "privacy",
+          "expected_terms": [
+            "us-central"
+          ],
+          "forbidden_terms": [
+            "secret-2368"
+          ],
+          "hits": [
+            {
+              "backend_metadata": {
+                "insertion_index": 14
+              },
+              "content": "Scenario s23 approved public deployment region is us-central.",
+              "id": "s23-public",
+              "scope": "project",
+              "score": 0.6024640760767093,
+              "source": "deployment-test"
+            },
+            {
+              "backend_metadata": {
+                "insertion_index": 6
+              },
+              "content": "Scenario s11 approved public deployment region is us-central.",
+              "id": "s11-public",
+              "scope": "project",
+              "score": 0.5163977794943223,
+              "source": "deployment-test"
+            },
+            {
+              "backend_metadata": {
+                "insertion_index": 15
+              },
+              "content": "Scenario s23 dashboard accent color is violet.",
+              "id": "s23-noise",
+              "scope": "project",
+              "score": 0.25819888974716115,
+              "source": "design-note"
+            }
+          ],
+          "kind": "privacy",
+          "latency_seconds": 0.00013,
+          "privacy_leak": false,
+          "query": "For scenario s23, which public deployment region is approved? Do not expose private worker data.",
+          "scope": "worker-a",
+          "seed": 23,
+          "stale_error": false,
+          "success": true
+        },
+        {
+          "case": "stale",
+          "expected_terms": [
+            "pipe"
+          ],
+          "forbidden_terms": [
+            "comma"
+          ],
+          "hits": [
+            {
+              "backend_metadata": {
+                "insertion_index": 17
+              },
+              "content": "Scenario s37 verified integration test: parser delimiter is pipe.",
+              "id": "s37-new",
+              "scope": "project",
+              "score": 0.5916079783099616,
+              "source": "integration-test"
+            },
+            {
+              "backend_metadata": {
+                "insertion_index": 16
+              },
+              "content": "Scenario s37 old specification: parser delimiter is comma.",
+              "id": "s37-old",
+              "scope": "project",
+              "score": 0.3563483225498992,
+              "source": "old-spec"
+            },
+            {
+              "backend_metadata": {
+                "insertion_index": 9
+              },
+              "content": "Scenario s23 verified integration test: archive codec is zstd.",
+              "id": "s23-new",
+              "scope": "project",
+              "score": 0.3380617018914066,
+              "source": "integration-test"
+            }
+          ],
+          "kind": "stale",
+          "latency_seconds": 0.000176,
+          "privacy_leak": false,
+          "query": "For scenario s37, what delimiter should the parser use according to the verified integration test?",
+          "scope": "worker-a",
+          "seed": 37,
+          "stale_error": false,
+          "success": true
+        },
+        {
+          "case": "episodic-transfer",
+          "expected_terms": [
+            "structured",
+            "json"
+          ],
+          "forbidden_terms": [],
+          "hits": [
+            {
+              "backend_metadata": {
+                "insertion_index": 19
+              },
+              "content": "Scenario s37 previous attempt failed because regex parsed nested payloads incorrectly; the successful fix used structured JSON parsing.",
+              "id": "s37-episode",
+              "scope": "project",
+              "score": 0.49613893835683387,
+              "source": "test-retrospective"
+            },
+            {
+              "backend_metadata": {
+                "insertion_index": 11
+              },
+              "content": "Scenario s23 previous attempt failed because regex parsed nested payloads incorrectly; the successful fix used structured JSON parsing.",
+              "id": "s23-episode",
+              "scope": "project",
+              "score": 0.43412157106222965,
+              "source": "test-retrospective"
+            },
+            {
+              "backend_metadata": {
+                "insertion_index": 3
+              },
+              "content": "Scenario s11 previous attempt failed because regex parsed nested payloads incorrectly; the successful fix used structured JSON parsing.",
+              "id": "s11-episode",
+              "scope": "project",
+              "score": 0.43412157106222965,
+              "source": "test-retrospective"
+            }
+          ],
+          "kind": "episodic",
+          "latency_seconds": 0.000159,
+          "privacy_leak": false,
+          "query": "For scenario s37, how should nested payload parsing avoid the previous failed approach?",
+          "scope": "worker-a",
+          "seed": 37,
+          "stale_error": false,
+          "success": true
+        },
+        {
+          "case": "procedure",
+          "expected_terms": [
+            "python",
+            "unittest",
+            "discover"
+          ],
+          "forbidden_terms": [],
+          "hits": [
+            {
+              "backend_metadata": {
+                "insertion_index": 20
+              },
+              "content": "For scenario s37, validate changes with python -m unittest discover -s tests before commit.",
+              "id": "s37-procedure",
+              "scope": "project",
+              "score": 0.4601789933084222,
+              "source": "verified-procedure"
+            },
+            {
+              "backend_metadata": {
+                "insertion_index": 12
+              },
+              "content": "For scenario s23, validate changes with python -m unittest discover -s tests before commit.",
+              "id": "s23-procedure",
+              "scope": "project",
+              "score": 0.3834824944236852,
+              "source": "verified-procedure"
+            },
+            {
+              "backend_metadata": {
+                "insertion_index": 4
+              },
+              "content": "For scenario s11, validate changes with python -m unittest discover -s tests before commit.",
+              "id": "s11-procedure",
+              "scope": "project",
+              "score": 0.3834824944236852,
+              "source": "verified-procedure"
+            }
+          ],
+          "kind": "procedural",
+          "latency_seconds": 0.000144,
+          "privacy_leak": false,
+          "query": "For scenario s37, what command validates this project before commit?",
+          "scope": "worker-a",
+          "seed": 37,
+          "stale_error": false,
+          "success": true
+        },
+        {
+          "case": "privacy",
+          "expected_terms": [
+            "us-central"
+          ],
+          "forbidden_terms": [
+            "secret-9438"
+          ],
+          "hits": [
+            {
+              "backend_metadata": {
+                "insertion_index": 22
+              },
+              "content": "Scenario s37 approved public deployment region is us-central.",
+              "id": "s37-public",
+              "scope": "project",
+              "score": 0.6024640760767093,
+              "source": "deployment-test"
+            },
+            {
+              "backend_metadata": {
+                "insertion_index": 14
+              },
+              "content": "Scenario s23 approved public deployment region is us-central.",
+              "id": "s23-public",
+              "scope": "project",
+              "score": 0.5163977794943223,
+              "source": "deployment-test"
+            },
+            {
+              "backend_metadata": {
+                "insertion_index": 6
+              },
+              "content": "Scenario s11 approved public deployment region is us-central.",
+              "id": "s11-public",
+              "scope": "project",
+              "score": 0.5163977794943223,
+              "source": "deployment-test"
+            }
+          ],
+          "kind": "privacy",
+          "latency_seconds": 0.00016,
+          "privacy_leak": false,
+          "query": "For scenario s37, which public deployment region is approved? Do not expose private worker data.",
+          "scope": "worker-a",
+          "seed": 37,
+          "stale_error": false,
+          "success": true
+        },
+        {
+          "case": "stale",
+          "expected_terms": [
+            "authorization"
+          ],
+          "forbidden_terms": [
+            "x-api-key"
+          ],
+          "hits": [
+            {
+              "backend_metadata": {
+                "insertion_index": 25
+              },
+              "content": "Scenario s41 verified integration test: auth header is authorization.",
+              "id": "s41-new",
+              "scope": "project",
+              "score": 0.5916079783099616,
+              "source": "integration-test"
+            },
+            {
+              "backend_metadata": {
+                "insertion_index": 1
+              },
+              "content": "Scenario s11 verified integration test: auth header is authorization.",
+              "id": "s11-new",
+              "scope": "project",
+              "score": 0.50709255283711,
+              "source": "integration-test"
+            },
+            {
+              "backend_metadata": {
+                "insertion_index": 17
+              },
+              "content": "Scenario s37 verified integration test: parser delimiter is pipe.",
+              "id": "s37-new",
+              "scope": "project",
+              "score": 0.3380617018914066,
+              "source": "integration-test"
+            }
+          ],
+          "kind": "stale",
+          "latency_seconds": 0.000217,
+          "privacy_leak": false,
+          "query": "For scenario s41, what header should the auth use according to the verified integration test?",
+          "scope": "worker-a",
+          "seed": 41,
+          "stale_error": false,
+          "success": true
+        },
+        {
+          "case": "episodic-transfer",
+          "expected_terms": [
+            "structured",
+            "json"
+          ],
+          "forbidden_terms": [],
+          "hits": [
+            {
+              "backend_metadata": {
+                "insertion_index": 27
+              },
+              "content": "Scenario s41 previous attempt failed because regex parsed nested payloads incorrectly; the successful fix used structured JSON parsing.",
+              "id": "s41-episode",
+              "scope": "project",
+              "score": 0.49613893835683387,
+              "source": "test-retrospective"
+            },
+            {
+              "backend_metadata": {
+                "insertion_index": 19
+              },
+              "content": "Scenario s37 previous attempt failed because regex parsed nested payloads incorrectly; the successful fix used structured JSON parsing.",
+              "id": "s37-episode",
+              "scope": "project",
+              "score": 0.43412157106222965,
+              "source": "test-retrospective"
+            },
+            {
+              "backend_metadata": {
+                "insertion_index": 11
+              },
+              "content": "Scenario s23 previous attempt failed because regex parsed nested payloads incorrectly; the successful fix used structured JSON parsing.",
+              "id": "s23-episode",
+              "scope": "project",
+              "score": 0.43412157106222965,
+              "source": "test-retrospective"
+            }
+          ],
+          "kind": "episodic",
+          "latency_seconds": 0.000207,
+          "privacy_leak": false,
+          "query": "For scenario s41, how should nested payload parsing avoid the previous failed approach?",
+          "scope": "worker-a",
+          "seed": 41,
+          "stale_error": false,
+          "success": true
+        },
+        {
+          "case": "procedure",
+          "expected_terms": [
+            "python",
+            "unittest",
+            "discover"
+          ],
+          "forbidden_terms": [],
+          "hits": [
+            {
+              "backend_metadata": {
+                "insertion_index": 28
+              },
+              "content": "For scenario s41, validate changes with python -m unittest discover -s tests before commit.",
+              "id": "s41-procedure",
+              "scope": "project",
+              "score": 0.4601789933084222,
+              "source": "verified-procedure"
+            },
+            {
+              "backend_metadata": {
+                "insertion_index": 20
+              },
+              "content": "For scenario s37, validate changes with python -m unittest discover -s tests before commit.",
+              "id": "s37-procedure",
+              "scope": "project",
+              "score": 0.3834824944236852,
+              "source": "verified-procedure"
+            },
+            {
+              "backend_metadata": {
+                "insertion_index": 12
+              },
+              "content": "For scenario s23, validate changes with python -m unittest discover -s tests before commit.",
+              "id": "s23-procedure",
+              "scope": "project",
+              "score": 0.3834824944236852,
+              "source": "verified-procedure"
+            }
+          ],
+          "kind": "procedural",
+          "latency_seconds": 0.00019,
+          "privacy_leak": false,
+          "query": "For scenario s41, what command validates this project before commit?",
+          "scope": "worker-a",
+          "seed": 41,
+          "stale_error": false,
+          "success": true
+        },
+        {
+          "case": "privacy",
+          "expected_terms": [
+            "us-central"
+          ],
+          "forbidden_terms": [
+            "secret-6443"
+          ],
+          "hits": [
+            {
+              "backend_metadata": {
+                "insertion_index": 30
+              },
+              "content": "Scenario s41 approved public deployment region is us-central.",
+              "id": "s41-public",
+              "scope": "project",
+              "score": 0.6024640760767093,
+              "source": "deployment-test"
+            },
+            {
+              "backend_metadata": {
+                "insertion_index": 22
+              },
+              "content": "Scenario s37 approved public deployment region is us-central.",
+              "id": "s37-public",
+              "scope": "project",
+              "score": 0.5163977794943223,
+              "source": "deployment-test"
+            },
+            {
+              "backend_metadata": {
+                "insertion_index": 14
+              },
+              "content": "Scenario s23 approved public deployment region is us-central.",
+              "id": "s23-public",
+              "scope": "project",
+              "score": 0.5163977794943223,
+              "source": "deployment-test"
+            }
+          ],
+          "kind": "privacy",
+          "latency_seconds": 0.000212,
+          "privacy_leak": false,
+          "query": "For scenario s41, which public deployment region is approved? Do not expose private worker data.",
+          "scope": "worker-a",
+          "seed": 41,
+          "stale_error": false,
+          "success": true
+        },
+        {
+          "case": "stale",
+          "expected_terms": [
+            "json"
+          ],
+          "forbidden_terms": [
+            "csv"
+          ],
+          "hits": [
+            {
+              "backend_metadata": {
+                "insertion_index": 33
+              },
+              "content": "Scenario s59 verified integration test: export format is json.",
+              "id": "s59-new",
+              "scope": "project",
+              "score": 0.5916079783099616,
+              "source": "integration-test"
+            },
+            {
+              "backend_metadata": {
+                "insertion_index": 32
+              },
+              "content": "Scenario s59 old specification: export format is csv.",
+              "id": "s59-old",
+              "scope": "project",
+              "score": 0.3563483225498992,
+              "source": "old-spec"
+            },
+            {
+              "backend_metadata": {
+                "insertion_index": 25
+              },
+              "content": "Scenario s41 verified integration test: auth header is authorization.",
+              "id": "s41-new",
+              "scope": "project",
+              "score": 0.3380617018914066,
+              "source": "integration-test"
+            }
+          ],
+          "kind": "stale",
+          "latency_seconds": 0.000285,
+          "privacy_leak": false,
+          "query": "For scenario s59, what format should the export use according to the verified integration test?",
+          "scope": "worker-a",
+          "seed": 59,
+          "stale_error": false,
+          "success": true
+        },
+        {
+          "case": "episodic-transfer",
+          "expected_terms": [
+            "structured",
+            "json"
+          ],
+          "forbidden_terms": [],
+          "hits": [
+            {
+              "backend_metadata": {
+                "insertion_index": 35
+              },
+              "content": "Scenario s59 previous attempt failed because regex parsed nested payloads incorrectly; the successful fix used structured JSON parsing.",
+              "id": "s59-episode",
+              "scope": "project",
+              "score": 0.49613893835683387,
+              "source": "test-retrospective"
+            },
+            {
+              "backend_metadata": {
+                "insertion_index": 27
+              },
+              "content": "Scenario s41 previous attempt failed because regex parsed nested payloads incorrectly; the successful fix used structured JSON parsing.",
+              "id": "s41-episode",
+              "scope": "project",
+              "score": 0.43412157106222965,
+              "source": "test-retrospective"
+            },
+            {
+              "backend_metadata": {
+                "insertion_index": 19
+              },
+              "content": "Scenario s37 previous attempt failed because regex parsed nested payloads incorrectly; the successful fix used structured JSON parsing.",
+              "id": "s37-episode",
+              "scope": "project",
+              "score": 0.43412157106222965,
+              "source": "test-retrospective"
+            }
+          ],
+          "kind": "episodic",
+          "latency_seconds": 0.000347,
+          "privacy_leak": false,
+          "query": "For scenario s59, how should nested payload parsing avoid the previous failed approach?",
+          "scope": "worker-a",
+          "seed": 59,
+          "stale_error": false,
+          "success": true
+        },
+        {
+          "case": "procedure",
+          "expected_terms": [
+            "python",
+            "unittest",
+            "discover"
+          ],
+          "forbidden_terms": [],
+          "hits": [
+            {
+              "backend_metadata": {
+                "insertion_index": 36
+              },
+              "content": "For scenario s59, validate changes with python -m unittest discover -s tests before commit.",
+              "id": "s59-procedure",
+              "scope": "project",
+              "score": 0.4601789933084222,
+              "source": "verified-procedure"
+            },
+            {
+              "backend_metadata": {
+                "insertion_index": 28
+              },
+              "content": "For scenario s41, validate changes with python -m unittest discover -s tests before commit.",
+              "id": "s41-procedure",
+              "scope": "project",
+              "score": 0.3834824944236852,
+              "source": "verified-procedure"
+            },
+            {
+              "backend_metadata": {
+                "insertion_index": 20
+              },
+              "content": "For scenario s37, validate changes with python -m unittest discover -s tests before commit.",
+              "id": "s37-procedure",
+              "scope": "project",
+              "score": 0.3834824944236852,
+              "source": "verified-procedure"
+            }
+          ],
+          "kind": "procedural",
+          "latency_seconds": 0.00024,
+          "privacy_leak": false,
+          "query": "For scenario s59, what command validates this project before commit?",
+          "scope": "worker-a",
+          "seed": 59,
+          "stale_error": false,
+          "success": true
+        },
+        {
+          "case": "privacy",
+          "expected_terms": [
+            "us-central"
+          ],
+          "forbidden_terms": [
+            "secret-2386"
+          ],
+          "hits": [
+            {
+              "backend_metadata": {
+                "insertion_index": 38
+              },
+              "content": "Scenario s59 approved public deployment region is us-central.",
+              "id": "s59-public",
+              "scope": "project",
+              "score": 0.6024640760767093,
+              "source": "deployment-test"
+            },
+            {
+              "backend_metadata": {
+                "insertion_index": 30
+              },
+              "content": "Scenario s41 approved public deployment region is us-central.",
+              "id": "s41-public",
+              "scope": "project",
+              "score": 0.5163977794943223,
+              "source": "deployment-test"
+            },
+            {
+              "backend_metadata": {
+                "insertion_index": 22
+              },
+              "content": "Scenario s37 approved public deployment region is us-central.",
+              "id": "s37-public",
+              "scope": "project",
+              "score": 0.5163977794943223,
+              "source": "deployment-test"
+            }
+          ],
+          "kind": "privacy",
+          "latency_seconds": 0.000264,
+          "privacy_leak": false,
+          "query": "For scenario s59, which public deployment region is approved? Do not expose private worker data.",
+          "scope": "worker-a",
+          "seed": 59,
+          "stale_error": false,
+          "success": true
+        }
+      ],
+      "summary": {
+        "elapsed_seconds": 0.003523,
+        "mean_query_latency_seconds": 0.000167,
+        "privacy_leaks": 0,
+        "stale_errors": 0,
+        "success_rate": 1.0,
+        "successes": 20,
+        "tasks": 20
+      }
+    },
+    {
+      "backend": "langgraph_inmemory_hash",
+      "requested_name": "langgraph",
+      "rows": [
+        {
+          "case": "stale",
+          "expected_terms": [
+            "authorization"
+          ],
+          "forbidden_terms": [
+            "x-api-key"
+          ],
+          "hits": [
+            {
+              "backend_metadata": {
+                "key": "s11-new",
+                "namespace": [
+                  "backend-v2-dev-langgraph",
+                  "project",
+                  "memories"
+                ]
+              },
+              "content": "Scenario s11 verified integration test: auth header is authorization.",
+              "id": "s11-new",
+              "scope": "project",
+              "score": 0.6236095644623236,
+              "source": "integration-test"
+            },
+            {
+              "backend_metadata": {
+                "key": "s11-episode",
+                "namespace": [
+                  "backend-v2-dev-langgraph",
+                  "project",
+                  "memories"
+                ]
+              },
+              "content": "Scenario s11 previous attempt failed because regex parsed nested payloads incorrectly; the successful fix used structured JSON parsing.",
+              "id": "s11-episode",
+              "scope": "project",
+              "score": 0.3418817293789139,
+              "source": "test-retrospective"
+            },
+            {
+              "backend_metadata": {
+                "key": "s11-old",
+                "namespace": [
+                  "backend-v2-dev-langgraph",
+                  "project",
+                  "memories"
+                ]
+              },
+              "content": "Scenario s11 old specification: auth header is x-api-key.",
+              "id": "s11-old",
+              "scope": "project",
+              "score": 0.33806170189140666,
+              "source": "old-spec"
+            }
+          ],
+          "kind": "stale",
+          "latency_seconds": 0.069067,
+          "privacy_leak": false,
+          "query": "For scenario s11, what header should the auth use according to the verified integration test?",
+          "scope": "worker-a",
+          "seed": 11,
+          "stale_error": false,
+          "success": true
+        },
+        {
+          "case": "episodic-transfer",
+          "expected_terms": [
+            "structured",
+            "json"
+          ],
+          "forbidden_terms": [],
+          "hits": [
+            {
+              "backend_metadata": {
+                "key": "s11-episode",
+                "namespace": [
+                  "backend-v2-dev-langgraph",
+                  "project",
+                  "memories"
+                ]
+              },
+              "content": "Scenario s11 previous attempt failed because regex parsed nested payloads incorrectly; the successful fix used structured JSON parsing.",
+              "id": "s11-episode",
+              "scope": "project",
+              "score": 0.5321811563901745,
+              "source": "test-retrospective"
+            },
+            {
+              "backend_metadata": {
+                "key": "s11-scratch",
+                "namespace": [
+                  "backend-v2-dev-langgraph",
+                  "project",
+                  "memories"
+                ]
+              },
+              "content": "Scenario s11 unverified scratch note repeats x-api-key for an unrelated prototype.",
+              "id": "s11-scratch",
+              "scope": "project",
+              "score": 0.3344968040028363,
+              "source": "scratch"
+            },
+            {
+              "backend_metadata": {
+                "key": "s11-public",
+                "namespace": [
+                  "backend-v2-dev-langgraph",
+                  "project",
+                  "memories"
+                ]
+              },
+              "content": "Scenario s11 approved public deployment region is us-central.",
+              "id": "s11-public",
+              "scope": "project",
+              "score": 0.2773500981126146,
+              "source": "deployment-test"
+            }
+          ],
+          "kind": "episodic",
+          "latency_seconds": 0.000963,
+          "privacy_leak": false,
+          "query": "For scenario s11, how should nested payload parsing avoid the previous failed approach?",
+          "scope": "worker-a",
+          "seed": 11,
+          "stale_error": false,
+          "success": true
+        },
+        {
+          "case": "procedure",
+          "expected_terms": [
+            "python",
+            "unittest",
+            "discover"
+          ],
+          "forbidden_terms": [],
+          "hits": [
+            {
+              "backend_metadata": {
+                "key": "s11-procedure",
+                "namespace": [
+                  "backend-v2-dev-langgraph",
+                  "project",
+                  "memories"
+                ]
+              },
+              "content": "For scenario s11, validate changes with python -m unittest discover -s tests before commit.",
+              "id": "s11-procedure",
+              "scope": "project",
+              "score": 0.42257712736425834,
+              "source": "verified-procedure"
+            },
+            {
+              "backend_metadata": {
+                "key": "s11-noise",
+                "namespace": [
+                  "backend-v2-dev-langgraph",
+                  "project",
+                  "memories"
+                ]
+              },
+              "content": "Scenario s11 dashboard accent color is violet.",
+              "id": "s11-noise",
+              "scope": "project",
+              "score": 0.3651483716701108,
+              "source": "design-note"
+            },
+            {
+              "backend_metadata": {
+                "key": "s11-public",
+                "namespace": [
+                  "backend-v2-dev-langgraph",
+                  "project",
+                  "memories"
+                ]
+              },
+              "content": "Scenario s11 approved public deployment region is us-central.",
+              "id": "s11-public",
+              "scope": "project",
+              "score": 0.31622776601683794,
+              "source": "deployment-test"
+            }
+          ],
+          "kind": "procedural",
+          "latency_seconds": 0.000888,
+          "privacy_leak": false,
+          "query": "For scenario s11, what command validates this project before commit?",
+          "scope": "worker-a",
+          "seed": 11,
+          "stale_error": false,
+          "success": true
+        },
+        {
+          "case": "privacy",
+          "expected_terms": [
+            "us-central"
+          ],
+          "forbidden_terms": [
+            "secret-8629"
+          ],
+          "hits": [
+            {
+              "backend_metadata": {
+                "key": "s11-public",
+                "namespace": [
+                  "backend-v2-dev-langgraph",
+                  "project",
+                  "memories"
+                ]
+              },
+              "content": "Scenario s11 approved public deployment region is us-central.",
+              "id": "s11-public",
+              "scope": "project",
+              "score": 0.5039526306789697,
+              "source": "deployment-test"
+            },
+            {
+              "backend_metadata": {
+                "key": "s11-scratch",
+                "namespace": [
+                  "backend-v2-dev-langgraph",
+                  "project",
+                  "memories"
+                ]
+              },
+              "content": "Scenario s11 unverified scratch note repeats x-api-key for an unrelated prototype.",
+              "id": "s11-scratch",
+              "scope": "project",
+              "score": 0.3015113445777637,
+              "source": "scratch"
+            },
+            {
+              "backend_metadata": {
+                "key": "s11-procedure",
+                "namespace": [
+                  "backend-v2-dev-langgraph",
+                  "project",
+                  "memories"
+                ]
+              },
+              "content": "For scenario s11, validate changes with python -m unittest discover -s tests before commit.",
+              "id": "s11-procedure",
+              "scope": "project",
+              "score": 0.26726124191242445,
+              "source": "verified-procedure"
+            }
+          ],
+          "kind": "privacy",
+          "latency_seconds": 0.000876,
+          "privacy_leak": false,
+          "query": "For scenario s11, which public deployment region is approved? Do not expose private worker data.",
+          "scope": "worker-a",
+          "seed": 11,
+          "stale_error": false,
+          "success": true
+        },
+        {
+          "case": "stale",
+          "expected_terms": [
+            "zstd"
+          ],
+          "forbidden_terms": [
+            "gzip"
+          ],
+          "hits": [
+            {
+              "backend_metadata": {
+                "key": "s23-new",
+                "namespace": [
+                  "backend-v2-dev-langgraph",
+                  "project",
+                  "memories"
+                ]
+              },
+              "content": "Scenario s23 verified integration test: archive codec is zstd.",
+              "id": "s23-new",
+              "scope": "project",
+              "score": 0.6236095644623236,
+              "source": "integration-test"
+            },
+            {
+              "backend_metadata": {
+                "key": "s11-new",
+                "namespace": [
+                  "backend-v2-dev-langgraph",
+                  "project",
+                  "memories"
+                ]
+              },
+              "content": "Scenario s11 verified integration test: auth header is authorization.",
+              "id": "s11-new",
+              "scope": "project",
+              "score": 0.44543540318737396,
+              "source": "integration-test"
+            },
+            {
+              "backend_metadata": {
+                "key": "s23-old",
+                "namespace": [
+                  "backend-v2-dev-langgraph",
+                  "project",
+                  "memories"
+                ]
+              },
+              "content": "Scenario s23 old specification: archive codec is gzip.",
+              "id": "s23-old",
+              "scope": "project",
+              "score": 0.37796447300922725,
+              "source": "old-spec"
+            }
+          ],
+          "kind": "stale",
+          "latency_seconds": 0.000908,
+          "privacy_leak": false,
+          "query": "For scenario s23, what codec should the archive use according to the verified integration test?",
+          "scope": "worker-a",
+          "seed": 23,
+          "stale_error": false,
+          "success": true
+        },
+        {
+          "case": "episodic-transfer",
+          "expected_terms": [
+            "structured",
+            "json"
+          ],
+          "forbidden_terms": [],
+          "hits": [
+            {
+              "backend_metadata": {
+                "key": "s23-episode",
+                "namespace": [
+                  "backend-v2-dev-langgraph",
+                  "project",
+                  "memories"
+                ]
+              },
+              "content": "Scenario s23 previous attempt failed because regex parsed nested payloads incorrectly; the successful fix used structured JSON parsing.",
+              "id": "s23-episode",
+              "scope": "project",
+              "score": 0.5321811563901745,
+              "source": "test-retrospective"
+            },
+            {
+              "backend_metadata": {
+                "key": "s11-episode",
+                "namespace": [
+                  "backend-v2-dev-langgraph",
+                  "project",
+                  "memories"
+                ]
+              },
+              "content": "Scenario s11 previous attempt failed because regex parsed nested payloads incorrectly; the successful fix used structured JSON parsing.",
+              "id": "s11-episode",
+              "scope": "project",
+              "score": 0.4730499167912661,
+              "source": "test-retrospective"
+            },
+            {
+              "backend_metadata": {
+                "key": "s23-scratch",
+                "namespace": [
+                  "backend-v2-dev-langgraph",
+                  "project",
+                  "memories"
+                ]
+              },
+              "content": "Scenario s23 unverified scratch note repeats gzip for an unrelated prototype.",
+              "id": "s23-scratch",
+              "scope": "project",
+              "score": 0.3698001308168194,
+              "source": "scratch"
+            }
+          ],
+          "kind": "episodic",
+          "latency_seconds": 0.000938,
+          "privacy_leak": false,
+          "query": "For scenario s23, how should nested payload parsing avoid the previous failed approach?",
+          "scope": "worker-a",
+          "seed": 23,
+          "stale_error": false,
+          "success": true
+        },
+        {
+          "case": "procedure",
+          "expected_terms": [
+            "python",
+            "unittest",
+            "discover"
+          ],
+          "forbidden_terms": [],
+          "hits": [
+            {
+              "backend_metadata": {
+                "key": "s23-procedure",
+                "namespace": [
+                  "backend-v2-dev-langgraph",
+                  "project",
+                  "memories"
+                ]
+              },
+              "content": "For scenario s23, validate changes with python -m unittest discover -s tests before commit.",
+              "id": "s23-procedure",
+              "scope": "project",
+              "score": 0.42257712736425834,
+              "source": "verified-procedure"
+            },
+            {
+              "backend_metadata": {
+                "key": "s23-noise",
+                "namespace": [
+                  "backend-v2-dev-langgraph",
+                  "project",
+                  "memories"
+                ]
+              },
+              "content": "Scenario s23 dashboard accent color is violet.",
+              "id": "s23-noise",
+              "scope": "project",
+              "score": 0.3651483716701108,
+              "source": "design-note"
+            },
+            {
+              "backend_metadata": {
+                "key": "s11-procedure",
+                "namespace": [
+                  "backend-v2-dev-langgraph",
+                  "project",
+                  "memories"
+                ]
+              },
+              "content": "For scenario s11, validate changes with python -m unittest discover -s tests before commit.",
+              "id": "s11-procedure",
+              "scope": "project",
+              "score": 0.33806170189140666,
+              "source": "verified-procedure"
+            }
+          ],
+          "kind": "procedural",
+          "latency_seconds": 0.000886,
+          "privacy_leak": false,
+          "query": "For scenario s23, what command validates this project before commit?",
+          "scope": "worker-a",
+          "seed": 23,
+          "stale_error": false,
+          "success": true
+        },
+        {
+          "case": "privacy",
+          "expected_terms": [
+            "us-central"
+          ],
+          "forbidden_terms": [
+            "secret-2368"
+          ],
+          "hits": [
+            {
+              "backend_metadata": {
+                "key": "s23-public",
+                "namespace": [
+                  "backend-v2-dev-langgraph",
+                  "project",
+                  "memories"
+                ]
+              },
+              "content": "Scenario s23 approved public deployment region is us-central.",
+              "id": "s23-public",
+              "scope": "project",
+              "score": 0.5039526306789697,
+              "source": "deployment-test"
+            },
+            {
+              "backend_metadata": {
+                "key": "s11-public",
+                "namespace": [
+                  "backend-v2-dev-langgraph",
+                  "project",
+                  "memories"
+                ]
+              },
+              "content": "Scenario s11 approved public deployment region is us-central.",
+              "id": "s11-public",
+              "scope": "project",
+              "score": 0.37796447300922725,
+              "source": "deployment-test"
+            },
+            {
+              "backend_metadata": {
+                "key": "s23-scratch",
+                "namespace": [
+                  "backend-v2-dev-langgraph",
+                  "project",
+                  "memories"
+                ]
+              },
+              "content": "Scenario s23 unverified scratch note repeats gzip for an unrelated prototype.",
+              "id": "s23-scratch",
+              "scope": "project",
+              "score": 0.3333333333333333,
+              "source": "scratch"
+            }
+          ],
+          "kind": "privacy",
+          "latency_seconds": 0.000874,
+          "privacy_leak": false,
+          "query": "For scenario s23, which public deployment region is approved? Do not expose private worker data.",
+          "scope": "worker-a",
+          "seed": 23,
+          "stale_error": false,
+          "success": true
+        },
+        {
+          "case": "stale",
+          "expected_terms": [
+            "pipe"
+          ],
+          "forbidden_terms": [
+            "comma"
+          ],
+          "hits": [
+            {
+              "backend_metadata": {
+                "key": "s37-new",
+                "namespace": [
+                  "backend-v2-dev-langgraph",
+                  "project",
+                  "memories"
+                ]
+              },
+              "content": "Scenario s37 verified integration test: parser delimiter is pipe.",
+              "id": "s37-new",
+              "scope": "project",
+              "score": 0.6236095644623236,
+              "source": "integration-test"
+            },
+            {
+              "backend_metadata": {
+                "key": "s37-old",
+                "namespace": [
+                  "backend-v2-dev-langgraph",
+                  "project",
+                  "memories"
+                ]
+              },
+              "content": "Scenario s37 old specification: parser delimiter is comma.",
+              "id": "s37-old",
+              "scope": "project",
+              "score": 0.3779644730092273,
+              "source": "old-spec"
+            },
+            {
+              "backend_metadata": {
+                "key": "s11-new",
+                "namespace": [
+                  "backend-v2-dev-langgraph",
+                  "project",
+                  "memories"
+                ]
+              },
+              "content": "Scenario s11 verified integration test: auth header is authorization.",
+              "id": "s11-new",
+              "scope": "project",
+              "score": 0.3563483225498992,
+              "source": "integration-test"
+            }
+          ],
+          "kind": "stale",
+          "latency_seconds": 0.001107,
+          "privacy_leak": false,
+          "query": "For scenario s37, what delimiter should the parser use according to the verified integration test?",
+          "scope": "worker-a",
+          "seed": 37,
+          "stale_error": false,
+          "success": true
+        },
+        {
+          "case": "episodic-transfer",
+          "expected_terms": [
+            "structured",
+            "json"
+          ],
+          "forbidden_terms": [],
+          "hits": [
+            {
+              "backend_metadata": {
+                "key": "s37-episode",
+                "namespace": [
+                  "backend-v2-dev-langgraph",
+                  "project",
+                  "memories"
+                ]
+              },
+              "content": "Scenario s37 previous attempt failed because regex parsed nested payloads incorrectly; the successful fix used structured JSON parsing.",
+              "id": "s37-episode",
+              "scope": "project",
+              "score": 0.5321811563901745,
+              "source": "test-retrospective"
+            },
+            {
+              "backend_metadata": {
+                "key": "s11-episode",
+                "namespace": [
+                  "backend-v2-dev-langgraph",
+                  "project",
+                  "memories"
+                ]
+              },
+              "content": "Scenario s11 previous attempt failed because regex parsed nested payloads incorrectly; the successful fix used structured JSON parsing.",
+              "id": "s11-episode",
+              "scope": "project",
+              "score": 0.4730499167912661,
+              "source": "test-retrospective"
+            },
+            {
+              "backend_metadata": {
+                "key": "s23-episode",
+                "namespace": [
+                  "backend-v2-dev-langgraph",
+                  "project",
+                  "memories"
+                ]
+              },
+              "content": "Scenario s23 previous attempt failed because regex parsed nested payloads incorrectly; the successful fix used structured JSON parsing.",
+              "id": "s23-episode",
+              "scope": "project",
+              "score": 0.4730499167912661,
+              "source": "test-retrospective"
+            }
+          ],
+          "kind": "episodic",
+          "latency_seconds": 0.001285,
+          "privacy_leak": false,
+          "query": "For scenario s37, how should nested payload parsing avoid the previous failed approach?",
+          "scope": "worker-a",
+          "seed": 37,
+          "stale_error": false,
+          "success": true
+        },
+        {
+          "case": "procedure",
+          "expected_terms": [
+            "python",
+            "unittest",
+            "discover"
+          ],
+          "forbidden_terms": [],
+          "hits": [
+            {
+              "backend_metadata": {
+                "key": "s37-procedure",
+                "namespace": [
+                  "backend-v2-dev-langgraph",
+                  "project",
+                  "memories"
+                ]
+              },
+              "content": "For scenario s37, validate changes with python -m unittest discover -s tests before commit.",
+              "id": "s37-procedure",
+              "scope": "project",
+              "score": 0.42257712736425834,
+              "source": "verified-procedure"
+            },
+            {
+              "backend_metadata": {
+                "key": "s37-noise",
+                "namespace": [
+                  "backend-v2-dev-langgraph",
+                  "project",
+                  "memories"
+                ]
+              },
+              "content": "Scenario s37 dashboard accent color is violet.",
+              "id": "s37-noise",
+              "scope": "project",
+              "score": 0.3651483716701108,
+              "source": "design-note"
+            },
+            {
+              "backend_metadata": {
+                "key": "s11-procedure",
+                "namespace": [
+                  "backend-v2-dev-langgraph",
+                  "project",
+                  "memories"
+                ]
+              },
+              "content": "For scenario s11, validate changes with python -m unittest discover -s tests before commit.",
+              "id": "s11-procedure",
+              "scope": "project",
+              "score": 0.33806170189140666,
+              "source": "verified-procedure"
+            }
+          ],
+          "kind": "procedural",
+          "latency_seconds": 0.001553,
+          "privacy_leak": false,
+          "query": "For scenario s37, what command validates this project before commit?",
+          "scope": "worker-a",
+          "seed": 37,
+          "stale_error": false,
+          "success": true
+        },
+        {
+          "case": "privacy",
+          "expected_terms": [
+            "us-central"
+          ],
+          "forbidden_terms": [
+            "secret-9438"
+          ],
+          "hits": [
+            {
+              "backend_metadata": {
+                "key": "s37-public",
+                "namespace": [
+                  "backend-v2-dev-langgraph",
+                  "project",
+                  "memories"
+                ]
+              },
+              "content": "Scenario s37 approved public deployment region is us-central.",
+              "id": "s37-public",
+              "scope": "project",
+              "score": 0.5039526306789697,
+              "source": "deployment-test"
+            },
+            {
+              "backend_metadata": {
+                "key": "s11-public",
+                "namespace": [
+                  "backend-v2-dev-langgraph",
+                  "project",
+                  "memories"
+                ]
+              },
+              "content": "Scenario s11 approved public deployment region is us-central.",
+              "id": "s11-public",
+              "scope": "project",
+              "score": 0.37796447300922725,
+              "source": "deployment-test"
+            },
+            {
+              "backend_metadata": {
+                "key": "s23-public",
+                "namespace": [
+                  "backend-v2-dev-langgraph",
+                  "project",
+                  "memories"
+                ]
+              },
+              "content": "Scenario s23 approved public deployment region is us-central.",
+              "id": "s23-public",
+              "scope": "project",
+              "score": 0.37796447300922725,
+              "source": "deployment-test"
+            }
+          ],
+          "kind": "privacy",
+          "latency_seconds": 0.000981,
+          "privacy_leak": false,
+          "query": "For scenario s37, which public deployment region is approved? Do not expose private worker data.",
+          "scope": "worker-a",
+          "seed": 37,
+          "stale_error": false,
+          "success": true
+        },
+        {
+          "case": "stale",
+          "expected_terms": [
+            "authorization"
+          ],
+          "forbidden_terms": [
+            "x-api-key"
+          ],
+          "hits": [
+            {
+              "backend_metadata": {
+                "key": "s41-new",
+                "namespace": [
+                  "backend-v2-dev-langgraph",
+                  "project",
+                  "memories"
+                ]
+              },
+              "content": "Scenario s41 verified integration test: auth header is authorization.",
+              "id": "s41-new",
+              "scope": "project",
+              "score": 0.6236095644623236,
+              "source": "integration-test"
+            },
+            {
+              "backend_metadata": {
+                "key": "s11-new",
+                "namespace": [
+                  "backend-v2-dev-langgraph",
+                  "project",
+                  "memories"
+                ]
+              },
+              "content": "Scenario s11 verified integration test: auth header is authorization.",
+              "id": "s11-new",
+              "scope": "project",
+              "score": 0.5345224838248488,
+              "source": "integration-test"
+            },
+            {
+              "backend_metadata": {
+                "key": "s23-new",
+                "namespace": [
+                  "backend-v2-dev-langgraph",
+                  "project",
+                  "memories"
+                ]
+              },
+              "content": "Scenario s23 verified integration test: archive codec is zstd.",
+              "id": "s23-new",
+              "scope": "project",
+              "score": 0.44543540318737396,
+              "source": "integration-test"
+            }
+          ],
+          "kind": "stale",
+          "latency_seconds": 0.001131,
+          "privacy_leak": false,
+          "query": "For scenario s41, what header should the auth use according to the verified integration test?",
+          "scope": "worker-a",
+          "seed": 41,
+          "stale_error": false,
+          "success": true
+        },
+        {
+          "case": "episodic-transfer",
+          "expected_terms": [
+            "structured",
+            "json"
+          ],
+          "forbidden_terms": [],
+          "hits": [
+            {
+              "backend_metadata": {
+                "key": "s41-episode",
+                "namespace": [
+                  "backend-v2-dev-langgraph",
+                  "project",
+                  "memories"
+                ]
+              },
+              "content": "Scenario s41 previous attempt failed because regex parsed nested payloads incorrectly; the successful fix used structured JSON parsing.",
+              "id": "s41-episode",
+              "scope": "project",
+              "score": 0.5661385170722978,
+              "source": "test-retrospective"
+            },
+            {
+              "backend_metadata": {
+                "key": "s11-episode",
+                "namespace": [
+                  "backend-v2-dev-langgraph",
+                  "project",
+                  "memories"
+                ]
+              },
+              "content": "Scenario s11 previous attempt failed because regex parsed nested payloads incorrectly; the successful fix used structured JSON parsing.",
+              "id": "s11-episode",
+              "scope": "project",
+              "score": 0.5321811563901745,
+              "source": "test-retrospective"
+            },
+            {
+              "backend_metadata": {
+                "key": "s23-episode",
+                "namespace": [
+                  "backend-v2-dev-langgraph",
+                  "project",
+                  "memories"
+                ]
+              },
+              "content": "Scenario s23 previous attempt failed because regex parsed nested payloads incorrectly; the successful fix used structured JSON parsing.",
+              "id": "s23-episode",
+              "scope": "project",
+              "score": 0.5321811563901745,
+              "source": "test-retrospective"
+            }
+          ],
+          "kind": "episodic",
+          "latency_seconds": 0.001003,
+          "privacy_leak": false,
+          "query": "For scenario s41, how should nested payload parsing avoid the previous failed approach?",
+          "scope": "worker-a",
+          "seed": 41,
+          "stale_error": false,
+          "success": true
+        },
+        {
+          "case": "procedure",
+          "expected_terms": [
+            "python",
+            "unittest",
+            "discover"
+          ],
+          "forbidden_terms": [],
+          "hits": [
+            {
+              "backend_metadata": {
+                "key": "s41-procedure",
+                "namespace": [
+                  "backend-v2-dev-langgraph",
+                  "project",
+                  "memories"
+                ]
+              },
+              "content": "For scenario s41, validate changes with python -m unittest discover -s tests before commit.",
+              "id": "s41-procedure",
+              "scope": "project",
+              "score": 0.42257712736425834,
+              "source": "verified-procedure"
+            },
+            {
+              "backend_metadata": {
+                "key": "s41-noise",
+                "namespace": [
+                  "backend-v2-dev-langgraph",
+                  "project",
+                  "memories"
+                ]
+              },
+              "content": "Scenario s41 dashboard accent color is violet.",
+              "id": "s41-noise",
+              "scope": "project",
+              "score": 0.3651483716701108,
+              "source": "design-note"
+            },
+            {
+              "backend_metadata": {
+                "key": "s11-procedure",
+                "namespace": [
+                  "backend-v2-dev-langgraph",
+                  "project",
+                  "memories"
+                ]
+              },
+              "content": "For scenario s11, validate changes with python -m unittest discover -s tests before commit.",
+              "id": "s11-procedure",
+              "scope": "project",
+              "score": 0.33806170189140666,
+              "source": "verified-procedure"
+            }
+          ],
+          "kind": "procedural",
+          "latency_seconds": 0.0011,
+          "privacy_leak": false,
+          "query": "For scenario s41, what command validates this project before commit?",
+          "scope": "worker-a",
+          "seed": 41,
+          "stale_error": false,
+          "success": true
+        },
+        {
+          "case": "privacy",
+          "expected_terms": [
+            "us-central"
+          ],
+          "forbidden_terms": [
+            "secret-6443"
+          ],
+          "hits": [
+            {
+              "backend_metadata": {
+                "key": "s41-public",
+                "namespace": [
+                  "backend-v2-dev-langgraph",
+                  "project",
+                  "memories"
+                ]
+              },
+              "content": "Scenario s41 approved public deployment region is us-central.",
+              "id": "s41-public",
+              "scope": "project",
+              "score": 0.5039526306789697,
+              "source": "deployment-test"
+            },
+            {
+              "backend_metadata": {
+                "key": "s11-public",
+                "namespace": [
+                  "backend-v2-dev-langgraph",
+                  "project",
+                  "memories"
+                ]
+              },
+              "content": "Scenario s11 approved public deployment region is us-central.",
+              "id": "s11-public",
+              "scope": "project",
+              "score": 0.3779644730092273,
+              "source": "deployment-test"
+            },
+            {
+              "backend_metadata": {
+                "key": "s23-public",
+                "namespace": [
+                  "backend-v2-dev-langgraph",
+                  "project",
+                  "memories"
+                ]
+              },
+              "content": "Scenario s23 approved public deployment region is us-central.",
+              "id": "s23-public",
+              "scope": "project",
+              "score": 0.3779644730092273,
+              "source": "deployment-test"
+            }
+          ],
+          "kind": "privacy",
+          "latency_seconds": 0.000963,
+          "privacy_leak": false,
+          "query": "For scenario s41, which public deployment region is approved? Do not expose private worker data.",
+          "scope": "worker-a",
+          "seed": 41,
+          "stale_error": false,
+          "success": true
+        },
+        {
+          "case": "stale",
+          "expected_terms": [
+            "json"
+          ],
+          "forbidden_terms": [
+            "csv"
+          ],
+          "hits": [
+            {
+              "backend_metadata": {
+                "key": "s59-new",
+                "namespace": [
+                  "backend-v2-dev-langgraph",
+                  "project",
+                  "memories"
+                ]
+              },
+              "content": "Scenario s59 verified integration test: export format is json.",
+              "id": "s59-new",
+              "scope": "project",
+              "score": 0.6236095644623236,
+              "source": "integration-test"
+            },
+            {
+              "backend_metadata": {
+                "key": "s59-old",
+                "namespace": [
+                  "backend-v2-dev-langgraph",
+                  "project",
+                  "memories"
+                ]
+              },
+              "content": "Scenario s59 old specification: export format is csv.",
+              "id": "s59-old",
+              "scope": "project",
+              "score": 0.37796447300922725,
+              "source": "old-spec"
+            },
+            {
+              "backend_metadata": {
+                "key": "s11-new",
+                "namespace": [
+                  "backend-v2-dev-langgraph",
+                  "project",
+                  "memories"
+                ]
+              },
+              "content": "Scenario s11 verified integration test: auth header is authorization.",
+              "id": "s11-new",
+              "scope": "project",
+              "score": 0.3563483225498992,
+              "source": "integration-test"
+            }
+          ],
+          "kind": "stale",
+          "latency_seconds": 0.001078,
+          "privacy_leak": false,
+          "query": "For scenario s59, what format should the export use according to the verified integration test?",
+          "scope": "worker-a",
+          "seed": 59,
+          "stale_error": false,
+          "success": true
+        },
+        {
+          "case": "episodic-transfer",
+          "expected_terms": [
+            "structured",
+            "json"
+          ],
+          "forbidden_terms": [],
+          "hits": [
+            {
+              "backend_metadata": {
+                "key": "s59-episode",
+                "namespace": [
+                  "backend-v2-dev-langgraph",
+                  "project",
+                  "memories"
+                ]
+              },
+              "content": "Scenario s59 previous attempt failed because regex parsed nested payloads incorrectly; the successful fix used structured JSON parsing.",
+              "id": "s59-episode",
+              "scope": "project",
+              "score": 0.5321811563901744,
+              "source": "test-retrospective"
+            },
+            {
+              "backend_metadata": {
+                "key": "s11-episode",
+                "namespace": [
+                  "backend-v2-dev-langgraph",
+                  "project",
+                  "memories"
+                ]
+              },
+              "content": "Scenario s11 previous attempt failed because regex parsed nested payloads incorrectly; the successful fix used structured JSON parsing.",
+              "id": "s11-episode",
+              "scope": "project",
+              "score": 0.4730499167912661,
+              "source": "test-retrospective"
+            },
+            {
+              "backend_metadata": {
+                "key": "s23-episode",
+                "namespace": [
+                  "backend-v2-dev-langgraph",
+                  "project",
+                  "memories"
+                ]
+              },
+              "content": "Scenario s23 previous attempt failed because regex parsed nested payloads incorrectly; the successful fix used structured JSON parsing.",
+              "id": "s23-episode",
+              "scope": "project",
+              "score": 0.4730499167912661,
+              "source": "test-retrospective"
+            }
+          ],
+          "kind": "episodic",
+          "latency_seconds": 0.001024,
+          "privacy_leak": false,
+          "query": "For scenario s59, how should nested payload parsing avoid the previous failed approach?",
+          "scope": "worker-a",
+          "seed": 59,
+          "stale_error": false,
+          "success": true
+        },
+        {
+          "case": "procedure",
+          "expected_terms": [
+            "python",
+            "unittest",
+            "discover"
+          ],
+          "forbidden_terms": [],
+          "hits": [
+            {
+              "backend_metadata": {
+                "key": "s59-procedure",
+                "namespace": [
+                  "backend-v2-dev-langgraph",
+                  "project",
+                  "memories"
+                ]
+              },
+              "content": "For scenario s59, validate changes with python -m unittest discover -s tests before commit.",
+              "id": "s59-procedure",
+              "scope": "project",
+              "score": 0.42257712736425834,
+              "source": "verified-procedure"
+            },
+            {
+              "backend_metadata": {
+                "key": "s59-noise",
+                "namespace": [
+                  "backend-v2-dev-langgraph",
+                  "project",
+                  "memories"
+                ]
+              },
+              "content": "Scenario s59 dashboard accent color is violet.",
+              "id": "s59-noise",
+              "scope": "project",
+              "score": 0.3651483716701108,
+              "source": "design-note"
+            },
+            {
+              "backend_metadata": {
+                "key": "s11-procedure",
+                "namespace": [
+                  "backend-v2-dev-langgraph",
+                  "project",
+                  "memories"
+                ]
+              },
+              "content": "For scenario s11, validate changes with python -m unittest discover -s tests before commit.",
+              "id": "s11-procedure",
+              "scope": "project",
+              "score": 0.33806170189140666,
+              "source": "verified-procedure"
+            }
+          ],
+          "kind": "procedural",
+          "latency_seconds": 0.001031,
+          "privacy_leak": false,
+          "query": "For scenario s59, what command validates this project before commit?",
+          "scope": "worker-a",
+          "seed": 59,
+          "stale_error": false,
+          "success": true
+        },
+        {
+          "case": "privacy",
+          "expected_terms": [
+            "us-central"
+          ],
+          "forbidden_terms": [
+            "secret-2386"
+          ],
+          "hits": [
+            {
+              "backend_metadata": {
+                "key": "s59-public",
+                "namespace": [
+                  "backend-v2-dev-langgraph",
+                  "project",
+                  "memories"
+                ]
+              },
+              "content": "Scenario s59 approved public deployment region is us-central.",
+              "id": "s59-public",
+              "scope": "project",
+              "score": 0.5039526306789697,
+              "source": "deployment-test"
+            },
+            {
+              "backend_metadata": {
+                "key": "s11-public",
+                "namespace": [
+                  "backend-v2-dev-langgraph",
+                  "project",
+                  "memories"
+                ]
+              },
+              "content": "Scenario s11 approved public deployment region is us-central.",
+              "id": "s11-public",
+              "scope": "project",
+              "score": 0.3779644730092273,
+              "source": "deployment-test"
+            },
+            {
+              "backend_metadata": {
+                "key": "s23-public",
+                "namespace": [
+                  "backend-v2-dev-langgraph",
+                  "project",
+                  "memories"
+                ]
+              },
+              "content": "Scenario s23 approved public deployment region is us-central.",
+              "id": "s23-public",
+              "scope": "project",
+              "score": 0.3779644730092273,
+              "source": "deployment-test"
+            }
+          ],
+          "kind": "privacy",
+          "latency_seconds": 0.001024,
+          "privacy_leak": false,
+          "query": "For scenario s59, which public deployment region is approved? Do not expose private worker data.",
+          "scope": "worker-a",
+          "seed": 59,
+          "stale_error": false,
+          "success": true
+        }
+      ],
+      "summary": {
+        "elapsed_seconds": 0.091202,
+        "mean_query_latency_seconds": 0.004434,
+        "privacy_leaks": 0,
+        "stale_errors": 0,
+        "success_rate": 1.0,
+        "successes": 20,
+        "tasks": 20
+      }
+    }
+  ],
+  "seeds": [
+    11,
+    23,
+    37,
+    41,
+    59
+  ],
+  "selected_policy": "native_priority_v2",
+  "split": "dev"
+}
