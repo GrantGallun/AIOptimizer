@@ -51,6 +51,28 @@ highest-value gap — mature (14–22k stars), purest token-level determinism, a
 **DSPy** is the optimization layer above it. **Reflexion** is the named ancestor of our queued
 reasoning experiment (t0014).
 
+## Context optimization ("which parts of context matter" — a whole subfield)
+
+Motivation: **lost-in-the-middle** / context rot — models degrade as context grows. Two importance
+signals dominate: **information/entropy** and **attention**. Scraped repos (Haiku, 2026-07-10):
+
+| repo | stars | technique | kernel-fit |
+|---|---|---|---|
+| microsoft/LLMLingua | 6.4k | compact LM scores + drops non-essential tokens | High |
+| **LLMLingua-2** | (in LLMLingua) | **BERT-scale ENCODER trained on GPT-4-distilled labels → token importance**; task-agnostic, 3–6x | **High** |
+| mit-han-lab/streaming-llm | 7.2k | attention sinks: keep initial + recent, discard middle | High |
+| FMInference/H2O | 526 | heavy-hitter: recency + salience dual-signal token ranking | High |
+| FasterDecoding/SnapKV | 323 | snapshot selection of important KV pairs | High |
+| liyucheng09/Selective_Context | 421 | self-information (entropy) ranking, no external model | High |
+| parthsarthi03/raptor | 1.7k | recursive summary **tree** (hierarchical retrieval) | Med |
+
+**Key validation:** LLMLingua-2 is *literally an encoder that scores which context matters* — the
+user's "attention-encoder" instinct is SOTA, and it sidesteps the FlashAttention-hides-attention
+problem that hobbles H2O/SnapKV in production. Most reusable: **LLMLingua-2** (encoder token-scoring
+pipeline), **H2O** (recency+salience formulation), **Selective_Context** (entropy, zero extra model).
+Our angle: apply encoder importance-scoring at the *memory-chunk/fact* level as a deterministic
+selection primitive integrated with governed retrieval — the agent-memory version, not just inference.
+
 ## Runnable next experiment (deterministic-kernel test)
 
 **Constrained decoding as an action-validity layer for the CoALA controller.** Codex's

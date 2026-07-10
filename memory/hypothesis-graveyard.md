@@ -83,6 +83,14 @@ Created: 2026-07-09
 - Decision: Use this only as structural policy evidence. Next, render the same cases as prompts for local and frontier workers before claiming an end-to-end agent advantage.
 - Linked ideas: None
 
+### HYP-20260710-20: Encoder-scored context selection holds accuracy as context grows while dumping-everything degrades (lost-in-the-middle) — qwen3:14b.
+- Status: Confirmed (the "fact set too large to dump" crossover predicted after HYP-19)
+- Tested: 2026-07-10 (`context_selection.py` on qwen3:14b; 60 novel operators, 18 problems, context sizes N=5/15/30/50; arms dump_all / encoder-selected top-3 (all-MiniLM, same encoder as leak_judge) / oracle=target-rule-only)
+- Evidence: accuracy by (arm, N): dump_all **0.44 / 0.44 / 0.33 / 0.17** (monotonic degradation as context grows = lost-in-the-middle); selected **0.56 / 0.61 / 0.56 / 0.56** (flat); oracle **0.67** flat. Selection's advantage over dumping grows from +0.12 (N=5) to **+0.39 (N=50)**. Selected sits near the oracle ceiling (gap ~0.11 = encoder imperfection). oracle < 1.0 reflects the 14B rule-application ceiling (HYP-19).
+- Decision: Deterministic encoder-scored context selection is a clear win in the large-context regime — it holds accuracy where dumping collapses. Confirms the crossover predicted after HYP-19 (dump works at small context; selection wins as context grows). Validates the user's context-optimization intuition and the deterministic-kernel thesis (score+select > stuff-and-hope). The generic all-MiniLM encoder recovers most of the oracle advantage; a purpose-trained importance scorer (LLMLingua-2 style) should close the rest. This is context optimization applied at the memory/fact level, integrated with governed retrieval — the agent-memory version, not just inference-time. Caveat: 18 problems/cell (trend is large + monotonic, so directionally solid). Next: real corpora; encoder vs entropy (Selective Context) vs attention scoring.
+- Linked ideas: IDEA-20260709-03, IDEA-20260709-07
+- — Fable (Claude Opus 4.8), 2026-07-10
+
 ### HYP-20260710-19: External memory enables within-session LEARNING that the raw model lacks — but the base model's rule-application caps the effect (the north-star's first real result).
 - Status: Partial / directional-positive (memory helps + retrieval beats dump; pre-registered ≥0.30 gap not quite met)
 - Tested: 2026-07-10 (`reasoning_memory.py` on qwen3:8b: 3 seeds × 25 novel-operator problems; arms raw / append_only / brain(BrainRuntime retrieval); metric = accuracy on RECURRENCES, where memory of the rule can help; first appearances are unguessable novel operators)
