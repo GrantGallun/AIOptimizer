@@ -32,6 +32,22 @@ later = PersistentBrainRuntime.load("state/session.json")
 Snapshots declare the `brain-runtime-session-v1` schema and reject unknown versions or dangling
 store references. Run `python -m unittest tests.test_session_runtime` for the persistence contract.
 
+## CoALA decision cycles
+
+`coala.py` supplies a model-agnostic controller following the memory/action/decision decomposition
+in [Cognitive Architectures for Language Agents](https://arxiv.org/abs/2309.02427). A policy can
+interleave bounded retrieval and reasoning actions before selecting one terminal learning or
+grounding action. Reasoning, policy selection, and external grounding remain injected callbacks,
+so the same architecture can be tested with deterministic fakes or a real worker.
+
+Long-term writes are typed as episodic, semantic, or procedural. Procedural learning is disabled
+unless explicitly enabled, retrieval cannot change the cycle's authorized scope, and feedback
+credit is validated atomically before it updates utility or records a scoped episodic memory.
+
+Run `python -m unittest tests.test_coala` for the decision-cycle contract. This is architecture
+plumbing, not evidence that the controller improves model reasoning; that requires a separately
+specified real-model benchmark and gate.
+
 ## Benchmark
 
 The synthetic benchmark compares `BrainRuntime` against a `VanillaLoop` that uses append-only notes and first-match retrieval. It tests:
