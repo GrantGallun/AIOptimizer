@@ -34,15 +34,27 @@ def _tail(text: str, n: int = 3) -> str:
 class ShellExecutor:
     """Run a task's acceptance command. ok = exit 0. No model, fully local."""
 
-    def __init__(self, cwd: str | Path, *, cost: float = 0.02, timeout: int = 600) -> None:
+    def __init__(
+        self,
+        cwd: str | Path,
+        *,
+        cost: float = 0.02,
+        timeout: int = 600,
+        allowlist: list[str] | None = None,
+    ) -> None:
         self.cwd = str(cwd)
         self.cost = cost
         self.timeout = timeout
+        self.allowlist = allowlist
 
     def execute(self, task: dict[str, Any]) -> tuple[bool, str, float]:
         cmd = task.get("acceptance") or ""
         if not cmd:
             return False, "no acceptance command to run", 0.0
+        if self.allowlist is not None:
+            stripped = cmd.strip()
+            if not any(stripped.startswith(prefix) for prefix in self.allowlist):
+                return False, "blocked: command not allowlisted", 0.0
         try:
             proc = subprocess.run(
                 cmd, shell=True, cwd=self.cwd, capture_output=True, text=True, timeout=self.timeout

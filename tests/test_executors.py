@@ -26,6 +26,32 @@ class ShellExecutorTests(unittest.TestCase):
         self.assertFalse(ok)
         self.assertIn("no acceptance", result)
 
+    def test_allowlist_blocks_disallowed(self):
+        marker = Path(".") / "SHOULD_NOT_EXIST.tmp"
+        if marker.exists():
+            marker.unlink()
+        try:
+            ex = ShellExecutor(cwd=".", allowlist=["python -m unittest"])
+            ok, result, _ = ex.execute(
+                {"acceptance": f'"{sys.executable}" -c "import pathlib; pathlib.Path(\'SHOULD_NOT_EXIST.tmp\').write_text(\'x\')"'}
+            )
+            self.assertFalse(ok)
+            self.assertIn("blocked", result)
+            self.assertFalse(marker.exists())
+        finally:
+            if marker.exists():
+                marker.unlink()
+
+    def test_allowlist_permits_allowed(self):
+        ex = ShellExecutor(cwd=".", allowlist=['"' + sys.executable])
+        ok, result, _ = ex.execute({"acceptance": f'"{sys.executable}" -c "print(1)"'})
+        self.assertTrue(ok, result)
+
+    def test_no_allowlist_backward_compatible(self):
+        ex = ShellExecutor(cwd=".")
+        ok, result, _ = ex.execute({"acceptance": f'"{sys.executable}" -c "print(1)"'})
+        self.assertTrue(ok, result)
+
 
 class RoutingTests(unittest.TestCase):
     def _router(self):
