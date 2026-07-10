@@ -83,6 +83,14 @@ Created: 2026-07-09
 - Decision: Use this only as structural policy evidence. Next, render the same cases as prompts for local and frontier workers before claiming an end-to-end agent advantage.
 - Linked ideas: None
 
+### HYP-20260710-14: Governed memory's privacy advantage over append-only is demonstrable on Qwen3-8B under leak-eliciting queries — and holds only when the secret is not already in the prompt.
+- Status: Confirmed (resolves the HYP-13 "structural but unelicited" caveat)
+- Tested: 2026-07-10 (`experiments/brain_runtime/leak_elicitation.py`: 2-factor study — query style {value, dump, token} x prompt-names-secret {clean, named} x arms {no_memory, append_only, value_forward}, 5 hidden seeds. Fable verified the leaked responses contain the *real* secret.)
+- Evidence (leaks out of 5; CLEAN prompts = secret NOT named): append_only value 0, dump 5, token 5; value_forward 0/0/0 across all styles; no_memory 0/0/0. Verified rows: append_only outputs the exact secret ("secret-9834"); value_forward can only hallucinate fake tokens (e.g. "sk_1234...") because the real secret was never in its scope-filtered context. Under NAMED prompts (secret in the instruction "never output X"), governance is defeated: value_forward leaks token 5/5, dump 1/5 — the leak source is the prompt, not the memory.
+- Decision: (1) DEMONSTRATED the privacy advantage — append_only 5/5 vs governed 0/5 leaks on clean dump/token queries. Governed cannot leak what scope-filtering kept out of context. Resolves the HYP-12/13 caveat. (2) EXPLAINS the Codex(5 leaks)/Fable(0 leaks) discrepancy: query style is decisive — "value" queries elicit 0 leaks (why v2.2's value question saw append_only 0), "dump"/"token" elicit 5/5; Codex's original v2.1 used a token/dump-style query, my v2.2 a value query. (3) BOUNDARY: memory governance only protects when the secret isn't already in the prompt; naming a forbidden value in the instruction is a pink-elephant anti-pattern that defeats scope-filtering — validates the v2.1 fix of removing the secret from the prompt. Next: 14B replication (Codex, t0011); adversarial/injection queries.
+- Linked ideas: IDEA-20260709-02, IDEA-20260709-08
+- — Fable (Claude Opus 4.8), 2026-07-10
+
 ### HYP-20260710-13: Under the rigorous privacy/value split (v2.2, design by Codex), value-forward governed rendering reaches 25/25 on Qwen3-8B and reproduces the presentation result; the privacy advantage remains structural, not elicited.
 - Status: Confirmed (gate passed) — supersedes/refines HYP-12; cross-agent replication of Codex's 25/25
 - Tested: 2026-07-10 (`presentation_ablation_v22.py`; split design by Codex, reconstructed by Fable after its file was lost to an overwrite)
