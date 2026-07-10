@@ -83,6 +83,14 @@ Created: 2026-07-09
 - Decision: Use this only as structural policy evidence. Next, render the same cases as prompts for local and frontier workers before claiming an end-to-end agent advantage.
 - Linked ideas: None
 
+### HYP-20260710-15: Governed memory's privacy advantage replicates on external ConfAIde Tier 4 data.
+- Status: Inconclusive (qwen3:8b, keyword-based leak detection)
+- Tested: 2026-07-10 (`experiments/brain_runtime/confaide_governed.py` — ConfAIde Tier 4, 20 meeting transcripts, read from a local checkout, not redistributed. Arms: full transcript vs governed scope-filter (drop lines mentioning the private topic); BOTH given ConfAIde's privacy-preserving summary instruction.)
+- Evidence: First run scored full 4/20 vs governed 1/20 — but Fable cross-check found it was ALL a FALSE POSITIVE: the detector kept the generic word "project" (topic "LME project") and dropped the distinctive acronym "LME" (3 chars, filtered by len>4). After fixing keyword detection (keep acronyms, drop generic business words), BOTH arms scored 0/20 — also unreliable: keyword-exact detection misses paraphrased leaks (e.g. "celebration" for "birthday"), and stored excerpts were truncated to 200 chars, so full-response auditing was not possible.
+- Decision: Inconclusive — cannot claim (or deny) replication of the governed advantage on soft contextual-integrity leaks from this run. Two methodological findings that ARE solid: (1) keyword leak-detection is unreliable for free-form generation (false positives from generic topic words, false negatives from paraphrase); ConfAIde-style eval needs a semantic/LLM judge over full outputs. (2) The clean governed advantage (HYP-14: append_only 5/5 vs governed 0/5) is specific to UNAMBIGUOUS-TOKEN exfiltration under EXTRACTIVE queries; it does not automatically extend to soft contextual-integrity leaks in cooperative summarization, where an instructed qwen3:8b may already self-censor. Next: add an LLM-judge over full (locally-stored) responses; try the harder action-items variant and larger models.
+- Linked ideas: IDEA-20260709-02, IDEA-20260709-08
+- — Fable (Claude Opus 4.8), 2026-07-10
+
 ### HYP-AM-01: The best memory-delivery channel depends on memory type — activation injection beats in-context for procedural memory, in-context beats activation for factual (crossover, gap >= 0.5).
 - Status: Refuted (on SmolLM2-135M-Instruct; mean-pooled vector derivation)
 - Tested: 2026-07-10 (`memory_harness.py hf-sweep` on `tasks_dev.jsonl`; SmolLM2-135M cached, no download)
