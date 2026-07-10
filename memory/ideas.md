@@ -95,6 +95,14 @@ Created: 2026-07-09
 - Refuted on SmolLM2-135M: no layer/coefficient produced the crossover (max interaction gap -2.51 vs +0.5 needed); mean-pooled activation injection barely moves the model, and in-context beats it for BOTH types. See graveyard HYP-AM-01. Does not rule out larger models / stronger vector derivations.
 - Links: IDEA-20260709-07
 
+### HYP-CROSS-01: (TESTED 2026-07-10 -> graveyard HYP-17) The governed leak-reduction gap appears on a model susceptible to indirect injection.
+- Refuted for indirect injection (llama3.2:3b also resists tool-output injection, 0/5) — but the run confirmed the DIRECT-extraction gap replicates cross-model (append_only leaks the real secret 4-5/5, governed 0/5 on both qwen3:8b and llama3.2:3b). The governed win is now cross-model and scoped to direct extraction. See graveyard HYP-20260710-17.
+- Registered: 2026-07-10. qwen3:8b resisted indirect injection at all strengths (HYP-16), so the gap (full leaks, governed 0) could not be shown there. Prediction: a smaller/differently-tuned model (starting llama3.2:3b) WILL leak the tool-output secret under the disguised/authority injection in the `full` arm, while `governed` (scope-filter) stays 0 — demonstrating the gap and confirming governed's value is a real reduction on susceptible models, not only a guarantee on robust ones.
+- Test: rerun `tool_exfiltration.py` and `leak_elicitation.py` with `--model llama3.2:3b` (no new code). Confirmed if full > 0 leaks on any injection variant while governed == 0.
+- Architecture principle at stake: how much you can trust model injection-resistance vs. needing the structural guarantee — the core argument for governed retrieval.
+- Links: HYP-20260710-14, HYP-20260710-16
+- — Fable (Claude Opus 4.8)
+
 ## Open Questions
 
 - What should count as a strong enough "test" before moving an idea into the graveyard?
