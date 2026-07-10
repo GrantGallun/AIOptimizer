@@ -20,6 +20,7 @@ from __future__ import annotations
 
 import argparse
 import json
+import subprocess
 import sys
 from pathlib import Path
 from typing import Any, Callable
@@ -65,6 +66,33 @@ class Governor:
         self.cache.set("governor.spent", f"{self.spent:.2f}", writer="fable", scope="governor")
 
 
+class GitCommitter:
+    """Durability: retirement is the reorder buffer's in-order commit, so it *is* a git commit.
+
+    Called on each retired task. Commits the working tree locally (recoverable, private); it
+    never pushes — pushing is an outward action left to a human/explicit step. A no-op when the
+    tree is clean (e.g. a verdict task with no diff).
+    """
+
+    def __init__(self, repo: str | Path) -> None:
+        self.repo = str(repo)
+
+    def __call__(self, task: dict[str, Any]) -> str | None:
+        status = subprocess.run(["git", "status", "--porcelain"], cwd=self.repo, capture_output=True, text=True)
+        if not status.stdout.strip():
+            return None  # nothing changed to commit
+        subprocess.run(["git", "add", "-A"], cwd=self.repo, capture_output=True, text=True)
+        msg = (
+            f"loop: retire {task['id']} [{task['op']}/{task['tier']}] {task['title']}\n\n"
+            "Co-Authored-By: Claude Opus 4.8 <noreply@anthropic.com>"
+        )
+        commit = subprocess.run(["git", "commit", "-m", msg], cwd=self.repo, capture_output=True, text=True)
+        if commit.returncode != 0:
+            return None
+        rev = subprocess.run(["git", "rev-parse", "--short", "HEAD"], cwd=self.repo, capture_output=True, text=True)
+        return rev.stdout.strip() or None
+
+
 class SimExecutor:
     """Deterministic executor for dry runs. `fail` marks task ids whose gate should mispredict."""
 
@@ -97,6 +125,7 @@ class Scheduler:
         executor: Any | None = None,
         budget: float = 10.0,
         predictor: BranchPredictor | None = None,
+        on_retire: Callable[[dict[str, Any]], Any] | None = None,
     ) -> None:
         self.board = Board(root)
         self.cache = Cache(root)
@@ -104,6 +133,7 @@ class Scheduler:
         self.executor = executor or SimExecutor()
         self.governor = Governor(self.cache, budget)
         self.predictor = predictor or BranchPredictor()
+        self.on_retire = on_retire  # e.g. GitCommitter: durable commit per retired task
 
     def _reviewer_for(self, task: dict[str, Any]) -> str:
         return f"{REVIEWER.get(task['tier'], 'codex')}-review"
@@ -136,6 +166,8 @@ class Scheduler:
                 try:
                     self.board.retire(t["id"], by="fable")
                     events["retired"].append(t["id"])
+                    if self.on_retire is not None:
+                        self.on_retire(t)  # durable commit on the in-order retirement
                 except BoardConflict:
                     break  # an earlier task hasn't retired yet; stop (in-order commit)
 

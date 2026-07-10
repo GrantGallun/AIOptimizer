@@ -1,9 +1,10 @@
+import subprocess
 import unittest
 from pathlib import Path
 from tempfile import TemporaryDirectory
 
 from agent_bus.board import Board
-from agent_bus.scheduler import BranchPredictor, Governor, Scheduler, SimExecutor
+from agent_bus.scheduler import BranchPredictor, GitCommitter, Governor, Scheduler, SimExecutor
 from agent_bus.cache import Cache
 
 
@@ -72,6 +73,38 @@ class SchedulerTests(unittest.TestCase):
             sched = Scheduler(Path(tmp), budget=100.0, predictor=BranchPredictor(predict_pass=lambda t: False))
             first = sched.tick()  # gate dispatched; with no speculation, dep stays queued this tick
             self.assertNotIn(dep["id"], first["speculated"])
+
+
+class DurabilityTests(unittest.TestCase):
+    def _git(self, repo, *args):
+        return subprocess.run(["git", *args], cwd=repo, capture_output=True, text=True)
+
+    def test_retire_hook_fires_per_retired_task(self):
+        with TemporaryDirectory() as tmp:
+            ids = []
+            board = Board(Path(tmp))
+            t1 = board.add(op="impl", title="a", tier="sonnet")
+            t2 = board.add(op="impl", title="b", tier="sonnet")
+            Scheduler(Path(tmp), budget=100.0, on_retire=lambda t: ids.append(t["id"])).run()
+            self.assertEqual(ids, [t1["id"], t2["id"]])  # fired in retirement (program) order
+
+    def test_git_committer_commits_a_change_and_skips_clean_tree(self):
+        with TemporaryDirectory() as tmp:
+            self._git(tmp, "init", "-b", "main")
+            self._git(tmp, "config", "user.email", "t@t.t")
+            self._git(tmp, "config", "user.name", "t")
+            (Path(tmp) / "seed.txt").write_text("x")
+            self._git(tmp, "add", "-A")
+            self._git(tmp, "commit", "-m", "seed")
+            committer = GitCommitter(tmp)
+            # No change yet -> no commit.
+            self.assertIsNone(committer({"id": "t1", "op": "impl", "tier": "sonnet", "title": "noop"}))
+            # A real change -> a commit.
+            (Path(tmp) / "improvement.txt").write_text("loop output")
+            rev = committer({"id": "t2", "op": "impl", "tier": "sonnet", "title": "add file"})
+            self.assertTrue(rev)
+            log = self._git(tmp, "log", "--oneline").stdout
+            self.assertIn("retire t2", log)
 
 
 if __name__ == "__main__":

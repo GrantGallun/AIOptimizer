@@ -28,7 +28,7 @@ if str(_REPO_ROOT) not in sys.path:
 
 from agent_bus.board import Board
 from agent_bus.executors import CodexExecutor, RoutingExecutor, ShellExecutor
-from agent_bus.scheduler import Scheduler, _summarize
+from agent_bus.scheduler import GitCommitter, Scheduler, _summarize
 
 
 def main() -> None:
@@ -40,12 +40,14 @@ def main() -> None:
     p.add_argument("--codex", action="store_true", help="Enable Codex as a real core (needs codex on PATH).")
     p.add_argument("--codex-bin", default="codex")
     p.add_argument("--codex-args", default="", help="Extra args passed to `codex exec` (e.g. --full-auto).")
+    p.add_argument("--commit", action="store_true", help="git commit locally on each retired task (durable, recoverable; never pushes).")
     args = p.parse_args()
 
     shell = ShellExecutor(cwd=args.repo)
     codex = CodexExecutor(args.repo, codex=args.codex_bin, extra_args=shlex.split(args.codex_args)) if args.codex else None
     router = RoutingExecutor(shell=shell, codex=codex)
-    sched = Scheduler(Path(args.root), executor=router, budget=args.budget)
+    on_retire = GitCommitter(args.repo) if args.commit else None
+    sched = Scheduler(Path(args.root), executor=router, budget=args.budget, on_retire=on_retire)
 
     history = sched.run(max_ticks=args.max_ticks)
     summary = _summarize(history)
