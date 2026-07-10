@@ -1,0 +1,182 @@
+{
+  "arms": [
+    {
+      "name": "legacy_add_all",
+      "rows": [
+        {
+          "seed": 11,
+          "staged_other_preserved": false,
+          "target_committed": true,
+          "unrelated_committed": 2,
+          "unstaged_other_preserved": false
+        },
+        {
+          "seed": 23,
+          "staged_other_preserved": false,
+          "target_committed": true,
+          "unrelated_committed": 2,
+          "unstaged_other_preserved": false
+        },
+        {
+          "seed": 37,
+          "staged_other_preserved": false,
+          "target_committed": true,
+          "unrelated_committed": 2,
+          "unstaged_other_preserved": false
+        },
+        {
+          "seed": 41,
+          "staged_other_preserved": false,
+          "target_committed": true,
+          "unrelated_committed": 2,
+          "unstaged_other_preserved": false
+        },
+        {
+          "seed": 59,
+          "staged_other_preserved": false,
+          "target_committed": true,
+          "unrelated_committed": 2,
+          "unstaged_other_preserved": false
+        },
+        {
+          "seed": 71,
+          "staged_other_preserved": false,
+          "target_committed": true,
+          "unrelated_committed": 2,
+          "unstaged_other_preserved": false
+        },
+        {
+          "seed": 73,
+          "staged_other_preserved": false,
+          "target_committed": true,
+          "unrelated_committed": 2,
+          "unstaged_other_preserved": false
+        },
+        {
+          "seed": 79,
+          "staged_other_preserved": false,
+          "target_committed": true,
+          "unrelated_committed": 2,
+          "unstaged_other_preserved": false
+        },
+        {
+          "seed": 83,
+          "staged_other_preserved": false,
+          "target_committed": true,
+          "unrelated_committed": 2,
+          "unstaged_other_preserved": false
+        },
+        {
+          "seed": 89,
+          "staged_other_preserved": false,
+          "target_committed": true,
+          "unrelated_committed": 2,
+          "unstaged_other_preserved": false
+        }
+      ],
+      "summary": {
+        "staged_other_preserved": 0,
+        "target_commits": 10,
+        "trials": 10,
+        "unrelated_files_committed": 20,
+        "unstaged_other_preserved": 0
+      }
+    },
+    {
+      "name": "declared_write_set",
+      "rows": [
+        {
+          "seed": 11,
+          "staged_other_preserved": true,
+          "target_committed": true,
+          "unrelated_committed": 0,
+          "unstaged_other_preserved": true
+        },
+        {
+          "seed": 23,
+          "staged_other_preserved": true,
+          "target_committed": true,
+          "unrelated_committed": 0,
+          "unstaged_other_preserved": true
+        },
+        {
+          "seed": 37,
+          "staged_other_preserved": true,
+          "target_committed": true,
+          "unrelated_committed": 0,
+          "unstaged_other_preserved": true
+        },
+        {
+          "seed": 41,
+          "staged_other_preserved": true,
+          "target_committed": true,
+          "unrelated_committed": 0,
+          "unstaged_other_preserved": true
+        },
+        {
+          "seed": 59,
+          "staged_other_preserved": true,
+          "target_committed": true,
+          "unrelated_committed": 0,
+          "unstaged_other_preserved": true
+        },
+        {
+          "seed": 71,
+          "staged_other_preserved": true,
+          "target_committed": true,
+          "unrelated_committed": 0,
+          "unstaged_other_preserved": true
+        },
+        {
+          "seed": 73,
+          "staged_other_preserved": true,
+          "target_committed": true,
+          "unrelated_committed": 0,
+          "unstaged_other_preserved": true
+        },
+        {
+          "seed": 79,
+          "staged_other_preserved": true,
+          "target_committed": true,
+          "unrelated_committed": 0,
+          "unstaged_other_preserved": true
+        },
+        {
+          "seed": 83,
+          "staged_other_preserved": true,
+          "target_committed": true,
+          "unrelated_committed": 0,
+          "unstaged_other_preserved": true
+        },
+        {
+          "seed": 89,
+          "staged_other_preserved": true,
+          "target_committed": true,
+          "unrelated_committed": 0,
+          "unstaged_other_preserved": true
+        }
+      ],
+      "summary": {
+        "staged_other_preserved": 10,
+        "target_commits": 10,
+        "trials": 10,
+        "unrelated_files_committed": 0,
+        "unstaged_other_preserved": 10
+      }
+    }
+  ],
+  "benchmark": "retirement-commit-scope-v1",
+  "elapsed_seconds": 7.455165,
+  "seeds": [
+    11,
+    23,
+    37,
+    41,
+    59,
+    71,
+    73,
+    79,
+    83,
+    89
+  ]
+}

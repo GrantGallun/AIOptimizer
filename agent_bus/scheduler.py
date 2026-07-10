@@ -75,24 +75,40 @@ class Governor:
 class GitCommitter:
     """Durability: retirement is the reorder buffer's in-order commit, so it *is* a git commit.
 
-    Called on each retired task. Commits the working tree locally (recoverable, private); it
+    Called on each retired task. Commits only declared ``writes`` paths locally; it
     never pushes — pushing is an outward action left to a human/explicit step. A no-op when the
-    tree is clean (e.g. a verdict task with no diff).
+    preserves unrelated staged/unstaged work. Tasks without declared writes are a no-op.
     """
 
     def __init__(self, repo: str | Path) -> None:
         self.repo = str(repo)
+        self.claims = WorkspaceClaims(Path(repo))
 
     def __call__(self, task: dict[str, Any]) -> str | None:
-        status = subprocess.run(["git", "status", "--porcelain"], cwd=self.repo, capture_output=True, text=True)
+        writes = self.claims.normalize(task.get("writes", []))
+        if not writes:
+            return None
+        status = subprocess.run(
+            ["git", "status", "--porcelain", "--", *writes],
+            cwd=self.repo,
+            capture_output=True,
+            text=True,
+        )
         if not status.stdout.strip():
-            return None  # nothing changed to commit
-        subprocess.run(["git", "add", "-A"], cwd=self.repo, capture_output=True, text=True)
+            return None
+        staged = subprocess.run(["git", "add", "--", *writes], cwd=self.repo, capture_output=True, text=True)
+        if staged.returncode != 0:
+            return None
         msg = (
             f"loop: retire {task['id']} [{task['op']}/{task['tier']}] {task['title']}\n\n"
             "Co-Authored-By: Claude Opus 4.8 <noreply@anthropic.com>"
         )
-        commit = subprocess.run(["git", "commit", "-m", msg], cwd=self.repo, capture_output=True, text=True)
+        commit = subprocess.run(
+            ["git", "commit", "--only", "-m", msg, "--", *writes],
+            cwd=self.repo,
+            capture_output=True,
+            text=True,
+        )
         if commit.returncode != 0:
             return None
         rev = subprocess.run(["git", "rev-parse", "--short", "HEAD"], cwd=self.repo, capture_output=True, text=True)

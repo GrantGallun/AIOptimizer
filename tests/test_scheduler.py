@@ -144,14 +144,63 @@ class DurabilityTests(unittest.TestCase):
             self._git(tmp, "add", "-A")
             self._git(tmp, "commit", "-m", "seed")
             committer = GitCommitter(tmp)
+            task = {"id": "t1", "op": "impl", "tier": "sonnet", "title": "noop", "writes": ["improvement.txt"]}
             # No change yet -> no commit.
-            self.assertIsNone(committer({"id": "t1", "op": "impl", "tier": "sonnet", "title": "noop"}))
+            self.assertIsNone(committer(task))
             # A real change -> a commit.
             (Path(tmp) / "improvement.txt").write_text("loop output")
-            rev = committer({"id": "t2", "op": "impl", "tier": "sonnet", "title": "add file"})
+            task.update({"id": "t2", "title": "add file"})
+            rev = committer(task)
             self.assertTrue(rev)
             log = self._git(tmp, "log", "--oneline").stdout
             self.assertIn("retire t2", log)
+
+    def test_git_committer_preserves_unrelated_staged_and_unstaged_work(self):
+        with TemporaryDirectory() as tmp:
+            self._git(tmp, "init", "-b", "main")
+            self._git(tmp, "config", "user.email", "t@t.t")
+            self._git(tmp, "config", "user.name", "t")
+            target = Path(tmp) / "target.txt"
+            staged_other = Path(tmp) / "staged-other.txt"
+            unstaged_other = Path(tmp) / "unstaged-other.txt"
+            for path in (target, staged_other, unstaged_other):
+                path.write_text("base")
+            self._git(tmp, "add", "-A")
+            self._git(tmp, "commit", "-m", "seed")
+
+            target.write_text("task change")
+            staged_other.write_text("other staged change")
+            unstaged_other.write_text("other unstaged change")
+            self._git(tmp, "add", "staged-other.txt")
+            rev = GitCommitter(tmp)({
+                "id": "t1",
+                "op": "impl",
+                "tier": "codex",
+                "title": "scoped edit",
+                "writes": ["target.txt"],
+            })
+
+            self.assertTrue(rev)
+            self.assertEqual(self._git(tmp, "show", "HEAD:target.txt").stdout, "task change")
+            self.assertEqual(self._git(tmp, "show", "HEAD:staged-other.txt").stdout, "base")
+            self.assertEqual(self._git(tmp, "show", "HEAD:unstaged-other.txt").stdout, "base")
+            self.assertEqual(self._git(tmp, "diff", "--cached", "--name-only").stdout.strip(), "staged-other.txt")
+            self.assertIn("unstaged-other.txt", self._git(tmp, "diff", "--name-only").stdout)
+
+    def test_git_committer_without_declared_writes_is_noop(self):
+        with TemporaryDirectory() as tmp:
+            self._git(tmp, "init", "-b", "main")
+            self._git(tmp, "config", "user.email", "t@t.t")
+            self._git(tmp, "config", "user.name", "t")
+            seed = Path(tmp) / "seed.txt"
+            seed.write_text("base")
+            self._git(tmp, "add", "-A")
+            self._git(tmp, "commit", "-m", "seed")
+            seed.write_text("changed")
+            before = self._git(tmp, "rev-parse", "HEAD").stdout
+            task = {"id": "t1", "op": "impl", "tier": "codex", "title": "undeclared"}
+            self.assertIsNone(GitCommitter(tmp)(task))
+            self.assertEqual(self._git(tmp, "rev-parse", "HEAD").stdout, before)
 
 
 if __name__ == "__main__":

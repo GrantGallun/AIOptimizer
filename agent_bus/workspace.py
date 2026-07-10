@@ -59,6 +59,10 @@ class WorkspaceClaims:
             raise WorkspaceConflict("workspace root cannot be claimed")
         return normalized
 
+    def normalize(self, paths: list[str | Path]) -> list[str]:
+        """Return deduplicated workspace-relative paths without mutating claim state."""
+        return sorted(set(self._normalize(path) for path in paths))
+
     def _reclaim_expired(self, state: dict[str, Any], now: float) -> list[str]:
         expired = sorted(path for path, row in state["claims"].items() if row["expires_at"] <= now)
         for path in expired:
@@ -70,7 +74,7 @@ class WorkspaceClaims:
             raise ValueError("owner must be non-empty")
         if ttl_seconds <= 0:
             raise ValueError("ttl_seconds must be positive")
-        normalized = sorted(set(self._normalize(path) for path in paths))
+        normalized = self.normalize(paths)
         if not normalized:
             raise ValueError("at least one path is required")
         with _cross_process_lock(self.lockfile):
@@ -97,7 +101,7 @@ class WorkspaceClaims:
             return {"revision": state["revision"], "owner": owner, "paths": normalized}
 
     def release(self, paths: list[str | Path], *, owner: str) -> list[str]:
-        normalized = sorted(set(self._normalize(path) for path in paths))
+        normalized = self.normalize(paths)
         with _cross_process_lock(self.lockfile):
             state = self._load()
             self._reclaim_expired(state, self.clock())
