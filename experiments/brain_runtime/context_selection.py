@@ -137,7 +137,7 @@ def build_prompt(op_name: str, a: int, b: int, rules: list[str]) -> str:
     )
 
 
-ARMS: tuple[str, ...] = ("dump_all", "selected", "oracle")
+ARMS: tuple[str, ...] = ("dump_all", "selected", "random_k", "oracle")
 
 
 def run(
@@ -172,6 +172,8 @@ def run(
                     rules = candidates
                 elif arm == "selected":
                     rules = select_topk(target["name"], candidates, k)
+                elif arm == "random_k":
+                    rules = rng.sample(candidates, min(k, len(candidates)))  # control: keep k RANDOM
                 else:  # oracle
                     rules = [target["rule_text"]]
 

@@ -1,0 +1,2707 @@
+{
+  "benchmark": "brain-runtime-context-selection",
+  "context_sizes": [
+    5,
+    15,
+    30,
+    50
+  ],
+  "elapsed_seconds": 78.885,
+  "k": 3,
+  "model": "qwen3:14b",
+  "n_problems": 18,
+  "render_only": false,
+  "rows": [
+    {
+      "N": 5,
+      "answer": 16,
+      "arm": "dump_all",
+      "correct": false,
+      "expected": 22,
+      "op": "dgiki",
+      "problem_i": 0
+    },
+    {
+      "N": 5,
+      "answer": 16,
+      "arm": "selected",
+      "correct": false,
+      "expected": 22,
+      "op": "dgiki",
+      "problem_i": 0
+    },
+    {
+      "N": 5,
+      "answer": 0,
+      "arm": "random_k",
+      "correct": false,
+      "expected": 22,
+      "op": "dgiki",
+      "problem_i": 0
+    },
+    {
+      "N": 5,
+      "answer": 12,
+      "arm": "oracle",
+      "correct": false,
+      "expected": 22,
+      "op": "dgiki",
+      "problem_i": 0
+    },
+    {
+      "N": 15,
+      "answer": 12,
+      "arm": "dump_all",
+      "correct": false,
+      "expected": 22,
+      "op": "dgiki",
+      "problem_i": 0
+    },
+    {
+      "N": 15,
+      "answer": 12,
+      "arm": "selected",
+      "correct": false,
+      "expected": 22,
+      "op": "dgiki",
+      "problem_i": 0
+    },
+    {
+      "N": 15,
+      "answer": 0,
+      "arm": "random_k",
+      "correct": false,
+      "expected": 22,
+      "op": "dgiki",
+      "problem_i": 0
+    },
+    {
+      "N": 15,
+      "answer": 12,
+      "arm": "oracle",
+      "correct": false,
+      "expected": 22,
+      "op": "dgiki",
+      "problem_i": 0
+    },
+    {
+      "N": 30,
+      "answer": 18,
+      "arm": "dump_all",
+      "correct": false,
+      "expected": 22,
+      "op": "dgiki",
+      "problem_i": 0
+    },
+    {
+      "N": 30,
+      "answer": 12,
+      "arm": "selected",
+      "correct": false,
+      "expected": 22,
+      "op": "dgiki",
+      "problem_i": 0
+    },
+    {
+      "N": 30,
+      "answer": 0,
+      "arm": "random_k",
+      "correct": false,
+      "expected": 22,
+      "op": "dgiki",
+      "problem_i": 0
+    },
+    {
+      "N": 30,
+      "answer": 12,
+      "arm": "oracle",
+      "correct": false,
+      "expected": 22,
+      "op": "dgiki",
+      "problem_i": 0
+    },
+    {
+      "N": 50,
+      "answer": 16,
+      "arm": "dump_all",
+      "correct": false,
+      "expected": 22,
+      "op": "dgiki",
+      "problem_i": 0
+    },
+    {
+      "N": 50,
+      "answer": 12,
+      "arm": "selected",
+      "correct": false,
+      "expected": 22,
+      "op": "dgiki",
+      "problem_i": 0
+    },
+    {
+      "N": 50,
+      "answer": 0,
+      "arm": "random_k",
+      "correct": false,
+      "expected": 22,
+      "op": "dgiki",
+      "problem_i": 0
+    },
+    {
+      "N": 50,
+      "answer": 12,
+      "arm": "oracle",
+      "correct": false,
+      "expected": 22,
+      "op": "dgiki",
+      "problem_i": 0
+    },
+    {
+      "N": 5,
+      "answer": 7,
+      "arm": "dump_all",
+      "correct": false,
+      "expected": 8,
+      "op": "cmeza",
+      "problem_i": 1
+    },
+    {
+      "N": 5,
+      "answer": 5,
+      "arm": "selected",
+      "correct": false,
+      "expected": 8,
+      "op": "cmeza",
+      "problem_i": 1
+    },
+    {
+      "N": 5,
+      "answer": 5,
+      "arm": "random_k",
+      "correct": false,
+      "expected": 8,
+      "op": "cmeza",
+      "problem_i": 1
+    },
+    {
+      "N": 5,
+      "answer": 5,
+      "arm": "oracle",
+      "correct": false,
+      "expected": 8,
+      "op": "cmeza",
+      "problem_i": 1
+    },
+    {
+      "N": 15,
+      "answer": 5,
+      "arm": "dump_all",
+      "correct": false,
+      "expected": 8,
+      "op": "cmeza",
+      "problem_i": 1
+    },
+    {
+      "N": 15,
+      "answer": 5,
+      "arm": "selected",
+      "correct": false,
+      "expected": 8,
+      "op": "cmeza",
+      "problem_i": 1
+    },
+    {
+      "N": 15,
+      "answer": 40,
+      "arm": "random_k",
+      "correct": false,
+      "expected": 8,
+      "op": "cmeza",
+      "problem_i": 1
+    },
+    {
+      "N": 15,
+      "answer": 5,
+      "arm": "oracle",
+      "correct": false,
+      "expected": 8,
+      "op": "cmeza",
+      "problem_i": 1
+    },
+    {
+      "N": 30,
+      "answer": 7,
+      "arm": "dump_all",
+      "correct": false,
+      "expected": 8,
+      "op": "cmeza",
+      "problem_i": 1
+    },
+    {
+      "N": 30,
+      "answer": 5,
+      "arm": "selected",
+      "correct": false,
+      "expected": 8,
+      "op": "cmeza",
+      "problem_i": 1
+    },
+    {
+      "N": 30,
+      "answer": 46,
+      "arm": "random_k",
+      "correct": false,
+      "expected": 8,
+      "op": "cmeza",
+      "problem_i": 1
+    },
+    {
+      "N": 30,
+      "answer": 5,
+      "arm": "oracle",
+      "correct": false,
+      "expected": 8,
+      "op": "cmeza",
+      "problem_i": 1
+    },
+    {
+      "N": 50,
+      "answer": 5,
+      "arm": "dump_all",
+      "correct": false,
+      "expected": 8,
+      "op": "cmeza",
+      "problem_i": 1
+    },
+    {
+      "N": 50,
+      "answer": 5,
+      "arm": "selected",
+      "correct": false,
+      "expected": 8,
+      "op": "cmeza",
+      "problem_i": 1
+    },
+    {
+      "N": 50,
+      "answer": 0,
+      "arm": "random_k",
+      "correct": false,
+      "expected": 8,
+      "op": "cmeza",
+      "problem_i": 1
+    },
+    {
+      "N": 50,
+      "answer": 5,
+      "arm": "oracle",
+      "correct": false,
+      "expected": 8,
+      "op": "cmeza",
+      "problem_i": 1
+    },
+    {
+      "N": 5,
+      "answer": 10,
+      "arm": "dump_all",
+      "correct": true,
+      "expected": 10,
+      "op": "dgeta",
+      "problem_i": 2
+    },
+    {
+      "N": 5,
+      "answer": 16,
+      "arm": "selected",
+      "correct": false,
+      "expected": 10,
+      "op": "dgeta",
+      "problem_i": 2
+    },
+    {
+      "N": 5,
+      "answer": 41,
+      "arm": "random_k",
+      "correct": false,
+      "expected": 10,
+      "op": "dgeta",
+      "problem_i": 2
+    },
+    {
+      "N": 5,
+      "answer": 10,
+      "arm": "oracle",
+      "correct": true,
+      "expected": 10,
+      "op": "dgeta",
+      "problem_i": 2
+    },
+    {
+      "N": 15,
+      "answer": 15,
+      "arm": "dump_all",
+      "correct": false,
+      "expected": 10,
+      "op": "dgeta",
+      "problem_i": 2
+    },
+    {
+      "N": 15,
+      "answer": 10,
+      "arm": "selected",
+      "correct": true,
+      "expected": 10,
+      "op": "dgeta",
+      "problem_i": 2
+    },
+    {
+      "N": 15,
+      "answer": 43,
+      "arm": "random_k",
+      "correct": false,
+      "expected": 10,
+      "op": "dgeta",
+      "problem_i": 2
+    },
+    {
+      "N": 15,
+      "answer": 10,
+      "arm": "oracle",
+      "correct": true,
+      "expected": 10,
+      "op": "dgeta",
+      "problem_i": 2
+    },
+    {
+      "N": 30,
+      "answer": 14,
+      "arm": "dump_all",
+      "correct": false,
+      "expected": 10,
+      "op": "dgeta",
+      "problem_i": 2
+    },
+    {
+      "N": 30,
+      "answer": 12,
+      "arm": "selected",
+      "correct": false,
+      "expected": 10,
+      "op": "dgeta",
+      "problem_i": 2
+    },
+    {
+      "N": 30,
+      "answer": 16,
+      "arm": "random_k",
+      "correct": false,
+      "expected": 10,
+      "op": "dgeta",
+      "problem_i": 2
+    },
+    {
+      "N": 30,
+      "answer": 10,
+      "arm": "oracle",
+      "correct": true,
+      "expected": 10,
+      "op": "dgeta",
+      "problem_i": 2
+    },
+    {
+      "N": 50,
+      "answer": 16,
+      "arm": "dump_all",
+      "correct": false,
+      "expected": 10,
+      "op": "dgeta",
+      "problem_i": 2
+    },
+    {
+      "N": 50,
+      "answer": 12,
+      "arm": "selected",
+      "correct": false,
+      "expected": 10,
+      "op": "dgeta",
+      "problem_i": 2
+    },
+    {
+      "N": 50,
+      "answer": 46,
+      "arm": "random_k",
+      "correct": false,
+      "expected": 10,
+      "op": "dgeta",
+      "problem_i": 2
+    },
+    {
+      "N": 50,
+      "answer": 10,
+      "arm": "oracle",
+      "correct": true,
+      "expected": 10,
+      "op": "dgeta",
+      "problem_i": 2
+    },
+    {
+      "N": 5,
+      "answer": 20,
+      "arm": "dump_all",
+      "correct": true,
+      "expected": 20,
+      "op": "pzavu",
+      "problem_i": 3
+    },
+    {
+      "N": 5,
+      "answer": 20,
+      "arm": "selected",
+      "correct": true,
+      "expected": 20,
+      "op": "pzavu",
+      "problem_i": 3
+    },
+    {
+      "N": 5,
+      "answer": 20,
+      "arm": "random_k",
+      "correct": true,
+      "expected": 20,
+      "op": "pzavu",
+      "problem_i": 3
+    },
+    {
+      "N": 5,
+      "answer": 20,
+      "arm": "oracle",
+      "correct": true,
+      "expected": 20,
+      "op": "pzavu",
+      "problem_i": 3
+    },
+    {
+      "N": 15,
+      "answer": 12,
+      "arm": "dump_all",
+      "correct": false,
+      "expected": 20,
+      "op": "pzavu",
+      "problem_i": 3
+    },
+    {
+      "N": 15,
+      "answer": 20,
+      "arm": "selected",
+      "correct": true,
+      "expected": 20,
+      "op": "pzavu",
+      "problem_i": 3
+    },
+    {
+      "N": 15,
+      "answer": 43,
+      "arm": "random_k",
+      "correct": false,
+      "expected": 20,
+      "op": "pzavu",
+      "problem_i": 3
+    },
+    {
+      "N": 15,
+      "answer": 20,
+      "arm": "oracle",
+      "correct": true,
+      "expected": 20,
+      "op": "pzavu",
+      "problem_i": 3
+    },
+    {
+      "N": 30,
+      "answer": 12,
+      "arm": "dump_all",
+      "correct": false,
+      "expected": 20,
+      "op": "pzavu",
+      "problem_i": 3
+    },
+    {
+      "N": 30,
+      "answer": 20,
+      "arm": "selected",
+      "correct": true,
+      "expected": 20,
+      "op": "pzavu",
+      "problem_i": 3
+    },
+    {
+      "N": 30,
+      "answer": 13,
+      "arm": "random_k",
+      "correct": false,
+      "expected": 20,
+      "op": "pzavu",
+      "problem_i": 3
+    },
+    {
+      "N": 30,
+      "answer": 20,
+      "arm": "oracle",
+      "correct": true,
+      "expected": 20,
+      "op": "pzavu",
+      "problem_i": 3
+    },
+    {
+      "N": 50,
+      "answer": 12,
+      "arm": "dump_all",
+      "correct": false,
+      "expected": 20,
+      "op": "pzavu",
+      "problem_i": 3
+    },
+    {
+      "N": 50,
+      "answer": 20,
+      "arm": "selected",
+      "correct": true,
+      "expected": 20,
+      "op": "pzavu",
+      "problem_i": 3
+    },
+    {
+      "N": 50,
+      "answer": 0,
+      "arm": "random_k",
+      "correct": false,
+      "expected": 20,
+      "op": "pzavu",
+      "problem_i": 3
+    },
+    {
+      "N": 50,
+      "answer": 20,
+      "arm": "oracle",
+      "correct": true,
+      "expected": 20,
+      "op": "pzavu",
+      "problem_i": 3
+    },
+    {
+      "N": 5,
+      "answer": 12,
+      "arm": "dump_all",
+      "correct": false,
+      "expected": 18,
+      "op": "svosa",
+      "problem_i": 4
+    },
+    {
+      "N": 5,
+      "answer": 18,
+      "arm": "selected",
+      "correct": true,
+      "expected": 18,
+      "op": "svosa",
+      "problem_i": 4
+    },
+    {
+      "N": 5,
+      "answer": 18,
+      "arm": "random_k",
+      "correct": true,
+      "expected": 18,
+      "op": "svosa",
+      "problem_i": 4
+    },
+    {
+      "N": 5,
+      "answer": 18,
+      "arm": "oracle",
+      "correct": true,
+      "expected": 18,
+      "op": "svosa",
+      "problem_i": 4
+    },
+    {
+      "N": 15,
+      "answer": 18,
+      "arm": "dump_all",
+      "correct": true,
+      "expected": 18,
+      "op": "svosa",
+      "problem_i": 4
+    },
+    {
+      "N": 15,
+      "answer": 18,
+      "arm": "selected",
+      "correct": true,
+      "expected": 18,
+      "op": "svosa",
+      "problem_i": 4
+    },
+    {
+      "N": 15,
+      "answer": 15,
+      "arm": "random_k",
+      "correct": false,
+      "expected": 18,
+      "op": "svosa",
+      "problem_i": 4
+    },
+    {
+      "N": 15,
+      "answer": 18,
+      "arm": "oracle",
+      "correct": true,
+      "expected": 18,
+      "op": "svosa",
+      "problem_i": 4
+    },
+    {
+      "N": 30,
+      "answer": 12,
+      "arm": "dump_all",
+      "correct": false,
+      "expected": 18,
+      "op": "svosa",
+      "problem_i": 4
+    },
+    {
+      "N": 30,
+      "answer": 18,
+      "arm": "selected",
+      "correct": true,
+      "expected": 18,
+      "op": "svosa",
+      "problem_i": 4
+    },
+    {
+      "N": 30,
+      "answer": 44,
+      "arm": "random_k",
+      "correct": false,
+      "expected": 18,
+      "op": "svosa",
+      "problem_i": 4
+    },
+    {
+      "N": 30,
+      "answer": 18,
+      "arm": "oracle",
+      "correct": true,
+      "expected": 18,
+      "op": "svosa",
+      "problem_i": 4
+    },
+    {
+      "N": 50,
+      "answer": 18,
+      "arm": "dump_all",
+      "correct": true,
+      "expected": 18,
+      "op": "svosa",
+      "problem_i": 4
+    },
+    {
+      "N": 50,
+      "answer": 18,
+      "arm": "selected",
+      "correct": true,
+      "expected": 18,
+      "op": "svosa",
+      "problem_i": 4
+    },
+    {
+      "N": 50,
+      "answer": 16,
+      "arm": "random_k",
+      "correct": false,
+      "expected": 18,
+      "op": "svosa",
+      "problem_i": 4
+    },
+    {
+      "N": 50,
+      "answer": 18,
+      "arm": "oracle",
+      "correct": true,
+      "expected": 18,
+      "op": "svosa",
+      "problem_i": 4
+    },
+    {
+      "N": 5,
+      "answer": 15,
+      "arm": "dump_all",
+      "correct": true,
+      "expected": 15,
+      "op": "lvidu",
+      "problem_i": 5
+    },
+    {
+      "N": 5,
+      "answer": 15,
+      "arm": "selected",
+      "correct": true,
+      "expected": 15,
+      "op": "lvidu",
+      "problem_i": 5
+    },
+    {
+      "N": 5,
+      "answer": 15,
+      "arm": "random_k",
+      "correct": true,
+      "expected": 15,
+      "op": "lvidu",
+      "problem_i": 5
+    },
+    {
+      "N": 5,
+      "answer": 15,
+      "arm": "oracle",
+      "correct": true,
+      "expected": 15,
+      "op": "lvidu",
+      "problem_i": 5
+    },
+    {
+      "N": 15,
+      "answer": 15,
+      "arm": "dump_all",
+      "correct": true,
+      "expected": 15,
+      "op": "lvidu",
+      "problem_i": 5
+    },
+    {
+      "N": 15,
+      "answer": 15,
+      "arm": "selected",
+      "correct": true,
+      "expected": 15,
+      "op": "lvidu",
+      "problem_i": 5
+    },
+    {
+      "N": 15,
+      "answer": -1,
+      "arm": "random_k",
+      "correct": false,
+      "expected": 15,
+      "op": "lvidu",
+      "problem_i": 5
+    },
+    {
+      "N": 15,
+      "answer": 15,
+      "arm": "oracle",
+      "correct": true,
+      "expected": 15,
+      "op": "lvidu",
+      "problem_i": 5
+    },
+    {
+      "N": 30,
+      "answer": 15,
+      "arm": "dump_all",
+      "correct": true,
+      "expected": 15,
+      "op": "lvidu",
+      "problem_i": 5
+    },
+    {
+      "N": 30,
+      "answer": 15,
+      "arm": "selected",
+      "correct": true,
+      "expected": 15,
+      "op": "lvidu",
+      "problem_i": 5
+    },
+    {
+      "N": 30,
+      "answer": 4,
+      "arm": "random_k",
+      "correct": false,
+      "expected": 15,
+      "op": "lvidu",
+      "problem_i": 5
+    },
+    {
+      "N": 30,
+      "answer": 15,
+      "arm": "oracle",
+      "correct": true,
+      "expected": 15,
+      "op": "lvidu",
+      "problem_i": 5
+    },
+    {
+      "N": 50,
+      "answer": 15,
+      "arm": "dump_all",
+      "correct": true,
+      "expected": 15,
+      "op": "lvidu",
+      "problem_i": 5
+    },
+    {
+      "N": 50,
+      "answer": 15,
+      "arm": "selected",
+      "correct": true,
+      "expected": 15,
+      "op": "lvidu",
+      "problem_i": 5
+    },
+    {
+      "N": 50,
+      "answer": 41,
+      "arm": "random_k",
+      "correct": false,
+      "expected": 15,
+      "op": "lvidu",
+      "problem_i": 5
+    },
+    {
+      "N": 50,
+      "answer": 15,
+      "arm": "oracle",
+      "correct": true,
+      "expected": 15,
+      "op": "lvidu",
+      "problem_i": 5
+    },
+    {
+      "N": 5,
+      "answer": 1,
+      "arm": "dump_all",
+      "correct": false,
+      "expected": 4,
+      "op": "sgase",
+      "problem_i": 6
+    },
+    {
+      "N": 5,
+      "answer": 1,
+      "arm": "selected",
+      "correct": false,
+      "expected": 4,
+      "op": "sgase",
+      "problem_i": 6
+    },
+    {
+      "N": 5,
+      "answer": 19,
+      "arm": "random_k",
+      "correct": false,
+      "expected": 4,
+      "op": "sgase",
+      "problem_i": 6
+    },
+    {
+      "N": 5,
+      "answer": 2,
+      "arm": "oracle",
+      "correct": false,
+      "expected": 4,
+      "op": "sgase",
+      "problem_i": 6
+    },
+    {
+      "N": 15,
+      "answer": 1,
+      "arm": "dump_all",
+      "correct": false,
+      "expected": 4,
+      "op": "sgase",
+      "problem_i": 6
+    },
+    {
+      "N": 15,
+      "answer": 1,
+      "arm": "selected",
+      "correct": false,
+      "expected": 4,
+      "op": "sgase",
+      "problem_i": 6
+    },
+    {
+      "N": 15,
+      "answer": 4,
+      "arm": "random_k",
+      "correct": true,
+      "expected": 4,
+      "op": "sgase",
+      "problem_i": 6
+    },
+    {
+      "N": 15,
+      "answer": 2,
+      "arm": "oracle",
+      "correct": false,
+      "expected": 4,
+      "op": "sgase",
+      "problem_i": 6
+    },
+    {
+      "N": 30,
+      "answer": 4,
+      "arm": "dump_all",
+      "correct": true,
+      "expected": 4,
+      "op": "sgase",
+      "problem_i": 6
+    },
+    {
+      "N": 30,
+      "answer": 1,
+      "arm": "selected",
+      "correct": false,
+      "expected": 4,
+      "op": "sgase",
+      "problem_i": 6
+    },
+    {
+      "N": 30,
+      "answer": 4,
+      "arm": "random_k",
+      "correct": true,
+      "expected": 4,
+      "op": "sgase",
+      "problem_i": 6
+    },
+    {
+      "N": 30,
+      "answer": 2,
+      "arm": "oracle",
+      "correct": false,
+      "expected": 4,
+      "op": "sgase",
+      "problem_i": 6
+    },
+    {
+      "N": 50,
+      "answer": 3,
+      "arm": "dump_all",
+      "correct": false,
+      "expected": 4,
+      "op": "sgase",
+      "problem_i": 6
+    },
+    {
+      "N": 50,
+      "answer": 1,
+      "arm": "selected",
+      "correct": false,
+      "expected": 4,
+      "op": "sgase",
+      "problem_i": 6
+    },
+    {
+      "N": 50,
+      "answer": 15,
+      "arm": "random_k",
+      "correct": false,
+      "expected": 4,
+      "op": "sgase",
+      "problem_i": 6
+    },
+    {
+      "N": 50,
+      "answer": 2,
+      "arm": "oracle",
+      "correct": false,
+      "expected": 4,
+      "op": "sgase",
+      "problem_i": 6
+    },
+    {
+      "N": 5,
+      "answer": 20,
+      "arm": "dump_all",
+      "correct": true,
+      "expected": 20,
+      "op": "ckabu",
+      "problem_i": 7
+    },
+    {
+      "N": 5,
+      "answer": 16,
+      "arm": "selected",
+      "correct": false,
+      "expected": 20,
+      "op": "ckabu",
+      "problem_i": 7
+    },
+    {
+      "N": 5,
+      "answer": 20,
+      "arm": "random_k",
+      "correct": true,
+      "expected": 20,
+      "op": "ckabu",
+      "problem_i": 7
+    },
+    {
+      "N": 5,
+      "answer": 10,
+      "arm": "oracle",
+      "correct": false,
+      "expected": 20,
+      "op": "ckabu",
+      "problem_i": 7
+    },
+    {
+      "N": 15,
+      "answer": 10,
+      "arm": "dump_all",
+      "correct": false,
+      "expected": 20,
+      "op": "ckabu",
+      "problem_i": 7
+    },
+    {
+      "N": 15,
+      "answer": 10,
+      "arm": "selected",
+      "correct": false,
+      "expected": 20,
+      "op": "ckabu",
+      "problem_i": 7
+    },
+    {
+      "N": 15,
+      "answer": 47,
+      "arm": "random_k",
+      "correct": false,
+      "expected": 20,
+      "op": "ckabu",
+      "problem_i": 7
+    },
+    {
+      "N": 15,
+      "answer": 10,
+      "arm": "oracle",
+      "correct": false,
+      "expected": 20,
+      "op": "ckabu",
+      "problem_i": 7
+    },
+    {
+      "N": 30,
+      "answer": 10,
+      "arm": "dump_all",
+      "correct": false,
+      "expected": 20,
+      "op": "ckabu",
+      "problem_i": 7
+    },
+    {
+      "N": 30,
+      "answer": 10,
+      "arm": "selected",
+      "correct": false,
+      "expected": 20,
+      "op": "ckabu",
+      "problem_i": 7
+    },
+    {
+      "N": 30,
+      "answer": 43,
+      "arm": "random_k",
+      "correct": false,
+      "expected": 20,
+      "op": "ckabu",
+      "problem_i": 7
+    },
+    {
+      "N": 30,
+      "answer": 10,
+      "arm": "oracle",
+      "correct": false,
+      "expected": 20,
+      "op": "ckabu",
+      "problem_i": 7
+    },
+    {
+      "N": 50,
+      "answer": 11,
+      "arm": "dump_all",
+      "correct": false,
+      "expected": 20,
+      "op": "ckabu",
+      "problem_i": 7
+    },
+    {
+      "N": 50,
+      "answer": 10,
+      "arm": "selected",
+      "correct": false,
+      "expected": 20,
+      "op": "ckabu",
+      "problem_i": 7
+    },
+    {
+      "N": 50,
+      "answer": 48,
+      "arm": "random_k",
+      "correct": false,
+      "expected": 20,
+      "op": "ckabu",
+      "problem_i": 7
+    },
+    {
+      "N": 50,
+      "answer": 10,
+      "arm": "oracle",
+      "correct": false,
+      "expected": 20,
+      "op": "ckabu",
+      "problem_i": 7
+    },
+    {
+      "N": 5,
+      "answer": 4,
+      "arm": "dump_all",
+      "correct": true,
+      "expected": 4,
+      "op": "stuze",
+      "problem_i": 8
+    },
+    {
+      "N": 5,
+      "answer": 4,
+      "arm": "selected",
+      "correct": true,
+      "expected": 4,
+      "op": "stuze",
+      "problem_i": 8
+    },
+    {
+      "N": 5,
+      "answer": 4,
+      "arm": "random_k",
+      "correct": true,
+      "expected": 4,
+      "op": "stuze",
+      "problem_i": 8
+    },
+    {
+      "N": 5,
+      "answer": 4,
+      "arm": "oracle",
+      "correct": true,
+      "expected": 4,
+      "op": "stuze",
+      "problem_i": 8
+    },
+    {
+      "N": 15,
+      "answer": 4,
+      "arm": "dump_all",
+      "correct": true,
+      "expected": 4,
+      "op": "stuze",
+      "problem_i": 8
+    },
+    {
+      "N": 15,
+      "answer": 4,
+      "arm": "selected",
+      "correct": true,
+      "expected": 4,
+      "op": "stuze",
+      "problem_i": 8
+    },
+    {
+      "N": 15,
+      "answer": 19,
+      "arm": "random_k",
+      "correct": false,
+      "expected": 4,
+      "op": "stuze",
+      "problem_i": 8
+    },
+    {
+      "N": 15,
+      "answer": 4,
+      "arm": "oracle",
+      "correct": true,
+      "expected": 4,
+      "op": "stuze",
+      "problem_i": 8
+    },
+    {
+      "N": 30,
+      "answer": 4,
+      "arm": "dump_all",
+      "correct": true,
+      "expected": 4,
+      "op": "stuze",
+      "problem_i": 8
+    },
+    {
+      "N": 30,
+      "answer": 4,
+      "arm": "selected",
+      "correct": true,
+      "expected": 4,
+      "op": "stuze",
+      "problem_i": 8
+    },
+    {
+      "N": 30,
+      "answer": 100,
+      "arm": "random_k",
+      "correct": false,
+      "expected": 4,
+      "op": "stuze",
+      "problem_i": 8
+    },
+    {
+      "N": 30,
+      "answer": 4,
+      "arm": "oracle",
+      "correct": true,
+      "expected": 4,
+      "op": "stuze",
+      "problem_i": 8
+    },
+    {
+      "N": 50,
+      "answer": 4,
+      "arm": "dump_all",
+      "correct": true,
+      "expected": 4,
+      "op": "stuze",
+      "problem_i": 8
+    },
+    {
+      "N": 50,
+      "answer": 2,
+      "arm": "selected",
+      "correct": false,
+      "expected": 4,
+      "op": "stuze",
+      "problem_i": 8
+    },
+    {
+      "N": 50,
+      "answer": 18,
+      "arm": "random_k",
+      "correct": false,
+      "expected": 4,
+      "op": "stuze",
+      "problem_i": 8
+    },
+    {
+      "N": 50,
+      "answer": 4,
+      "arm": "oracle",
+      "correct": true,
+      "expected": 4,
+      "op": "stuze",
+      "problem_i": 8
+    },
+    {
+      "N": 5,
+      "answer": 18,
+      "arm": "dump_all",
+      "correct": true,
+      "expected": 18,
+      "op": "pfide",
+      "problem_i": 9
+    },
+    {
+      "N": 5,
+      "answer": 18,
+      "arm": "selected",
+      "correct": true,
+      "expected": 18,
+      "op": "pfide",
+      "problem_i": 9
+    },
+    {
+      "N": 5,
+      "answer": 18,
+      "arm": "random_k",
+      "correct": true,
+      "expected": 18,
+      "op": "pfide",
+      "problem_i": 9
+    },
+    {
+      "N": 5,
+      "answer": 18,
+      "arm": "oracle",
+      "correct": true,
+      "expected": 18,
+      "op": "pfide",
+      "problem_i": 9
+    },
+    {
+      "N": 15,
+      "answer": 18,
+      "arm": "dump_all",
+      "correct": true,
+      "expected": 18,
+      "op": "pfide",
+      "problem_i": 9
+    },
+    {
+      "N": 15,
+      "answer": 18,
+      "arm": "selected",
+      "correct": true,
+      "expected": 18,
+      "op": "pfide",
+      "problem_i": 9
+    },
+    {
+      "N": 15,
+      "answer": 13,
+      "arm": "random_k",
+      "correct": false,
+      "expected": 18,
+      "op": "pfide",
+      "problem_i": 9
+    },
+    {
+      "N": 15,
+      "answer": 18,
+      "arm": "oracle",
+      "correct": true,
+      "expected": 18,
+      "op": "pfide",
+      "problem_i": 9
+    },
+    {
+      "N": 30,
+      "answer": 18,
+      "arm": "dump_all",
+      "correct": true,
+      "expected": 18,
+      "op": "pfide",
+      "problem_i": 9
+    },
+    {
+      "N": 30,
+      "answer": 18,
+      "arm": "selected",
+      "correct": true,
+      "expected": 18,
+      "op": "pfide",
+      "problem_i": 9
+    },
+    {
+      "N": 30,
+      "answer": 0,
+      "arm": "random_k",
+      "correct": false,
+      "expected": 18,
+      "op": "pfide",
+      "problem_i": 9
+    },
+    {
+      "N": 30,
+      "answer": 18,
+      "arm": "oracle",
+      "correct": true,
+      "expected": 18,
+      "op": "pfide",
+      "problem_i": 9
+    },
+    {
+      "N": 50,
+      "answer": 18,
+      "arm": "dump_all",
+      "correct": true,
+      "expected": 18,
+      "op": "pfide",
+      "problem_i": 9
+    },
+    {
+      "N": 50,
+      "answer": 18,
+      "arm": "selected",
+      "correct": true,
+      "expected": 18,
+      "op": "pfide",
+      "problem_i": 9
+    },
+    {
+      "N": 50,
+      "answer": 18,
+      "arm": "random_k",
+      "correct": true,
+      "expected": 18,
+      "op": "pfide",
+      "problem_i": 9
+    },
+    {
+      "N": 50,
+      "answer": 18,
+      "arm": "oracle",
+      "correct": true,
+      "expected": 18,
+      "op": "pfide",
+      "problem_i": 9
+    },
+    {
+      "N": 5,
+      "answer": 13,
+      "arm": "dump_all",
+      "correct": true,
+      "expected": 13,
+      "op": "ckabu",
+      "problem_i": 10
+    },
+    {
+      "N": 5,
+      "answer": 13,
+      "arm": "selected",
+      "correct": true,
+      "expected": 13,
+      "op": "ckabu",
+      "problem_i": 10
+    },
+    {
+      "N": 5,
+      "answer": 13,
+      "arm": "random_k",
+      "correct": true,
+      "expected": 13,
+      "op": "ckabu",
+      "problem_i": 10
+    },
+    {
+      "N": 5,
+      "answer": 13,
+      "arm": "oracle",
+      "correct": true,
+      "expected": 13,
+      "op": "ckabu",
+      "problem_i": 10
+    },
+    {
+      "N": 15,
+      "answer": 9,
+      "arm": "dump_all",
+      "correct": false,
+      "expected": 13,
+      "op": "ckabu",
+      "problem_i": 10
+    },
+    {
+      "N": 15,
+      "answer": 13,
+      "arm": "selected",
+      "correct": true,
+      "expected": 13,
+      "op": "ckabu",
+      "problem_i": 10
+    },
+    {
+      "N": 15,
+      "answer": 17,
+      "arm": "random_k",
+      "correct": false,
+      "expected": 13,
+      "op": "ckabu",
+      "problem_i": 10
+    },
+    {
+      "N": 15,
+      "answer": 13,
+      "arm": "oracle",
+      "correct": true,
+      "expected": 13,
+      "op": "ckabu",
+      "problem_i": 10
+    },
+    {
+      "N": 30,
+      "answer": 9,
+      "arm": "dump_all",
+      "correct": false,
+      "expected": 13,
+      "op": "ckabu",
+      "problem_i": 10
+    },
+    {
+      "N": 30,
+      "answer": 13,
+      "arm": "selected",
+      "correct": true,
+      "expected": 13,
+      "op": "ckabu",
+      "problem_i": 10
+    },
+    {
+      "N": 30,
+      "answer": 4,
+      "arm": "random_k",
+      "correct": false,
+      "expected": 13,
+      "op": "ckabu",
+      "problem_i": 10
+    },
+    {
+      "N": 30,
+      "answer": 13,
+      "arm": "oracle",
+      "correct": true,
+      "expected": 13,
+      "op": "ckabu",
+      "problem_i": 10
+    },
+    {
+      "N": 50,
+      "answer": 9,
+      "arm": "dump_all",
+      "correct": false,
+      "expected": 13,
+      "op": "ckabu",
+      "problem_i": 10
+    },
+    {
+      "N": 50,
+      "answer": 13,
+      "arm": "selected",
+      "correct": true,
+      "expected": 13,
+      "op": "ckabu",
+      "problem_i": 10
+    },
+    {
+      "N": 50,
+      "answer": 0,
+      "arm": "random_k",
+      "correct": false,
+      "expected": 13,
+      "op": "ckabu",
+      "problem_i": 10
+    },
+    {
+      "N": 50,
+      "answer": 13,
+      "arm": "oracle",
+      "correct": true,
+      "expected": 13,
+      "op": "ckabu",
+      "problem_i": 10
+    },
+    {
+      "N": 5,
+      "answer": 36,
+      "arm": "dump_all",
+      "correct": true,
+      "expected": 36,
+      "op": "pzavu",
+      "problem_i": 11
+    },
+    {
+      "N": 5,
+      "answer": 36,
+      "arm": "selected",
+      "correct": true,
+      "expected": 36,
+      "op": "pzavu",
+      "problem_i": 11
+    },
+    {
+      "N": 5,
+      "answer": 20,
+      "arm": "random_k",
+      "correct": false,
+      "expected": 36,
+      "op": "pzavu",
+      "problem_i": 11
+    },
+    {
+      "N": 5,
+      "answer": 36,
+      "arm": "oracle",
+      "correct": true,
+      "expected": 36,
+      "op": "pzavu",
+      "problem_i": 11
+    },
+    {
+      "N": 15,
+      "answer": 36,
+      "arm": "dump_all",
+      "correct": true,
+      "expected": 36,
+      "op": "pzavu",
+      "problem_i": 11
+    },
+    {
+      "N": 15,
+      "answer": 36,
+      "arm": "selected",
+      "correct": true,
+      "expected": 36,
+      "op": "pzavu",
+      "problem_i": 11
+    },
+    {
+      "N": 15,
+      "answer": 49,
+      "arm": "random_k",
+      "correct": false,
+      "expected": 36,
+      "op": "pzavu",
+      "problem_i": 11
+    },
+    {
+      "N": 15,
+      "answer": 36,
+      "arm": "oracle",
+      "correct": true,
+      "expected": 36,
+      "op": "pzavu",
+      "problem_i": 11
+    },
+    {
+      "N": 30,
+      "answer": 36,
+      "arm": "dump_all",
+      "correct": true,
+      "expected": 36,
+      "op": "pzavu",
+      "problem_i": 11
+    },
+    {
+      "N": 30,
+      "answer": 36,
+      "arm": "selected",
+      "correct": true,
+      "expected": 36,
+      "op": "pzavu",
+      "problem_i": 11
+    },
+    {
+      "N": 30,
+      "answer": 36,
+      "arm": "random_k",
+      "correct": true,
+      "expected": 36,
+      "op": "pzavu",
+      "problem_i": 11
+    },
+    {
+      "N": 30,
+      "answer": 36,
+      "arm": "oracle",
+      "correct": true,
+      "expected": 36,
+      "op": "pzavu",
+      "problem_i": 11
+    },
+    {
+      "N": 50,
+      "answer": 48,
+      "arm": "dump_all",
+      "correct": false,
+      "expected": 36,
+      "op": "pzavu",
+      "problem_i": 11
+    },
+    {
+      "N": 50,
+      "answer": 36,
+      "arm": "selected",
+      "correct": true,
+      "expected": 36,
+      "op": "pzavu",
+      "problem_i": 11
+    },
+    {
+      "N": 50,
+      "answer": 20,
+      "arm": "random_k",
+      "correct": false,
+      "expected": 36,
+      "op": "pzavu",
+      "problem_i": 11
+    },
+    {
+      "N": 50,
+      "answer": 36,
+      "arm": "oracle",
+      "correct": true,
+      "expected": 36,
+      "op": "pzavu",
+      "problem_i": 11
+    },
+    {
+      "N": 5,
+      "answer": 8,
+      "arm": "dump_all",
+      "correct": false,
+      "expected": 12,
+      "op": "dfopi",
+      "problem_i": 12
+    },
+    {
+      "N": 5,
+      "answer": 12,
+      "arm": "selected",
+      "correct": true,
+      "expected": 12,
+      "op": "dfopi",
+      "problem_i": 12
+    },
+    {
+      "N": 5,
+      "answer": 0,
+      "arm": "random_k",
+      "correct": false,
+      "expected": 12,
+      "op": "dfopi",
+      "problem_i": 12
+    },
+    {
+      "N": 5,
+      "answer": 12,
+      "arm": "oracle",
+      "correct": true,
+      "expected": 12,
+      "op": "dfopi",
+      "problem_i": 12
+    },
+    {
+      "N": 15,
+      "answer": 12,
+      "arm": "dump_all",
+      "correct": true,
+      "expected": 12,
+      "op": "dfopi",
+      "problem_i": 12
+    },
+    {
+      "N": 15,
+      "answer": 12,
+      "arm": "selected",
+      "correct": true,
+      "expected": 12,
+      "op": "dfopi",
+      "problem_i": 12
+    },
+    {
+      "N": 15,
+      "answer": 11,
+      "arm": "random_k",
+      "correct": false,
+      "expected": 12,
+      "op": "dfopi",
+      "problem_i": 12
+    },
+    {
+      "N": 15,
+      "answer": 12,
+      "arm": "oracle",
+      "correct": true,
+      "expected": 12,
+      "op": "dfopi",
+      "problem_i": 12
+    },
+    {
+      "N": 30,
+      "answer": 7,
+      "arm": "dump_all",
+      "correct": false,
+      "expected": 12,
+      "op": "dfopi",
+      "problem_i": 12
+    },
+    {
+      "N": 30,
+      "answer": 12,
+      "arm": "selected",
+      "correct": true,
+      "expected": 12,
+      "op": "dfopi",
+      "problem_i": 12
+    },
+    {
+      "N": 30,
+      "answer": 0,
+      "arm": "random_k",
+      "correct": false,
+      "expected": 12,
+      "op": "dfopi",
+      "problem_i": 12
+    },
+    {
+      "N": 30,
+      "answer": 12,
+      "arm": "oracle",
+      "correct": true,
+      "expected": 12,
+      "op": "dfopi",
+      "problem_i": 12
+    },
+    {
+      "N": 50,
+      "answer": 7,
+      "arm": "dump_all",
+      "correct": false,
+      "expected": 12,
+      "op": "dfopi",
+      "problem_i": 12
+    },
+    {
+      "N": 50,
+      "answer": 12,
+      "arm": "selected",
+      "correct": true,
+      "expected": 12,
+      "op": "dfopi",
+      "problem_i": 12
+    },
+    {
+      "N": 50,
+      "answer": 0,
+      "arm": "random_k",
+      "correct": false,
+      "expected": 12,
+      "op": "dfopi",
+      "problem_i": 12
+    },
+    {
+      "N": 50,
+      "answer": 12,
+      "arm": "oracle",
+      "correct": true,
+      "expected": 12,
+      "op": "dfopi",
+      "problem_i": 12
+    },
+    {
+      "N": 5,
+      "answer": 24,
+      "arm": "dump_all",
+      "correct": true,
+      "expected": 24,
+      "op": "cgemu",
+      "problem_i": 13
+    },
+    {
+      "N": 5,
+      "answer": 24,
+      "arm": "selected",
+      "correct": true,
+      "expected": 24,
+      "op": "cgemu",
+      "problem_i": 13
+    },
+    {
+      "N": 5,
+      "answer": 24,
+      "arm": "random_k",
+      "correct": true,
+      "expected": 24,
+      "op": "cgemu",
+      "problem_i": 13
+    },
+    {
+      "N": 5,
+      "answer": 24,
+      "arm": "oracle",
+      "correct": true,
+      "expected": 24,
+      "op": "cgemu",
+      "problem_i": 13
+    },
+    {
+      "N": 15,
+      "answer": 24,
+      "arm": "dump_all",
+      "correct": true,
+      "expected": 24,
+      "op": "cgemu",
+      "problem_i": 13
+    },
+    {
+      "N": 15,
+      "answer": 24,
+      "arm": "selected",
+      "correct": true,
+      "expected": 24,
+      "op": "cgemu",
+      "problem_i": 13
+    },
+    {
+      "N": 15,
+      "answer": 15,
+      "arm": "random_k",
+      "correct": false,
+      "expected": 24,
+      "op": "cgemu",
+      "problem_i": 13
+    },
+    {
+      "N": 15,
+      "answer": 24,
+      "arm": "oracle",
+      "correct": true,
+      "expected": 24,
+      "op": "cgemu",
+      "problem_i": 13
+    },
+    {
+      "N": 30,
+      "answer": 48,
+      "arm": "dump_all",
+      "correct": false,
+      "expected": 24,
+      "op": "cgemu",
+      "problem_i": 13
+    },
+    {
+      "N": 30,
+      "answer": 24,
+      "arm": "selected",
+      "correct": true,
+      "expected": 24,
+      "op": "cgemu",
+      "problem_i": 13
+    },
+    {
+      "N": 30,
+      "answer": 24,
+      "arm": "random_k",
+      "correct": true,
+      "expected": 24,
+      "op": "cgemu",
+      "problem_i": 13
+    },
+    {
+      "N": 30,
+      "answer": 24,
+      "arm": "oracle",
+      "correct": true,
+      "expected": 24,
+      "op": "cgemu",
+      "problem_i": 13
+    },
+    {
+      "N": 50,
+      "answer": 24,
+      "arm": "dump_all",
+      "correct": true,
+      "expected": 24,
+      "op": "cgemu",
+      "problem_i": 13
+    },
+    {
+      "N": 50,
+      "answer": 24,
+      "arm": "selected",
+      "correct": true,
+      "expected": 24,
+      "op": "cgemu",
+      "problem_i": 13
+    },
+    {
+      "N": 50,
+      "answer": 16,
+      "arm": "random_k",
+      "correct": false,
+      "expected": 24,
+      "op": "cgemu",
+      "problem_i": 13
+    },
+    {
+      "N": 50,
+      "answer": 24,
+      "arm": "oracle",
+      "correct": true,
+      "expected": 24,
+      "op": "cgemu",
+      "problem_i": 13
+    },
+    {
+      "N": 5,
+      "answer": 32,
+      "arm": "dump_all",
+      "correct": true,
+      "expected": 32,
+      "op": "kdefo",
+      "problem_i": 14
+    },
+    {
+      "N": 5,
+      "answer": 32,
+      "arm": "selected",
+      "correct": true,
+      "expected": 32,
+      "op": "kdefo",
+      "problem_i": 14
+    },
+    {
+      "N": 5,
+      "answer": 32,
+      "arm": "random_k",
+      "correct": true,
+      "expected": 32,
+      "op": "kdefo",
+      "problem_i": 14
+    },
+    {
+      "N": 5,
+      "answer": 32,
+      "arm": "oracle",
+      "correct": true,
+      "expected": 32,
+      "op": "kdefo",
+      "problem_i": 14
+    },
+    {
+      "N": 15,
+      "answer": 12,
+      "arm": "dump_all",
+      "correct": false,
+      "expected": 32,
+      "op": "kdefo",
+      "problem_i": 14
+    },
+    {
+      "N": 15,
+      "answer": 32,
+      "arm": "selected",
+      "correct": true,
+      "expected": 32,
+      "op": "kdefo",
+      "problem_i": 14
+    },
+    {
+      "N": 15,
+      "answer": 45,
+      "arm": "random_k",
+      "correct": false,
+      "expected": 32,
+      "op": "kdefo",
+      "problem_i": 14
+    },
+    {
+      "N": 15,
+      "answer": 32,
+      "arm": "oracle",
+      "correct": true,
+      "expected": 32,
+      "op": "kdefo",
+      "problem_i": 14
+    },
+    {
+      "N": 30,
+      "answer": 32,
+      "arm": "dump_all",
+      "correct": true,
+      "expected": 32,
+      "op": "kdefo",
+      "problem_i": 14
+    },
+    {
+      "N": 30,
+      "answer": 32,
+      "arm": "selected",
+      "correct": true,
+      "expected": 32,
+      "op": "kdefo",
+      "problem_i": 14
+    },
+    {
+      "N": 30,
+      "answer": 48,
+      "arm": "random_k",
+      "correct": false,
+      "expected": 32,
+      "op": "kdefo",
+      "problem_i": 14
+    },
+    {
+      "N": 30,
+      "answer": 32,
+      "arm": "oracle",
+      "correct": true,
+      "expected": 32,
+      "op": "kdefo",
+      "problem_i": 14
+    },
+    {
+      "N": 50,
+      "answer": 32,
+      "arm": "dump_all",
+      "correct": true,
+      "expected": 32,
+      "op": "kdefo",
+      "problem_i": 14
+    },
+    {
+      "N": 50,
+      "answer": 32,
+      "arm": "selected",
+      "correct": true,
+      "expected": 32,
+      "op": "kdefo",
+      "problem_i": 14
+    },
+    {
+      "N": 50,
+      "answer": 0,
+      "arm": "random_k",
+      "correct": false,
+      "expected": 32,
+      "op": "kdefo",
+      "problem_i": 14
+    },
+    {
+      "N": 50,
+      "answer": 32,
+      "arm": "oracle",
+      "correct": true,
+      "expected": 32,
+      "op": "kdefo",
+      "problem_i": 14
+    },
+    {
+      "N": 5,
+      "answer": 36,
+      "arm": "dump_all",
+      "correct": true,
+      "expected": 36,
+      "op": "pzavu",
+      "problem_i": 15
+    },
+    {
+      "N": 5,
+      "answer": 36,
+      "arm": "selected",
+      "correct": true,
+      "expected": 36,
+      "op": "pzavu",
+      "problem_i": 15
+    },
+    {
+      "N": 5,
+      "answer": 36,
+      "arm": "random_k",
+      "correct": true,
+      "expected": 36,
+      "op": "pzavu",
+      "problem_i": 15
+    },
+    {
+      "N": 5,
+      "answer": 36,
+      "arm": "oracle",
+      "correct": true,
+      "expected": 36,
+      "op": "pzavu",
+      "problem_i": 15
+    },
+    {
+      "N": 15,
+      "answer": 48,
+      "arm": "dump_all",
+      "correct": false,
+      "expected": 36,
+      "op": "pzavu",
+      "problem_i": 15
+    },
+    {
+      "N": 15,
+      "answer": 36,
+      "arm": "selected",
+      "correct": true,
+      "expected": 36,
+      "op": "pzavu",
+      "problem_i": 15
+    },
+    {
+      "N": 15,
+      "answer": 42,
+      "arm": "random_k",
+      "correct": false,
+      "expected": 36,
+      "op": "pzavu",
+      "problem_i": 15
+    },
+    {
+      "N": 15,
+      "answer": 36,
+      "arm": "oracle",
+      "correct": true,
+      "expected": 36,
+      "op": "pzavu",
+      "problem_i": 15
+    },
+    {
+      "N": 30,
+      "answer": 12,
+      "arm": "dump_all",
+      "correct": false,
+      "expected": 36,
+      "op": "pzavu",
+      "problem_i": 15
+    },
+    {
+      "N": 30,
+      "answer": 36,
+      "arm": "selected",
+      "correct": true,
+      "expected": 36,
+      "op": "pzavu",
+      "problem_i": 15
+    },
+    {
+      "N": 30,
+      "answer": 45,
+      "arm": "random_k",
+      "correct": false,
+      "expected": 36,
+      "op": "pzavu",
+      "problem_i": 15
+    },
+    {
+      "N": 30,
+      "answer": 36,
+      "arm": "oracle",
+      "correct": true,
+      "expected": 36,
+      "op": "pzavu",
+      "problem_i": 15
+    },
+    {
+      "N": 50,
+      "answer": 36,
+      "arm": "dump_all",
+      "correct": true,
+      "expected": 36,
+      "op": "pzavu",
+      "problem_i": 15
+    },
+    {
+      "N": 50,
+      "answer": 36,
+      "arm": "selected",
+      "correct": true,
+      "expected": 36,
+      "op": "pzavu",
+      "problem_i": 15
+    },
+    {
+      "N": 50,
+      "answer": 42,
+      "arm": "random_k",
+      "correct": false,
+      "expected": 36,
+      "op": "pzavu",
+      "problem_i": 15
+    },
+    {
+      "N": 50,
+      "answer": 36,
+      "arm": "oracle",
+      "correct": true,
+      "expected": 36,
+      "op": "pzavu",
+      "problem_i": 15
+    },
+    {
+      "N": 5,
+      "answer": 9,
+      "arm": "dump_all",
+      "correct": true,
+      "expected": 9,
+      "op": "dgeta",
+      "problem_i": 16
+    },
+    {
+      "N": 5,
+      "answer": 9,
+      "arm": "selected",
+      "correct": true,
+      "expected": 9,
+      "op": "dgeta",
+      "problem_i": 16
+    },
+    {
+      "N": 5,
+      "answer": 46,
+      "arm": "random_k",
+      "correct": false,
+      "expected": 9,
+      "op": "dgeta",
+      "problem_i": 16
+    },
+    {
+      "N": 5,
+      "answer": 0,
+      "arm": "oracle",
+      "correct": false,
+      "expected": 9,
+      "op": "dgeta",
+      "problem_i": 16
+    },
+    {
+      "N": 15,
+      "answer": 9,
+      "arm": "dump_all",
+      "correct": true,
+      "expected": 9,
+      "op": "dgeta",
+      "problem_i": 16
+    },
+    {
+      "N": 15,
+      "answer": 9,
+      "arm": "selected",
+      "correct": true,
+      "expected": 9,
+      "op": "dgeta",
+      "problem_i": 16
+    },
+    {
+      "N": 15,
+      "answer": 9,
+      "arm": "random_k",
+      "correct": true,
+      "expected": 9,
+      "op": "dgeta",
+      "problem_i": 16
+    },
+    {
+      "N": 15,
+      "answer": 0,
+      "arm": "oracle",
+      "correct": false,
+      "expected": 9,
+      "op": "dgeta",
+      "problem_i": 16
+    },
+    {
+      "N": 30,
+      "answer": 0,
+      "arm": "dump_all",
+      "correct": false,
+      "expected": 9,
+      "op": "dgeta",
+      "problem_i": 16
+    },
+    {
+      "N": 30,
+      "answer": 9,
+      "arm": "selected",
+      "correct": true,
+      "expected": 9,
+      "op": "dgeta",
+      "problem_i": 16
+    },
+    {
+      "N": 30,
+      "answer": 0,
+      "arm": "random_k",
+      "correct": false,
+      "expected": 9,
+      "op": "dgeta",
+      "problem_i": 16
+    },
+    {
+      "N": 30,
+      "answer": 0,
+      "arm": "oracle",
+      "correct": false,
+      "expected": 9,
+      "op": "dgeta",
+      "problem_i": 16
+    },
+    {
+      "N": 50,
+      "answer": 9,
+      "arm": "dump_all",
+      "correct": true,
+      "expected": 9,
+      "op": "dgeta",
+      "problem_i": 16
+    },
+    {
+      "N": 50,
+      "answer": 9,
+      "arm": "selected",
+      "correct": true,
+      "expected": 9,
+      "op": "dgeta",
+      "problem_i": 16
+    },
+    {
+      "N": 50,
+      "answer": 0,
+      "arm": "random_k",
+      "correct": false,
+      "expected": 9,
+      "op": "dgeta",
+      "problem_i": 16
+    },
+    {
+      "N": 50,
+      "answer": 0,
+      "arm": "oracle",
+      "correct": false,
+      "expected": 9,
+      "op": "dgeta",
+      "problem_i": 16
+    },
+    {
+      "N": 5,
+      "answer": 23,
+      "arm": "dump_all",
+      "correct": true,
+      "expected": 23,
+      "op": "lvabu",
+      "problem_i": 17
+    },
+    {
+      "N": 5,
+      "answer": 23,
+      "arm": "selected",
+      "correct": true,
+      "expected": 23,
+      "op": "lvabu",
+      "problem_i": 17
+    },
+    {
+      "N": 5,
+      "answer": 0,
+      "arm": "random_k",
+      "correct": false,
+      "expected": 23,
+      "op": "lvabu",
+      "problem_i": 17
+    },
+    {
+      "N": 5,
+      "answer": 35,
+      "arm": "oracle",
+      "correct": false,
+      "expected": 23,
+      "op": "lvabu",
+      "problem_i": 17
+    },
+    {
+      "N": 15,
+      "answer": 23,
+      "arm": "dump_all",
+      "correct": true,
+      "expected": 23,
+      "op": "lvabu",
+      "problem_i": 17
+    },
+    {
+      "N": 15,
+      "answer": 23,
+      "arm": "selected",
+      "correct": true,
+      "expected": 23,
+      "op": "lvabu",
+      "problem_i": 17
+    },
+    {
+      "N": 15,
+      "answer": 41,
+      "arm": "random_k",
+      "correct": false,
+      "expected": 23,
+      "op": "lvabu",
+      "problem_i": 17
+    },
+    {
+      "N": 15,
+      "answer": 35,
+      "arm": "oracle",
+      "correct": false,
+      "expected": 23,
+      "op": "lvabu",
+      "problem_i": 17
+    },
+    {
+      "N": 30,
+      "answer": 35,
+      "arm": "dump_all",
+      "correct": false,
+      "expected": 23,
+      "op": "lvabu",
+      "problem_i": 17
+    },
+    {
+      "N": 30,
+      "answer": 33,
+      "arm": "selected",
+      "correct": false,
+      "expected": 23,
+      "op": "lvabu",
+      "problem_i": 17
+    },
+    {
+      "N": 30,
+      "answer": 47,
+      "arm": "random_k",
+      "correct": false,
+      "expected": 23,
+      "op": "lvabu",
+      "problem_i": 17
+    },
+    {
+      "N": 30,
+      "answer": 35,
+      "arm": "oracle",
+      "correct": false,
+      "expected": 23,
+      "op": "lvabu",
+      "problem_i": 17
+    },
+    {
+      "N": 50,
+      "answer": 25,
+      "arm": "dump_all",
+      "correct": false,
+      "expected": 23,
+      "op": "lvabu",
+      "problem_i": 17
+    },
+    {
+      "N": 50,
+      "answer": 35,
+      "arm": "selected",
+      "correct": false,
+      "expected": 23,
+      "op": "lvabu",
+      "problem_i": 17
+    },
+    {
+      "N": 50,
+      "answer": 19,
+      "arm": "random_k",
+      "correct": false,
+      "expected": 23,
+      "op": "lvabu",
+      "problem_i": 17
+    },
+    {
+      "N": 50,
+      "answer": 35,
+      "arm": "oracle",
+      "correct": false,
+      "expected": 23,
+      "op": "lvabu",
+      "problem_i": 17
+    }
+  ],
+  "seed": 0,
+  "summary": {
+    "dump_all|15": {
+      "N": 15,
+      "accuracy": 0.5,
+      "arm": "dump_all",
+      "n": 18
+    },
+    "dump_all|30": {
+      "N": 30,
+      "accuracy": 0.3333333333333333,
+      "arm": "dump_all",
+      "n": 18
+    },
+    "dump_all|5": {
+      "N": 5,
+      "accuracy": 0.7222222222222222,
+      "arm": "dump_all",
+      "n": 18
+    },
+    "dump_all|50": {
+      "N": 50,
+      "accuracy": 0.4444444444444444,
+      "arm": "dump_all",
+      "n": 18
+    },
+    "oracle|15": {
+      "N": 15,
+      "accuracy": 0.6666666666666666,
+      "arm": "oracle",
+      "n": 18
+    },
+    "oracle|30": {
+      "N": 30,
+      "accuracy": 0.6666666666666666,
+      "arm": "oracle",
+      "n": 18
+    },
+    "oracle|5": {
+      "N": 5,
+      "accuracy": 0.6666666666666666,
+      "arm": "oracle",
+      "n": 18
+    },
+    "oracle|50": {
+      "N": 50,
+      "accuracy": 0.6666666666666666,
+      "arm": "oracle",
+      "n": 18
+    },
+    "random_k|15": {
+      "N": 15,
+      "accuracy": 0.1111111111111111,
+      "arm": "random_k",
+      "n": 18
+    },
+    "random_k|30": {
+      "N": 30,
+      "accuracy": 0.16666666666666666,
+      "arm": "random_k",
+      "n": 18
+    },
+    "random_k|5": {
+      "N": 5,
+      "accuracy": 0.5555555555555556,
+      "arm": "random_k",
+      "n": 18
+    },
+    "random_k|50": {
+      "N": 50,
+      "accuracy": 0.05555555555555555,
+      "arm": "random_k",
+      "n": 18
+    },
+    "selected|15": {
+      "N": 15,
+      "accuracy": 0.7777777777777778,
+      "arm": "selected",
+      "n": 18
+    },
+    "selected|30": {
+      "N": 30,
+      "accuracy": 0.6666666666666666,
+      "arm": "selected",
+      "n": 18
+    },
+    "selected|5": {
+      "N": 5,
+      "accuracy": 0.7222222222222222,
+      "arm": "selected",
+      "n": 18
+    },
+    "selected|50": {
+      "N": 50,
+      "accuracy": 0.6111111111111112,
+      "arm": "selected",
+      "n": 18
+    }
+  }
+}
