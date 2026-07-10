@@ -1,0 +1,6 @@
+{"id":"proc-evidence","type":"procedural","behavior":"evidence","text":"Working rule: when a result looks good, verify it with a small test and cite the observed number before claiming success.","fact_value":null,"distractor_value":null}
+{"id":"proc-clarify","type":"procedural","behavior":"clarify","text":"Working rule: when a request is ambiguous, ask one clarifying question and name the missing requirement before acting.","fact_value":null,"distractor_value":null}
+{"id":"proc-concise","type":"procedural","behavior":"concise","text":"Working rule: answer with a short, direct, concrete result and drop unnecessary background.","fact_value":null,"distractor_value":null}
+{"id":"fact-delimiter","type":"factual","behavior":null,"text":"Project fact: the AIOptimizer config file separates its fields with a pipe character.","fact_value":"pipe","distractor_value":"comma"}
+{"id":"fact-layer","type":"factual","behavior":null,"text":"Project fact: the activation-steering split eval selected layer 12 as its best steering layer.","fact_value":"12","distractor_value":"29"}
+{"id":"fact-runtime","type":"factual","behavior":null,"text":"Project fact: the external memory system in this repo is named Brain Runtime, and its first benchmarked version is v0.","fact_value":"v0","distractor_value":"v3"}

@@ -1,0 +1,18 @@
+# Python
+__pycache__/
+*.pyc
+*.pyo
+
+# Temp / lock files
+*.tmp
+*.json.tmp
+
+# agent_bus runtime state (regenerated at runtime; not source of truth)
+agent_bus/cache.json
+agent_bus/board.json
+agent_bus/messages.jsonl
+agent_bus/.cursors.json
+agent_bus/.cache.lock
+agent_bus/SHARED.md
+agent_bus/CHANNEL.md
+agent_bus/BOARD.md

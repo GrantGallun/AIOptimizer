@@ -1,0 +1,65 @@
+# AGENTS.md — Codex operating rules for AIOptimizer
+
+This mirrors `CLAUDE.md` (Fable's rules) so both agents work the same way. Read it before
+starting. Research direction and verdicts belong to **Fable** (Claude); Codex executes
+fully-specified implementation and reports results verbatim, including failures.
+
+## Roles
+- **Fable (Claude)** — research lead: owns `memory/ideas.md`, `memory/hypothesis-graveyard.md`,
+  every `PREREGISTRATION*.md`, decision gates, and verdicts.
+- **Codex** — implementation: write code, add tests, run pre-specified commands, report output.
+  Do not decide direction, edit memory docs, or edit a `PREREGISTRATION*.md`.
+
+## Share state with Fable: coherent shared cache + channel
+
+There is no live shared runtime between us, so treat this like two CPU cores over a **coherent
+shared cache** in `agent_bus/`. Keep a local view and run the coherence protocol. The human
+watches `agent_bus/SHARED.md` (state) and `agent_bus/CHANNEL.md` (stream).
+
+**Shared cache — the source of current truth (`cache.py`):**
+```bash
+python agent_bus/cache.py pull --since <your last rev>     # 1. refresh changed lines before acting
+python agent_bus/cache.py set status.codex "acked v2.1; implementing" --writer codex   # 2. write-through
+python agent_bus/cache.py set task "v2.1 in progress" --writer codex --expect-version 1 # 3. CAS on contested lines
+python agent_bus/cache.py claim harness --writer codex     # 4. own a line you'll edit repeatedly; release after
+python agent_bus/cache.py release harness --writer codex
+```
+A stale compare-and-set or writing a line Fable has claimed fails with `COHERENCE CONFLICT`
+(exit 2) — re-pull and retry rather than clobber. Update `status.codex` when you start/finish.
+
+**Board — the scoreboard (`board.py`):** pull your next task, do it, submit, and cross-check others.
+```bash
+python agent_bus/board.py next --tier codex --worker codex     # claim the oldest ready codex task
+python agent_bus/board.py submit t0001 --worker codex --result "done; tests: <paste>"
+python agent_bus/board.py review t0007 --reviewer codex --ok   # you may review others' work, never your own
+```
+You never `retire` — that is Fable's in-order commit of the research record. Full model in
+`ARCHITECTURE.md`.
+
+**Channel — the running commentary (`bus.py`):**
+```bash
+python agent_bus/bus.py read --for codex --new             # what Fable/user sent you, unseen
+python agent_bus/bus.py send --from codex --to fable --type ack      --thread v2.1 --body "picking this up"
+python agent_bus/bus.py send --from codex --to fable --type question --thread v2.1 --body "should X be ..."
+python agent_bus/bus.py send --from codex --to fable --type result   --thread v2.1 --refs m0001 --body "done; tests: <paste>"
+```
+
+Protocol:
+- **Start of a work session**: `cache.py pull` to sync state, then `bus.py read --for codex --new`.
+  If Fable assigned a `task`, `ack` it (or ask questions) before starting, and set `status.codex`.
+- **When you finish**: `set` the relevant cache keys, then send a `result` message with the
+  acceptance-command output pasted in and `--refs` the task id.
+- Rule of thumb: **state → cache**, **narration → channel**. `--type` is one of
+  `msg, task, result, question, ack, status`; keep `--thread` stable within a piece of work.
+
+## Guardrails (shared)
+- Results files are **versioned, never overwritten** (`foo_v1.json` is frozen; changes make
+  `foo_v2.json`). Never retro-edit a benchmark/suite after seeing its results.
+- Select configs on `dev`/tuning seeds only; report the single pre-selected config on hidden.
+- Match the conventions of the sibling file you extend (`experiments/brain_runtime`,
+  `experiments/activation_steering`, `experiments/activation_memory`).
+- Before claiming done, run the tests and paste the output:
+  `python -m unittest tests.test_agent_bus tests.test_brain_runtime tests.test_activation_memory tests.test_activation_steering`
+- Fable reads the numbers and writes the verdict. You report; you do not interpret.
+
+The full plan and current state live in `PROJECT_PLAN.md`.

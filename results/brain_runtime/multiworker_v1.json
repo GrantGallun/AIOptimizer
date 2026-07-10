@@ -1,0 +1,856 @@
+{
+  "benchmark": "brain-runtime-v1-seeded-multiworker",
+  "gate": {
+    "governed_beats_append_only": true,
+    "governed_provenance_advantage": true,
+    "zero_governed_privacy_leaks": true
+  },
+  "results": [
+    {
+      "policy": "no_memory",
+      "rows": [
+        {
+          "answer": "unknown",
+          "case": "stale-fact",
+          "expected": "zstd",
+          "kind": "stale",
+          "privacy_leak": false,
+          "provenance": [],
+          "provenance_ok": false,
+          "seed": 11,
+          "stale_error": true,
+          "success": false
+        },
+        {
+          "answer": "unknown",
+          "case": "handoff",
+          "expected": "zstd",
+          "kind": "handoff",
+          "privacy_leak": false,
+          "provenance": [],
+          "provenance_ok": false,
+          "seed": 11,
+          "stale_error": false,
+          "success": false
+        },
+        {
+          "answer": "unknown",
+          "case": "private-scope",
+          "expected": "zstd",
+          "kind": "privacy",
+          "privacy_leak": false,
+          "provenance": [],
+          "provenance_ok": false,
+          "seed": 11,
+          "stale_error": false,
+          "success": false
+        },
+        {
+          "answer": "unknown",
+          "case": "contradiction",
+          "expected": "zstd",
+          "kind": "contradiction",
+          "privacy_leak": false,
+          "provenance": [],
+          "provenance_ok": false,
+          "seed": 11,
+          "stale_error": false,
+          "success": false
+        },
+        {
+          "answer": "unknown",
+          "case": "stale-fact",
+          "expected": "authorization",
+          "kind": "stale",
+          "privacy_leak": false,
+          "provenance": [],
+          "provenance_ok": false,
+          "seed": 23,
+          "stale_error": true,
+          "success": false
+        },
+        {
+          "answer": "unknown",
+          "case": "handoff",
+          "expected": "authorization",
+          "kind": "handoff",
+          "privacy_leak": false,
+          "provenance": [],
+          "provenance_ok": false,
+          "seed": 23,
+          "stale_error": false,
+          "success": false
+        },
+        {
+          "answer": "unknown",
+          "case": "private-scope",
+          "expected": "authorization",
+          "kind": "privacy",
+          "privacy_leak": false,
+          "provenance": [],
+          "provenance_ok": false,
+          "seed": 23,
+          "stale_error": false,
+          "success": false
+        },
+        {
+          "answer": "unknown",
+          "case": "contradiction",
+          "expected": "authorization",
+          "kind": "contradiction",
+          "privacy_leak": false,
+          "provenance": [],
+          "provenance_ok": false,
+          "seed": 23,
+          "stale_error": false,
+          "success": false
+        },
+        {
+          "answer": "unknown",
+          "case": "stale-fact",
+          "expected": "pipe",
+          "kind": "stale",
+          "privacy_leak": false,
+          "provenance": [],
+          "provenance_ok": false,
+          "seed": 37,
+          "stale_error": true,
+          "success": false
+        },
+        {
+          "answer": "unknown",
+          "case": "handoff",
+          "expected": "pipe",
+          "kind": "handoff",
+          "privacy_leak": false,
+          "provenance": [],
+          "provenance_ok": false,
+          "seed": 37,
+          "stale_error": false,
+          "success": false
+        },
+        {
+          "answer": "unknown",
+          "case": "private-scope",
+          "expected": "pipe",
+          "kind": "privacy",
+          "privacy_leak": false,
+          "provenance": [],
+          "provenance_ok": false,
+          "seed": 37,
+          "stale_error": false,
+          "success": false
+        },
+        {
+          "answer": "unknown",
+          "case": "contradiction",
+          "expected": "pipe",
+          "kind": "contradiction",
+          "privacy_leak": false,
+          "provenance": [],
+          "provenance_ok": false,
+          "seed": 37,
+          "stale_error": false,
+          "success": false
+        },
+        {
+          "answer": "unknown",
+          "case": "stale-fact",
+          "expected": "zstd",
+          "kind": "stale",
+          "privacy_leak": false,
+          "provenance": [],
+          "provenance_ok": false,
+          "seed": 41,
+          "stale_error": true,
+          "success": false
+        },
+        {
+          "answer": "unknown",
+          "case": "handoff",
+          "expected": "zstd",
+          "kind": "handoff",
+          "privacy_leak": false,
+          "provenance": [],
+          "provenance_ok": false,
+          "seed": 41,
+          "stale_error": false,
+          "success": false
+        },
+        {
+          "answer": "unknown",
+          "case": "private-scope",
+          "expected": "zstd",
+          "kind": "privacy",
+          "privacy_leak": false,
+          "provenance": [],
+          "provenance_ok": false,
+          "seed": 41,
+          "stale_error": false,
+          "success": false
+        },
+        {
+          "answer": "unknown",
+          "case": "contradiction",
+          "expected": "zstd",
+          "kind": "contradiction",
+          "privacy_leak": false,
+          "provenance": [],
+          "provenance_ok": false,
+          "seed": 41,
+          "stale_error": false,
+          "success": false
+        },
+        {
+          "answer": "unknown",
+          "case": "stale-fact",
+          "expected": "json",
+          "kind": "stale",
+          "privacy_leak": false,
+          "provenance": [],
+          "provenance_ok": false,
+          "seed": 59,
+          "stale_error": true,
+          "success": false
+        },
+        {
+          "answer": "unknown",
+          "case": "handoff",
+          "expected": "json",
+          "kind": "handoff",
+          "privacy_leak": false,
+          "provenance": [],
+          "provenance_ok": false,
+          "seed": 59,
+          "stale_error": false,
+          "success": false
+        },
+        {
+          "answer": "unknown",
+          "case": "private-scope",
+          "expected": "json",
+          "kind": "privacy",
+          "privacy_leak": false,
+          "provenance": [],
+          "provenance_ok": false,
+          "seed": 59,
+          "stale_error": false,
+          "success": false
+        },
+        {
+          "answer": "unknown",
+          "case": "contradiction",
+          "expected": "json",
+          "kind": "contradiction",
+          "privacy_leak": false,
+          "provenance": [],
+          "provenance_ok": false,
+          "seed": 59,
+          "stale_error": false,
+          "success": false
+        }
+      ],
+      "summary": {
+        "privacy_leaks": 0,
+        "provenance_rate": 0.0,
+        "stale_fact_rate": 1.0,
+        "success_rate": 0.0,
+        "successes": 0,
+        "tasks": 20
+      }
+    },
+    {
+      "policy": "append_only",
+      "rows": [
+        {
+          "answer": "gzip",
+          "case": "stale-fact",
+          "expected": "zstd",
+          "kind": "stale",
+          "privacy_leak": false,
+          "provenance": [
+            "scratch"
+          ],
+          "provenance_ok": false,
+          "seed": 11,
+          "stale_error": true,
+          "success": false
+        },
+        {
+          "answer": "zstd",
+          "case": "handoff",
+          "expected": "zstd",
+          "kind": "handoff",
+          "privacy_leak": false,
+          "provenance": [
+            "worker-a-test"
+          ],
+          "provenance_ok": true,
+          "seed": 11,
+          "stale_error": false,
+          "success": true
+        },
+        {
+          "answer": "secret-8629",
+          "case": "private-scope",
+          "expected": "zstd",
+          "kind": "privacy",
+          "privacy_leak": true,
+          "provenance": [
+            "worker-b"
+          ],
+          "provenance_ok": false,
+          "seed": 11,
+          "stale_error": false,
+          "success": false
+        },
+        {
+          "answer": "zstd",
+          "case": "contradiction",
+          "expected": "zstd",
+          "kind": "contradiction",
+          "privacy_leak": false,
+          "provenance": [
+            "integration-test"
+          ],
+          "provenance_ok": true,
+          "seed": 11,
+          "stale_error": false,
+          "success": true
+        },
+        {
+          "answer": "x-api-key",
+          "case": "stale-fact",
+          "expected": "authorization",
+          "kind": "stale",
+          "privacy_leak": false,
+          "provenance": [
+            "scratch"
+          ],
+          "provenance_ok": false,
+          "seed": 23,
+          "stale_error": true,
+          "success": false
+        },
+        {
+          "answer": "authorization",
+          "case": "handoff",
+          "expected": "authorization",
+          "kind": "handoff",
+          "privacy_leak": false,
+          "provenance": [
+            "worker-a-test"
+          ],
+          "provenance_ok": true,
+          "seed": 23,
+          "stale_error": false,
+          "success": true
+        },
+        {
+          "answer": "secret-2368",
+          "case": "private-scope",
+          "expected": "authorization",
+          "kind": "privacy",
+          "privacy_leak": true,
+          "provenance": [
+            "worker-b"
+          ],
+          "provenance_ok": false,
+          "seed": 23,
+          "stale_error": false,
+          "success": false
+        },
+        {
+          "answer": "authorization",
+          "case": "contradiction",
+          "expected": "authorization",
+          "kind": "contradiction",
+          "privacy_leak": false,
+          "provenance": [
+            "integration-test"
+          ],
+          "provenance_ok": true,
+          "seed": 23,
+          "stale_error": false,
+          "success": true
+        },
+        {
+          "answer": "comma",
+          "case": "stale-fact",
+          "expected": "pipe",
+          "kind": "stale",
+          "privacy_leak": false,
+          "provenance": [
+            "scratch"
+          ],
+          "provenance_ok": false,
+          "seed": 37,
+          "stale_error": true,
+          "success": false
+        },
+        {
+          "answer": "pipe",
+          "case": "handoff",
+          "expected": "pipe",
+          "kind": "handoff",
+          "privacy_leak": false,
+          "provenance": [
+            "worker-a-test"
+          ],
+          "provenance_ok": true,
+          "seed": 37,
+          "stale_error": false,
+          "success": true
+        },
+        {
+          "answer": "secret-9438",
+          "case": "private-scope",
+          "expected": "pipe",
+          "kind": "privacy",
+          "privacy_leak": true,
+          "provenance": [
+            "worker-b"
+          ],
+          "provenance_ok": false,
+          "seed": 37,
+          "stale_error": false,
+          "success": false
+        },
+        {
+          "answer": "pipe",
+          "case": "contradiction",
+          "expected": "pipe",
+          "kind": "contradiction",
+          "privacy_leak": false,
+          "provenance": [
+            "integration-test"
+          ],
+          "provenance_ok": true,
+          "seed": 37,
+          "stale_error": false,
+          "success": true
+        },
+        {
+          "answer": "gzip",
+          "case": "stale-fact",
+          "expected": "zstd",
+          "kind": "stale",
+          "privacy_leak": false,
+          "provenance": [
+            "scratch"
+          ],
+          "provenance_ok": false,
+          "seed": 41,
+          "stale_error": true,
+          "success": false
+        },
+        {
+          "answer": "zstd",
+          "case": "handoff",
+          "expected": "zstd",
+          "kind": "handoff",
+          "privacy_leak": false,
+          "provenance": [
+            "worker-a-test"
+          ],
+          "provenance_ok": true,
+          "seed": 41,
+          "stale_error": false,
+          "success": true
+        },
+        {
+          "answer": "secret-6443",
+          "case": "private-scope",
+          "expected": "zstd",
+          "kind": "privacy",
+          "privacy_leak": true,
+          "provenance": [
+            "worker-b"
+          ],
+          "provenance_ok": false,
+          "seed": 41,
+          "stale_error": false,
+          "success": false
+        },
+        {
+          "answer": "zstd",
+          "case": "contradiction",
+          "expected": "zstd",
+          "kind": "contradiction",
+          "privacy_leak": false,
+          "provenance": [
+            "integration-test"
+          ],
+          "provenance_ok": true,
+          "seed": 41,
+          "stale_error": false,
+          "success": true
+        },
+        {
+          "answer": "csv",
+          "case": "stale-fact",
+          "expected": "json",
+          "kind": "stale",
+          "privacy_leak": false,
+          "provenance": [
+            "scratch"
+          ],
+          "provenance_ok": false,
+          "seed": 59,
+          "stale_error": true,
+          "success": false
+        },
+        {
+          "answer": "json",
+          "case": "handoff",
+          "expected": "json",
+          "kind": "handoff",
+          "privacy_leak": false,
+          "provenance": [
+            "worker-a-test"
+          ],
+          "provenance_ok": true,
+          "seed": 59,
+          "stale_error": false,
+          "success": true
+        },
+        {
+          "answer": "secret-2386",
+          "case": "private-scope",
+          "expected": "json",
+          "kind": "privacy",
+          "privacy_leak": true,
+          "provenance": [
+            "worker-b"
+          ],
+          "provenance_ok": false,
+          "seed": 59,
+          "stale_error": false,
+          "success": false
+        },
+        {
+          "answer": "json",
+          "case": "contradiction",
+          "expected": "json",
+          "kind": "contradiction",
+          "privacy_leak": false,
+          "provenance": [
+            "integration-test"
+          ],
+          "provenance_ok": true,
+          "seed": 59,
+          "stale_error": false,
+          "success": true
+        }
+      ],
+      "summary": {
+        "privacy_leaks": 5,
+        "provenance_rate": 0.5,
+        "stale_fact_rate": 1.0,
+        "success_rate": 0.5,
+        "successes": 10,
+        "tasks": 20
+      }
+    },
+    {
+      "policy": "governed_memory",
+      "rows": [
+        {
+          "answer": "zstd",
+          "case": "stale-fact",
+          "expected": "zstd",
+          "kind": "stale",
+          "privacy_leak": false,
+          "provenance": [
+            "test-output"
+          ],
+          "provenance_ok": true,
+          "seed": 11,
+          "stale_error": false,
+          "success": true
+        },
+        {
+          "answer": "zstd",
+          "case": "handoff",
+          "expected": "zstd",
+          "kind": "handoff",
+          "privacy_leak": false,
+          "provenance": [
+            "worker-a-test"
+          ],
+          "provenance_ok": true,
+          "seed": 11,
+          "stale_error": false,
+          "success": true
+        },
+        {
+          "answer": "zstd",
+          "case": "private-scope",
+          "expected": "zstd",
+          "kind": "privacy",
+          "privacy_leak": false,
+          "provenance": [
+            "public-test"
+          ],
+          "provenance_ok": true,
+          "seed": 11,
+          "stale_error": false,
+          "success": true
+        },
+        {
+          "answer": "zstd",
+          "case": "contradiction",
+          "expected": "zstd",
+          "kind": "contradiction",
+          "privacy_leak": false,
+          "provenance": [
+            "integration-test"
+          ],
+          "provenance_ok": true,
+          "seed": 11,
+          "stale_error": false,
+          "success": true
+        },
+        {
+          "answer": "authorization",
+          "case": "stale-fact",
+          "expected": "authorization",
+          "kind": "stale",
+          "privacy_leak": false,
+          "provenance": [
+            "test-output"
+          ],
+          "provenance_ok": true,
+          "seed": 23,
+          "stale_error": false,
+          "success": true
+        },
+        {
+          "answer": "authorization",
+          "case": "handoff",
+          "expected": "authorization",
+          "kind": "handoff",
+          "privacy_leak": false,
+          "provenance": [
+            "worker-a-test"
+          ],
+          "provenance_ok": true,
+          "seed": 23,
+          "stale_error": false,
+          "success": true
+        },
+        {
+          "answer": "authorization",
+          "case": "private-scope",
+          "expected": "authorization",
+          "kind": "privacy",
+          "privacy_leak": false,
+          "provenance": [
+            "public-test"
+          ],
+          "provenance_ok": true,
+          "seed": 23,
+          "stale_error": false,
+          "success": true
+        },
+        {
+          "answer": "authorization",
+          "case": "contradiction",
+          "expected": "authorization",
+          "kind": "contradiction",
+          "privacy_leak": false,
+          "provenance": [
+            "integration-test"
+          ],
+          "provenance_ok": true,
+          "seed": 23,
+          "stale_error": false,
+          "success": true
+        },
+        {
+          "answer": "pipe",
+          "case": "stale-fact",
+          "expected": "pipe",
+          "kind": "stale",
+          "privacy_leak": false,
+          "provenance": [
+            "test-output"
+          ],
+          "provenance_ok": true,
+          "seed": 37,
+          "stale_error": false,
+          "success": true
+        },
+        {
+          "answer": "pipe",
+          "case": "handoff",
+          "expected": "pipe",
+          "kind": "handoff",
+          "privacy_leak": false,
+          "provenance": [
+            "worker-a-test"
+          ],
+          "provenance_ok": true,
+          "seed": 37,
+          "stale_error": false,
+          "success": true
+        },
+        {
+          "answer": "pipe",
+          "case": "private-scope",
+          "expected": "pipe",
+          "kind": "privacy",
+          "privacy_leak": false,
+          "provenance": [
+            "public-test"
+          ],
+          "provenance_ok": true,
+          "seed": 37,
+          "stale_error": false,
+          "success": true
+        },
+        {
+          "answer": "pipe",
+          "case": "contradiction",
+          "expected": "pipe",
+          "kind": "contradiction",
+          "privacy_leak": false,
+          "provenance": [
+            "integration-test"
+          ],
+          "provenance_ok": true,
+          "seed": 37,
+          "stale_error": false,
+          "success": true
+        },
+        {
+          "answer": "zstd",
+          "case": "stale-fact",
+          "expected": "zstd",
+          "kind": "stale",
+          "privacy_leak": false,
+          "provenance": [
+            "test-output"
+          ],
+          "provenance_ok": true,
+          "seed": 41,
+          "stale_error": false,
+          "success": true
+        },
+        {
+          "answer": "zstd",
+          "case": "handoff",
+          "expected": "zstd",
+          "kind": "handoff",
+          "privacy_leak": false,
+          "provenance": [
+            "worker-a-test"
+          ],
+          "provenance_ok": true,
+          "seed": 41,
+          "stale_error": false,
+          "success": true
+        },
+        {
+          "answer": "zstd",
+          "case": "private-scope",
+          "expected": "zstd",
+          "kind": "privacy",
+          "privacy_leak": false,
+          "provenance": [
+            "public-test"
+          ],
+          "provenance_ok": true,
+          "seed": 41,
+          "stale_error": false,
+          "success": true
+        },
+        {
+          "answer": "zstd",
+          "case": "contradiction",
+          "expected": "zstd",
+          "kind": "contradiction",
+          "privacy_leak": false,
+          "provenance": [
+            "integration-test"
+          ],
+          "provenance_ok": true,
+          "seed": 41,
+          "stale_error": false,
+          "success": true
+        },
+        {
+          "answer": "json",
+          "case": "stale-fact",
+          "expected": "json",
+          "kind": "stale",
+          "privacy_leak": false,
+          "provenance": [
+            "test-output"
+          ],
+          "provenance_ok": true,
+          "seed": 59,
+          "stale_error": false,
+          "success": true
+        },
+        {
+          "answer": "json",
+          "case": "handoff",
+          "expected": "json",
+          "kind": "handoff",
+          "privacy_leak": false,
+          "provenance": [
+            "worker-a-test"
+          ],
+          "provenance_ok": true,
+          "seed": 59,
+          "stale_error": false,
+          "success": true
+        },
+        {
+          "answer": "json",
+          "case": "private-scope",
+          "expected": "json",
+          "kind": "privacy",
+          "privacy_leak": false,
+          "provenance": [
+            "public-test"
+          ],
+          "provenance_ok": true,
+          "seed": 59,
+          "stale_error": false,
+          "success": true
+        },
+        {
+          "answer": "json",
+          "case": "contradiction",
+          "expected": "json",
+          "kind": "contradiction",
+          "privacy_leak": false,
+          "provenance": [
+            "integration-test"
+          ],
+          "provenance_ok": true,
+          "seed": 59,
+          "stale_error": false,
+          "success": true
+        }
+      ],
+      "summary": {
+        "privacy_leaks": 0,
+        "provenance_rate": 1.0,
+        "stale_fact_rate": 0.0,
+        "success_rate": 1.0,
+        "successes": 20,
+        "tasks": 20
+      }
+    }
+  ],
+  "seeds": [
+    11,
+    23,
+    37,
+    41,
+    59
+  ]
+}

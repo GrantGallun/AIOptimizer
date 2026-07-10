@@ -1,0 +1,4 @@
+interface:
+  display_name: "Brain Workspace"
+  short_description: "Track ideas and tested hypotheses"
+  default_prompt: "Use $brain-workspace to work on this project while keeping ideas and tested hypotheses updated."

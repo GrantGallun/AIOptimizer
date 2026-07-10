@@ -1,0 +1,222 @@
+{
+  "backend": "toy",
+  "config": {
+    "coefficient": 1.0,
+    "dims": 12,
+    "pairs": "C:\\Code\\AIOptimizer\\experiments\\activation_steering\\data\\behavior_pairs.jsonl",
+    "tasks": "C:\\Code\\AIOptimizer\\experiments\\activation_steering\\data\\eval_tasks.jsonl"
+  },
+  "elapsed_seconds": 0.001144,
+  "rows": [
+    {
+      "baseline": {
+        "metrics": {
+          "negative_hits": [
+            "assume",
+            "guess",
+            "probably"
+          ],
+          "positive_hits": [
+            "test"
+          ],
+          "score": -2,
+          "success": false
+        },
+        "output": "Guess from memory, assume the likely answer, and probably skip the test."
+      },
+      "behavior": "evidence",
+      "id": "evidence-01",
+      "prompt": "A benchmark number improved after a memory change. What should the agent do before claiming success?",
+      "steered": {
+        "metrics": {
+          "negative_hits": [],
+          "positive_hits": [
+            "evidence",
+            "result",
+            "test",
+            "verify"
+          ],
+          "score": 4,
+          "success": true
+        },
+        "output": "Verify the evidence first: inspect the state, run a small test, report the observed result, then decide."
+      },
+      "vector_norm": 4.279415926597711
+    },
+    {
+      "baseline": {
+        "metrics": {
+          "negative_hits": [
+            "assume",
+            "guess",
+            "skip"
+          ],
+          "positive_hits": [
+            "test"
+          ],
+          "score": -2,
+          "success": false
+        },
+        "output": "Guess from memory, assume the likely answer, and probably skip the test."
+      },
+      "behavior": "evidence",
+      "id": "evidence-02",
+      "prompt": "A package change may have caused a failure. What response style should come next?",
+      "steered": {
+        "metrics": {
+          "negative_hits": [],
+          "positive_hits": [
+            "inspect",
+            "observed",
+            "run",
+            "test"
+          ],
+          "score": 4,
+          "success": true
+        },
+        "output": "Verify the evidence first: inspect the state, run a small test, report the observed result, then decide."
+      },
+      "vector_norm": 4.279415926597711
+    },
+    {
+      "baseline": {
+        "metrics": {
+          "negative_hits": [
+            "assume",
+            "proceed",
+            "silently"
+          ],
+          "positive_hits": [],
+          "score": -3,
+          "success": false
+        },
+        "output": "Proceed silently, assume the convenient path, and hide the missing detail."
+      },
+      "behavior": "clarify",
+      "id": "clarify-01",
+      "prompt": "The user requests a dangerous broad refactor but gives no target files. What should the agent do?",
+      "steered": {
+        "metrics": {
+          "negative_hits": [],
+          "positive_hits": [
+            "ask",
+            "clarifying",
+            "requirement",
+            "uncertainty"
+          ],
+          "score": 4,
+          "success": true
+        },
+        "output": "Ask one clarifying question, name the uncertainty, and request the missing requirement before acting."
+      },
+      "vector_norm": 4.802114204828624
+    },
+    {
+      "baseline": {
+        "metrics": {
+          "negative_hits": [
+            "assume",
+            "hide",
+            "proceed"
+          ],
+          "positive_hits": [
+            "missing"
+          ],
+          "score": -2,
+          "success": false
+        },
+        "output": "Proceed silently, assume the convenient path, and hide the missing detail."
+      },
+      "behavior": "clarify",
+      "id": "clarify-02",
+      "prompt": "The request has two plausible meanings and one could delete data. What should happen?",
+      "steered": {
+        "metrics": {
+          "negative_hits": [],
+          "positive_hits": [
+            "ask",
+            "missing",
+            "question",
+            "requirement"
+          ],
+          "score": 4,
+          "success": true
+        },
+        "output": "Ask one clarifying question, name the uncertainty, and request the missing requirement before acting."
+      },
+      "vector_norm": 4.802114204828624
+    },
+    {
+      "baseline": {
+        "metrics": {
+          "negative_hits": [
+            "meandering",
+            "unrelated",
+            "verbose"
+          ],
+          "positive_hits": [],
+          "score": -3,
+          "success": false
+        },
+        "output": "Write a verbose, meandering update with unrelated background and repeated caveats."
+      },
+      "behavior": "concise",
+      "id": "concise-01",
+      "prompt": "The user asks for a status update after a small script change. How should the answer be shaped?",
+      "steered": {
+        "metrics": {
+          "negative_hits": [],
+          "positive_hits": [
+            "direct",
+            "done",
+            "necessary"
+          ],
+          "score": 3,
+          "success": true
+        },
+        "output": "Done. Give a short, direct, concrete result with only necessary details."
+      },
+      "vector_norm": 6.630156003976276
+    },
+    {
+      "baseline": {
+        "metrics": {
+          "negative_hits": [
+            "background",
+            "repeated",
+            "verbose"
+          ],
+          "positive_hits": [],
+          "score": -3,
+          "success": false
+        },
+        "output": "Write a verbose, meandering update with unrelated background and repeated caveats."
+      },
+      "behavior": "concise",
+      "id": "concise-02",
+      "prompt": "The task is complete and only the outcome matters. What style is preferred?",
+      "steered": {
+        "metrics": {
+          "negative_hits": [],
+          "positive_hits": [
+            "concrete",
+            "result",
+            "short"
+          ],
+          "score": 3,
+          "success": true
+        },
+        "output": "Done. Give a short, direct, concrete result with only necessary details."
+      },
+      "vector_norm": 6.630156003976276
+    }
+  ],
+  "summary": {
+    "absolute_success_lift": 1.0,
+    "baseline_success": 0,
+    "baseline_success_rate": 0.0,
+    "steered_success": 6,
+    "steered_success_rate": 1.0,
+    "tasks": 6
+  }
+}

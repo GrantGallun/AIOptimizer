@@ -1,0 +1,18 @@
+{
+  "name": "brain-workspace",
+  "version": "0.1.0+codex.20260709065919",
+  "description": "Brain-like project memory and hypothesis tracking for Codex workspaces.",
+  "author": {
+    "name": "Local developer"
+  },
+  "skills": "./skills/",
+  "interface": {
+    "displayName": "Brain Workspace",
+    "shortDescription": "Maintain ideas and tested hypotheses while working.",
+    "longDescription": "Brain Workspace adds a lightweight Codex operating loop for project memory: ideas stay active until tested, tested hypotheses move into a graveyard with evidence, and relevant memory is refreshed before and after substantive work.",
+    "developerName": "Local developer",
+    "category": "Productivity",
+    "capabilities": [],
+    "defaultPrompt": "Use Brain Workspace to work on this project while updating ideas and tested hypotheses."
+  }
+}

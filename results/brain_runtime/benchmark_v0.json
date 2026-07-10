@@ -1,0 +1,56 @@
+{
+  "benchmark": "brain-runtime-v0-synthetic",
+  "elapsed_seconds": 0.000462,
+  "summary": {
+    "brain_beats_vanilla": true,
+    "brain_success_rate": 1.0,
+    "brain_successes": 4,
+    "consolidation": {
+      "forgotten": 1,
+      "promoted": 2
+    },
+    "contradictions": 1,
+    "task_hooks": 1,
+    "tasks": 4,
+    "vanilla_success_rate": 0.0,
+    "vanilla_successes": 0
+  },
+  "tasks": [
+    {
+      "brain_answer": "pipe",
+      "brain_success": true,
+      "expected": "pipe",
+      "id": "stale-fact",
+      "query": "What delimiter should the ingest parser use?",
+      "vanilla_answer": "comma",
+      "vanilla_success": false
+    },
+    {
+      "brain_answer": "Regex extraction failed on nested payload extraction; use structured JSON parsing.",
+      "brain_success": true,
+      "expected": "structured JSON parsing",
+      "id": "transfer",
+      "query": "How should nested payload extraction be implemented?",
+      "vanilla_answer": "The ingest parser delimiter is comma.",
+      "vanilla_success": false
+    },
+    {
+      "brain_answer": "New failing test proves the ingest parser delimiter is pipe.",
+      "brain_success": true,
+      "expected": "no distractor",
+      "id": "forgetting",
+      "query": "Should temporary scratch comma notes affect parser decisions?",
+      "vanilla_answer": "The ingest parser delimiter is comma.",
+      "vanilla_success": false
+    },
+    {
+      "brain_answer": "task",
+      "brain_success": true,
+      "expected": "task",
+      "id": "task-hook",
+      "query": "Did contradiction pressure spawn a resolution task?",
+      "vanilla_answer": "none",
+      "vanilla_success": false
+    }
+  ]
+}

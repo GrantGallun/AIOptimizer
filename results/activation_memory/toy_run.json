@@ -1,0 +1,93 @@
+{
+  "aggregate": {
+    "factual": {
+      "activation": {
+        "margin_lift": 0.0,
+        "success_rate": 0.0,
+        "tasks": 4
+      },
+      "activation_random": {
+        "margin_lift": 0.0,
+        "success_rate": 0.0,
+        "tasks": 4
+      },
+      "activation_wrong": {
+        "margin_lift": 0.0,
+        "success_rate": 0.0,
+        "tasks": 4
+      },
+      "in_context": {
+        "margin_lift": 2.5,
+        "success_rate": 1.0,
+        "tasks": 4
+      },
+      "in_context_wrong": {
+        "margin_lift": -0.5,
+        "success_rate": 0.0,
+        "tasks": 4
+      },
+      "none": {
+        "margin_lift": 0.0,
+        "success_rate": 0.0,
+        "tasks": 4
+      }
+    },
+    "procedural": {
+      "activation": {
+        "margin_lift": 7.663786764705883,
+        "success_rate": 1.0,
+        "tasks": 4
+      },
+      "activation_random": {
+        "margin_lift": 0.48970588235294127,
+        "success_rate": 1.0,
+        "tasks": 4
+      },
+      "activation_wrong": {
+        "margin_lift": 0.025257352941176453,
+        "success_rate": 0.25,
+        "tasks": 4
+      },
+      "in_context": {
+        "margin_lift": 5.108259803921569,
+        "success_rate": 1.0,
+        "tasks": 4
+      },
+      "in_context_wrong": {
+        "margin_lift": 0.01590686274509806,
+        "success_rate": 0.25,
+        "tasks": 4
+      },
+      "none": {
+        "margin_lift": 0.0,
+        "success_rate": 0.25,
+        "tasks": 4
+      }
+    }
+  },
+  "backend": "toy",
+  "config": {
+    "coefficient": 1.5,
+    "dims": 12,
+    "memories": "C:\\Code\\AIOptimizer\\experiments\\activation_memory\\data\\memory_items.jsonl",
+    "tasks": "C:\\Code\\AIOptimizer\\experiments\\activation_memory\\data\\tasks_hidden.jsonl"
+  },
+  "elapsed_seconds": 0.002857,
+  "interaction": {
+    "adv_fact": -2.5,
+    "adv_proc": 2.555526960784314,
+    "checks": {
+      "activation_wins_procedural": true,
+      "factual_in_context_beats_wrong": true,
+      "in_context_wins_factual": true,
+      "interaction_gap_met": true,
+      "procedural_activation_beats_random": true,
+      "procedural_activation_beats_wrong": true
+    },
+    "interaction_gap": 5.055526960784314,
+    "min_gap": 0.5,
+    "passed": true,
+    "verdict": "Confirmed"
+  },
+  "rows": []
+}
