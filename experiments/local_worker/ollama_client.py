@@ -52,8 +52,15 @@ class OllamaClient:
             raise RuntimeError("Ollama returned an invalid model list.")
         return models
 
-    def generate(self, prompt: str, *, model: str = DEFAULT_MODEL, system: str | None = None) -> str:
-        return self.generate_with_metrics(prompt, model=model, system=system).text
+    def generate(
+        self,
+        prompt: str,
+        *,
+        model: str = DEFAULT_MODEL,
+        system: str | None = None,
+        format: dict[str, Any] | str | None = None,
+    ) -> str:
+        return self.generate_with_metrics(prompt, model=model, system=system, format=format).text
 
     def generate_with_metrics(
         self,
@@ -63,6 +70,7 @@ class OllamaClient:
         system: str | None = None,
         temperature: float = 0.0,
         max_tokens: int = 24,
+        format: dict[str, Any] | str | None = None,
     ) -> Generation:
         body: dict[str, Any] = {
             "model": model,
@@ -73,6 +81,8 @@ class OllamaClient:
         }
         if system:
             body["system"] = system
+        if format is not None:
+            body["format"] = format
         payload = self._request("/api/generate", body)
         response = payload.get("response")
         if not isinstance(response, str):
