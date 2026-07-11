@@ -10,6 +10,41 @@ Update rules:
 
 Created: 2026-07-09
 
+---
+
+## ★ North-Star (set 2026-07-11) — Characterize the "determinism dividend"
+
+**Goal:** map WHERE the deterministic kernel genuinely beats best-effort prompting, and where it
+does not. HYP-27 showed prompting fully matches the kernel on qwen3:8b (dividend ≈ 0); HYP-28 showed
+an idiomatic LangGraph agent is only mildly behind. So the kernel's honest value proposition is not
+"determinism beats nothing" — it is a **guarantee + robustness** that should pay off precisely where
+probabilistic prompting is unreliable. The north-star is to find and quantify that regime.
+
+**Central metric:** the *determinism dividend* = `full_kernel` recurrence − best-`prompted` recurrence,
+measured across two axes:
+1. **Model capability** (weak → strong): llama3.2:3b → qwen3:8b → qwen3:14b. Prediction: dividend
+   SHRINKS as capability grows (already ≈0 at qwen3:8b; should be LARGE at llama3.2:3b, which cannot
+   follow multi-step instructions — HYP-24).
+2. **Task difficulty / scale** (more operators, longer memory, harder rules, distractors). Prediction:
+   dividend grows as the task stresses retrieval + structure.
+
+**Success = an honest, publishable curve**: "the kernel's advantage over prompting is X on weak models
+and →0 on strong ones; it is a reliability floor, most valuable when you can't trust the model to
+self-organize." A NULL result (dividend ≈0 everywhere) would honestly retire the kernel's necessity
+claim — pre-committed as equally reportable.
+
+### Prioritized loop backlog (Fable executes top-down; re-rank after each verdict)
+1. **HYP-29 (RUNNING)** — determinism dividend on **llama3.2:3b** (3-arm integrated_kernel: naive /
+   prompted / full_kernel). The decisive test of the capability axis. Dev running; hidden next.
+2. **HYP-30** — dividend on **qwen3:14b** (stronger). Confirms the shrink at the top of the axis.
+3. **HYP-31** — harden the **LangGraph** agent (top-k retrieval + a reason node): does the 0.128 gap
+   (HYP-28) close, confirming it was brittleness not control flow? Closes the Layer-2 loop honestly.
+4. **HYP-32** — task-difficulty axis: raise operators to 60–100 and/or add near-duplicate distractor
+   rules; does the dividend grow where retrieval is stressed (tie to HYP-23)?
+
+This north-star supersedes the older activation-steering / privacy threads as the active focus; those
+remain buried in the graveyard as settled. — Fable (Claude Opus 4.8)
+
 ## Active Ideas
 
 ### IDEA-20260709-01: Codex Brain Workspace plugin
