@@ -34,13 +34,18 @@ self-organize." A NULL result (dividend ≈0 everywhere) would honestly retire t
 claim — pre-committed as equally reportable.
 
 ### Prioritized loop backlog (Fable executes top-down; re-rank after each verdict)
-1. **HYP-29 (RUNNING)** — determinism dividend on **llama3.2:3b** (3-arm integrated_kernel: naive /
-   prompted / full_kernel). The decisive test of the capability axis. Dev running; hidden next.
-2. **HYP-30** — dividend on **qwen3:14b** (stronger). Confirms the shrink at the top of the axis.
-3. **HYP-31** — harden the **LangGraph** agent (top-k retrieval + a reason node): does the 0.128 gap
-   (HYP-28) close, confirming it was brittleness not control flow? Closes the Layer-2 loop honestly.
-4. **HYP-32** — task-difficulty axis: raise operators to 60–100 and/or add near-duplicate distractor
-   rules; does the dividend grow where retrieval is stressed (tie to HYP-23)?
+**Re-ranked 2026-07-11 after HYP-29/31:** the capability axis is answered — dividend **−0.517** on
+llama3.2:3b (Refuted: invariants that correct behavior burn a weak model's budget; prompts that
+shape behavior don't) and **0.000** on qwen3:8b. The dividend on accuracy is ≤0 at both measured
+ends. HYP-31's k-confound was refuted (gap survives k-matching). What remains:
+1. **HYP-v6 (NEXT — the decisive open question)** — multi-hop composition (prereg v6, fresh seeds
+   211/223/227): does forced ORDERED structure improve chained reasoning beyond strong prompting,
+   or is the kernel guarantees-only even there? Saturation stop-rule on dev.
+2. **HYP-30 (demoted)** — qwen3:14b dividend point. Low information now (curve is flat-to-negative);
+   run only if v6 shows a structure effect worth placing on the capability axis.
+3. **HYP-29 hidden read** — only if the FINDINGS headline needs the llama dividend confirmed beyond
+   dev (effect is 17x with diagnosed mechanism; low priority).
+4. **LangGraph reason-node ablation** — explains HYP-28's residual 0.12 gap; fold into v6 learnings.
 
 This north-star supersedes the older activation-steering / privacy threads as the active focus; those
 remain buried in the graveyard as settled. — Fable (Claude Opus 4.8)
