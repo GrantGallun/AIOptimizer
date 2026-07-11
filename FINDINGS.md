@@ -74,10 +74,27 @@ qwen3:8b (hidden):
 
 **The honest headline:** on a *capable, instructable* model, good prompting and even an idiomatic
 framework agent get you to ~87–100%. The kernel's determinism is **not** a night-and-day miracle
-there — it is a **guarantee** (100% vs prompting's ~97% step-compliance) and **robustness at scale**,
-and it earns its keep most on **weaker / less-instructable models** (llama3.2:3b couldn't follow the
-instruction at all). The kernel is a reliability *floor*, not a capability ceiling — and its
-mechanisms are complementary to LangGraph, not opposed (they could be implemented as a LangGraph graph).
+there — it is a **guarantee** (100% vs prompting's ~97% step-compliance) and **robustness at scale**.
+The kernel is a reliability *floor*, not a capability ceiling — and its mechanisms are complementary
+to LangGraph, not opposed (they could be implemented as a LangGraph graph).
+
+### 7. The determinism dividend across model capability — ≤ 0 at both ends (HYP-29, Refuted)
+We predicted the kernel would rescue *weak* models that can't follow prompts. Wrong — measured on
+llama3.2:3b (with the audit-fixed action budget and a repaired invariant-ordering bug the weak model
+itself exposed): strong prompt **0.550**, full kernel **0.033**. The dividend is **negative**.
+Mechanism: *invariants that correct behavior mid-cycle consume the action budget a weak model needs
+to finish; a strong prompt shapes behavior from the first token for free — and a prompt can carry
+task knowledge, which a generic invariant cannot.* With qwen3:8b's dividend of 0.000 (HYP-27), the
+kernel's forced structure never beat good prompting on single-hop accuracy at either capability end.
+Its accuracy case now rests entirely on the task-difficulty axis:
+
+### 8. Multi-hop composition — the decisive test *(prereg v6, in progress)*
+Depth-2 composed operators (`outer(inner(a,b), c)`: retrieve TWO rules, chain them) finally give
+dynamic range instead of 0/1 cliffs. Dev (qwen3:8b, after two dated measurement amendments — reason-
+token truncation, then a composition-aware prompt for the prompted arm): **kernel 1.000 vs
+best-effort prompting 0.765**. A genuine mechanism appeared: the kernel's *deterministic retrieval
+query* (built from the full observation) reliably surfaces both rules; the prompted model's
+self-chosen query often missed one. Hidden verdict (fresh seeds, Wilson-significant gate) pending.
 
 ---
 
