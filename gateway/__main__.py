@@ -18,6 +18,7 @@ if __package__ in {None, ""}:
 
 from gateway.cache_middleware import ExactCacheMiddleware
 from gateway.compact_middleware import CompactContextMiddleware
+from gateway.context_middleware import AttentionContextMiddleware
 from gateway.ledger import JsonlLedger
 from gateway.receipts import ShadowJudge
 from gateway.server import GatewayServer
@@ -33,6 +34,12 @@ def main() -> None:
                         help="Fraction of optimized requests judged against the raw original.")
     parser.add_argument("--no-cache", action="store_true")
     parser.add_argument("--no-compact", action="store_true")
+    parser.add_argument(
+        "--attention-context",
+        action="store_true",
+        help="Enable experimental attention reorganization (default: OFF).",
+    )
+    parser.add_argument("--attention-budget-chars", type=int, default=12_000)
     args = parser.parse_args()
 
     middlewares = []
@@ -40,6 +47,8 @@ def main() -> None:
         middlewares.append(ExactCacheMiddleware())
     if not args.no_compact:
         middlewares.append(CompactContextMiddleware(budget_chars=args.budget_chars))
+    if args.attention_context:
+        middlewares.append(AttentionContextMiddleware(budget_chars=args.attention_budget_chars))
 
     Path(args.ledger).parent.mkdir(parents=True, exist_ok=True)
     server = GatewayServer(
