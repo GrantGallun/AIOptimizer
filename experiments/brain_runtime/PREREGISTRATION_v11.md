@@ -43,3 +43,26 @@ Each case (synthetic bed, v9 geometry, budget 32% — must evict the mapping und
   enough), heat is unnecessary on this task — scope honestly.
 
 — Fable (Claude Fable 5), 2026-07-11
+
+---
+
+## Dev-stage design log (2026-07-11, all render-only — zero model calls, dated)
+
+Built: t0033 heat API (Codex), v11 runner (`heat_eval.py`), frozen dev cases. Render-level
+iteration then killed four naive heat designs in sequence, each with a diagnosed mechanism:
+1. Dense-cosine heat, user-turn queries: user records SELF-MATCH at cosine 1.0 → heat degenerates
+   to "keep the user's own chatter" (mapping retention 0.05).
+2. + self-exclusion: uniform chatter templates cross-heat each other (mapping rank 28/40) —
+   fixed by diversifying the bed (a case-design artifact worth keeping fixed).
+3. All-turns dense heat: topical recurrence heats everything (0.05).
+4. IDF-lexical reference heat (rare-token overlap): signal improves (mapping heat rank ~12/40)
+   but the CLUSTER-BLEND semantics still displace the mapping relative to plain relevance
+   (0.40 vs 0.65 at a well-posed 45% budget; the earlier 32% budget made the task unanswerable
+   by construction — pinned + usage turns already exhausted it).
+
+**Standing conclusion (dev-stage):** heat as a *ranking blend* competes with relevance instead of
+complementing it. The user's original phrasing — "keep the entire thing" — points at PROTECTED-SET
+semantics (top-K heat records pinned like system/query, relevance ranks the remainder), likely with
+reference-graph heat (explicit citation/anaphora) rather than similarity accumulation. That is the
+v11.3 design to attempt fresh — no model run is spent until a render check passes
+(attention_heat expected_present > attention's). Gate unchanged. — Fable (Claude Fable 5)

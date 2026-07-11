@@ -233,16 +233,28 @@ def generate_codename_cases(seed: int, n_cases: int = 20,
 
         messages = [{"role": "system", "content": "You are a helpful project assistant."}]
         topics = rng.sample(TOPICS, len(TOPICS))
+        user_templates = [
+            "Any more thoughts on {t}?", "Where did we land on {t}?", "Is {t} still worth doing?",
+            "Remind me what we said about {t}.", "I tried {t} again yesterday.",
+            "Can we schedule time for {t}?", "My neighbor asked about {t}, funny enough.",
+            "Budget question: does {t} need money set aside?", "I saw an article about {t}.",
+            "Honestly {t} has been on my mind all week.",
+        ]
+        assistant_templates = [
+            "On {t}: keep it simple and revisit next week.", "For {t} I'd start small and iterate.",
+            "{t} seems fine to postpone until the weekend.", "There's a decent guide about {t} online.",
+            "I'd rank {t} below the urgent stuff for now.", "Your last take on {t} sounded right to me.",
+            "Two options for {t}: quick fix or full redo.", "No strong view on {t}, either works.",
+            "Worth timeboxing {t} to an hour, no more.", "Let's revisit {t} once the week calms down.",
+        ]
         for index in range(2, 40):
             role = "user" if index % 2 == 0 else "assistant"
             if index in planted:
                 messages.append({"role": role, "content": planted[index]})
                 continue
             topic = topics[index % len(topics)]
-            content = (f"Any more thoughts on {topic}? I keep going back and forth about it."
-                       if role == "user" else
-                       f"On {topic}: I'd keep it simple and revisit next week with fresh eyes.")
-            messages.append({"role": role, "content": content})
+            template = rng.choice(user_templates if role == "user" else assistant_templates)
+            messages.append({"role": role, "content": template.format(t=topic)})
         query = f"Which service had the {event} last week?"
         messages.append({"role": "user", "content": query})
 

@@ -1,0 +1,511 @@
+{
+  "benchmark": "usage-heat-v11",
+  "elapsed_seconds": 7.255,
+  "heat_weight": 0.5,
+  "model": "qwen3:8b",
+  "rows": [
+    {
+      "arm": "raw",
+      "case": "v11-20260711-00",
+      "cold_mappings_present": 1,
+      "context_chars": 928,
+      "expected_present": true,
+      "forbidden_present": false
+    },
+    {
+      "arm": "attention",
+      "case": "v11-20260711-00",
+      "cold_mappings_present": 1,
+      "context_chars": 953,
+      "expected_present": true,
+      "forbidden_present": false
+    },
+    {
+      "arm": "attention_heat",
+      "case": "v11-20260711-00",
+      "cold_mappings_present": 0,
+      "context_chars": 906,
+      "expected_present": true,
+      "forbidden_present": false
+    },
+    {
+      "arm": "raw",
+      "case": "v11-20260711-01",
+      "cold_mappings_present": 1,
+      "context_chars": 951,
+      "expected_present": true,
+      "forbidden_present": false
+    },
+    {
+      "arm": "attention",
+      "case": "v11-20260711-01",
+      "cold_mappings_present": 0,
+      "context_chars": 886,
+      "expected_present": true,
+      "forbidden_present": false
+    },
+    {
+      "arm": "attention_heat",
+      "case": "v11-20260711-01",
+      "cold_mappings_present": 0,
+      "context_chars": 919,
+      "expected_present": true,
+      "forbidden_present": false
+    },
+    {
+      "arm": "raw",
+      "case": "v11-20260711-02",
+      "cold_mappings_present": 1,
+      "context_chars": 927,
+      "expected_present": true,
+      "forbidden_present": false
+    },
+    {
+      "arm": "attention",
+      "case": "v11-20260711-02",
+      "cold_mappings_present": 1,
+      "context_chars": 912,
+      "expected_present": false,
+      "forbidden_present": false
+    },
+    {
+      "arm": "attention_heat",
+      "case": "v11-20260711-02",
+      "cold_mappings_present": 0,
+      "context_chars": 915,
+      "expected_present": false,
+      "forbidden_present": false
+    },
+    {
+      "arm": "raw",
+      "case": "v11-20260711-03",
+      "cold_mappings_present": 1,
+      "context_chars": 918,
+      "expected_present": true,
+      "forbidden_present": false
+    },
+    {
+      "arm": "attention",
+      "case": "v11-20260711-03",
+      "cold_mappings_present": 2,
+      "context_chars": 932,
+      "expected_present": true,
+      "forbidden_present": false
+    },
+    {
+      "arm": "attention_heat",
+      "case": "v11-20260711-03",
+      "cold_mappings_present": 0,
+      "context_chars": 904,
+      "expected_present": false,
+      "forbidden_present": false
+    },
+    {
+      "arm": "raw",
+      "case": "v11-20260711-04",
+      "cold_mappings_present": 1,
+      "context_chars": 919,
+      "expected_present": true,
+      "forbidden_present": false
+    },
+    {
+      "arm": "attention",
+      "case": "v11-20260711-04",
+      "cold_mappings_present": 0,
+      "context_chars": 888,
+      "expected_present": false,
+      "forbidden_present": false
+    },
+    {
+      "arm": "attention_heat",
+      "case": "v11-20260711-04",
+      "cold_mappings_present": 0,
+      "context_chars": 907,
+      "expected_present": false,
+      "forbidden_present": false
+    },
+    {
+      "arm": "raw",
+      "case": "v11-20260711-05",
+      "cold_mappings_present": 1,
+      "context_chars": 940,
+      "expected_present": true,
+      "forbidden_present": false
+    },
+    {
+      "arm": "attention",
+      "case": "v11-20260711-05",
+      "cold_mappings_present": 1,
+      "context_chars": 890,
+      "expected_present": true,
+      "forbidden_present": false
+    },
+    {
+      "arm": "attention_heat",
+      "case": "v11-20260711-05",
+      "cold_mappings_present": 0,
+      "context_chars": 932,
+      "expected_present": false,
+      "forbidden_present": false
+    },
+    {
+      "arm": "raw",
+      "case": "v11-20260711-06",
+      "cold_mappings_present": 1,
+      "context_chars": 910,
+      "expected_present": true,
+      "forbidden_present": false
+    },
+    {
+      "arm": "attention",
+      "case": "v11-20260711-06",
+      "cold_mappings_present": 2,
+      "context_chars": 903,
+      "expected_present": false,
+      "forbidden_present": false
+    },
+    {
+      "arm": "attention_heat",
+      "case": "v11-20260711-06",
+      "cold_mappings_present": 0,
+      "context_chars": 904,
+      "expected_present": true,
+      "forbidden_present": false
+    },
+    {
+      "arm": "raw",
+      "case": "v11-20260711-07",
+      "cold_mappings_present": 2,
+      "context_chars": 946,
+      "expected_present": true,
+      "forbidden_present": false
+    },
+    {
+      "arm": "attention",
+      "case": "v11-20260711-07",
+      "cold_mappings_present": 2,
+      "context_chars": 891,
+      "expected_present": true,
+      "forbidden_present": false
+    },
+    {
+      "arm": "attention_heat",
+      "case": "v11-20260711-07",
+      "cold_mappings_present": 0,
+      "context_chars": 910,
+      "expected_present": true,
+      "forbidden_present": false
+    },
+    {
+      "arm": "raw",
+      "case": "v11-20260711-08",
+      "cold_mappings_present": 1,
+      "context_chars": 938,
+      "expected_present": true,
+      "forbidden_present": false
+    },
+    {
+      "arm": "attention",
+      "case": "v11-20260711-08",
+      "cold_mappings_present": 1,
+      "context_chars": 930,
+      "expected_present": false,
+      "forbidden_present": false
+    },
+    {
+      "arm": "attention_heat",
+      "case": "v11-20260711-08",
+      "cold_mappings_present": 0,
+      "context_chars": 900,
+      "expected_present": true,
+      "forbidden_present": false
+    },
+    {
+      "arm": "raw",
+      "case": "v11-20260711-09",
+      "cold_mappings_present": 0,
+      "context_chars": 877,
+      "expected_present": true,
+      "forbidden_present": false
+    },
+    {
+      "arm": "attention",
+      "case": "v11-20260711-09",
+      "cold_mappings_present": 1,
+      "context_chars": 872,
+      "expected_present": true,
+      "forbidden_present": false
+    },
+    {
+      "arm": "attention_heat",
+      "case": "v11-20260711-09",
+      "cold_mappings_present": 0,
+      "context_chars": 918,
+      "expected_present": false,
+      "forbidden_present": false
+    },
+    {
+      "arm": "raw",
+      "case": "v11-20260711-10",
+      "cold_mappings_present": 2,
+      "context_chars": 917,
+      "expected_present": true,
+      "forbidden_present": false
+    },
+    {
+      "arm": "attention",
+      "case": "v11-20260711-10",
+      "cold_mappings_present": 2,
+      "context_chars": 950,
+      "expected_present": true,
+      "forbidden_present": false
+    },
+    {
+      "arm": "attention_heat",
+      "case": "v11-20260711-10",
+      "cold_mappings_present": 0,
+      "context_chars": 914,
+      "expected_present": false,
+      "forbidden_present": false
+    },
+    {
+      "arm": "raw",
+      "case": "v11-20260711-11",
+      "cold_mappings_present": 1,
+      "context_chars": 865,
+      "expected_present": true,
+      "forbidden_present": false
+    },
+    {
+      "arm": "attention",
+      "case": "v11-20260711-11",
+      "cold_mappings_present": 2,
+      "context_chars": 922,
+      "expected_present": true,
+      "forbidden_present": false
+    },
+    {
+      "arm": "attention_heat",
+      "case": "v11-20260711-11",
+      "cold_mappings_present": 1,
+      "context_chars": 892,
+      "expected_present": true,
+      "forbidden_present": false
+    },
+    {
+      "arm": "raw",
+      "case": "v11-20260711-12",
+      "cold_mappings_present": 2,
+      "context_chars": 888,
+      "expected_present": true,
+      "forbidden_present": false
+    },
+    {
+      "arm": "attention",
+      "case": "v11-20260711-12",
+      "cold_mappings_present": 0,
+      "context_chars": 911,
+      "expected_present": true,
+      "forbidden_present": false
+    },
+    {
+      "arm": "attention_heat",
+      "case": "v11-20260711-12",
+      "cold_mappings_present": 0,
+      "context_chars": 906,
+      "expected_present": false,
+      "forbidden_present": false
+    },
+    {
+      "arm": "raw",
+      "case": "v11-20260711-13",
+      "cold_mappings_present": 0,
+      "context_chars": 943,
+      "expected_present": true,
+      "forbidden_present": false
+    },
+    {
+      "arm": "attention",
+      "case": "v11-20260711-13",
+      "cold_mappings_present": 1,
+      "context_chars": 885,
+      "expected_present": true,
+      "forbidden_present": false
+    },
+    {
+      "arm": "attention_heat",
+      "case": "v11-20260711-13",
+      "cold_mappings_present": 0,
+      "context_chars": 931,
+      "expected_present": false,
+      "forbidden_present": false
+    },
+    {
+      "arm": "raw",
+      "case": "v11-20260711-14",
+      "cold_mappings_present": 2,
+      "context_chars": 905,
+      "expected_present": true,
+      "forbidden_present": false
+    },
+    {
+      "arm": "attention",
+      "case": "v11-20260711-14",
+      "cold_mappings_present": 2,
+      "context_chars": 863,
+      "expected_present": false,
+      "forbidden_present": false
+    },
+    {
+      "arm": "attention_heat",
+      "case": "v11-20260711-14",
+      "cold_mappings_present": 1,
+      "context_chars": 924,
+      "expected_present": false,
+      "forbidden_present": false
+    },
+    {
+      "arm": "raw",
+      "case": "v11-20260711-15",
+      "cold_mappings_present": 0,
+      "context_chars": 846,
+      "expected_present": true,
+      "forbidden_present": false
+    },
+    {
+      "arm": "attention",
+      "case": "v11-20260711-15",
+      "cold_mappings_present": 1,
+      "context_chars": 879,
+      "expected_present": false,
+      "forbidden_present": false
+    },
+    {
+      "arm": "attention_heat",
+      "case": "v11-20260711-15",
+      "cold_mappings_present": 0,
+      "context_chars": 889,
+      "expected_present": true,
+      "forbidden_present": false
+    },
+    {
+      "arm": "raw",
+      "case": "v11-20260711-16",
+      "cold_mappings_present": 1,
+      "context_chars": 920,
+      "expected_present": true,
+      "forbidden_present": false
+    },
+    {
+      "arm": "attention",
+      "case": "v11-20260711-16",
+      "cold_mappings_present": 0,
+      "context_chars": 873,
+      "expected_present": true,
+      "forbidden_present": false
+    },
+    {
+      "arm": "attention_heat",
+      "case": "v11-20260711-16",
+      "cold_mappings_present": 0,
+      "context_chars": 912,
+      "expected_present": false,
+      "forbidden_present": false
+    },
+    {
+      "arm": "raw",
+      "case": "v11-20260711-17",
+      "cold_mappings_present": 2,
+      "context_chars": 920,
+      "expected_present": true,
+      "forbidden_present": false
+    },
+    {
+      "arm": "attention",
+      "case": "v11-20260711-17",
+      "cold_mappings_present": 1,
+      "context_chars": 944,
+      "expected_present": true,
+      "forbidden_present": false
+    },
+    {
+      "arm": "attention_heat",
+      "case": "v11-20260711-17",
+      "cold_mappings_present": 0,
+      "context_chars": 930,
+      "expected_present": false,
+      "forbidden_present": false
+    },
+    {
+      "arm": "raw",
+      "case": "v11-20260711-18",
+      "cold_mappings_present": 1,
+      "context_chars": 926,
+      "expected_present": true,
+      "forbidden_present": false
+    },
+    {
+      "arm": "attention",
+      "case": "v11-20260711-18",
+      "cold_mappings_present": 2,
+      "context_chars": 877,
+      "expected_present": true,
+      "forbidden_present": false
+    },
+    {
+      "arm": "attention_heat",
+      "case": "v11-20260711-18",
+      "cold_mappings_present": 0,
+      "context_chars": 925,
+      "expected_present": true,
+      "forbidden_present": false
+    },
+    {
+      "arm": "raw",
+      "case": "v11-20260711-19",
+      "cold_mappings_present": 0,
+      "context_chars": 864,
+      "expected_present": true,
+      "forbidden_present": false
+    },
+    {
+      "arm": "attention",
+      "case": "v11-20260711-19",
+      "cold_mappings_present": 2,
+      "context_chars": 864,
+      "expected_present": false,
+      "forbidden_present": false
+    },
+    {
+      "arm": "attention_heat",
+      "case": "v11-20260711-19",
+      "cold_mappings_present": 1,
+      "context_chars": 923,
+      "expected_present": false,
+      "forbidden_present": false
+    }
+  ],
+  "summaries": {
+    "attention": {
+      "arm": "attention",
+      "cold_mappings_present_mean": 1.2,
+      "expected_present": 0.65,
+      "forbidden_present": 0.0,
+      "n": 20
+    },
+    "attention_heat": {
+      "arm": "attention_heat",
+      "cold_mappings_present_mean": 0.15,
+      "expected_present": 0.4,
+      "forbidden_present": 0.0,
+      "n": 20
+    },
+    "raw": {
+      "arm": "raw",
+      "cold_mappings_present_mean": 1.05,
+      "expected_present": 1.0,
+      "forbidden_present": 0.0,
+      "n": 20
+    }
+  }
+}
