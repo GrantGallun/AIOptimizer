@@ -10,6 +10,8 @@ from __future__ import annotations
 import hashlib
 import json
 import re
+import threading
+from collections import OrderedDict
 from dataclasses import dataclass
 from typing import Any, Callable, Iterable, Mapping, Sequence
 
@@ -53,10 +55,56 @@ class ConversationCompiler:
         rewrite_fn: RewriteFn | None = None,
         embed_fn: EmbedFn | None = None,
         deny_patterns: Sequence[str] = DEFAULT_DENY_PATTERNS,
+        embed_cache_entries: int = 4096,
     ):
+        if embed_cache_entries < 0:
+            raise ValueError("embed_cache_entries must be non-negative")
         self._rewrite_fn = rewrite_fn
-        self._selector = ContextCompactor(embed_fn)
+        self._raw_selector = ContextCompactor(embed_fn)
+        self._embed_cache_entries = embed_cache_entries
+        self._embed_cache: OrderedDict[str, list[float]] = OrderedDict()
+        self._embed_cache_lock = threading.Lock()
+        self._embed_cache_hits = 0
+        self._embed_cache_misses = 0
+        self._selector = ContextCompactor(self._cached_embed)
         self._deny_patterns = tuple(re.compile(pattern, re.IGNORECASE) for pattern in deny_patterns)
+
+    def _cached_embed(self, texts: list[str]) -> list[list[float]]:
+        """Incrementally embed exact text once; stable IDs/ties remain outside the cache."""
+        if self._embed_cache_entries == 0:
+            return [_as_vector(value) for value in self._raw_selector._embed(texts)]
+        missing = []
+        resolved: dict[str, list[float]] = {}
+        with self._embed_cache_lock:
+            for text in dict.fromkeys(texts):
+                if text in self._embed_cache:
+                    self._embed_cache_hits += texts.count(text)
+                    self._embed_cache.move_to_end(text)
+                    resolved[text] = list(self._embed_cache[text])
+                else:
+                    missing.append(text)
+                    self._embed_cache_misses += texts.count(text)
+        if missing:
+            values = [_as_vector(value) for value in self._raw_selector._embed(missing)]
+            if len(values) != len(missing):
+                raise ValueError("embed_fn must return one vector per input text")
+            with self._embed_cache_lock:
+                for text, value in zip(missing, values):
+                    resolved[text] = value
+                    self._embed_cache[text] = value
+                    self._embed_cache.move_to_end(text)
+                while len(self._embed_cache) > self._embed_cache_entries:
+                    self._embed_cache.popitem(last=False)
+        return [list(resolved[text]) for text in texts]
+
+    def embedding_cache_stats(self) -> dict[str, int]:
+        with self._embed_cache_lock:
+            return {
+                "entries": len(self._embed_cache),
+                "hits": self._embed_cache_hits,
+                "misses": self._embed_cache_misses,
+                "capacity": self._embed_cache_entries,
+            }
 
     def _is_denied(self, text: str) -> bool:
         # Treat Markdown-style double hyphens as the single dash allowed by the

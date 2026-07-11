@@ -194,6 +194,37 @@ class ConversationCompilerTests(unittest.TestCase):
             self.assertIn(record["text"], flat)
             self.assertIn(record["text"], structured)
 
+    def test_incremental_embedding_cache_reuses_exact_context(self):
+        calls = []
+        def embed(texts):
+            calls.append(list(texts))
+            return _embed(texts)
+
+        compiler = ConversationCompiler(embed_fn=embed)
+        compiled = compiler.compile(self.messages)
+        compiler.materialize(compiled, query="cache latency", max_records=4)
+        first_call_count = len(calls)
+        compiler.materialize(compiled, query="cache latency", max_records=4)
+        compiler.organize(compiled, query="cache latency", max_records=4)
+
+        self.assertEqual(len(calls), first_call_count)
+        stats = compiler.embedding_cache_stats()
+        self.assertEqual(stats["misses"], 5)
+        self.assertGreaterEqual(stats["hits"], 10)
+
+    def test_embedding_cache_can_be_disabled_and_validates_capacity(self):
+        calls = []
+        compiler = ConversationCompiler(
+            embed_fn=lambda texts: calls.append(list(texts)) or _embed(texts),
+            embed_cache_entries=0,
+        )
+        compiled = compiler.compile(self.messages)
+        compiler.materialize(compiled, query="cache", max_records=4)
+        compiler.materialize(compiled, query="cache", max_records=4)
+        self.assertEqual(len(calls), 2)
+        with self.assertRaisesRegex(ValueError, "non-negative"):
+            ConversationCompiler(embed_cache_entries=-1)
+
 
 if __name__ == "__main__":
     unittest.main()
