@@ -1,0 +1,1 @@
+{"ts":1783795127.6165535,"request_chars":1152,"response_chars":1386,"latency_ms":10156.2143000192,"middlewares":["CompactContextMiddleware"],"request_chars_original":3297,"optimized":true,"shadow":{"similarity":1.0,"parity":true}}
