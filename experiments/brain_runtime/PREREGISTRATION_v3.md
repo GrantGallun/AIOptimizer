@@ -107,3 +107,35 @@ rate → little to fix), not as the primary gate model.
   partial (e.g. weak `oneOf`), that is a finding about the substrate, recorded as such.
 
 — Fable (Claude Opus 4.8), 2026-07-11
+
+---
+
+## Amendment v3.1 (2026-07-11, after the DEV sanity run — dated, not a silent edit)
+
+The dev-seed run (HYP-20260711-24; llama3.2:3b + qwen3:8b, seed 20260711, hidden untouched)
+did its job and exposed two flaws in the v3 design **before** any confirmatory read:
+
+1. **The union schema cannot guarantee H-v3a.** `ACTION_SCHEMA` requires only `kind`, but
+   `parse_action` enforces per-kind required fields *and* forbids per-kind-unexpected fields. So a
+   schema-valid `{"kind":"reason"}` still fails parsing. Result: constrained malformed rate hit 0.000
+   on qwen3:8b (it voluntarily fills the right fields) but only 0.043 on llama3.2:3b (it emits
+   minimal objects). The constraint must encode the **full per-kind contract**.
+   Fix: replace the union with a **conditional schema** — `oneOf` over four branches keyed on
+   `kind`, each branch listing that kind's exact `required` and allowed properties (mirroring
+   `parse_action`). Then H-v3a becomes a real test of "does token-level constraint enforce the
+   contract" rather than "does the model volunteer the fields."
+
+2. **`task_completion_accuracy` is degenerate (0 everywhere), so H-v3b is untestable.** The answer is
+   supposed to arrive via the REASON step, but models skip reasoning and emit `retrieve → ground`
+   with a null value (grounded output `"None"`). qwen completed 25/25 cycles yet scored 0.
+   Fix: make the answer path mandatory and measurable — either (a) require a REASON action before any
+   GROUND (extend the controller/adapter invariant) and grade `parse_answer` on the reason output, or
+   (b) constrain the terminal `ground` schema so `arguments.value` is a required integer. Prefer (a):
+   it matches how `coala_learning_eval` already grades (reason-output → ANSWER=<int>).
+
+v3.1 plan: freeze the conditional schema + the reason-before-ground grading in a NEW module/result
+version (do not edit the v3 files or results); re-run dev sanity (confirm free_form still malforms and
+completion is now non-degenerate on qwen3:8b), then read the frozen gate on the hidden seeds. Primary
+model becomes **qwen3:8b** (llama3.2:3b's cycle-incompletion 0.16–0.20 makes completion the bottleneck,
+not action shape); llama3.2:3b stays as the weak-model reference for H-v3a-under-conditional-schema. The
+malformed-halving mechanism result (HYP-24) stands regardless of v3.1. — Fable (Claude Opus 4.8)

@@ -23,6 +23,7 @@ from experiments.brain_runtime.coala import (
     ActionKind,
     CognitiveAction,
     CoALAController,
+    CycleLimitExceeded,
     LongTermMemoryKind,
 )
 from experiments.brain_runtime.coala_learning_eval import (
@@ -81,13 +82,22 @@ def _answer_cycle(
         observation=f"{problem['operator']}({problem['a']}, {problem['b']})",
         policy=adapter.policy,
     )
-    reason_event = next(event for event in result.events if event.action.kind is ActionKind.REASON)
     event_kinds = tuple(event.action.kind.value for event in result.events)
     retrieved_before_terminal = (
         ActionKind.RETRIEVE.value in event_kinds
         and event_kinds.index(ActionKind.RETRIEVE.value) < len(event_kinds) - 1
     )
-    return parse_answer(reason_event.output), reason_event.output, event_kinds, retrieved_before_terminal
+    # The model may or may not emit a REASON step before grounding. Prefer the
+    # terminal GROUND value as the answer; otherwise fall back to the reason text.
+    reason_event = next(
+        (event for event in result.events if event.action.kind is ActionKind.REASON), None
+    )
+    reason_output = reason_event.output if reason_event else ""
+    if result.terminal_action.kind is ActionKind.GROUND:
+        answer = parse_answer(result.output)
+    else:
+        answer = parse_answer(reason_output) if reason_output else None
+    return answer, reason_output or result.output, event_kinds, retrieved_before_terminal
 
 
 def _learn_verified_rule(controller: CoALAController, problem: dict[str, Any]) -> str:
@@ -140,9 +150,18 @@ def evaluate(
         learned: set[str] = set()
         arm_rows: list[dict[str, Any]] = []
         for problem in sequence:
-            answer, response, event_kinds, retrieved_before_terminal = _answer_cycle(
-                controller, adapter, problem
-            )
+            # A real model can emit valid-but-non-terminating actions (or repeated
+            # malformed-JSON fallbacks) that never reach a terminal within the cycle
+            # budget. That is a measured failure of this problem, not a harness crash:
+            # count it as incomplete/incorrect and continue. Symmetric across arms.
+            try:
+                answer, response, event_kinds, retrieved_before_terminal = _answer_cycle(
+                    controller, adapter, problem
+                )
+                incomplete = False
+            except CycleLimitExceeded:
+                answer, response, event_kinds, retrieved_before_terminal = None, "", (), False
+                incomplete = True
             correct = answer == problem["expected"]
             learned_after_feedback = problem["operator"] not in learned
             if learned_after_feedback:
@@ -155,6 +174,7 @@ def evaluate(
                 "answer": answer,
                 "response": response,
                 "correct": correct,
+                "incomplete": incomplete,
                 "event_kinds": list(event_kinds),
                 "retrieved_before_terminal": retrieved_before_terminal,
                 "learned_after_feedback": learned_after_feedback,
@@ -163,11 +183,15 @@ def evaluate(
             arm_rows.append(row)
         metrics = adapter.metrics.as_dict()
         calls = metrics["calls"]
+        completed = [row for row in arm_rows if not row["incomplete"]]
         arms[arm] = {
             **metrics,
             "malformed_action_rate": metrics["malformed_actions"] / calls if calls else 0.0,
             "task_completion_accuracy": sum(row["correct"] for row in arm_rows) / len(arm_rows),
-            "forced_retrieval_ok": all(row["retrieved_before_terminal"] for row in arm_rows),
+            "cycle_completion_rate": len(completed) / len(arm_rows) if arm_rows else 0.0,
+            # forced_retrieval invariant is a sanity check over cycles that reached a
+            # terminal; an incomplete (crashed) cycle has no terminal to precede.
+            "forced_retrieval_ok": all(row["retrieved_before_terminal"] for row in completed) if completed else False,
         }
 
     return {
