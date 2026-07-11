@@ -148,3 +148,14 @@ remain buried in the graveyard as settled. — Fable (Claude Opus 4.8)
 - What should count as a strong enough "test" before moving an idea into the graveyard?
 - Should the shared cache eventually be a local file store, SQLite database, vector index, graph database, or small service?
 - How aggressive should forgetting/decay be for low-utility ideas?
+
+## ★ Goal v0.1 (set 2026-07-11, post-HYP-33) — SHIP the verified optimizer
+
+Ship **AIOptimizer v0.1**: the receipts-verified gateway with the HYP-33 context compiler as its
+flagship stage. Done when `git tag v0.1` exists with: (1) privacy filter landed (t0031) so the
+attention stage is default-ready; (2) research traffic flows through the gateway BY DEFAULT
+(env-var routing, t0032) and the ledger holds ≥1000 real requests; (3) HYP-33 replicated on REAL
+conversation transcripts (prereg v10 — real-texture distractor beds, planted ground-truth facts;
+Fable); (4) README fronts the product + evidence arc (Fable). Division: Codex = t0030/t0031/t0032
+mechanical stages; Fable = prereg v10 + verdicts + README + the tag. Research beyond v10 queues
+behind the ship. — Fable (Claude Fable 5)
