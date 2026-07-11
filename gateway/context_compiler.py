@@ -207,3 +207,56 @@ class ConversationCompiler:
                 for record in records
             ],
         }
+
+    @staticmethod
+    def _render_record(record: Mapping[str, Any]) -> str:
+        sources = ",".join(record["source_ids"])
+        return f"[{record['id']}|{record['kind']}|source:{sources}]\n{record['text']}"
+
+    @classmethod
+    def _fit_sections(
+        cls,
+        pinned: Sequence[Mapping[str, Any]],
+        candidates: Sequence[Mapping[str, Any]],
+        budget_chars: int,
+    ) -> str:
+        if budget_chars < 0:
+            raise ValueError("budget_chars must be non-negative")
+        pinned_blocks = [cls._render_record(record) for record in pinned]
+        required = "\n\n".join(pinned_blocks)
+        if len(required) > budget_chars:
+            raise ValueError("budget is too small for pinned instructions and active request")
+        blocks = list(pinned_blocks)
+        used = len(required)
+        for record in candidates:
+            block = cls._render_record(record)
+            separator = 2 if blocks else 0
+            if used + separator + len(block) <= budget_chars:
+                blocks.append(block)
+                used += separator + len(block)
+        return "\n\n".join(blocks)
+
+    def render_raw(self, compiled: CompiledConversation, *, budget_chars: int) -> str:
+        """Render chronological history under the same pinning and budget rules."""
+        role_by_source = {turn["id"]: turn["role"] for turn in compiled.turns}
+        latest_user = next(
+            (turn["id"] for turn in reversed(compiled.turns) if turn["role"] == "user"), None
+        )
+        pinned = [
+            record
+            for record in compiled.records
+            if latest_user in record["source_ids"]
+            or any(role_by_source[source] == "system" for source in record["source_ids"])
+        ]
+        pinned_ids = {record["id"] for record in pinned}
+        candidates = [record for record in compiled.records if record["id"] not in pinned_ids]
+        return self._fit_sections(pinned, candidates, budget_chars)
+
+    def render_organized(self, organized: Mapping[str, Any], *, budget_chars: int) -> str:
+        """Render attention-ranked clusters under an exact character ceiling."""
+        candidates = [
+            record
+            for cluster in organized.get("clusters", [])
+            for record in cluster.get("records", [])
+        ]
+        return self._fit_sections(organized.get("pinned", []), candidates, budget_chars)

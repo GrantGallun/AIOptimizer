@@ -98,6 +98,30 @@ class ConversationCompilerTests(unittest.TestCase):
         with self.assertRaisesRegex(ValueError, "one vector"):
             broken.organize(broken.compile(self.messages), query="cache")
 
+    def test_raw_and_organized_renderers_obey_identical_budget_ceiling(self):
+        compiler = ConversationCompiler(embed_fn=_embed)
+        compiled = compiler.compile(self.messages)
+        organized = compiler.organize(compiled, query="cache latency", max_records=4)
+        budget = 300
+
+        raw = compiler.render_raw(compiled, budget_chars=budget)
+        attention = compiler.render_organized(organized, budget_chars=budget)
+
+        self.assertLessEqual(len(raw), budget)
+        self.assertLessEqual(len(attention), budget)
+        self.assertIn("Never reveal private memory.", raw)
+        self.assertIn("Never reveal private memory.", attention)
+        self.assertIn("How should memory be organized?", raw)
+        self.assertIn("How should memory be organized?", attention)
+        self.assertIn("cache reduced latency", attention)
+
+    def test_renderer_rejects_budget_that_cannot_hold_pinned_records(self):
+        compiler = ConversationCompiler(embed_fn=_embed)
+        compiled = compiler.compile(self.messages)
+
+        with self.assertRaisesRegex(ValueError, "too small"):
+            compiler.render_raw(compiled, budget_chars=10)
+
 
 if __name__ == "__main__":
     unittest.main()
