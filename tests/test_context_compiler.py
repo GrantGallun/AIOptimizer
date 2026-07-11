@@ -24,6 +24,7 @@ class ConversationCompilerTests(unittest.TestCase):
         self.assertEqual([r["text"] for r in compiled.records], [m["content"] for m in self.messages])
         self.assertEqual(compiled.records[0]["source_ids"], ["T0001"])
         self.assertEqual(compiled.turns[0]["content"], self.messages[0]["content"])
+        self.assertEqual(compiled.records[0]["kind"], "instruction")
         self.assertEqual(compiled.records[0]["authority"], "source")
         self.assertTrue(compiled.records[0]["binding"])
 
@@ -170,6 +171,28 @@ class ConversationCompilerTests(unittest.TestCase):
         audit = compiler.audit_integrity(compiler.compile(self.messages))
         self.assertFalse(audit["ok"])
         self.assertIn("source_text_changed", {item["reason"] for item in audit["failures"]})
+
+    def test_matched_pair_has_identical_records_under_one_budget(self):
+        compiler = ConversationCompiler(embed_fn=_embed)
+        compiled = compiler.compile(self.messages)
+        pinned = compiler.pinned_records(compiled)
+        pinned_ids = {record["id"] for record in pinned}
+        candidates = [record for record in compiled.records if record["id"] not in pinned_ids]
+
+        flat, structured, selected = compiler.matched_record_pair(
+            pinned, candidates, budget_chars=340
+        )
+
+        self.assertLessEqual(len(flat), 340)
+        self.assertLessEqual(len(structured), 340)
+        self.assertIn("## INSTRUCTION", structured)
+        self.assertEqual(
+            {record["id"] for record in selected},
+            {record_id for record_id in ("R0001", "R0002", "R0003", "R0004")},
+        )
+        for record in selected:
+            self.assertIn(record["text"], flat)
+            self.assertIn(record["text"], structured)
 
 
 if __name__ == "__main__":

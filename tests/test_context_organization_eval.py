@@ -3,7 +3,9 @@ import unittest
 from experiments.brain_runtime.context_organization_eval import (
     SYSTEM,
     render_arms,
+    render_five_arms,
     run_evaluation,
+    run_evaluation_v2,
     score_response,
     summarize,
     validate_case,
@@ -102,6 +104,75 @@ class ContextOrganizationEvalTests(unittest.TestCase):
     def test_case_validation_rejects_missing_contract(self):
         with self.assertRaisesRegex(ValueError, "requires"):
             validate_case({"id": "broken"})
+
+    def test_five_arm_renderer_matches_information_within_ablation_pairs(self):
+        compiler = ConversationCompiler(embed_fn=_embed)
+        contexts, diagnostics = render_five_arms(CASE, compiler)
+
+        self.assertEqual(set(contexts), {
+            "raw", "structured", "attention", "combined", "llm_rewrite",
+        })
+        self.assertEqual(diagnostics["raw"]["record_ids"], diagnostics["structured"]["record_ids"])
+        self.assertEqual(diagnostics["attention"]["record_ids"], diagnostics["combined"]["record_ids"])
+        self.assertEqual(contexts["llm_rewrite"], contexts["raw"])
+        self.assertEqual(diagnostics["llm_rewrite"]["rewrite_status"], "not_run")
+        self.assertTrue(all(len(context) <= CASE["budget_chars"] for context in contexts.values()))
+
+    def test_llm_rewrite_is_budgeted_and_reports_preprocessing_cost(self):
+        class Rewrite:
+            text = "rewritten " * 100
+            prompt_tokens = 50
+            completion_tokens = 20
+            total_duration_ns = 500_000_000
+
+        contexts, diagnostics = render_five_arms(
+            CASE,
+            ConversationCompiler(embed_fn=_embed),
+            rewrite_fn=lambda raw, query, budget: Rewrite(),
+        )
+
+        self.assertEqual(len(contexts["llm_rewrite"]), CASE["budget_chars"])
+        self.assertEqual(diagnostics["llm_rewrite"]["rewrite_status"], "over_budget_truncated")
+        self.assertEqual(
+            diagnostics["llm_rewrite"]["rewrite_metrics"]["prompt_tokens"], 50
+        )
+
+    def test_llm_rewriter_receives_complete_filtered_source_not_raw_truncation(self):
+        seen = {}
+        def rewrite(source, query, budget):
+            seen["source"] = source
+            return source
+
+        contexts, diagnostics = render_five_arms(
+            CASE, ConversationCompiler(embed_fn=_embed), rewrite_fn=rewrite
+        )
+
+        self.assertIn("8800", seen["source"])
+        self.assertNotIn("secret-999", seen["source"])
+        self.assertGreaterEqual(
+            len(diagnostics["llm_rewrite"]["record_ids"]),
+            len(diagnostics["raw"]["record_ids"]),
+        )
+        self.assertLessEqual(len(contexts["llm_rewrite"]), CASE["budget_chars"])
+
+    def test_v2_evaluator_executes_five_answer_arms_without_optional_rewrite_call(self):
+        class Client:
+            calls = 0
+            def generate_with_metrics(self, prompt, **kwargs):
+                self.calls += 1
+                return Generation("8800|T0004", 40, 3, 250_000_000, 10_000_000)
+
+        client = Client()
+        payload = run_evaluation_v2(
+            [CASE], client, compiler=ConversationCompiler(embed_fn=_embed),
+            include_llm_rewrite=False,
+        )
+
+        self.assertEqual(client.calls, 5)
+        self.assertEqual([row["arm"] for row in payload["rows"]], list(payload["arms"]))
+        self.assertEqual(len(payload["summaries"]), 5)
+        self.assertTrue(all(row["success"] for row in payload["rows"]))
+        self.assertEqual(payload["summaries"][-1]["rewrite_prompt_tokens"], 0)
 
 
 if __name__ == "__main__":

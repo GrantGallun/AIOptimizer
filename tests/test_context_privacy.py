@@ -43,7 +43,7 @@ class ContextPrivacyTests(unittest.TestCase):
             stub = next(entry for entry in index if entry["id"] == "R0002")
             self.assertEqual(
                 stub,
-                {"id": "R0002", "kind": "verbatim_turn", "text": "[redacted: privacy]"},
+                {"id": "R0002", "kind": "note", "text": "[redacted: privacy]"},
             )
 
     def test_custom_deny_patterns_and_middleware_passthrough(self):

@@ -29,6 +29,10 @@ RECORD_KINDS = frozenset(
         "open_question", "artifact", "preference", "hypothesis", "note", "verbatim_turn",
     }
 )
+KIND_ORDER = (
+    "instruction", "constraint", "decision", "fact", "evidence", "result",
+    "preference", "hypothesis", "open_question", "artifact", "note", "verbatim_turn",
+)
 AUTHORITIES = frozenset({"source", "derived", "inferred"})
 
 
@@ -95,10 +99,13 @@ class ConversationCompiler:
 
     @staticmethod
     def _lossless_records(turns: list[dict[str, str]]) -> list[Record]:
+        role_kinds = {
+            "system": "instruction", "user": "note", "assistant": "result", "tool": "evidence",
+        }
         return [
             {
                 "id": f"R{index + 1:04d}",
-                "kind": "verbatim_turn",
+                "kind": role_kinds[turn["role"]],
                 "text": turn["content"],
                 "source_ids": [turn["id"]],
                 "tags": [turn["role"]],
@@ -385,6 +392,66 @@ class ConversationCompiler:
     def _render_record(record: Mapping[str, Any]) -> str:
         sources = ",".join(record["source_ids"])
         return f"[{record['id']}|{record['kind']}|source:{sources}]\n{record['text']}"
+
+    @classmethod
+    def render_record_set(
+        cls, records: Sequence[Mapping[str, Any]], *, structured: bool = False
+    ) -> str:
+        """Render an exact record set flat or in deterministic typed sections."""
+        if not structured:
+            return "\n\n".join(cls._render_record(record) for record in records)
+        grouped = {kind: [] for kind in KIND_ORDER}
+        for record in records:
+            grouped[str(record["kind"])].append(record)
+        sections = []
+        for kind in KIND_ORDER:
+            if grouped[kind]:
+                body = "\n\n".join(cls._render_record(record) for record in grouped[kind])
+                sections.append(f"## {kind.upper()}\n{body}")
+        return "\n\n".join(sections)
+
+    @classmethod
+    def matched_record_pair(
+        cls,
+        pinned: Sequence[Mapping[str, Any]],
+        candidates: Sequence[Mapping[str, Any]],
+        *,
+        budget_chars: int,
+    ) -> tuple[str, str, list[Mapping[str, Any]]]:
+        """Fit one information-identical record set to flat and structured renderings."""
+        if budget_chars < 0:
+            raise ValueError("budget_chars must be non-negative")
+        selected = list(pinned)
+        if max(
+            len(cls.render_record_set(selected)),
+            len(cls.render_record_set(selected, structured=True)),
+        ) > budget_chars:
+            raise ValueError("budget is too small for pinned instructions and active request")
+        for candidate in candidates:
+            proposed = selected + [candidate]
+            if max(
+                len(cls.render_record_set(proposed)),
+                len(cls.render_record_set(proposed, structured=True)),
+            ) <= budget_chars:
+                selected = proposed
+        return (
+            cls.render_record_set(selected),
+            cls.render_record_set(selected, structured=True),
+            selected,
+        )
+
+    def pinned_records(self, compiled: CompiledConversation) -> list[Record]:
+        """System records and the active user request, in source order."""
+        records = self._public_records(compiled)
+        roles = {turn["id"]: turn["role"] for turn in compiled.turns}
+        latest_user = next(
+            (turn["id"] for turn in reversed(compiled.turns) if turn["role"] == "user"), None
+        )
+        return [
+            record for record in records
+            if latest_user in record["source_ids"]
+            or any(roles[source] == "system" for source in record["source_ids"])
+        ]
 
     @classmethod
     def _fit_sections(
