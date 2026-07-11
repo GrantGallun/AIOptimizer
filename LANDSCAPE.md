@@ -84,3 +84,20 @@ parsing. Arms: free-form (current) vs. constrained (schema-forced). Metric: malf
 task completion. This is the thesis in miniature — a deterministic mechanism replacing "hope it's
 valid." Fable-designable, Codex-runnable on the existing substrate.
 
+
+## LLM gateways / usage optimizers (added 2026-07-11 — the category the product lives in)
+
+The 2026 ecosystem converged on **cache / route / compress** behind an OpenAI-compatible proxy:
+
+| product | model | strengths | gap vs us |
+|---|---|---|---|
+| LiteLLM | OSS proxy, 100+ providers | budgets/keys, Redis cache, ~10-20ms overhead | no quality evidence for its optimizations |
+| Portkey | OSS (Apache 2.0, 2026) | semantic caching, guardrails/PII, audit | same |
+| Helicone | OSS observability proxy | best request/cost observability UI | observes cost, not quality deltas |
+| OpenRouter | SaaS marketplace | 200+ models, auto-fallback | hosted-only; no local models |
+| Cloudflare AI Gateway | edge proxy | mature caching | same gap |
+
+Reported industry wins: prompt caching 45-80% cost cut; routing 60-75%; semantic-cache+routing 47%
+in production. **The uniform gap: every gateway reports cost saved; none proves quality preserved.**
+Our differentiator (PRODUCT.md): ship each optimization behind a pre-registered quality gate and an
+always-on shadow-A/B "receipts" report — the optimizer you can *verify*.
