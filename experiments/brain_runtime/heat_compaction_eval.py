@@ -92,14 +92,22 @@ def _test_problems(operators, hot: list[str], seed: int) -> list[dict[str, Any]]
 
 
 def _answer(client: OllamaClient, model: str, runtime: PersistentBrainRuntime, problem) -> int | None:
-    retrieved = runtime.retrieve(f"operator:{problem['operator']} rule", limit=3)
-    rules = [str(item.value) for item in retrieved
-             if item.key == f"operator:{problem['operator']}" and item.value]
-    if not rules:
+    # Direct key lookup: this experiment measures COMPACTION policy, not retrieval quality
+    # (retrieval was settled in HYP-23; jaccard would add known noise on top of the treatment).
+    item = next((i for i in runtime.long_term_memory.values()
+                 if i.key == f"operator:{problem['operator']}"), None)
+    if item is None or not item.value:
         return None  # the rule did not survive compaction — unanswerable
-    prompt = ("Apply the rule exactly and compute the result. Reply with ONLY an integer.\n"
-              f"Rule: {rules[0]}\n{problem['operator']}({problem['a']}, {problem['b']}) = ?")
-    return parse_int(client.generate_with_metrics(prompt, model=model, max_tokens=24).text)
+    # Reasoning allowed + ANSWER= extraction (the "ONLY an integer" phrasing suppresses the
+    # chain-of-thought qwen needs for rule application — the HYP-19 prompt artifact).
+    prompt = (f"Rule you must apply exactly: {item.value}\n"
+              f"Compute {problem['operator']}({problem['a']}, {problem['b']}). "
+              "Show the arithmetic, then end with exactly ANSWER=<integer>.")
+    # 256 tokens: qwen narrates arithmetic in verbose LaTeX; 96 truncates mid-computation
+    # and the last-integer fallback then grabs an operand (the v6.1 artifact, reproduced here).
+    text = client.generate_with_metrics(prompt, model=model, max_tokens=256).text
+    from experiments.brain_runtime.coala_learning_eval import parse_answer
+    return parse_answer(text)
 
 
 def run(*, model: str, seed: int, endpoint: str | None = None, render_only: bool = False):
