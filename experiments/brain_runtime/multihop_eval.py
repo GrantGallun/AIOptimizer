@@ -34,6 +34,7 @@ from experiments.brain_runtime.coala_learning_eval import parse_answer
 from experiments.brain_runtime.constrained_action_eval import _learn_verified_rule
 from experiments.brain_runtime.context_selection import make_operators
 from experiments.brain_runtime.integrated_kernel_eval import ScaleMockClient, _make_adapter, _memory
+from experiments.brain_runtime.stats import wilson_interval
 from experiments.local_worker.ollama_client import DEFAULT_MODEL, OllamaClient
 
 ARMS = ("prompted", "full_kernel")
@@ -41,16 +42,47 @@ DEFAULT_SEED = 20260711
 
 
 def build_composed_sequence(
-    operators: list[dict[str, Any]], *, seed: int, n_problems: int = 60
+    operators: list[dict[str, Any]], *, seed: int, n_problems: int = 60, depth: int = 2
 ) -> list[dict[str, Any]]:
-    """Depth-2 composition problems; recurrence requires BOTH operators learned."""
-    if len(operators) < 2:
-        raise ValueError("need at least two operators to compose")
+    """Composition problems whose recurrence requires every operator learned."""
+    if depth not in (2, 3):
+        raise ValueError("depth must be 2 or 3")
+    if len(operators) < depth:
+        raise ValueError(f"need at least {depth} operators to compose")
     rng = random.Random(seed)
     by_name = {op["name"]: op for op in operators}
     seen: set[str] = set()
     rows: list[dict[str, Any]] = []
     for step in range(n_problems):
+        if depth == 3:
+            outer, middle, inner = rng.sample(list(by_name), 3)
+            a, b, c, d = (rng.randint(2, 9) for _ in range(4))
+            inner_value = by_name[inner]["fn"](a, b)
+            middle_value = by_name[middle]["fn"](inner_value, c)
+            rows.append(
+                {
+                    "step": step,
+                    "operator": f"{outer}∘{middle}∘{inner}",
+                    "outer": outer,
+                    "middle": middle,
+                    "inner": inner,
+                    "a": a,
+                    "b": b,
+                    "c": c,
+                    "d": d,
+                    "inner_value": inner_value,
+                    "middle_value": middle_value,
+                    "expected": int(by_name[outer]["fn"](middle_value, d)),
+                    "rules": {
+                        inner: str(by_name[inner]["rule_text"]),
+                        middle: str(by_name[middle]["rule_text"]),
+                        outer: str(by_name[outer]["rule_text"]),
+                    },
+                    "first_appearance": not {outer, middle, inner} <= seen,
+                }
+            )
+            seen.update({outer, middle, inner})
+            continue
         outer, inner = rng.sample(list(by_name), 2)
         a, b, c = rng.randint(2, 9), rng.randint(2, 9), rng.randint(2, 9)
         inner_value = by_name[inner]["fn"](a, b)
@@ -77,6 +109,9 @@ def build_composed_sequence(
 
 
 def _observation(problem: dict[str, Any]) -> str:
+    if "middle" in problem:
+        return (f"{problem['outer']}({problem['middle']}({problem['inner']}({problem['a']}, "
+                f"{problem['b']}), {problem['c']}), {problem['d']})")
     return f"{problem['outer']}({problem['inner']}({problem['a']}, {problem['b']}), {problem['c']})"
 
 
@@ -142,10 +177,14 @@ def evaluate(operators, sequence, *, model: str, seed: int, clients: dict[str, A
         completed = [r for r in arm_rows if not r["incomplete"]]
         metrics = adapter.metrics.as_dict()
         acc = lambda g: (sum(r["correct"] for r in g) / len(g)) if g else 0.0
+        recurrence_correct = sum(r["correct"] for r in recurrence)
+        # Empty groups have no estimable interval; match the existing 0.0 empty-group accuracy.
+        recurrence_ci = list(wilson_interval(recurrence_correct, len(recurrence))) if recurrence else [0.0, 0.0]
         arms[arm] = {
             "arm": arm,
             **metrics,
             "recurrence_accuracy": acc(recurrence),
+            "recurrence_ci": recurrence_ci,
             "recurrence_tasks": len(recurrence),
             "first_appearance_accuracy": acc([r for r in arm_rows if r["first_appearance"]]),
             "cycle_completion_rate": len(completed) / len(arm_rows) if arm_rows else 0.0,
@@ -190,7 +229,9 @@ def main() -> None:
     Path(out).parent.mkdir(parents=True, exist_ok=True)
     Path(out).write_text(json.dumps(payload, indent=2, sort_keys=True) + "\n", encoding="utf-8")
     for arm, s in payload["arms"].items():
-        print(f"{arm:<12} recurrence={s['recurrence_accuracy']:.3f} completion={s['cycle_completion_rate']:.3f} malformed={s['malformed_action_rate']:.3f}")
+        print(f"{arm:<12} recurrence={s['recurrence_accuracy']:.3f} completion={s['cycle_completion_rate']:.3f} "
+              f"malformed={s['malformed_action_rate']:.3f} "
+              f"ci=[{s['recurrence_ci'][0]:.3f},{s['recurrence_ci'][1]:.3f}]")
 
 
 if __name__ == "__main__":

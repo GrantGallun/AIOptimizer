@@ -17,6 +17,10 @@ class SummarizeMathTests(unittest.TestCase):
         summary = ike._summarize("full_kernel", rows, metrics)
 
         self.assertAlmostEqual(summary["recurrence_accuracy"], 0.5)  # 1 of 2 recurrence rows correct
+        self.assertIsInstance(summary["recurrence_ci"], list)
+        self.assertEqual(len(summary["recurrence_ci"]), 2)
+        self.assertLessEqual(summary["recurrence_ci"][0], summary["recurrence_accuracy"])
+        self.assertGreaterEqual(summary["recurrence_ci"][1], summary["recurrence_accuracy"])
         self.assertAlmostEqual(summary["retrieval_participation_rate"], 2 / 3)
         self.assertAlmostEqual(summary["reasoning_participation_rate"], 2 / 3)
         self.assertAlmostEqual(summary["cycle_completion_rate"], 2 / 3)
@@ -30,7 +34,8 @@ class RenderOnlyStructureTests(unittest.TestCase):
         self.assertEqual(set(payload["arms"]), set(ike.ARMS))
         for arm in ike.ARMS:
             for key in ("recurrence_accuracy", "malformed_action_rate", "cycle_completion_rate",
-                        "retrieval_participation_rate", "reasoning_participation_rate"):
+                        "retrieval_participation_rate", "reasoning_participation_rate",
+                        "recurrence_ci"):
                 self.assertIn(key, payload["arms"][arm])
         # The invariant-bearing arm always retrieves and completes under the mock.
         fk = payload["arms"]["full_kernel"]
