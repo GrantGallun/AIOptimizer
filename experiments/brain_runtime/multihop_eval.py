@@ -18,6 +18,7 @@ graded from the last REASON output; incomplete cycles count as wrong. Fable read
 from __future__ import annotations
 
 import argparse
+from collections import Counter
 import json
 import random
 import re
@@ -31,14 +32,16 @@ if __package__ in {None, ""}:
 
 from experiments.brain_runtime.coala import ActionKind, CoALAController, CycleLimitExceeded
 from experiments.brain_runtime.coala_learning_eval import parse_answer
+from experiments.brain_runtime.coala_ollama import OllamaCoALAAdapter, STRONG_POLICY_SYSTEM_MULTIHOP
 from experiments.brain_runtime.constrained_action_eval import _learn_verified_rule
 from experiments.brain_runtime.context_selection import make_operators
 from experiments.brain_runtime.integrated_kernel_eval import ScaleMockClient, _make_adapter, _memory
 from experiments.brain_runtime.stats import wilson_interval
 from experiments.local_worker.ollama_client import DEFAULT_MODEL, OllamaClient
 
-ARMS = ("prompted", "full_kernel")
+ARMS = ("prompted", "prompted_vote", "full_kernel")
 DEFAULT_SEED = 20260711
+SAMPLE_SEPARATOR = "---SAMPLE---"
 
 
 def build_composed_sequence(
@@ -124,7 +127,40 @@ def _answer_cycle(controller: CoALAController, adapter: Any, problem: dict[str, 
     event_kinds = tuple(event.action.kind.value for event in result.events)
     reason_events = [event for event in result.events if event.action.kind is ActionKind.REASON]
     reason_output = reason_events[-1].output if reason_events else ""
-    return (parse_answer(reason_output) if reason_output else None), reason_output, event_kinds
+    return _parse_voted_answer(reason_output), reason_output, event_kinds
+
+
+def _parse_voted_answer(reason_output: str) -> int | None:
+    """Parse one answer, or deterministically majority-vote separated samples."""
+    if not reason_output:
+        return None
+    if SAMPLE_SEPARATOR not in reason_output:
+        return parse_answer(reason_output)
+    answers = [parse_answer(sample) for sample in reason_output.split(SAMPLE_SEPARATOR)]
+    return Counter(answers).most_common(1)[0][0]
+
+
+def _make_multihop_adapter(client: Any, model: str, arm: str) -> OllamaCoALAAdapter:
+    if arm != "prompted_vote":
+        return _make_adapter(
+            client,
+            model,
+            arm,
+            max_reason_tokens=256,
+            prompted_policy_system=STRONG_POLICY_SYSTEM_MULTIHOP,
+        )
+    return OllamaCoALAAdapter(
+        client,
+        model=model,
+        grounding_actions=["answer"],
+        max_reason_tokens=256,
+        require_retrieval_before_terminal=False,
+        require_reason_before_ground=False,
+        constrained=False,
+        policy_system=STRONG_POLICY_SYSTEM_MULTIHOP,
+        reason_samples=5,
+        reason_temperature=0.7,
+    )
 
 
 def evaluate(operators, sequence, *, model: str, seed: int, clients: dict[str, Any] | None = None,
@@ -138,12 +174,9 @@ def evaluate(operators, sequence, *, model: str, seed: int, clients: dict[str, A
         # (dev diagnosis: correct reasoning cut mid-second-hop, last-integer grading then fails).
         # v6.2: the prompted arm gets the composition-aware strong prompt (the v4.2 single-rule
         # query template made it retrieve one of the two needed rules — a stale-prompt artifact).
-        from experiments.brain_runtime.coala_ollama import STRONG_POLICY_SYSTEM_MULTIHOP
-
-        adapter = _make_adapter(client, model, arm, max_reason_tokens=256,
-                                prompted_policy_system=STRONG_POLICY_SYSTEM_MULTIHOP)
+        adapter = _make_multihop_adapter(client, model, arm)
         controller = CoALAController(
-            _memory(arm),
+            _memory("prompted" if arm == "prompted_vote" else arm),
             reasoner=adapter.reason,
             grounding={"answer": lambda arguments, _context: str(arguments.get("value"))},
             max_internal_actions=max_internal_actions,

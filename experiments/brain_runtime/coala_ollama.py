@@ -205,12 +205,16 @@ class OllamaCoALAAdapter:
         require_reason_before_ground: bool = False,
         policy_system: str | None = None,
         deterministic_retrieve_query: bool = False,
+        reason_samples: int = 1,
+        reason_temperature: float = 0.0,
     ) -> None:
         actions = tuple(dict.fromkeys(str(action).strip() for action in grounding_actions))
         if not actions or any(not action for action in actions):
             raise ValueError("at least one grounding action is required")
         if max_policy_tokens < 1 or max_reason_tokens < 1:
             raise ValueError("generation token limits must be positive")
+        if reason_samples < 1:
+            raise ValueError("reason_samples must be positive")
         self.client = client
         self.model = model
         self.grounding_actions = actions
@@ -226,6 +230,8 @@ class OllamaCoALAAdapter:
         # v7: override every model-chosen retrieve query with the full goal+observation (the
         # kernel-fallback construction). Isolates query construction as a bolt-on mechanism.
         self.deterministic_retrieve_query = deterministic_retrieve_query
+        self.reason_samples = reason_samples
+        self.reason_temperature = reason_temperature
         self.metrics = AdapterMetrics()
 
     def policy(self, context: DecisionContext) -> CognitiveAction:
@@ -288,15 +294,18 @@ class OllamaCoALAAdapter:
             f"Authorized memories:\n{render_memories(context)}\n"
             f"Prior thoughts:\n{render_thoughts(context)}"
         )
-        generation = self.client.generate_with_metrics(
-            prompt,
-            model=self.model,
-            system=REASON_SYSTEM,
-            temperature=0.0,
-            max_tokens=self.max_reason_tokens,
-        )
-        self.metrics.add(generation)
-        return generation.text.strip()
+        samples: list[str] = []
+        for _ in range(self.reason_samples):
+            generation = self.client.generate_with_metrics(
+                prompt,
+                model=self.model,
+                system=REASON_SYSTEM,
+                temperature=self.reason_temperature if self.reason_samples > 1 else 0.0,
+                max_tokens=self.max_reason_tokens,
+            )
+            self.metrics.add(generation)
+            samples.append(generation.text.strip())
+        return "\n---SAMPLE---\n".join(samples)
 
     def _policy_prompt(self, context: DecisionContext) -> str:
         events = "\n".join(

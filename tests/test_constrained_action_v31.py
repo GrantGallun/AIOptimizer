@@ -1,7 +1,10 @@
 import unittest
 
 from experiments.brain_runtime import constrained_action_eval_v31 as v31
-from experiments.brain_runtime.coala_ollama import ACTION_SCHEMA_CONDITIONAL
+from experiments.brain_runtime.coala import DecisionContext
+from experiments.brain_runtime.coala_ollama import ACTION_SCHEMA_CONDITIONAL, OllamaCoALAAdapter
+from experiments.brain_runtime.multihop_eval import _parse_voted_answer
+from experiments.local_worker.ollama_client import Generation
 
 
 class ConditionalSchemaTests(unittest.TestCase):
@@ -26,6 +29,46 @@ class RenderOnlyTests(unittest.TestCase):
             self.assertEqual(metrics["malformed_action_rate"], 0.0)
             # The mock reasons before grounding, so completion is measurable (not the v3 degeneracy).
             self.assertGreater(metrics["task_completion_accuracy"], 0.0)
+
+
+class SampleVoteTests(unittest.TestCase):
+    def test_reason_samples_join_outputs_and_record_each_generation(self):
+        class FakeClient:
+            def __init__(self):
+                self.calls = []
+
+            def generate_with_metrics(self, prompt, **kwargs):
+                self.calls.append((prompt, kwargs))
+                return Generation(f"ANSWER={len(self.calls)}", 1, 1, 1, 1)
+
+        client = FakeClient()
+        adapter = OllamaCoALAAdapter(
+            client,
+            model="mock",
+            grounding_actions=["answer"],
+            reason_samples=3,
+            reason_temperature=0.7,
+        )
+        context = DecisionContext(
+            goal="answer composed problem",
+            observation="outer(inner(2, 3), 4)",
+            scope="project",
+            working={},
+        )
+
+        output = adapter.reason("compute", context)
+
+        self.assertEqual(output, "ANSWER=1\n---SAMPLE---\nANSWER=2\n---SAMPLE---\nANSWER=3")
+        self.assertEqual(adapter.metrics.calls, 3)
+        self.assertEqual(len(client.calls), 3)
+        self.assertTrue(all(kwargs["temperature"] == 0.7 for _, kwargs in client.calls))
+
+    def test_majority_vote_and_first_tie_break(self):
+        self.assertEqual(
+            _parse_voted_answer("ANSWER=3\n---SAMPLE---\nANSWER=5\n---SAMPLE---\nANSWER=5"),
+            5,
+        )
+        self.assertEqual(_parse_voted_answer("ANSWER=7\n---SAMPLE---\nANSWER=8"), 7)
 
 
 if __name__ == "__main__":
