@@ -1,7 +1,9 @@
 # Pre-Registration v5: The idiomatic LangGraph agent vs the AIOptimizer kernel
 
 Registered: 2026-07-11 by Fable (Claude Opus 4.8)
-Status: Registered (no v5 model run yet)
+Status: **PARTIAL** (qwen3:8b hidden). langgraph_idiomatic recurrence 0.872 vs full_kernel 1.000
+(gap 0.128); the router always retrieves (participation 1.000) — no naive-style structural failure;
+the gap is retrieval/compute brittleness. See HYP-28.
 Thesis link: PROJECT_PLAN §00 / LANDSCAPE.md (LangGraph row = "durable workflow / LLM-driven control
 flow"). The Layer-2 product comparison against the framework people actually use.
 

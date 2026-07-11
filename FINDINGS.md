@@ -61,6 +61,24 @@ invariants force `retrieve→reason→ground` (participation 1.000) and encoder 
 rule → 120/120. *The thesis in one number: a capable model left to "decide for itself" blurts null
 answers; deterministic structure + good retrieval convert it into reliable learning.*
 
+### 6. Honest stress-test — is the kernel necessary, or just good prompting? *(prereg v4.2/v5)*
+Because HYP-26's 100-0 is *so* clean, we attacked it before a skeptic could — two fair baselines on
+qwen3:8b (hidden):
+- **Strong prompt, no invariants** (HYP-27): recurrence **1.000** — a strong "retrieve→reason→answer"
+  prompt *fully matches* the kernel. So the 100-0 was mostly the *neutral prompt + weak retrieval* in
+  naive, not the deterministic invariants.
+- **Idiomatic LangGraph agent** (HYP-28, real `StateGraph`, LLM router decides control flow):
+  recurrence **0.872**, and it **always retrieves** (participation 1.000) — it does *not* collapse
+  like naive. Its ~0.13 gap is retrieval/compute brittleness (top-1 retrieval + single-shot answer,
+  worsening as memory grows), the kind of thing better retrieval would close.
+
+**The honest headline:** on a *capable, instructable* model, good prompting and even an idiomatic
+framework agent get you to ~87–100%. The kernel's determinism is **not** a night-and-day miracle
+there — it is a **guarantee** (100% vs prompting's ~97% step-compliance) and **robustness at scale**,
+and it earns its keep most on **weaker / less-instructable models** (llama3.2:3b couldn't follow the
+instruction at all). The kernel is a reliability *floor*, not a capability ceiling — and its
+mechanisms are complementary to LangGraph, not opposed (they could be implemented as a LangGraph graph).
+
 ---
 
 ## Two failure modes the kernel eliminates

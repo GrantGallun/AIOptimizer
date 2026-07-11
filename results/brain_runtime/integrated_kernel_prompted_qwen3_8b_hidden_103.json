@@ -1,0 +1,3022 @@
+{
+  "arms": {
+    "prompted": {
+      "arm": "prompted",
+      "calls": 597,
+      "completion_tokens": 15348,
+      "cycle_completion_rate": 0.9733333333333334,
+      "first_appearance_accuracy": 0.13333333333333333,
+      "forced_reasons": 0,
+      "forced_retrievals": 0,
+      "load_duration_ns": 79882519300,
+      "malformed_action_rate": 0.0,
+      "malformed_actions": 0,
+      "prompt_tokens": 240118,
+      "reasoning_participation_rate": 0.9733333333333334,
+      "recurrence_accuracy": 1.0,
+      "recurrence_tasks": 120,
+      "retrieval_participation_rate": 0.9733333333333334,
+      "total_duration_ns": 239608136500
+    }
+  },
+  "benchmark": "integrated-kernel-v4",
+  "elapsed_seconds": 254.898,
+  "gate": {
+    "full_kernel_malformed_rate": null,
+    "naive_malformed_rate": null,
+    "note": "Fable reads the hidden gate and writes the verdict.",
+    "observed_recurrence_gap": null,
+    "owner": "fable",
+    "required_recurrence_gap": 0.3
+  },
+  "model": "qwen3:8b",
+  "operator_count": 30,
+  "repetitions": 5,
+  "rows": [
+    {
+      "a": 4,
+      "answer": null,
+      "arm": "prompted",
+      "b": 8,
+      "correct": false,
+      "event_kinds": [],
+      "expected": 20,
+      "first_appearance": true,
+      "incomplete": true,
+      "operator": "ngame",
+      "response": "",
+      "rule": "ngame(a,b) = (a times 3) + b",
+      "seed": 103,
+      "step": 0
+    },
+    {
+      "a": 8,
+      "answer": 30,
+      "arm": "prompted",
+      "b": 6,
+      "correct": false,
+      "event_kinds": [
+        "retrieve",
+        "reason",
+        "ground"
+      ],
+      "expected": 16,
+      "first_appearance": true,
+      "incomplete": false,
+      "operator": "mtozu",
+      "response": "The rule provided is ngame(a,b) = (a times 3) + b. Applying this rule to the operands 8 and 6: (8 times 3) + 6 = 24 + 6 = 30. Therefore, the result is 30.",
+      "rule": "mtozu(a,b) = a + b + 2",
+      "seed": 103,
+      "step": 1
+    },
+    {
+      "a": 6,
+      "answer": 7,
+      "arm": "prompted",
+      "b": 7,
+      "correct": false,
+      "event_kinds": [
+        "retrieve",
+        "reason",
+        "ground"
+      ],
+      "expected": 21,
+      "first_appearance": true,
+      "incomplete": false,
+      "operator": "gbumu",
+      "response": "The given problem involves the operator \"gbumu\" with operands 6 and 7. However, there is no verified rule provided for \"gbumu\" in the authorized memories. The available rules are for \"ngame\" and \"mtozu\". Since \"gbumu\" is not defined, it is not possible to compute the result based on the given information.",
+      "rule": "gbumu(a,b) = 3 times max(a, b)",
+      "seed": 103,
+      "step": 2
+    },
+    {
+      "a": 8,
+      "answer": null,
+      "arm": "prompted",
+      "b": 6,
+      "correct": false,
+      "event_kinds": [],
+      "expected": 23,
+      "first_appearance": true,
+      "incomplete": true,
+      "operator": "tbiri",
+      "response": "",
+      "rule": "tbiri(a,b) = a + b + 9",
+      "seed": 103,
+      "step": 3
+    },
+    {
+      "a": 6,
+      "answer": 2,
+      "arm": "prompted",
+      "b": 2,
+      "correct": false,
+      "event_kinds": [
+        "retrieve",
+        "reason",
+        "ground"
+      ],
+      "expected": 26,
+      "first_appearance": true,
+      "incomplete": false,
+      "operator": "sluso",
+      "response": "The given problem is to compute sluso(6, 2). However, there is no verified operator rule provided for \"sluso\" in the authorized memories. Therefore, it is not possible to compute the result based on the given information.",
+      "rule": "sluso(a,b) = (a times 4) + b",
+      "seed": 103,
+      "step": 4
+    },
+    {
+      "a": 8,
+      "answer": 9,
+      "arm": "prompted",
+      "b": 9,
+      "correct": false,
+      "event_kinds": [
+        "retrieve",
+        "reason",
+        "ground"
+      ],
+      "expected": 41,
+      "first_appearance": true,
+      "incomplete": false,
+      "operator": "zfuzo",
+      "response": "The zfuzo operator is not recognized in the provided authorized memories. Therefore, it is not possible to apply a rule to compute zfuzo(8, 9).",
+      "rule": "zfuzo(a,b) = (a times 4) + b",
+      "seed": 103,
+      "step": 5
+    },
+    {
+      "a": 7,
+      "answer": 8,
+      "arm": "prompted",
+      "b": 8,
+      "correct": false,
+      "event_kinds": [
+        "retrieve",
+        "reason",
+        "ground"
+      ],
+      "expected": 5,
+      "first_appearance": true,
+      "incomplete": false,
+      "operator": "ptufa",
+      "response": "The given problem is ptufa(7, 8). However, there is no verified operator rule provided for \"ptufa\" in the authorized memories. Therefore, it is not possible to compute the result based on the given information.",
+      "rule": "ptufa(a,b) = |a - b| + 4",
+      "seed": 103,
+      "step": 6
+    },
+    {
+      "a": 4,
+      "answer": 4,
+      "arm": "prompted",
+      "b": 4,
+      "correct": false,
+      "event_kinds": [
+        "retrieve",
+        "reason",
+        "ground"
+      ],
+      "expected": 9,
+      "first_appearance": true,
+      "incomplete": false,
+      "operator": "lzedi",
+      "response": "The requested problem involves the operator \"lzedi,\" but there is no verified rule for \"lzedi\" in the provided authorized memories. Therefore, it is not possible to compute \"lzedi(4, 4)\" with the given information.",
+      "rule": "lzedi(a,b) = |a - b| + 9",
+      "seed": 103,
+      "step": 7
+    },
+    {
+      "a": 9,
+      "answer": 9,
+      "arm": "prompted",
+      "b": 9,
+      "correct": true,
+      "event_kinds": [
+        "retrieve",
+        "reason",
+        "ground"
+      ],
+      "expected": 9,
+      "first_appearance": true,
+      "incomplete": false,
+      "operator": "sdoli",
+      "response": "The given problem is to compute sdoli(9, 9). However, there is no verified operator rule provided for \"sdoli\" in the authorized memories. Therefore, it is not possible to compute the result based on the given information.",
+      "rule": "sdoli(a,b) = |a - b| + 9",
+      "seed": 103,
+      "step": 8
+    },
+    {
+      "a": 2,
+      "answer": 3,
+      "arm": "prompted",
+      "b": 3,
+      "correct": false,
+      "event_kinds": [
+        "retrieve",
+        "reason",
+        "ground"
+      ],
+      "expected": 9,
+      "first_appearance": true,
+      "incomplete": false,
+      "operator": "grena",
+      "response": "The requested problem involves applying the rule for the operator \"grena\" to the operands 2 and 3. However, there is no verified operator rule provided for \"grena\" in the authorized memories. Therefore, it is not possible to compute the result based on the given information.",
+      "rule": "grena(a,b) = 3 times max(a, b)",
+      "seed": 103,
+      "step": 9
+    },
+    {
+      "a": 9,
+      "answer": 2,
+      "arm": "prompted",
+      "b": 2,
+      "correct": false,
+      "event_kinds": [
+        "retrieve",
+        "reason",
+        "ground"
+      ],
+      "expected": 18,
+      "first_appearance": true,
+      "incomplete": false,
+      "operator": "smesa",
+      "response": "The given problem is smesa(9, 2). However, there is no verified operator rule provided for \"smesa\" in the authorized memories. Therefore, it is not possible to compute the result based on the given information.",
+      "rule": "smesa(a,b) = a + b + 7",
+      "seed": 103,
+      "step": 10
+    },
+    {
+      "a": 7,
+      "answer": 4,
+      "arm": "prompted",
+      "b": 4,
+      "correct": false,
+      "event_kinds": [
+        "retrieve",
+        "reason",
+        "ground"
+      ],
+      "expected": 13,
+      "first_appearance": true,
+      "incomplete": false,
+      "operator": "ngami",
+      "response": "The function ngami is not defined in the provided authorized memories. Therefore, it is not possible to compute ngami(7, 4) with the given information.",
+      "rule": "ngami(a,b) = a + b + 2",
+      "seed": 103,
+      "step": 11
+    },
+    {
+      "a": 5,
+      "answer": null,
+      "arm": "prompted",
+      "b": 9,
+      "correct": false,
+      "event_kinds": [],
+      "expected": 20,
+      "first_appearance": true,
+      "incomplete": true,
+      "operator": "mkane",
+      "response": "",
+      "rule": "mkane(a,b) = a + b + 6",
+      "seed": 103,
+      "step": 12
+    },
+    {
+      "a": 8,
+      "answer": 3,
+      "arm": "prompted",
+      "b": 3,
+      "correct": false,
+      "event_kinds": [
+        "retrieve",
+        "reason",
+        "ground"
+      ],
+      "expected": 19,
+      "first_appearance": true,
+      "incomplete": false,
+      "operator": "mzavi",
+      "response": "The problem involves applying the rule for the operator \"mzavi\" to the operands 8 and 3. However, there is no verified operator rule provided for \"mzavi\" in the authorized memories. Therefore, it is not possible to compute the result based on the given information.",
+      "rule": "mzavi(a,b) = (a times 2) + b",
+      "seed": 103,
+      "step": 13
+    },
+    {
+      "a": 6,
+      "answer": 2,
+      "arm": "prompted",
+      "b": 2,
+      "correct": false,
+      "event_kinds": [
+        "retrieve",
+        "reason",
+        "ground"
+      ],
+      "expected": 12,
+      "first_appearance": true,
+      "incomplete": false,
+      "operator": "mziva",
+      "response": "The function mziva is not defined in the provided authorized memories. Therefore, it is not possible to compute mziva(6, 2) with the given information.",
+      "rule": "mziva(a,b) = 2 times max(a, b)",
+      "seed": 103,
+      "step": 14
+    },
+    {
+      "a": 3,
+      "answer": null,
+      "arm": "prompted",
+      "b": 2,
+      "correct": false,
+      "event_kinds": [],
+      "expected": 13,
+      "first_appearance": true,
+      "incomplete": true,
+      "operator": "dparo",
+      "response": "",
+      "rule": "dparo(a,b) = a + b + 8",
+      "seed": 103,
+      "step": 15
+    },
+    {
+      "a": 4,
+      "answer": 4,
+      "arm": "prompted",
+      "b": 4,
+      "correct": false,
+      "event_kinds": [
+        "retrieve",
+        "reason",
+        "ground"
+      ],
+      "expected": 16,
+      "first_appearance": true,
+      "incomplete": false,
+      "operator": "dkava",
+      "response": "The given problem is dkava(4, 4). However, there is no verified operator rule provided for \"dkava\" in the authorized memories. Therefore, it is not possible to compute the result based on the given information.",
+      "rule": "dkava(a,b) = 4 times max(a, b)",
+      "seed": 103,
+      "step": 16
+    },
+    {
+      "a": 7,
+      "answer": 2,
+      "arm": "prompted",
+      "b": 2,
+      "correct": false,
+      "event_kinds": [
+        "retrieve",
+        "reason",
+        "ground"
+      ],
+      "expected": 16,
+      "first_appearance": true,
+      "incomplete": false,
+      "operator": "gmazu",
+      "response": "The given problem is to compute gmazu(7, 2). However, there is no verified operator rule provided for \"gmazu\" in the authorized memories. Therefore, it is not possible to compute the result based on the given information.",
+      "rule": "gmazu(a,b) = a + b + 7",
+      "seed": 103,
+      "step": 17
+    },
+    {
+      "a": 6,
+      "answer": 5,
+      "arm": "prompted",
+      "b": 5,
+      "correct": true,
+      "event_kinds": [
+        "retrieve",
+        "reason",
+        "ground"
+      ],
+      "expected": 5,
+      "first_appearance": true,
+      "incomplete": false,
+      "operator": "zduka",
+      "response": "The requested problem is to compute zduka(6, 5). However, there is no verified operator rule provided for \"zduka\" in the authorized memories. The available rules are for \"zfuzo,\" \"dkava,\" and \"ngami.\" Therefore, it is not possible to compute zduka(6, 5) with the given information.",
+      "rule": "zduka(a,b) = |a - b| + 4",
+      "seed": 103,
+      "step": 18
+    },
+    {
+      "a": 6,
+      "answer": 8,
+      "arm": "prompted",
+      "b": 8,
+      "correct": false,
+      "event_kinds": [
+        "retrieve",
+        "reason",
+        "ground"
+      ],
+      "expected": 26,
+      "first_appearance": true,
+      "incomplete": false,
+      "operator": "vsoga",
+      "response": "The given problem involves applying a verified operator rule to the operands 6 and 8. The available rules are:\n\n1. `mkane(a,b) = a + b + 6`\n2. `mzavi(a,b) = (a times 2) + b`\n3. `ngame(a,b) = (a times 3) + b`\n\nSince the problem specifies `vsoga(6, 8)`, and no rule is explicitly associated",
+      "rule": "vsoga(a,b) = (a times 3) + b",
+      "seed": 103,
+      "step": 19
+    },
+    {
+      "a": 3,
+      "answer": 6,
+      "arm": "prompted",
+      "b": 6,
+      "correct": true,
+      "event_kinds": [
+        "retrieve",
+        "reason",
+        "ground"
+      ],
+      "expected": 6,
+      "first_appearance": true,
+      "incomplete": false,
+      "operator": "csepu",
+      "response": "The goal is to compute csepu(3, 6). However, there is no authorized memory that defines the operator \"csepu\". Therefore, it is not possible to compute the result based on the provided information.",
+      "rule": "csepu(a,b) = |a - b| + 3",
+      "seed": 103,
+      "step": 20
+    },
+    {
+      "a": 8,
+      "answer": 9,
+      "arm": "prompted",
+      "b": 9,
+      "correct": false,
+      "event_kinds": [
+        "retrieve",
+        "reason",
+        "ground"
+      ],
+      "expected": 27,
+      "first_appearance": true,
+      "incomplete": false,
+      "operator": "vpasu",
+      "response": "The given problem is to compute vpasu(8, 9). However, there is no authorized memory that defines the operator \"vpasu\". Therefore, it is not possible to compute the result based on the provided information.",
+      "rule": "vpasu(a,b) = 3 times max(a, b)",
+      "seed": 103,
+      "step": 21
+    },
+    {
+      "a": 6,
+      "answer": 5,
+      "arm": "prompted",
+      "b": 5,
+      "correct": false,
+      "event_kinds": [
+        "retrieve",
+        "reason",
+        "ground"
+      ],
+      "expected": 15,
+      "first_appearance": true,
+      "incomplete": false,
+      "operator": "dfuva",
+      "response": "The requested operator \"dfuva\" is not recognized in the provided authorized memories. Therefore, it is not possible to apply a rule to compute the result of dfuva(6, 5).",
+      "rule": "dfuva(a,b) = a + b + 4",
+      "seed": 103,
+      "step": 22
+    },
+    {
+      "a": 8,
+      "answer": 9,
+      "arm": "prompted",
+      "b": 9,
+      "correct": false,
+      "event_kinds": [
+        "retrieve",
+        "reason",
+        "ground"
+      ],
+      "expected": 2,
+      "first_appearance": true,
+      "incomplete": false,
+      "operator": "pmova",
+      "response": "The pmova operator is not directly defined in the provided memories. However, based on the given rules, it is possible that pmova is a variant or a miswritten version of one of the defined operators (e.g., mzavi, gmazu, or smesa). Since no explicit rule for pmova is provided, it is not possible to compute pmova(8, 9) with the given information.",
+      "rule": "pmova(a,b) = |a - b| + 1",
+      "seed": 103,
+      "step": 23
+    },
+    {
+      "a": 5,
+      "answer": 7,
+      "arm": "prompted",
+      "b": 7,
+      "correct": true,
+      "event_kinds": [
+        "retrieve",
+        "reason",
+        "ground"
+      ],
+      "expected": 7,
+      "first_appearance": true,
+      "incomplete": false,
+      "operator": "pfuno",
+      "response": "The requested problem involves the operator \"pfuno,\" but there is no verified rule provided for \"pfuno\" in the authorized memories. Therefore, it is not possible to compute \"pfuno(5, 7)\" based on the given information.",
+      "rule": "pfuno(a,b) = |a - b| + 5",
+      "seed": 103,
+      "step": 24
+    },
+    {
+      "a": 3,
+      "answer": 7,
+      "arm": "prompted",
+      "b": 7,
+      "correct": false,
+      "event_kinds": [
+        "retrieve",
+        "reason",
+        "ground"
+      ],
+      "expected": 13,
+      "first_appearance": true,
+      "incomplete": false,
+      "operator": "rpuna",
+      "response": "The given problem is to compute rpuna(3, 7). However, there is no verified operator rule provided for \"rpuna\" in the authorized memories. The available rules are for \"tbiri\", \"ngami\", and \"smesa\". Since \"rpuna\" is not recognized as a valid operator based on the provided information, it is not possible to compute the result.",
+      "rule": "rpuna(a,b) = a + b + 3",
+      "seed": 103,
+      "step": 25
+    },
+    {
+      "a": 6,
+      "answer": 6,
+      "arm": "prompted",
+      "b": 6,
+      "correct": false,
+      "event_kinds": [
+        "retrieve",
+        "reason",
+        "ground"
+      ],
+      "expected": 24,
+      "first_appearance": true,
+      "incomplete": false,
+      "operator": "glati",
+      "response": "The goal is to answer the \"glati\" problem with the given operands (6, 6). However, there is no verified operator rule provided for \"glati\" in the authorized memories. Therefore, it is not possible to compute the result using the available information.",
+      "rule": "glati(a,b) = 4 times max(a, b)",
+      "seed": 103,
+      "step": 26
+    },
+    {
+      "a": 3,
+      "answer": 9,
+      "arm": "prompted",
+      "b": 9,
+      "correct": false,
+      "event_kinds": [
+        "retrieve",
+        "reason",
+        "ground"
+      ],
+      "expected": 15,
+      "first_appearance": true,
+      "incomplete": false,
+      "operator": "tpoko",
+      "response": "The given problem is tpoko(3, 9). None of the provided operator rules match \"tpoko\". Therefore, it is not possible to compute the result with the available information.",
+      "rule": "tpoko(a,b) = (a times 2) + b",
+      "seed": 103,
+      "step": 27
+    },
+    {
+      "a": 9,
+      "answer": 8,
+      "arm": "prompted",
+      "b": 8,
+      "correct": false,
+      "event_kinds": [
+        "retrieve",
+        "reason",
+        "ground"
+      ],
+      "expected": 35,
+      "first_appearance": true,
+      "incomplete": false,
+      "operator": "fpepe",
+      "response": "The given problem is fpepe(9, 8). However, there is no verified operator rule provided for \"fpepe\" in the authorized memories. Therefore, it is not possible to compute the result based on the given information.",
+      "rule": "fpepe(a,b) = (a times 3) + b",
+      "seed": 103,
+      "step": 28
+    },
+    {
+      "a": 2,
+      "answer": 6,
+      "arm": "prompted",
+      "b": 6,
+      "correct": false,
+      "event_kinds": [
+        "retrieve",
+        "reason",
+        "ground"
+      ],
+      "expected": 15,
+      "first_appearance": true,
+      "incomplete": false,
+      "operator": "kligu",
+      "response": "The function \"kligu\" is not defined in the provided authorized memories. Therefore, it is not possible to apply any rule to compute \"kligu(2, 6)\".",
+      "rule": "kligu(a,b) = a + b + 7",
+      "seed": 103,
+      "step": 29
+    },
+    {
+      "a": 9,
+      "answer": 29,
+      "arm": "prompted",
+      "b": 2,
+      "correct": true,
+      "event_kinds": [
+        "retrieve",
+        "reason",
+        "ground"
+      ],
+      "expected": 29,
+      "first_appearance": false,
+      "incomplete": false,
+      "operator": "vsoga",
+      "response": "The rule for vsoga(a,b) is (a times 3) + b. Applying this to vsoga(9, 2): (9 \u00d7 3) + 2 = 27 + 2 = 29.",
+      "rule": "vsoga(a,b) = (a times 3) + b",
+      "seed": 103,
+      "step": 30
+    },
+    {
+      "a": 4,
+      "answer": 4,
+      "arm": "prompted",
+      "b": 4,
+      "correct": true,
+      "event_kinds": [
+        "retrieve",
+        "reason",
+        "ground"
+      ],
+      "expected": 4,
+      "first_appearance": false,
+      "incomplete": false,
+      "operator": "ptufa",
+      "response": "The rule for ptufa(a,b) is |a - b| + 4. Applying this to ptufa(4, 4): |4 - 4| + 4 = 0 + 4 = 4. The result is 4.",
+      "rule": "ptufa(a,b) = |a - b| + 4",
+      "seed": 103,
+      "step": 31
+    },
+    {
+      "a": 3,
+      "answer": 15,
+      "arm": "prompted",
+      "b": 5,
+      "correct": true,
+      "event_kinds": [
+        "retrieve",
+        "reason",
+        "ground"
+      ],
+      "expected": 15,
+      "first_appearance": false,
+      "incomplete": false,
+      "operator": "smesa",
+      "response": "The rule for smesa(a,b) is a + b + 7. Applying this to smesa(3, 5): 3 + 5 + 7 = 15.",
+      "rule": "smesa(a,b) = a + b + 7",
+      "seed": 103,
+      "step": 32
+    },
+    {
+      "a": 7,
+      "answer": 20,
+      "arm": "prompted",
+      "b": 6,
+      "correct": true,
+      "event_kinds": [
+        "retrieve",
+        "reason",
+        "ground"
+      ],
+      "expected": 20,
+      "first_appearance": false,
+      "incomplete": false,
+      "operator": "kligu",
+      "response": "The rule for kligu(a,b) is a + b + 7. Applying this to kligu(7, 6): 7 + 6 + 7 = 20.",
+      "rule": "kligu(a,b) = a + b + 7",
+      "seed": 103,
+      "step": 33
+    },
+    {
+      "a": 7,
+      "answer": 23,
+      "arm": "prompted",
+      "b": 8,
+      "correct": true,
+      "event_kinds": [
+        "retrieve",
+        "reason",
+        "ground"
+      ],
+      "expected": 23,
+      "first_appearance": false,
+      "incomplete": false,
+      "operator": "dparo",
+      "response": "The rule for dparo(a,b) is a + b + 8. Applying this to the operands 7 and 8: 7 + 8 + 8 = 23. Therefore, the result is 23.",
+      "rule": "dparo(a,b) = a + b + 8",
+      "seed": 103,
+      "step": 34
+    },
+    {
+      "a": 7,
+      "answer": 14,
+      "arm": "prompted",
+      "b": 5,
+      "correct": true,
+      "event_kinds": [
+        "retrieve",
+        "reason",
+        "ground"
+      ],
+      "expected": 14,
+      "first_appearance": false,
+      "incomplete": false,
+      "operator": "mziva",
+      "response": "The function mziva(a, b) is defined as 2 times the maximum of a and b. For the given inputs, mziva(7, 5) = 2 * max(7, 5) = 2 * 7 = 14.",
+      "rule": "mziva(a,b) = 2 times max(a, b)",
+      "seed": 103,
+      "step": 35
+    },
+    {
+      "a": 3,
+      "answer": 8,
+      "arm": "prompted",
+      "b": 3,
+      "correct": true,
+      "event_kinds": [
+        "retrieve",
+        "reason",
+        "ground"
+      ],
+      "expected": 8,
+      "first_appearance": false,
+      "incomplete": false,
+      "operator": "mtozu",
+      "response": "The rule for mtozu(a,b) is a + b + 2. Applying this to mtozu(3, 3): 3 + 3 + 2 = 8.",
+      "rule": "mtozu(a,b) = a + b + 2",
+      "seed": 103,
+      "step": 36
+    },
+    {
+      "a": 3,
+      "answer": 16,
+      "arm": "prompted",
+      "b": 7,
+      "correct": true,
+      "event_kinds": [
+        "retrieve",
+        "reason",
+        "ground"
+      ],
+      "expected": 16,
+      "first_appearance": false,
+      "incomplete": false,
+      "operator": "fpepe",
+      "response": "The rule for fpepe(a,b) is (a times 3) + b. Applying this to fpepe(3, 7): (3 times 3) + 7 = 9 + 7 = 16.",
+      "rule": "fpepe(a,b) = (a times 3) + b",
+      "seed": 103,
+      "step": 37
+    },
+    {
+      "a": 9,
+      "answer": 6,
+      "arm": "prompted",
+      "b": 6,
+      "correct": true,
+      "event_kinds": [
+        "retrieve",
+        "reason",
+        "ground"
+      ],
+      "expected": 6,
+      "first_appearance": false,
+      "incomplete": false,
+      "operator": "csepu",
+      "response": "The rule for csepu(a,b) is |a - b| + 3. Applying this to the operands 9 and 6: |9 - 6| + 3 = 3 + 3 = 6. The result is 6.",
+      "rule": "csepu(a,b) = |a - b| + 3",
+      "seed": 103,
+      "step": 38
+    },
+    {
+      "a": 4,
+      "answer": 20,
+      "arm": "prompted",
+      "b": 9,
+      "correct": true,
+      "event_kinds": [
+        "retrieve",
+        "reason",
+        "ground"
+      ],
+      "expected": 20,
+      "first_appearance": false,
+      "incomplete": false,
+      "operator": "gmazu",
+      "response": "The rule for gmazu(a,b) is a + b + 7. Applying this to the operands 4 and 9: 4 + 9 + 7 = 20.",
+      "rule": "gmazu(a,b) = a + b + 7",
+      "seed": 103,
+      "step": 39
+    },
+    {
+      "a": 7,
+      "answer": 35,
+      "arm": "prompted",
+      "b": 7,
+      "correct": true,
+      "event_kinds": [
+        "retrieve",
+        "reason",
+        "ground"
+      ],
+      "expected": 35,
+      "first_appearance": false,
+      "incomplete": false,
+      "operator": "sluso",
+      "response": "The rule for sluso(a,b) is (a times 4) + b. Applying this to sluso(7, 7): (7 \u00d7 4) + 7 = 28 + 7 = 35. The result is 35.",
+      "rule": "sluso(a,b) = (a times 4) + b",
+      "seed": 103,
+      "step": 40
+    },
+    {
+      "a": 6,
+      "answer": 24,
+      "arm": "prompted",
+      "b": 3,
+      "correct": true,
+      "event_kinds": [
+        "retrieve",
+        "reason",
+        "ground"
+      ],
+      "expected": 24,
+      "first_appearance": false,
+      "incomplete": false,
+      "operator": "dkava",
+      "response": "The rule for dkava(a,b) is 4 times the maximum of a and b. For dkava(6, 3), the maximum of 6 and 3 is 6. Therefore, dkava(6, 3) = 4 * 6 = 24.",
+      "rule": "dkava(a,b) = 4 times max(a, b)",
+      "seed": 103,
+      "step": 41
+    },
+    {
+      "a": 8,
+      "answer": 27,
+      "arm": "prompted",
+      "b": 3,
+      "correct": true,
+      "event_kinds": [
+        "retrieve",
+        "reason",
+        "ground"
+      ],
+      "expected": 27,
+      "first_appearance": false,
+      "incomplete": false,
+      "operator": "ngame",
+      "response": "The rule for ngame(a,b) is (a times 3) + b. Applying this to ngame(8, 3): (8 \u00d7 3) + 3 = 24 + 3 = 27. The answer is 27.",
+      "rule": "ngame(a,b) = (a times 3) + b",
+      "seed": 103,
+      "step": 42
+    },
+    {
+      "a": 6,
+      "answer": 14,
+      "arm": "prompted",
+      "b": 6,
+      "correct": true,
+      "event_kinds": [
+        "retrieve",
+        "reason",
+        "ground"
+      ],
+      "expected": 14,
+      "first_appearance": false,
+      "incomplete": false,
+      "operator": "ngami",
+      "response": "The rule for ngami(a,b) is a + b + 2. Applying this to ngami(6, 6): 6 + 6 + 2 = 14.",
+      "rule": "ngami(a,b) = a + b + 2",
+      "seed": 103,
+      "step": 43
+    },
+    {
+      "a": 4,
+      "answer": 27,
+      "arm": "prompted",
+      "b": 9,
+      "correct": true,
+      "event_kinds": [
+        "retrieve",
+        "reason",
+        "ground"
+      ],
+      "expected": 27,
+      "first_appearance": false,
+      "incomplete": false,
+      "operator": "grena",
+      "response": "The rule for grena(a,b) is \"3 times max(a, b)\". For the operands 4 and 9, the maximum is 9. Therefore, grena(4, 9) = 3 * 9 = 27.",
+      "rule": "grena(a,b) = 3 times max(a, b)",
+      "seed": 103,
+      "step": 44
+    },
+    {
+      "a": 7,
+      "answer": 20,
+      "arm": "prompted",
+      "b": 7,
+      "correct": true,
+      "event_kinds": [
+        "retrieve",
+        "reason",
+        "ground"
+      ],
+      "expected": 20,
+      "first_appearance": false,
+      "incomplete": false,
+      "operator": "mkane",
+      "response": "The rule for mkane(a,b) is a + b + 6. Applying this to mkane(7, 7): 7 + 7 + 6 = 20.",
+      "rule": "mkane(a,b) = a + b + 6",
+      "seed": 103,
+      "step": 45
+    },
+    {
+      "a": 9,
+      "answer": 8,
+      "arm": "prompted",
+      "b": 6,
+      "correct": true,
+      "event_kinds": [
+        "retrieve",
+        "reason",
+        "ground"
+      ],
+      "expected": 8,
+      "first_appearance": false,
+      "incomplete": false,
+      "operator": "pfuno",
+      "response": "The rule for pfuno(a,b) is |a - b| + 5. Applying this to pfuno(9, 6): |9 - 6| + 5 = 3 + 5 = 8. The result is 8.",
+      "rule": "pfuno(a,b) = |a - b| + 5",
+      "seed": 103,
+      "step": 46
+    },
+    {
+      "a": 2,
+      "answer": 12,
+      "arm": "prompted",
+      "b": 4,
+      "correct": true,
+      "event_kinds": [
+        "retrieve",
+        "reason",
+        "ground"
+      ],
+      "expected": 12,
+      "first_appearance": false,
+      "incomplete": false,
+      "operator": "gbumu",
+      "response": "The rule for gbumu(a,b) is 3 times the maximum of a and b. For gbumu(2, 4), the maximum of 2 and 4 is 4. Therefore, the result is 3 * 4 = 12.",
+      "rule": "gbumu(a,b) = 3 times max(a, b)",
+      "seed": 103,
+      "step": 47
+    },
+    {
+      "a": 9,
+      "answer": 17,
+      "arm": "prompted",
+      "b": 4,
+      "correct": true,
+      "event_kinds": [
+        "retrieve",
+        "reason",
+        "ground"
+      ],
+      "expected": 17,
+      "first_appearance": false,
+      "incomplete": false,
+      "operator": "dfuva",
+      "response": "The rule for dfuva(a,b) is a + b + 4. Applying this to the operands 9 and 4: 9 + 4 + 4 = 17. Therefore, dfuva(9, 4) = 17.",
+      "rule": "dfuva(a,b) = a + b + 4",
+      "seed": 103,
+      "step": 48
+    },
+    {
+      "a": 8,
+      "answer": 7,
+      "arm": "prompted",
+      "b": 2,
+      "correct": true,
+      "event_kinds": [
+        "retrieve",
+        "reason",
+        "ground"
+      ],
+      "expected": 7,
+      "first_appearance": false,
+      "incomplete": false,
+      "operator": "pmova",
+      "response": "The rule for pmova(a,b) is |a - b| + 1. Applying this to pmova(8, 2): |8 - 2| + 1 = 6 + 1 = 7. The result is 7.",
+      "rule": "pmova(a,b) = |a - b| + 1",
+      "seed": 103,
+      "step": 49
+    },
+    {
+      "a": 6,
+      "answer": 21,
+      "arm": "prompted",
+      "b": 7,
+      "correct": true,
+      "event_kinds": [
+        "retrieve",
+        "reason",
+        "ground"
+      ],
+      "expected": 21,
+      "first_appearance": false,
+      "incomplete": false,
+      "operator": "vpasu",
+      "response": "The rule for vpasu(a,b) is \"3 times max(a, b)\". For the operands 6 and 7, the maximum is 7. Therefore, vpasu(6, 7) = 3 * 7 = 21.",
+      "rule": "vpasu(a,b) = 3 times max(a, b)",
+      "seed": 103,
+      "step": 50
+    },
+    {
+      "a": 8,
+      "answer": 32,
+      "arm": "prompted",
+      "b": 3,
+      "correct": true,
+      "event_kinds": [
+        "retrieve",
+        "reason",
+        "ground"
+      ],
+      "expected": 32,
+      "first_appearance": false,
+      "incomplete": false,
+      "operator": "glati",
+      "response": "The rule for glati(a,b) is \"4 times max(a, b)\". For glati(8, 3), the maximum of 8 and 3 is 8. Multiplying 8 by 4 gives 32. Therefore, the result is 32.",
+      "rule": "glati(a,b) = 4 times max(a, b)",
+      "seed": 103,
+      "step": 51
+    },
+    {
+      "a": 6,
+      "answer": 19,
+      "arm": "prompted",
+      "b": 7,
+      "correct": true,
+      "event_kinds": [
+        "retrieve",
+        "reason",
+        "ground"
+      ],
+      "expected": 19,
+      "first_appearance": false,
+      "incomplete": false,
+      "operator": "mzavi",
+      "response": "The rule for mzavi(a,b) is (a times 2) + b. Applying this to mzavi(6, 7): (6 \u00d7 2) + 7 = 12 + 7 = 19. The answer is 19.",
+      "rule": "mzavi(a,b) = (a times 2) + b",
+      "seed": 103,
+      "step": 52
+    },
+    {
+      "a": 3,
+      "answer": 18,
+      "arm": "prompted",
+      "b": 6,
+      "correct": true,
+      "event_kinds": [
+        "retrieve",
+        "reason",
+        "ground"
+      ],
+      "expected": 18,
+      "first_appearance": false,
+      "incomplete": false,
+      "operator": "zfuzo",
+      "response": "The rule for zfuzo(a,b) is (a times 4) + b. Applying this to zfuzo(3, 6): (3 \u00d7 4) + 6 = 12 + 6 = 18. The answer is 18.",
+      "rule": "zfuzo(a,b) = (a times 4) + b",
+      "seed": 103,
+      "step": 53
+    },
+    {
+      "a": 2,
+      "answer": 13,
+      "arm": "prompted",
+      "b": 2,
+      "correct": true,
+      "event_kinds": [
+        "retrieve",
+        "reason",
+        "ground"
+      ],
+      "expected": 13,
+      "first_appearance": false,
+      "incomplete": false,
+      "operator": "tbiri",
+      "response": "The rule for tbiri(a,b) is a + b + 9. Applying this to tbiri(2, 2): 2 + 2 + 9 = 13.",
+      "rule": "tbiri(a,b) = a + b + 9",
+      "seed": 103,
+      "step": 54
+    },
+    {
+      "a": 9,
+      "answer": 13,
+      "arm": "prompted",
+      "b": 5,
+      "correct": true,
+      "event_kinds": [
+        "retrieve",
+        "reason",
+        "ground"
+      ],
+      "expected": 13,
+      "first_appearance": false,
+      "incomplete": false,
+      "operator": "sdoli",
+      "response": "The rule for sdoli(a,b) is |a - b| + 9. Applying this to sdoli(9, 5): |9 - 5| + 9 = 4 + 9 = 13. The result is 13.",
+      "rule": "sdoli(a,b) = |a - b| + 9",
+      "seed": 103,
+      "step": 55
+    },
+    {
+      "a": 7,
+      "answer": 5,
+      "arm": "prompted",
+      "b": 6,
+      "correct": true,
+      "event_kinds": [
+        "retrieve",
+        "reason",
+        "ground"
+      ],
+      "expected": 5,
+      "first_appearance": false,
+      "incomplete": false,
+      "operator": "zduka",
+      "response": "The rule for zduka(a,b) is |a - b| + 4. Applying this to zduka(7, 6): |7 - 6| + 4 = 1 + 4 = 5. The answer is 5.",
+      "rule": "zduka(a,b) = |a - b| + 4",
+      "seed": 103,
+      "step": 56
+    },
+    {
+      "a": 2,
+      "answer": 14,
+      "arm": "prompted",
+      "b": 7,
+      "correct": true,
+      "event_kinds": [
+        "retrieve",
+        "reason",
+        "ground"
+      ],
+      "expected": 14,
+      "first_appearance": false,
+      "incomplete": false,
+      "operator": "lzedi",
+      "response": "The rule for lzedi(a,b) is |a - b| + 9. Applying this to lzedi(2, 7): |2 - 7| + 9 = 5 + 9 = 14.",
+      "rule": "lzedi(a,b) = |a - b| + 9",
+      "seed": 103,
+      "step": 57
+    },
+    {
+      "a": 6,
+      "answer": 15,
+      "arm": "prompted",
+      "b": 3,
+      "correct": true,
+      "event_kinds": [
+        "retrieve",
+        "reason",
+        "ground"
+      ],
+      "expected": 15,
+      "first_appearance": false,
+      "incomplete": false,
+      "operator": "tpoko",
+      "response": "The rule for tpoko(a,b) is (a times 2) + b. Applying this to tpoko(6, 3): (6 \u00d7 2) + 3 = 12 + 3 = 15.",
+      "rule": "tpoko(a,b) = (a times 2) + b",
+      "seed": 103,
+      "step": 58
+    },
+    {
+      "a": 7,
+      "answer": 12,
+      "arm": "prompted",
+      "b": 2,
+      "correct": true,
+      "event_kinds": [
+        "retrieve",
+        "reason",
+        "ground"
+      ],
+      "expected": 12,
+      "first_appearance": false,
+      "incomplete": false,
+      "operator": "rpuna",
+      "response": "The rule for rpuna(a,b) is a + b + 3. Applying this to the operands 7 and 2: 7 + 2 + 3 = 12.",
+      "rule": "rpuna(a,b) = a + b + 3",
+      "seed": 103,
+      "step": 59
+    },
+    {
+      "a": 6,
+      "answer": 14,
+      "arm": "prompted",
+      "b": 7,
+      "correct": true,
+      "event_kinds": [
+        "retrieve",
+        "reason",
+        "ground"
+      ],
+      "expected": 14,
+      "first_appearance": false,
+      "incomplete": false,
+      "operator": "mziva",
+      "response": "The rule for mziva(a,b) is defined as 2 times the maximum of a and b. For the given operands 6 and 7, the maximum is 7. Applying the rule: 2 \u00d7 7 = 14. Therefore, mziva(6, 7) = 14.",
+      "rule": "mziva(a,b) = 2 times max(a, b)",
+      "seed": 103,
+      "step": 60
+    },
+    {
+      "a": 4,
+      "answer": 17,
+      "arm": "prompted",
+      "b": 5,
+      "correct": true,
+      "event_kinds": [
+        "retrieve",
+        "reason",
+        "ground"
+      ],
+      "expected": 17,
+      "first_appearance": false,
+      "incomplete": false,
+      "operator": "fpepe",
+      "response": "The rule for fpepe(a,b) is (a times 3) + b. Applying this to fpepe(4, 5): (4 \u00d7 3) + 5 = 12 + 5 = 17.",
+      "rule": "fpepe(a,b) = (a times 3) + b",
+      "seed": 103,
+      "step": 61
+    },
+    {
+      "a": 9,
+      "answer": 33,
+      "arm": "prompted",
+      "b": 6,
+      "correct": true,
+      "event_kinds": [
+        "retrieve",
+        "reason",
+        "ground"
+      ],
+      "expected": 33,
+      "first_appearance": false,
+      "incomplete": false,
+      "operator": "vsoga",
+      "response": "The rule for vsoga(a,b) is (a times 3) + b. Applying this to vsoga(9, 6): (9 \u00d7 3) + 6 = 27 + 6 = 33. The answer is 33.",
+      "rule": "vsoga(a,b) = (a times 3) + b",
+      "seed": 103,
+      "step": 62
+    },
+    {
+      "a": 8,
+      "answer": 24,
+      "arm": "prompted",
+      "b": 5,
+      "correct": true,
+      "event_kinds": [
+        "retrieve",
+        "reason",
+        "ground"
+      ],
+      "expected": 24,
+      "first_appearance": false,
+      "incomplete": false,
+      "operator": "vpasu",
+      "response": "The rule for vpasu(a,b) is \"3 times max(a, b)\". For the given operands 8 and 5, the maximum is 8. Therefore, vpasu(8, 5) = 3 * 8 = 24.",
+      "rule": "vpasu(a,b) = 3 times max(a, b)",
+      "seed": 103,
+      "step": 63
+    },
+    {
+      "a": 5,
+      "answer": 18,
+      "arm": "prompted",
+      "b": 6,
+      "correct": true,
+      "event_kinds": [
+        "retrieve",
+        "reason",
+        "ground"
+      ],
+      "expected": 18,
+      "first_appearance": false,
+      "incomplete": false,
+      "operator": "grena",
+      "response": "The rule for grena(a,b) is \"3 times max(a, b)\". For the operands 5 and 6, the maximum is 6. Therefore, grena(5, 6) = 3 * 6 = 18.",
+      "rule": "grena(a,b) = 3 times max(a, b)",
+      "seed": 103,
+      "step": 64
+    },
+    {
+      "a": 5,
+      "answer": 8,
+      "arm": "prompted",
+      "b": 9,
+      "correct": true,
+      "event_kinds": [
+        "retrieve",
+        "reason",
+        "ground"
+      ],
+      "expected": 8,
+      "first_appearance": false,
+      "incomplete": false,
+      "operator": "ptufa",
+      "response": "The rule for ptufa(a,b) is |a - b| + 4. Applying this to ptufa(5, 9): |5 - 9| + 4 = 4 + 4 = 8. The answer is 8.",
+      "rule": "ptufa(a,b) = |a - b| + 4",
+      "seed": 103,
+      "step": 65
+    },
+    {
+      "a": 7,
+      "answer": 13,
+      "arm": "prompted",
+      "b": 3,
+      "correct": true,
+      "event_kinds": [
+        "retrieve",
+        "reason",
+        "ground"
+      ],
+      "expected": 13,
+      "first_appearance": false,
+      "incomplete": false,
+      "operator": "lzedi",
+      "response": "The rule for lzedi(a,b) is |a - b| + 9. Applying this to lzedi(7, 3): |7 - 3| + 9 = 4 + 9 = 13.",
+      "rule": "lzedi(a,b) = |a - b| + 9",
+      "seed": 103,
+      "step": 66
+    },
+    {
+      "a": 4,
+      "answer": 17,
+      "arm": "prompted",
+      "b": 6,
+      "correct": true,
+      "event_kinds": [
+        "retrieve",
+        "reason",
+        "ground"
+      ],
+      "expected": 17,
+      "first_appearance": false,
+      "incomplete": false,
+      "operator": "gmazu",
+      "response": "The rule for gmazu(a,b) is a + b + 7. Applying this to the operands 4 and 6: 4 + 6 + 7 = 17.",
+      "rule": "gmazu(a,b) = a + b + 7",
+      "seed": 103,
+      "step": 67
+    },
+    {
+      "a": 8,
+      "answer": 32,
+      "arm": "prompted",
+      "b": 5,
+      "correct": true,
+      "event_kinds": [
+        "retrieve",
+        "reason",
+        "ground"
+      ],
+      "expected": 32,
+      "first_appearance": false,
+      "incomplete": false,
+      "operator": "glati",
+      "response": "The rule for glati(a,b) is 4 times the maximum of a and b. For glati(8, 5), the maximum of 8 and 5 is 8. Multiplying 8 by 4 gives 32. Therefore, the result is 32.",
+      "rule": "glati(a,b) = 4 times max(a, b)",
+      "seed": 103,
+      "step": 68
+    },
+    {
+      "a": 7,
+      "answer": 32,
+      "arm": "prompted",
+      "b": 4,
+      "correct": true,
+      "event_kinds": [
+        "retrieve",
+        "reason",
+        "ground"
+      ],
+      "expected": 32,
+      "first_appearance": false,
+      "incomplete": false,
+      "operator": "zfuzo",
+      "response": "The rule for zfuzo(a,b) is (a times 4) + b. Applying this to zfuzo(7, 4): (7 \u00d7 4) + 4 = 28 + 4 = 32.",
+      "rule": "zfuzo(a,b) = (a times 4) + b",
+      "seed": 103,
+      "step": 69
+    },
+    {
+      "a": 9,
+      "answer": 17,
+      "arm": "prompted",
+      "b": 6,
+      "correct": true,
+      "event_kinds": [
+        "retrieve",
+        "reason",
+        "ground"
+      ],
+      "expected": 17,
+      "first_appearance": false,
+      "incomplete": false,
+      "operator": "mtozu",
+      "response": "The rule for mtozu(a, b) is a + b + 2. Applying this to mtozu(9, 6): 9 + 6 + 2 = 17.",
+      "rule": "mtozu(a,b) = a + b + 2",
+      "seed": 103,
+      "step": 70
+    },
+    {
+      "a": 6,
+      "answer": 17,
+      "arm": "prompted",
+      "b": 4,
+      "correct": true,
+      "event_kinds": [
+        "retrieve",
+        "reason",
+        "ground"
+      ],
+      "expected": 17,
+      "first_appearance": false,
+      "incomplete": false,
+      "operator": "smesa",
+      "response": "The rule for smesa(a,b) is a + b + 7. Applying this to smesa(6, 4): 6 + 4 + 7 = 17.",
+      "rule": "smesa(a,b) = a + b + 7",
+      "seed": 103,
+      "step": 71
+    },
+    {
+      "a": 6,
+      "answer": 14,
+      "arm": "prompted",
+      "b": 5,
+      "correct": true,
+      "event_kinds": [
+        "retrieve",
+        "reason",
+        "ground"
+      ],
+      "expected": 14,
+      "first_appearance": false,
+      "incomplete": false,
+      "operator": "rpuna",
+      "response": "The rule for rpuna(a,b) is a + b + 3. Applying this to rpuna(6, 5): 6 + 5 + 3 = 14.",
+      "rule": "rpuna(a,b) = a + b + 3",
+      "seed": 103,
+      "step": 72
+    },
+    {
+      "a": 3,
+      "answer": 11,
+      "arm": "prompted",
+      "b": 9,
+      "correct": true,
+      "event_kinds": [
+        "retrieve",
+        "reason",
+        "ground"
+      ],
+      "expected": 11,
+      "first_appearance": false,
+      "incomplete": false,
+      "operator": "pfuno",
+      "response": "The rule for pfuno(a,b) is |a - b| + 5. Applying this to pfuno(3, 9): |3 - 9| + 5 = 6 + 5 = 11.",
+      "rule": "pfuno(a,b) = |a - b| + 5",
+      "seed": 103,
+      "step": 73
+    },
+    {
+      "a": 9,
+      "answer": 11,
+      "arm": "prompted",
+      "b": 7,
+      "correct": true,
+      "event_kinds": [
+        "retrieve",
+        "reason",
+        "ground"
+      ],
+      "expected": 11,
+      "first_appearance": false,
+      "incomplete": false,
+      "operator": "sdoli",
+      "response": "The rule for sdoli(a,b) is |a - b| + 9. Applying this to sdoli(9, 7): |9 - 7| + 9 = 2 + 9 = 11. The result is 11.",
+      "rule": "sdoli(a,b) = |a - b| + 9",
+      "seed": 103,
+      "step": 74
+    },
+    {
+      "a": 3,
+      "answer": 11,
+      "arm": "prompted",
+      "b": 5,
+      "correct": true,
+      "event_kinds": [
+        "retrieve",
+        "reason",
+        "ground"
+      ],
+      "expected": 11,
+      "first_appearance": false,
+      "incomplete": false,
+      "operator": "mzavi",
+      "response": "The rule for mzavi(a,b) is (a times 2) + b. Applying this to mzavi(3, 5): (3 \u00d7 2) + 5 = 6 + 5 = 11. The result is 11.",
+      "rule": "mzavi(a,b) = (a times 2) + b",
+      "seed": 103,
+      "step": 75
+    },
+    {
+      "a": 2,
+      "answer": 12,
+      "arm": "prompted",
+      "b": 3,
+      "correct": true,
+      "event_kinds": [
+        "retrieve",
+        "reason",
+        "ground"
+      ],
+      "expected": 12,
+      "first_appearance": false,
+      "incomplete": false,
+      "operator": "dkava",
+      "response": "The rule for dkava(a,b) is 4 times the maximum of a and b. For dkava(2, 3), the maximum of 2 and 3 is 3. Therefore, dkava(2, 3) = 4 * 3 = 12.",
+      "rule": "dkava(a,b) = 4 times max(a, b)",
+      "seed": 103,
+      "step": 76
+    },
+    {
+      "a": 2,
+      "answer": 16,
+      "arm": "prompted",
+      "b": 7,
+      "correct": true,
+      "event_kinds": [
+        "retrieve",
+        "reason",
+        "ground"
+      ],
+      "expected": 16,
+      "first_appearance": false,
+      "incomplete": false,
+      "operator": "kligu",
+      "response": "The rule for kligu(a,b) is a + b + 7. Applying this to kligu(2, 7): 2 + 7 + 7 = 16.",
+      "rule": "kligu(a,b) = a + b + 7",
+      "seed": 103,
+      "step": 77
+    },
+    {
+      "a": 5,
+      "answer": 15,
+      "arm": "prompted",
+      "b": 8,
+      "correct": true,
+      "event_kinds": [
+        "retrieve",
+        "reason",
+        "ground"
+      ],
+      "expected": 15,
+      "first_appearance": false,
+      "incomplete": false,
+      "operator": "ngami",
+      "response": "The rule for ngami(a,b) is a + b + 2. Applying this to ngami(5, 8): 5 + 8 + 2 = 15.",
+      "rule": "ngami(a,b) = a + b + 2",
+      "seed": 103,
+      "step": 78
+    },
+    {
+      "a": 4,
+      "answer": 15,
+      "arm": "prompted",
+      "b": 7,
+      "correct": true,
+      "event_kinds": [
+        "retrieve",
+        "reason",
+        "ground"
+      ],
+      "expected": 15,
+      "first_appearance": false,
+      "incomplete": false,
+      "operator": "dfuva",
+      "response": "The rule for dfuva(a,b) is a + b + 4. Applying this to the operands 4 and 7: 4 + 7 + 4 = 15. Therefore, dfuva(4, 7) = 15.",
+      "rule": "dfuva(a,b) = a + b + 4",
+      "seed": 103,
+      "step": 79
+    },
+    {
+      "a": 4,
+      "answer": 15,
+      "arm": "prompted",
+      "b": 7,
+      "correct": true,
+      "event_kinds": [
+        "retrieve",
+        "reason",
+        "ground"
+      ],
+      "expected": 15,
+      "first_appearance": false,
+      "incomplete": false,
+      "operator": "tpoko",
+      "response": "The rule for tpoko(a,b) is (a times 2) + b. Applying this to tpoko(4, 7): (4 \u00d7 2) + 7 = 8 + 7 = 15. The result is 15.",
+      "rule": "tpoko(a,b) = (a times 2) + b",
+      "seed": 103,
+      "step": 80
+    },
+    {
+      "a": 9,
+      "answer": 27,
+      "arm": "prompted",
+      "b": 2,
+      "correct": true,
+      "event_kinds": [
+        "retrieve",
+        "reason",
+        "ground"
+      ],
+      "expected": 27,
+      "first_appearance": false,
+      "incomplete": false,
+      "operator": "gbumu",
+      "response": "The rule for gbumu(a,b) is 3 times the maximum of a and b. For gbumu(9, 2), the maximum of 9 and 2 is 9. Therefore, the result is 3 * 9 = 27.",
+      "rule": "gbumu(a,b) = 3 times max(a, b)",
+      "seed": 103,
+      "step": 81
+    },
+    {
+      "a": 4,
+      "answer": 17,
+      "arm": "prompted",
+      "b": 5,
+      "correct": true,
+      "event_kinds": [
+        "retrieve",
+        "reason",
+        "ground"
+      ],
+      "expected": 17,
+      "first_appearance": false,
+      "incomplete": false,
+      "operator": "dparo",
+      "response": "The rule for dparo(a,b) is a + b + 8. Applying this to the operands 4 and 5: 4 + 5 + 8 = 17. Therefore, the result is 17.",
+      "rule": "dparo(a,b) = a + b + 8",
+      "seed": 103,
+      "step": 82
+    },
+    {
+      "a": 3,
+      "answer": 8,
+      "arm": "prompted",
+      "b": 8,
+      "correct": true,
+      "event_kinds": [
+        "retrieve",
+        "reason",
+        "ground"
+      ],
+      "expected": 8,
+      "first_appearance": false,
+      "incomplete": false,
+      "operator": "csepu",
+      "response": "The rule for csepu(a,b) is |a - b| + 3. Applying this to csepu(3, 8): |3 - 8| + 3 = 5 + 3 = 8. The answer is 8.",
+      "rule": "csepu(a,b) = |a - b| + 3",
+      "seed": 103,
+      "step": 83
+    },
+    {
+      "a": 5,
+      "answer": 20,
+      "arm": "prompted",
+      "b": 5,
+      "correct": true,
+      "event_kinds": [
+        "retrieve",
+        "reason",
+        "ground"
+      ],
+      "expected": 20,
+      "first_appearance": false,
+      "incomplete": false,
+      "operator": "ngame",
+      "response": "The function ngame(a,b) is defined as (a times 3) + b. Applying this rule to ngame(5, 5): (5 \u00d7 3) + 5 = 15 + 5 = 20. The answer is 20.",
+      "rule": "ngame(a,b) = (a times 3) + b",
+      "seed": 103,
+      "step": 84
+    },
+    {
+      "a": 3,
+      "answer": 12,
+      "arm": "prompted",
+      "b": 3,
+      "correct": true,
+      "event_kinds": [
+        "retrieve",
+        "reason",
+        "ground"
+      ],
+      "expected": 12,
+      "first_appearance": false,
+      "incomplete": false,
+      "operator": "mkane",
+      "response": "The rule for mkane(a,b) is a + b + 6. Applying this to mkane(3, 3): 3 + 3 + 6 = 12.",
+      "rule": "mkane(a,b) = a + b + 6",
+      "seed": 103,
+      "step": 85
+    },
+    {
+      "a": 8,
+      "answer": 24,
+      "arm": "prompted",
+      "b": 7,
+      "correct": true,
+      "event_kinds": [
+        "retrieve",
+        "reason",
+        "ground"
+      ],
+      "expected": 24,
+      "first_appearance": false,
+      "incomplete": false,
+      "operator": "tbiri",
+      "response": "The rule for tbiri(a,b) is a + b + 9. Applying this to tbiri(8, 7): 8 + 7 + 9 = 24.",
+      "rule": "tbiri(a,b) = a + b + 9",
+      "seed": 103,
+      "step": 86
+    },
+    {
+      "a": 9,
+      "answer": 9,
+      "arm": "prompted",
+      "b": 4,
+      "correct": true,
+      "event_kinds": [
+        "retrieve",
+        "reason",
+        "ground"
+      ],
+      "expected": 9,
+      "first_appearance": false,
+      "incomplete": false,
+      "operator": "zduka",
+      "response": "The rule for zduka(a,b) is |a - b| + 4. Applying this to zduka(9, 4): |9 - 4| + 4 = 5 + 4 = 9. The answer is 9.",
+      "rule": "zduka(a,b) = |a - b| + 4",
+      "seed": 103,
+      "step": 87
+    },
+    {
+      "a": 2,
+      "answer": 16,
+      "arm": "prompted",
+      "b": 8,
+      "correct": true,
+      "event_kinds": [
+        "retrieve",
+        "reason",
+        "ground"
+      ],
+      "expected": 16,
+      "first_appearance": false,
+      "incomplete": false,
+      "operator": "sluso",
+      "response": "The rule for sluso(a,b) is (a times 4) + b. Applying this to the operands 2 and 8: (2 \u00d7 4) + 8 = 8 + 8 = 16. Therefore, sluso(2, 8) = 16.",
+      "rule": "sluso(a,b) = (a times 4) + b",
+      "seed": 103,
+      "step": 88
+    },
+    {
+      "a": 2,
+      "answer": 7,
+      "arm": "prompted",
+      "b": 8,
+      "correct": true,
+      "event_kinds": [
+        "retrieve",
+        "reason",
+        "ground"
+      ],
+      "expected": 7,
+      "first_appearance": false,
+      "incomplete": false,
+      "operator": "pmova",
+      "response": "The rule for pmova(a,b) is |a - b| + 1. Applying this to pmova(2, 8): |2 - 8| + 1 = 6 + 1 = 7. The result is 7.",
+      "rule": "pmova(a,b) = |a - b| + 1",
+      "seed": 103,
+      "step": 89
+    },
+    {
+      "a": 3,
+      "answer": 21,
+      "arm": "prompted",
+      "b": 9,
+      "correct": true,
+      "event_kinds": [
+        "retrieve",
+        "reason",
+        "ground"
+      ],
+      "expected": 21,
+      "first_appearance": false,
+      "incomplete": false,
+      "operator": "tbiri",
+      "response": "The rule for tbiri(a,b) is a + b + 9. Applying this to tbiri(3, 9): 3 + 9 + 9 = 21.",
+      "rule": "tbiri(a,b) = a + b + 9",
+      "seed": 103,
+      "step": 90
+    },
+    {
+      "a": 8,
+      "answer": 39,
+      "arm": "prompted",
+      "b": 7,
+      "correct": true,
+      "event_kinds": [
+        "retrieve",
+        "reason",
+        "ground"
+      ],
+      "expected": 39,
+      "first_appearance": false,
+      "incomplete": false,
+      "operator": "sluso",
+      "response": "The rule for sluso(a,b) is (a times 4) + b. Applying this to the operands 8 and 7: (8 \u00d7 4) + 7 = 32 + 7 = 39. The result is 39.",
+      "rule": "sluso(a,b) = (a times 4) + b",
+      "seed": 103,
+      "step": 91
+    },
+    {
+      "a": 4,
+      "answer": 36,
+      "arm": "prompted",
+      "b": 9,
+      "correct": true,
+      "event_kinds": [
+        "retrieve",
+        "reason",
+        "ground"
+      ],
+      "expected": 36,
+      "first_appearance": false,
+      "incomplete": false,
+      "operator": "glati",
+      "response": "The rule for glati(a,b) is 4 times the maximum of a and b. For glati(4, 9), the maximum of 4 and 9 is 9. Multiplying 9 by 4 gives 36. Therefore, the result is 36.",
+      "rule": "glati(a,b) = 4 times max(a, b)",
+      "seed": 103,
+      "step": 92
+    },
+    {
+      "a": 8,
+      "answer": 20,
+      "arm": "prompted",
+      "b": 4,
+      "correct": true,
+      "event_kinds": [
+        "retrieve",
+        "reason",
+        "ground"
+      ],
+      "expected": 20,
+      "first_appearance": false,
+      "incomplete": false,
+      "operator": "dparo",
+      "response": "The rule for dparo(a,b) is a + b + 8. Applying this to dparo(8, 4): 8 + 4 + 8 = 20.",
+      "rule": "dparo(a,b) = a + b + 8",
+      "seed": 103,
+      "step": 93
+    },
+    {
+      "a": 9,
+      "answer": 33,
+      "arm": "prompted",
+      "b": 6,
+      "correct": true,
+      "event_kinds": [
+        "retrieve",
+        "reason",
+        "ground"
+      ],
+      "expected": 33,
+      "first_appearance": false,
+      "incomplete": false,
+      "operator": "ngame",
+      "response": "The function ngame(a,b) is defined as (a times 3) + b. Applying this rule to the operands 9 and 6: (9 \u00d7 3) + 6 = 27 + 6 = 33. The result is 33.",
+      "rule": "ngame(a,b) = (a times 3) + b",
+      "seed": 103,
+      "step": 94
+    },
+    {
+      "a": 5,
+      "answer": 7,
+      "arm": "prompted",
+      "b": 2,
+      "correct": true,
+      "event_kinds": [
+        "retrieve",
+        "reason",
+        "ground"
+      ],
+      "expected": 7,
+      "first_appearance": false,
+      "incomplete": false,
+      "operator": "zduka",
+      "response": "The rule for zduka(a,b) is |a - b| + 4. Applying this to zduka(5, 2): |5 - 2| + 4 = 3 + 4 = 7. The answer is 7.",
+      "rule": "zduka(a,b) = |a - b| + 4",
+      "seed": 103,
+      "step": 95
+    },
+    {
+      "a": 6,
+      "answer": 5,
+      "arm": "prompted",
+      "b": 4,
+      "correct": true,
+      "event_kinds": [
+        "retrieve",
+        "reason",
+        "ground"
+      ],
+      "expected": 5,
+      "first_appearance": false,
+      "incomplete": false,
+      "operator": "csepu",
+      "response": "The rule for csepu(a,b) is |a - b| + 3. Applying this to csepu(6, 4): |6 - 4| + 3 = 2 + 3 = 5. The answer is 5.",
+      "rule": "csepu(a,b) = |a - b| + 3",
+      "seed": 103,
+      "step": 96
+    },
+    {
+      "a": 3,
+      "answer": 15,
+      "arm": "prompted",
+      "b": 6,
+      "correct": true,
+      "event_kinds": [
+        "retrieve",
+        "reason",
+        "ground"
+      ],
+      "expected": 15,
+      "first_appearance": false,
+      "incomplete": false,
+      "operator": "mkane",
+      "response": "The rule for mkane(a,b) is a + b + 6. Applying this to mkane(3, 6): 3 + 6 + 6 = 15.",
+      "rule": "mkane(a,b) = a + b + 6",
+      "seed": 103,
+      "step": 97
+    },
+    {
+      "a": 5,
+      "answer": 14,
+      "arm": "prompted",
+      "b": 2,
+      "correct": true,
+      "event_kinds": [
+        "retrieve",
+        "reason",
+        "ground"
+      ],
+      "expected": 14,
+      "first_appearance": false,
+      "incomplete": false,
+      "operator": "kligu",
+      "response": "The rule for kligu(a,b) is a + b + 7. Applying this to kligu(5, 2): 5 + 2 + 7 = 14.",
+      "rule": "kligu(a,b) = a + b + 7",
+      "seed": 103,
+      "step": 98
+    },
+    {
+      "a": 3,
+      "answer": 11,
+      "arm": "prompted",
+      "b": 9,
+      "correct": true,
+      "event_kinds": [
+        "retrieve",
+        "reason",
+        "ground"
+      ],
+      "expected": 11,
+      "first_appearance": false,
+      "incomplete": false,
+      "operator": "pfuno",
+      "response": "The rule for pfuno(a,b) is |a - b| + 5. Applying this to pfuno(3, 9): |3 - 9| + 5 = 6 + 5 = 11. The answer is 11.",
+      "rule": "pfuno(a,b) = |a - b| + 5",
+      "seed": 103,
+      "step": 99
+    },
+    {
+      "a": 6,
+      "answer": 18,
+      "arm": "prompted",
+      "b": 2,
+      "correct": true,
+      "event_kinds": [
+        "retrieve",
+        "reason",
+        "ground"
+      ],
+      "expected": 18,
+      "first_appearance": false,
+      "incomplete": false,
+      "operator": "gbumu",
+      "response": "The rule for gbumu(a,b) is 3 times the maximum of a and b. For gbumu(6, 2), the maximum of 6 and 2 is 6. Therefore, the result is 3 * 6 = 18.",
+      "rule": "gbumu(a,b) = 3 times max(a, b)",
+      "seed": 103,
+      "step": 100
+    },
+    {
+      "a": 7,
+      "answer": 16,
+      "arm": "prompted",
+      "b": 2,
+      "correct": true,
+      "event_kinds": [
+        "retrieve",
+        "reason",
+        "ground"
+      ],
+      "expected": 16,
+      "first_appearance": false,
+      "incomplete": false,
+      "operator": "mzavi",
+      "response": "The rule for mzavi(a,b) is (a times 2) + b. Applying this to mzavi(7, 2): (7 * 2) + 2 = 14 + 2 = 16. The answer is 16.",
+      "rule": "mzavi(a,b) = (a times 2) + b",
+      "seed": 103,
+      "step": 101
+    },
+    {
+      "a": 8,
+      "answer": 1,
+      "arm": "prompted",
+      "b": 8,
+      "correct": true,
+      "event_kinds": [
+        "retrieve",
+        "reason",
+        "ground"
+      ],
+      "expected": 1,
+      "first_appearance": false,
+      "incomplete": false,
+      "operator": "pmova",
+      "response": "The rule for pmova(a,b) is |a - b| + 1. Applying this to pmova(8, 8): |8 - 8| + 1 = 0 + 1 = 1. The result is 1.",
+      "rule": "pmova(a,b) = |a - b| + 1",
+      "seed": 103,
+      "step": 102
+    },
+    {
+      "a": 6,
+      "answer": 14,
+      "arm": "prompted",
+      "b": 2,
+      "correct": true,
+      "event_kinds": [
+        "retrieve",
+        "reason",
+        "ground"
+      ],
+      "expected": 14,
+      "first_appearance": false,
+      "incomplete": false,
+      "operator": "tpoko",
+      "response": "The rule for tpoko(a,b) is (a times 2) + b. Applying this to tpoko(6, 2): (6 \u00d7 2) + 2 = 12 + 2 = 14.",
+      "rule": "tpoko(a,b) = (a times 2) + b",
+      "seed": 103,
+      "step": 103
+    },
+    {
+      "a": 7,
+      "answer": 17,
+      "arm": "prompted",
+      "b": 6,
+      "correct": true,
+      "event_kinds": [
+        "retrieve",
+        "reason",
+        "ground"
+      ],
+      "expected": 17,
+      "first_appearance": false,
+      "incomplete": false,
+      "operator": "dfuva",
+      "response": "The rule for dfuva(a,b) is a + b + 4. Applying this to the operands 7 and 6: 7 + 6 + 4 = 17.",
+      "rule": "dfuva(a,b) = a + b + 4",
+      "seed": 103,
+      "step": 104
+    },
+    {
+      "a": 4,
+      "answer": 20,
+      "arm": "prompted",
+      "b": 8,
+      "correct": true,
+      "event_kinds": [
+        "retrieve",
+        "reason",
+        "ground"
+      ],
+      "expected": 20,
+      "first_appearance": false,
+      "incomplete": false,
+      "operator": "vsoga",
+      "response": "The rule for vsoga(a,b) is (a times 3) + b. Applying this to the operands 4 and 8: (4 \u00d7 3) + 8 = 12 + 8 = 20. The answer is 20.",
+      "rule": "vsoga(a,b) = (a times 3) + b",
+      "seed": 103,
+      "step": 105
+    },
+    {
+      "a": 9,
+      "answer": 14,
+      "arm": "prompted",
+      "b": 4,
+      "correct": true,
+      "event_kinds": [
+        "retrieve",
+        "reason",
+        "ground"
+      ],
+      "expected": 14,
+      "first_appearance": false,
+      "incomplete": false,
+      "operator": "sdoli",
+      "response": "The rule for sdoli(a,b) is |a - b| + 9. Applying this to sdoli(9, 4): |9 - 4| + 9 = 5 + 9 = 14.",
+      "rule": "sdoli(a,b) = |a - b| + 9",
+      "seed": 103,
+      "step": 106
+    },
+    {
+      "a": 4,
+      "answer": 12,
+      "arm": "prompted",
+      "b": 3,
+      "correct": true,
+      "event_kinds": [
+        "retrieve",
+        "reason",
+        "ground"
+      ],
+      "expected": 12,
+      "first_appearance": false,
+      "incomplete": false,
+      "operator": "vpasu",
+      "response": "The rule for vpasu(a,b) is \"3 times max(a, b)\". For the given operands 4 and 3, the maximum is 4. Therefore, vpasu(4, 3) = 3 * 4 = 12.",
+      "rule": "vpasu(a,b) = 3 times max(a, b)",
+      "seed": 103,
+      "step": 107
+    },
+    {
+      "a": 5,
+      "answer": 16,
+      "arm": "prompted",
+      "b": 8,
+      "correct": true,
+      "event_kinds": [
+        "retrieve",
+        "reason",
+        "ground"
+      ],
+      "expected": 16,
+      "first_appearance": false,
+      "incomplete": false,
+      "operator": "rpuna",
+      "response": "The rule for rpuna(a,b) is a + b + 3. Applying this to the operands 5 and 8: 5 + 8 + 3 = 16.",
+      "rule": "rpuna(a,b) = a + b + 3",
+      "seed": 103,
+      "step": 108
+    },
+    {
+      "a": 4,
+      "answer": 10,
+      "arm": "prompted",
+      "b": 5,
+      "correct": true,
+      "event_kinds": [
+        "retrieve",
+        "reason",
+        "ground"
+      ],
+      "expected": 10,
+      "first_appearance": false,
+      "incomplete": false,
+      "operator": "lzedi",
+      "response": "The rule for lzedi(a,b) is |a - b| + 9. Applying this to lzedi(4, 5): |4 - 5| + 9 = 1 + 9 = 10.",
+      "rule": "lzedi(a,b) = |a - b| + 9",
+      "seed": 103,
+      "step": 109
+    },
+    {
+      "a": 7,
+      "answer": 37,
+      "arm": "prompted",
+      "b": 9,
+      "correct": true,
+      "event_kinds": [
+        "retrieve",
+        "reason",
+        "ground"
+      ],
+      "expected": 37,
+      "first_appearance": false,
+      "incomplete": false,
+      "operator": "zfuzo",
+      "response": "The rule for zfuzo(a,b) is (a times 4) + b. Applying this to zfuzo(7, 9): (7 \u00d7 4) + 9 = 28 + 9 = 37. The answer is 37.",
+      "rule": "zfuzo(a,b) = (a times 4) + b",
+      "seed": 103,
+      "step": 110
+    },
+    {
+      "a": 2,
+      "answer": 27,
+      "arm": "prompted",
+      "b": 9,
+      "correct": true,
+      "event_kinds": [
+        "retrieve",
+        "reason",
+        "ground"
+      ],
+      "expected": 27,
+      "first_appearance": false,
+      "incomplete": false,
+      "operator": "grena",
+      "response": "The rule for grena(a,b) is \"3 times max(a, b)\". For the given operands 2 and 9, the maximum is 9. Therefore, grena(2, 9) = 3 * 9 = 27.",
+      "rule": "grena(a,b) = 3 times max(a, b)",
+      "seed": 103,
+      "step": 111
+    },
+    {
+      "a": 2,
+      "answer": 15,
+      "arm": "prompted",
+      "b": 6,
+      "correct": true,
+      "event_kinds": [
+        "retrieve",
+        "reason",
+        "ground"
+      ],
+      "expected": 15,
+      "first_appearance": false,
+      "incomplete": false,
+      "operator": "smesa",
+      "response": "The rule for smesa(a,b) is a + b + 7. Applying this to smesa(2, 6): 2 + 6 + 7 = 15.",
+      "rule": "smesa(a,b) = a + b + 7",
+      "seed": 103,
+      "step": 112
+    },
+    {
+      "a": 7,
+      "answer": 12,
+      "arm": "prompted",
+      "b": 3,
+      "correct": true,
+      "event_kinds": [
+        "retrieve",
+        "reason",
+        "ground"
+      ],
+      "expected": 12,
+      "first_appearance": false,
+      "incomplete": false,
+      "operator": "ngami",
+      "response": "The rule for ngami(a,b) is a + b + 2. Applying this to ngami(7, 3): 7 + 3 + 2 = 12.",
+      "rule": "ngami(a,b) = a + b + 2",
+      "seed": 103,
+      "step": 113
+    },
+    {
+      "a": 4,
+      "answer": 36,
+      "arm": "prompted",
+      "b": 9,
+      "correct": true,
+      "event_kinds": [
+        "retrieve",
+        "reason",
+        "ground"
+      ],
+      "expected": 36,
+      "first_appearance": false,
+      "incomplete": false,
+      "operator": "dkava",
+      "response": "The rule for dkava(a,b) is 4 times the maximum of a and b. For dkava(4, 9), the maximum of 4 and 9 is 9. Multiplying 9 by 4 gives 36. Therefore, the result is 36.",
+      "rule": "dkava(a,b) = 4 times max(a, b)",
+      "seed": 103,
+      "step": 114
+    },
+    {
+      "a": 8,
+      "answer": 23,
+      "arm": "prompted",
+      "b": 8,
+      "correct": true,
+      "event_kinds": [
+        "retrieve",
+        "reason",
+        "ground"
+      ],
+      "expected": 23,
+      "first_appearance": false,
+      "incomplete": false,
+      "operator": "gmazu",
+      "response": "The rule for gmazu(a,b) is a + b + 7. Applying this to the operands 8 and 8: 8 + 8 + 7 = 23.",
+      "rule": "gmazu(a,b) = a + b + 7",
+      "seed": 103,
+      "step": 115
+    },
+    {
+      "a": 8,
+      "answer": 16,
+      "arm": "prompted",
+      "b": 4,
+      "correct": true,
+      "event_kinds": [
+        "retrieve",
+        "reason",
+        "ground"
+      ],
+      "expected": 16,
+      "first_appearance": false,
+      "incomplete": false,
+      "operator": "mziva",
+      "response": "The function mziva(a, b) is defined as 2 times the maximum of a and b. For the given inputs, mziva(8, 4) = 2 * max(8, 4) = 2 * 8 = 16.",
+      "rule": "mziva(a,b) = 2 times max(a, b)",
+      "seed": 103,
+      "step": 116
+    },
+    {
+      "a": 2,
+      "answer": 13,
+      "arm": "prompted",
+      "b": 9,
+      "correct": true,
+      "event_kinds": [
+        "retrieve",
+        "reason",
+        "ground"
+      ],
+      "expected": 13,
+      "first_appearance": false,
+      "incomplete": false,
+      "operator": "mtozu",
+      "response": "The rule for mtozu(a,b) is a + b + 2. Applying this to mtozu(2, 9): 2 + 9 + 2 = 13.",
+      "rule": "mtozu(a,b) = a + b + 2",
+      "seed": 103,
+      "step": 117
+    },
+    {
+      "a": 7,
+      "answer": 23,
+      "arm": "prompted",
+      "b": 2,
+      "correct": true,
+      "event_kinds": [
+        "retrieve",
+        "reason",
+        "ground"
+      ],
+      "expected": 23,
+      "first_appearance": false,
+      "incomplete": false,
+      "operator": "fpepe",
+      "response": "The rule for fpepe(a,b) is (a times 3) + b. Applying this to fpepe(7, 2): (7 * 3) + 2 = 21 + 2 = 23.",
+      "rule": "fpepe(a,b) = (a times 3) + b",
+      "seed": 103,
+      "step": 118
+    },
+    {
+      "a": 8,
+      "answer": 7,
+      "arm": "prompted",
+      "b": 5,
+      "correct": true,
+      "event_kinds": [
+        "retrieve",
+        "reason",
+        "ground"
+      ],
+      "expected": 7,
+      "first_appearance": false,
+      "incomplete": false,
+      "operator": "ptufa",
+      "response": "The rule for ptufa(a,b) is |a - b| + 4. Applying this to ptufa(8, 5): |8 - 5| + 4 = 3 + 4 = 7. The answer is 7.",
+      "rule": "ptufa(a,b) = |a - b| + 4",
+      "seed": 103,
+      "step": 119
+    },
+    {
+      "a": 7,
+      "answer": 16,
+      "arm": "prompted",
+      "b": 2,
+      "correct": true,
+      "event_kinds": [
+        "retrieve",
+        "reason",
+        "ground"
+      ],
+      "expected": 16,
+      "first_appearance": false,
+      "incomplete": false,
+      "operator": "tpoko",
+      "response": "The rule for tpoko(a,b) is (a times 2) + b. Applying this to tpoko(7, 2): (7 * 2) + 2 = 14 + 2 = 16. The result is 16.",
+      "rule": "tpoko(a,b) = (a times 2) + b",
+      "seed": 103,
+      "step": 120
+    },
+    {
+      "a": 9,
+      "answer": 25,
+      "arm": "prompted",
+      "b": 8,
+      "correct": true,
+      "event_kinds": [
+        "retrieve",
+        "reason",
+        "ground"
+      ],
+      "expected": 25,
+      "first_appearance": false,
+      "incomplete": false,
+      "operator": "dparo",
+      "response": "The rule for dparo(a,b) is a + b + 8. Applying this to dparo(9, 8): 9 + 8 + 8 = 25.",
+      "rule": "dparo(a,b) = a + b + 8",
+      "seed": 103,
+      "step": 121
+    },
+    {
+      "a": 4,
+      "answer": 6,
+      "arm": "prompted",
+      "b": 3,
+      "correct": true,
+      "event_kinds": [
+        "retrieve",
+        "reason",
+        "ground"
+      ],
+      "expected": 6,
+      "first_appearance": false,
+      "incomplete": false,
+      "operator": "pfuno",
+      "response": "The rule for pfuno(a,b) is |a - b| + 5. Applying this to pfuno(4, 3): |4 - 3| + 5 = 1 + 5 = 6. The result is 6.",
+      "rule": "pfuno(a,b) = |a - b| + 5",
+      "seed": 103,
+      "step": 122
+    },
+    {
+      "a": 3,
+      "answer": 20,
+      "arm": "prompted",
+      "b": 8,
+      "correct": true,
+      "event_kinds": [
+        "retrieve",
+        "reason",
+        "ground"
+      ],
+      "expected": 20,
+      "first_appearance": false,
+      "incomplete": false,
+      "operator": "sluso",
+      "response": "The rule for sluso(a,b) is (a times 4) + b. Applying this to the operands 3 and 8: (3 \u00d7 4) + 8 = 12 + 8 = 20. The result is 20.",
+      "rule": "sluso(a,b) = (a times 4) + b",
+      "seed": 103,
+      "step": 123
+    },
+    {
+      "a": 7,
+      "answer": 17,
+      "arm": "prompted",
+      "b": 3,
+      "correct": true,
+      "event_kinds": [
+        "retrieve",
+        "reason",
+        "ground"
+      ],
+      "expected": 17,
+      "first_appearance": false,
+      "incomplete": false,
+      "operator": "smesa",
+      "response": "The rule for smesa(a,b) is a + b + 7. Applying this to smesa(7, 3): 7 + 3 + 7 = 17.",
+      "rule": "smesa(a,b) = a + b + 7",
+      "seed": 103,
+      "step": 124
+    },
+    {
+      "a": 7,
+      "answer": 12,
+      "arm": "prompted",
+      "b": 3,
+      "correct": true,
+      "event_kinds": [
+        "retrieve",
+        "reason",
+        "ground"
+      ],
+      "expected": 12,
+      "first_appearance": false,
+      "incomplete": false,
+      "operator": "mtozu",
+      "response": "The rule for mtozu(a,b) is a + b + 2. Applying this to mtozu(7, 3): 7 + 3 + 2 = 12. The answer is 12.",
+      "rule": "mtozu(a,b) = a + b + 2",
+      "seed": 103,
+      "step": 125
+    },
+    {
+      "a": 8,
+      "answer": 21,
+      "arm": "prompted",
+      "b": 4,
+      "correct": true,
+      "event_kinds": [
+        "retrieve",
+        "reason",
+        "ground"
+      ],
+      "expected": 21,
+      "first_appearance": false,
+      "incomplete": false,
+      "operator": "tbiri",
+      "response": "The rule for tbiri(a,b) is a + b + 9. Applying this to tbiri(8, 4): 8 + 4 + 9 = 21.",
+      "rule": "tbiri(a,b) = a + b + 9",
+      "seed": 103,
+      "step": 126
+    },
+    {
+      "a": 7,
+      "answer": 18,
+      "arm": "prompted",
+      "b": 7,
+      "correct": true,
+      "event_kinds": [
+        "retrieve",
+        "reason",
+        "ground"
+      ],
+      "expected": 18,
+      "first_appearance": false,
+      "incomplete": false,
+      "operator": "dfuva",
+      "response": "The rule for dfuva(a,b) is a + b + 4. Applying this to the operands 7 and 7: 7 + 7 + 4 = 18. Therefore, dfuva(7, 7) = 18.",
+      "rule": "dfuva(a,b) = a + b + 4",
+      "seed": 103,
+      "step": 127
+    },
+    {
+      "a": 4,
+      "answer": 9,
+      "arm": "prompted",
+      "b": 4,
+      "correct": true,
+      "event_kinds": [
+        "retrieve",
+        "reason",
+        "ground"
+      ],
+      "expected": 9,
+      "first_appearance": false,
+      "incomplete": false,
+      "operator": "lzedi",
+      "response": "The rule for lzedi(a,b) is |a - b| + 9. Applying this to lzedi(4, 4): |4 - 4| + 9 = 0 + 9 = 9. The result is 9.",
+      "rule": "lzedi(a,b) = |a - b| + 9",
+      "seed": 103,
+      "step": 128
+    },
+    {
+      "a": 2,
+      "answer": 10,
+      "arm": "prompted",
+      "b": 6,
+      "correct": true,
+      "event_kinds": [
+        "retrieve",
+        "reason",
+        "ground"
+      ],
+      "expected": 10,
+      "first_appearance": false,
+      "incomplete": false,
+      "operator": "mzavi",
+      "response": "The rule for mzavi(a,b) is (a times 2) + b. Applying this to mzavi(2, 6): (2 \u00d7 2) + 6 = 4 + 6 = 10. The result is 10.",
+      "rule": "mzavi(a,b) = (a times 2) + b",
+      "seed": 103,
+      "step": 129
+    },
+    {
+      "a": 8,
+      "answer": 24,
+      "arm": "prompted",
+      "b": 9,
+      "correct": true,
+      "event_kinds": [
+        "retrieve",
+        "reason",
+        "ground"
+      ],
+      "expected": 24,
+      "first_appearance": false,
+      "incomplete": false,
+      "operator": "kligu",
+      "response": "The rule for kligu(a,b) is a + b + 7. Applying this to kligu(8, 9): 8 + 9 + 7 = 24.",
+      "rule": "kligu(a,b) = a + b + 7",
+      "seed": 103,
+      "step": 130
+    },
+    {
+      "a": 2,
+      "answer": 2,
+      "arm": "prompted",
+      "b": 3,
+      "correct": true,
+      "event_kinds": [
+        "retrieve",
+        "reason",
+        "ground"
+      ],
+      "expected": 2,
+      "first_appearance": false,
+      "incomplete": false,
+      "operator": "pmova",
+      "response": "The rule for pmova(a,b) is |a - b| + 1. Applying this to pmova(2, 3): |2 - 3| + 1 = 1 + 1 = 2. The result is 2.",
+      "rule": "pmova(a,b) = |a - b| + 1",
+      "seed": 103,
+      "step": 131
+    },
+    {
+      "a": 6,
+      "answer": 24,
+      "arm": "prompted",
+      "b": 4,
+      "correct": true,
+      "event_kinds": [
+        "retrieve",
+        "reason",
+        "ground"
+      ],
+      "expected": 24,
+      "first_appearance": false,
+      "incomplete": false,
+      "operator": "glati",
+      "response": "The rule for glati(a,b) is 4 times the maximum of a and b. For glati(6, 4), the maximum of 6 and 4 is 6. Multiplying 6 by 4 gives 24. Therefore, the result is 24.",
+      "rule": "glati(a,b) = 4 times max(a, b)",
+      "seed": 103,
+      "step": 132
+    },
+    {
+      "a": 4,
+      "answer": 10,
+      "arm": "prompted",
+      "b": 3,
+      "correct": true,
+      "event_kinds": [
+        "retrieve",
+        "reason",
+        "ground"
+      ],
+      "expected": 10,
+      "first_appearance": false,
+      "incomplete": false,
+      "operator": "rpuna",
+      "response": "The rule for rpuna(a,b) is a + b + 3. Applying this to the operands 4 and 3: 4 + 3 + 3 = 10.",
+      "rule": "rpuna(a,b) = a + b + 3",
+      "seed": 103,
+      "step": 133
+    },
+    {
+      "a": 2,
+      "answer": 10,
+      "arm": "prompted",
+      "b": 2,
+      "correct": true,
+      "event_kinds": [
+        "retrieve",
+        "reason",
+        "ground"
+      ],
+      "expected": 10,
+      "first_appearance": false,
+      "incomplete": false,
+      "operator": "mkane",
+      "response": "The rule for mkane(a,b) is a + b + 6. Applying this to mkane(2, 2): 2 + 2 + 6 = 10.",
+      "rule": "mkane(a,b) = a + b + 6",
+      "seed": 103,
+      "step": 134
+    },
+    {
+      "a": 8,
+      "answer": 16,
+      "arm": "prompted",
+      "b": 3,
+      "correct": true,
+      "event_kinds": [
+        "retrieve",
+        "reason",
+        "ground"
+      ],
+      "expected": 16,
+      "first_appearance": false,
+      "incomplete": false,
+      "operator": "mziva",
+      "response": "The function mziva(a, b) is defined as 2 times the maximum of a and b. For the given inputs, mziva(8, 3) = 2 * max(8, 3) = 2 * 8 = 16.",
+      "rule": "mziva(a,b) = 2 times max(a, b)",
+      "seed": 103,
+      "step": 135
+    },
+    {
+      "a": 7,
+      "answer": 21,
+      "arm": "prompted",
+      "b": 2,
+      "correct": true,
+      "event_kinds": [
+        "retrieve",
+        "reason",
+        "ground"
+      ],
+      "expected": 21,
+      "first_appearance": false,
+      "incomplete": false,
+      "operator": "gbumu",
+      "response": "The rule for gbumu(a,b) is 3 times the maximum of a and b. For gbumu(7, 2), the maximum of 7 and 2 is 7. Therefore, the result is 3 * 7 = 21.",
+      "rule": "gbumu(a,b) = 3 times max(a, b)",
+      "seed": 103,
+      "step": 136
+    },
+    {
+      "a": 9,
+      "answer": 9,
+      "arm": "prompted",
+      "b": 4,
+      "correct": true,
+      "event_kinds": [
+        "retrieve",
+        "reason",
+        "ground"
+      ],
+      "expected": 9,
+      "first_appearance": false,
+      "incomplete": false,
+      "operator": "zduka",
+      "response": "The rule for zduka(a,b) is |a - b| + 4. Applying this to zduka(9, 4): |9 - 4| + 4 = 5 + 4 = 9. The answer is 9.",
+      "rule": "zduka(a,b) = |a - b| + 4",
+      "seed": 103,
+      "step": 137
+    },
+    {
+      "a": 6,
+      "answer": 18,
+      "arm": "prompted",
+      "b": 3,
+      "correct": true,
+      "event_kinds": [
+        "retrieve",
+        "reason",
+        "ground"
+      ],
+      "expected": 18,
+      "first_appearance": false,
+      "incomplete": false,
+      "operator": "vpasu",
+      "response": "The rule for vpasu(a,b) is \"3 times max(a, b)\". For vpasu(6, 3), the maximum of 6 and 3 is 6. Multiplying by 3 gives 18. Therefore, the result is 18.",
+      "rule": "vpasu(a,b) = 3 times max(a, b)",
+      "seed": 103,
+      "step": 138
+    },
+    {
+      "a": 7,
+      "answer": 4,
+      "arm": "prompted",
+      "b": 7,
+      "correct": true,
+      "event_kinds": [
+        "retrieve",
+        "reason",
+        "ground"
+      ],
+      "expected": 4,
+      "first_appearance": false,
+      "incomplete": false,
+      "operator": "ptufa",
+      "response": "The rule for ptufa(a,b) is |a - b| + 4. Applying this to ptufa(7, 7): |7 - 7| + 4 = 0 + 4 = 4. The result is 4.",
+      "rule": "ptufa(a,b) = |a - b| + 4",
+      "seed": 103,
+      "step": 139
+    },
+    {
+      "a": 7,
+      "answer": 23,
+      "arm": "prompted",
+      "b": 2,
+      "correct": true,
+      "event_kinds": [
+        "retrieve",
+        "reason",
+        "ground"
+      ],
+      "expected": 23,
+      "first_appearance": false,
+      "incomplete": false,
+      "operator": "vsoga",
+      "response": "The rule for vsoga(a,b) is (a times 3) + b. Applying this to vsoga(7, 2): (7 \u00d7 3) + 2 = 21 + 2 = 23.",
+      "rule": "vsoga(a,b) = (a times 3) + b",
+      "seed": 103,
+      "step": 140
+    },
+    {
+      "a": 4,
+      "answer": 8,
+      "arm": "prompted",
+      "b": 2,
+      "correct": true,
+      "event_kinds": [
+        "retrieve",
+        "reason",
+        "ground"
+      ],
+      "expected": 8,
+      "first_appearance": false,
+      "incomplete": false,
+      "operator": "ngami",
+      "response": "The rule for ngami(a,b) is a + b + 2. Applying this to ngami(4, 2): 4 + 2 + 2 = 8.",
+      "rule": "ngami(a,b) = a + b + 2",
+      "seed": 103,
+      "step": 141
+    },
+    {
+      "a": 5,
+      "answer": 22,
+      "arm": "prompted",
+      "b": 7,
+      "correct": true,
+      "event_kinds": [
+        "retrieve",
+        "reason",
+        "ground"
+      ],
+      "expected": 22,
+      "first_appearance": false,
+      "incomplete": false,
+      "operator": "fpepe",
+      "response": "The rule for fpepe(a,b) is (a times 3) + b. Applying this to fpepe(5, 7): (5 \u00d7 3) + 7 = 15 + 7 = 22.",
+      "rule": "fpepe(a,b) = (a times 3) + b",
+      "seed": 103,
+      "step": 142
+    },
+    {
+      "a": 9,
+      "answer": 8,
+      "arm": "prompted",
+      "b": 4,
+      "correct": true,
+      "event_kinds": [
+        "retrieve",
+        "reason",
+        "ground"
+      ],
+      "expected": 8,
+      "first_appearance": false,
+      "incomplete": false,
+      "operator": "csepu",
+      "response": "The rule for csepu(a,b) is |a - b| + 3. Applying this to csepu(9, 4): |9 - 4| + 3 = 5 + 3 = 8. The answer is 8.",
+      "rule": "csepu(a,b) = |a - b| + 3",
+      "seed": 103,
+      "step": 143
+    },
+    {
+      "a": 9,
+      "answer": 27,
+      "arm": "prompted",
+      "b": 3,
+      "correct": true,
+      "event_kinds": [
+        "retrieve",
+        "reason",
+        "ground"
+      ],
+      "expected": 27,
+      "first_appearance": false,
+      "incomplete": false,
+      "operator": "grena",
+      "response": "The rule for grena(a,b) is \"3 times max(a, b)\". For grena(9, 3), the maximum of 9 and 3 is 9. Multiplying this by 3 gives 27. Therefore, the result is 27.",
+      "rule": "grena(a,b) = 3 times max(a, b)",
+      "seed": 103,
+      "step": 144
+    },
+    {
+      "a": 3,
+      "answer": 18,
+      "arm": "prompted",
+      "b": 6,
+      "correct": true,
+      "event_kinds": [
+        "retrieve",
+        "reason",
+        "ground"
+      ],
+      "expected": 18,
+      "first_appearance": false,
+      "incomplete": false,
+      "operator": "zfuzo",
+      "response": "The rule for zfuzo(a,b) is (a times 4) + b. Applying this to zfuzo(3, 6): (3 \u00d7 4) + 6 = 12 + 6 = 18. The answer is 18.",
+      "rule": "zfuzo(a,b) = (a times 4) + b",
+      "seed": 103,
+      "step": 145
+    },
+    {
+      "a": 9,
+      "answer": 36,
+      "arm": "prompted",
+      "b": 5,
+      "correct": true,
+      "event_kinds": [
+        "retrieve",
+        "reason",
+        "ground"
+      ],
+      "expected": 36,
+      "first_appearance": false,
+      "incomplete": false,
+      "operator": "dkava",
+      "response": "The rule for dkava(a,b) is 4 times the maximum of a and b. For dkava(9, 5), the maximum of 9 and 5 is 9. Therefore, dkava(9, 5) = 4 * 9 = 36.",
+      "rule": "dkava(a,b) = 4 times max(a, b)",
+      "seed": 103,
+      "step": 146
+    },
+    {
+      "a": 8,
+      "answer": 10,
+      "arm": "prompted",
+      "b": 7,
+      "correct": true,
+      "event_kinds": [
+        "retrieve",
+        "reason",
+        "ground"
+      ],
+      "expected": 10,
+      "first_appearance": false,
+      "incomplete": false,
+      "operator": "sdoli",
+      "response": "The rule for sdoli(a,b) is |a - b| + 9. Applying this to sdoli(8, 7): |8 - 7| + 9 = 1 + 9 = 10. The result is 10.",
+      "rule": "sdoli(a,b) = |a - b| + 9",
+      "seed": 103,
+      "step": 147
+    },
+    {
+      "a": 9,
+      "answer": 30,
+      "arm": "prompted",
+      "b": 3,
+      "correct": true,
+      "event_kinds": [
+        "retrieve",
+        "reason",
+        "ground"
+      ],
+      "expected": 30,
+      "first_appearance": false,
+      "incomplete": false,
+      "operator": "ngame",
+      "response": "The rule for ngame(a,b) is (a times 3) + b. Applying this to ngame(9, 3): (9 \u00d7 3) + 3 = 27 + 3 = 30. The answer is 30.",
+      "rule": "ngame(a,b) = (a times 3) + b",
+      "seed": 103,
+      "step": 148
+    },
+    {
+      "a": 8,
+      "answer": 20,
+      "arm": "prompted",
+      "b": 5,
+      "correct": true,
+      "event_kinds": [
+        "retrieve",
+        "reason",
+        "ground"
+      ],
+      "expected": 20,
+      "first_appearance": false,
+      "incomplete": false,
+      "operator": "gmazu",
+      "response": "The rule for gmazu(a,b) is a + b + 7. Applying this to the operands 8 and 5: 8 + 5 + 7 = 20.",
+      "rule": "gmazu(a,b) = a + b + 7",
+      "seed": 103,
+      "step": 149
+    }
+  ],
+  "seed": 103
+}
