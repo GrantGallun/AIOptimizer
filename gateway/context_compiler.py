@@ -7,6 +7,7 @@ query-specific working set plus a complete lightweight index of the conversation
 
 from __future__ import annotations
 
+import re
 from dataclasses import dataclass
 from typing import Any, Callable, Iterable, Mapping, Sequence
 
@@ -14,6 +15,11 @@ from agent_bus.context import ContextCompactor, EmbedFn, _as_vector, _cosine
 
 Record = dict[str, Any]
 RewriteFn = Callable[[list[dict[str, str]]], Iterable[Mapping[str, Any]]]
+DEFAULT_DENY_PATTERNS = (
+    r"private\s*[\u2014-]?\s*never repeat",
+    r"do not (share|repeat|reveal)",
+    r"confidential",
+)
 
 
 @dataclass(frozen=True)
@@ -27,9 +33,44 @@ class CompiledConversation:
 class ConversationCompiler:
     """Compile raw turns, then materialize an indexed context working set."""
 
-    def __init__(self, *, rewrite_fn: RewriteFn | None = None, embed_fn: EmbedFn | None = None):
+    def __init__(
+        self,
+        *,
+        rewrite_fn: RewriteFn | None = None,
+        embed_fn: EmbedFn | None = None,
+        deny_patterns: Sequence[str] = DEFAULT_DENY_PATTERNS,
+    ):
         self._rewrite_fn = rewrite_fn
         self._selector = ContextCompactor(embed_fn)
+        self._deny_patterns = tuple(re.compile(pattern, re.IGNORECASE) for pattern in deny_patterns)
+
+    def _is_denied(self, text: str) -> bool:
+        # Treat Markdown-style double hyphens as the single dash allowed by the
+        # fixed policy pattern, while preserving the original text everywhere else.
+        normalized = re.sub(r"-{2,}", "-", text)
+        return any(
+            pattern.search(text) is not None or pattern.search(normalized) is not None
+            for pattern in self._deny_patterns
+        )
+
+    def _public_records(self, compiled: CompiledConversation) -> list[Record]:
+        return [record for record in compiled.records if not self._is_denied(record["text"])]
+
+    def _index_entry(self, record: Mapping[str, Any], *, include_tags: bool) -> dict[str, Any]:
+        if self._is_denied(str(record["text"])):
+            return {
+                "id": record["id"],
+                "kind": record["kind"],
+                "text": "[redacted: privacy]",
+            }
+        entry = {
+            "id": record["id"],
+            "kind": record["kind"],
+            "source_ids": record["source_ids"],
+        }
+        if include_tags:
+            entry["tags"] = record["tags"]
+        return entry
 
     @staticmethod
     def _turns(messages: Sequence[Mapping[str, Any]]) -> list[dict[str, str]]:
@@ -88,9 +129,10 @@ class ConversationCompiler:
         """Build a relevant working set while retaining a complete lookup index."""
         if max_records < 0:
             raise ValueError("max_records must be non-negative")
+        public_records = self._public_records(compiled)
         chunks = [
             {"id": record["id"], "text": record["text"], "record": record}
-            for record in compiled.records
+            for record in public_records
         ]
         selected = self._selector.select(query, chunks, min(max_records, len(chunks)))
         working_set = [chunk["record"] for chunk in selected]
@@ -98,15 +140,7 @@ class ConversationCompiler:
             "schema": "aioptimizer.compiled-context.v1",
             "query": query,
             "working_set": working_set,
-            "index": [
-                {
-                    "id": record["id"],
-                    "kind": record["kind"],
-                    "source_ids": record["source_ids"],
-                    "tags": record["tags"],
-                }
-                for record in compiled.records
-            ],
+            "index": [self._index_entry(record, include_tags=True) for record in compiled.records],
         }
 
     def organize(
@@ -128,14 +162,17 @@ class ConversationCompiler:
             raise ValueError("similarity_threshold must be between -1 and 1")
         if max_records < 0:
             raise ValueError("max_records must be non-negative")
-        records = list(compiled.records)
+        records = self._public_records(compiled)
         if not records:
             return {
                 "schema": "aioptimizer.attention-context.v1",
                 "query": query,
                 "pinned": [],
                 "clusters": [],
-                "index": [],
+                "index": [
+                    self._index_entry(record, include_tags=False)
+                    for record in compiled.records
+                ],
             }
 
         vectors = [_as_vector(value) for value in self._selector._embed(
@@ -203,8 +240,8 @@ class ConversationCompiler:
             "pinned": pinned,
             "clusters": clusters,
             "index": [
-                {"id": record["id"], "kind": record["kind"], "source_ids": record["source_ids"]}
-                for record in records
+                self._index_entry(record, include_tags=False)
+                for record in compiled.records
             ],
         }
 
@@ -238,18 +275,19 @@ class ConversationCompiler:
 
     def render_raw(self, compiled: CompiledConversation, *, budget_chars: int) -> str:
         """Render chronological history under the same pinning and budget rules."""
+        records = self._public_records(compiled)
         role_by_source = {turn["id"]: turn["role"] for turn in compiled.turns}
         latest_user = next(
             (turn["id"] for turn in reversed(compiled.turns) if turn["role"] == "user"), None
         )
         pinned = [
             record
-            for record in compiled.records
+            for record in records
             if latest_user in record["source_ids"]
             or any(role_by_source[source] == "system" for source in record["source_ids"])
         ]
         pinned_ids = {record["id"] for record in pinned}
-        candidates = [record for record in compiled.records if record["id"] not in pinned_ids]
+        candidates = [record for record in records if record["id"] not in pinned_ids]
         return self._fit_sections(pinned, candidates, budget_chars)
 
     def render_organized(self, organized: Mapping[str, Any], *, budget_chars: int) -> str:

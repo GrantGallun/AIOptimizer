@@ -3,9 +3,9 @@
 from __future__ import annotations
 
 import json
-from typing import Any
+from typing import Any, Sequence
 
-from gateway.context_compiler import ConversationCompiler
+from gateway.context_compiler import DEFAULT_DENY_PATTERNS, ConversationCompiler
 
 
 class AttentionContextMiddleware:
@@ -16,11 +16,17 @@ class AttentionContextMiddleware:
     gateway shadow receipts can therefore compare every sampled rewrite to raw.
     """
 
-    def __init__(self, *, budget_chars: int = 12_000, compiler: ConversationCompiler | None = None):
+    def __init__(
+        self,
+        *,
+        budget_chars: int = 12_000,
+        compiler: ConversationCompiler | None = None,
+        deny_patterns: Sequence[str] = DEFAULT_DENY_PATTERNS,
+    ):
         if budget_chars <= 0:
             raise ValueError("budget_chars must be positive")
         self.budget_chars = budget_chars
-        self.compiler = compiler or ConversationCompiler()
+        self.compiler = compiler or ConversationCompiler(deny_patterns=deny_patterns)
 
     def before_request(self, body: dict[str, Any]) -> dict[str, Any]:
         messages = body.get("messages")
@@ -47,6 +53,7 @@ class AttentionContextMiddleware:
             if isinstance(message, dict)
             and message.get("role") == "system"
             and isinstance(message.get("content"), str)
+            and not self.compiler._is_denied(message["content"])
         ]
         history = [
             message
