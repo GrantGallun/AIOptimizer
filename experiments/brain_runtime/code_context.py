@@ -27,6 +27,7 @@ import json
 import random
 import re
 import sys
+import textwrap
 import time
 from pathlib import Path
 from typing import Any
@@ -178,6 +179,38 @@ def extract_functions(paths: list[str]) -> list[dict[str, Any]]:
                     }
                 )
     return functions
+
+
+def extract_call_edges(functions: list[dict]) -> list[tuple[str, str]]:
+    """Return deterministic caller/callee edges between the supplied functions.
+
+    Calls are matched by function name, including the terminal attribute of an
+    attribute call (for example, ``module.helper()`` matches ``helper``).
+    Sources that cannot be parsed are ignored.
+    """
+    known_names = {function["name"] for function in functions}
+    edges: set[tuple[str, str]] = set()
+
+    for function in functions:
+        caller = function["name"]
+        try:
+            tree = ast.parse(textwrap.dedent(function["source"]))
+        except (SyntaxError, TypeError, ValueError):
+            continue
+
+        for node in ast.walk(tree):
+            if not isinstance(node, ast.Call):
+                continue
+            if isinstance(node.func, ast.Name):
+                callee = node.func.id
+            elif isinstance(node.func, ast.Attribute):
+                callee = node.func.attr
+            else:
+                continue
+            if callee in known_names and callee != caller:
+                edges.add((caller, callee))
+
+    return sorted(edges)
 
 
 def functions_with_defaults(functions: list[dict[str, Any]]) -> list[dict[str, Any]]:
