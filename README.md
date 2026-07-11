@@ -29,6 +29,7 @@ Proxies `/v1/chat/completions`, `/api/generate`, `/api/chat`, and GET utility en
 | attention context (opt-in) | conversation history reorganized into query-ranked semantic clusters, privacy-filtered | HYP-33: **+0.650** vs chronology at matched budget (hidden); HYP-34: honestly scoped — never lost a case (120/120) but the advantage is small when budget pressure is mild |
 | constrained decoding | per-kind JSON schema via `format=` | HYP-25: malformed actions 0.055→**0.000**, completion +12pts |
 | deterministic query rewrite | rebuild retrieval queries from task state | HYP-31: one line carries ~87% of a full agent-kernel's accuracy edge (0.796→0.974 hidden) |
+| usage-heat compaction | ACT-R activation over observed `uses` counters decides what survives memory compaction | HYP-35: 0.736 vs 0.403 (newest) / 0.444 (random), +0.333 hidden, both controls beaten; five naive similarity-heat forms falsified first — count usage, never infer it |
 | receipts (always on) | deterministic shadow sampling + encoder judge + Wilson CIs | the methodology itself, productized |
 | serving layer | `keep_alive` residency (+ planned residency-aware routing) | measured: 32.3% of our own GPU time was silent weight reloading |
 
