@@ -1,0 +1,1185 @@
+{
+  "adapter_metrics": {
+    "coala": {
+      "calls": 25,
+      "completion_tokens": 1335,
+      "forced_retrievals": 0,
+      "load_duration_ns": 2774548300,
+      "prompt_tokens": 4283,
+      "total_duration_ns": 21214660200
+    },
+    "no_memory": {
+      "calls": 25,
+      "completion_tokens": 994,
+      "forced_retrievals": 0,
+      "load_duration_ns": 6630446000,
+      "prompt_tokens": 3415,
+      "total_duration_ns": 20515561700
+    }
+  },
+  "benchmark": "coala-within-session-learning-v1",
+  "elapsed_seconds": 42.287,
+  "gate": {
+    "control_first_appearance_accuracy": 0.2,
+    "control_recurrence_accuracy": 0.0,
+    "control_recurrence_minus_first_delta": -0.2,
+    "note": "Fable interprets the ~= control condition and writes the verdict.",
+    "observed_recurrence_accuracy_gap": 1.0,
+    "owner": "fable",
+    "recurrence_gap_condition_met": true,
+    "required_recurrence_accuracy_gap": 0.3
+  },
+  "model": "qwen3:8b",
+  "operators": [
+    "glorp",
+    "zib",
+    "frotz",
+    "quan",
+    "vlim"
+  ],
+  "repetitions": 5,
+  "rows": [
+    {
+      "a": 4,
+      "answer": null,
+      "arm": "no_memory",
+      "b": 9,
+      "correct": false,
+      "event_kinds": [
+        "reason",
+        "ground"
+      ],
+      "expected": 10,
+      "first_appearance": true,
+      "learned_after_feedback": false,
+      "learned_memory_id": null,
+      "operator": "quan",
+      "response": "The problem involves the novel operator \"quan,\" but no authorized rule or memory is provided to define or solve it. Without a defined rule, the problem cannot be solved. ANSWER=undefined",
+      "retrieved_memory_ids": [],
+      "rule": "quan(a,b) = |a - b| + 5",
+      "seed": 20260710,
+      "step": 0
+    },
+    {
+      "a": 3,
+      "answer": 9,
+      "arm": "no_memory",
+      "b": 3,
+      "correct": true,
+      "event_kinds": [
+        "reason",
+        "ground"
+      ],
+      "expected": 9,
+      "first_appearance": true,
+      "learned_after_feedback": false,
+      "learned_memory_id": null,
+      "operator": "glorp",
+      "response": "No authorized rule is available to solve the glorp problem. ANSWER=9",
+      "retrieved_memory_ids": [],
+      "rule": "glorp(a,b) = a + b + 3",
+      "seed": 20260710,
+      "step": 1
+    },
+    {
+      "a": 5,
+      "answer": null,
+      "arm": "no_memory",
+      "b": 3,
+      "correct": false,
+      "event_kinds": [
+        "reason",
+        "ground"
+      ],
+      "expected": 10,
+      "first_appearance": true,
+      "learned_after_feedback": false,
+      "learned_memory_id": null,
+      "operator": "vlim",
+      "response": "The problem involves the novel operator \"vlim,\" but no authorized rule or memory is provided to define or solve it. Without a defined rule, the problem cannot be solved. ANSWER=undefined",
+      "retrieved_memory_ids": [],
+      "rule": "vlim(a,b) = 2 times max(a, b)",
+      "seed": 20260710,
+      "step": 2
+    },
+    {
+      "a": 8,
+      "answer": 6,
+      "arm": "no_memory",
+      "b": 6,
+      "correct": false,
+      "event_kinds": [
+        "reason",
+        "ground"
+      ],
+      "expected": 20,
+      "first_appearance": true,
+      "learned_after_feedback": false,
+      "learned_memory_id": null,
+      "operator": "frotz",
+      "response": "The problem frotz(8, 6) involves a novel operator for which no authorized rule is available. Since no rule can be applied, the solution cannot be determined. ANSWER=undefined",
+      "retrieved_memory_ids": [],
+      "rule": "frotz(a,b) = a + (b times 2)",
+      "seed": 20260710,
+      "step": 3
+    },
+    {
+      "a": 6,
+      "answer": null,
+      "arm": "no_memory",
+      "b": 3,
+      "correct": false,
+      "event_kinds": [
+        "reason",
+        "ground"
+      ],
+      "expected": 15,
+      "first_appearance": true,
+      "learned_after_feedback": false,
+      "learned_memory_id": null,
+      "operator": "zib",
+      "response": "No authorized rule is available to solve the zib problem. ANSWER=?.",
+      "retrieved_memory_ids": [],
+      "rule": "zib(a,b) = (a times 2) + b",
+      "seed": 20260710,
+      "step": 4
+    },
+    {
+      "a": 5,
+      "answer": null,
+      "arm": "no_memory",
+      "b": 2,
+      "correct": false,
+      "event_kinds": [
+        "reason",
+        "ground"
+      ],
+      "expected": 8,
+      "first_appearance": false,
+      "learned_after_feedback": false,
+      "learned_memory_id": null,
+      "operator": "quan",
+      "response": "The problem involves the novel operator \"quan,\" but no authorized rule or memory is provided to define its operation. Without a defined rule, it is not possible to compute the result. \n\nANSWER=undefined",
+      "retrieved_memory_ids": [],
+      "rule": "quan(a,b) = |a - b| + 5",
+      "seed": 20260710,
+      "step": 5
+    },
+    {
+      "a": 9,
+      "answer": null,
+      "arm": "no_memory",
+      "b": 3,
+      "correct": false,
+      "event_kinds": [
+        "reason",
+        "ground"
+      ],
+      "expected": 18,
+      "first_appearance": false,
+      "learned_after_feedback": false,
+      "learned_memory_id": null,
+      "operator": "vlim",
+      "response": "The operator \"vlim\" is not defined in the provided context, and no authorized rules are available to solve this problem. Therefore, it is not possible to compute the result with the given information.\n\nANSWER=undefined",
+      "retrieved_memory_ids": [],
+      "rule": "vlim(a,b) = 2 times max(a, b)",
+      "seed": 20260710,
+      "step": 6
+    },
+    {
+      "a": 6,
+      "answer": 3,
+      "arm": "no_memory",
+      "b": 3,
+      "correct": false,
+      "event_kinds": [
+        "reason",
+        "ground"
+      ],
+      "expected": 12,
+      "first_appearance": false,
+      "learned_after_feedback": false,
+      "learned_memory_id": null,
+      "operator": "frotz",
+      "response": "The problem frotz(6, 3) involves a novel operator for which no authorized rule is provided. Without a defined rule or context to apply, the problem cannot be solved. ANSWER=undefined",
+      "retrieved_memory_ids": [],
+      "rule": "frotz(a,b) = a + (b times 2)",
+      "seed": 20260710,
+      "step": 7
+    },
+    {
+      "a": 2,
+      "answer": null,
+      "arm": "no_memory",
+      "b": 5,
+      "correct": false,
+      "event_kinds": [
+        "reason",
+        "ground"
+      ],
+      "expected": 10,
+      "first_appearance": false,
+      "learned_after_feedback": false,
+      "learned_memory_id": null,
+      "operator": "glorp",
+      "response": "No authorized rule is available to solve the glorp problem. ANSWER=?.",
+      "retrieved_memory_ids": [],
+      "rule": "glorp(a,b) = a + b + 3",
+      "seed": 20260710,
+      "step": 8
+    },
+    {
+      "a": 3,
+      "answer": null,
+      "arm": "no_memory",
+      "b": 2,
+      "correct": false,
+      "event_kinds": [
+        "reason",
+        "ground"
+      ],
+      "expected": 8,
+      "first_appearance": false,
+      "learned_after_feedback": false,
+      "learned_memory_id": null,
+      "operator": "zib",
+      "response": "The problem involves the novel operator \"zib,\" but no authorized rule or memory is provided to define or solve it. Without a defined rule, the problem cannot be solved. ANSWER=undefined",
+      "retrieved_memory_ids": [],
+      "rule": "zib(a,b) = (a times 2) + b",
+      "seed": 20260710,
+      "step": 9
+    },
+    {
+      "a": 9,
+      "answer": 2,
+      "arm": "no_memory",
+      "b": 2,
+      "correct": false,
+      "event_kinds": [
+        "reason",
+        "ground"
+      ],
+      "expected": 13,
+      "first_appearance": false,
+      "learned_after_feedback": false,
+      "learned_memory_id": null,
+      "operator": "frotz",
+      "response": "The function frotz is not defined in the provided context, and no authorized rules or memories are available to solve the problem. Therefore, it is not possible to compute frotz(9, 2) with the given information.\n\nANSWER=undefined",
+      "retrieved_memory_ids": [],
+      "rule": "frotz(a,b) = a + (b times 2)",
+      "seed": 20260710,
+      "step": 10
+    },
+    {
+      "a": 5,
+      "answer": 9,
+      "arm": "no_memory",
+      "b": 9,
+      "correct": false,
+      "event_kinds": [
+        "reason",
+        "ground"
+      ],
+      "expected": 18,
+      "first_appearance": false,
+      "learned_after_feedback": false,
+      "learned_memory_id": null,
+      "operator": "vlim",
+      "response": "The operator \"vlim\" is not defined in the provided context, and no authorized rules are available to solve this problem. Therefore, it is not possible to compute the result of \"vlim(5, 9)\" with the given information.\n\nANSWER=undefined",
+      "retrieved_memory_ids": [],
+      "rule": "vlim(a,b) = 2 times max(a, b)",
+      "seed": 20260710,
+      "step": 11
+    },
+    {
+      "a": 5,
+      "answer": 2,
+      "arm": "no_memory",
+      "b": 2,
+      "correct": false,
+      "event_kinds": [
+        "reason",
+        "ground"
+      ],
+      "expected": 12,
+      "first_appearance": false,
+      "learned_after_feedback": false,
+      "learned_memory_id": null,
+      "operator": "zib",
+      "response": "The problem involves a novel operator \"zib\" with the input zib(5, 2). No authorized rule or memory is provided to define the operation of \"zib\". Therefore, it is not possible to compute the result based on the given information. \n\nANSWER=undefined",
+      "retrieved_memory_ids": [],
+      "rule": "zib(a,b) = (a times 2) + b",
+      "seed": 20260710,
+      "step": 12
+    },
+    {
+      "a": 4,
+      "answer": 8,
+      "arm": "no_memory",
+      "b": 2,
+      "correct": false,
+      "event_kinds": [
+        "reason",
+        "ground"
+      ],
+      "expected": 9,
+      "first_appearance": false,
+      "learned_after_feedback": false,
+      "learned_memory_id": null,
+      "operator": "glorp",
+      "response": "No authorized rule is available to solve the glorp problem. ANSWER=8",
+      "retrieved_memory_ids": [],
+      "rule": "glorp(a,b) = a + b + 3",
+      "seed": 20260710,
+      "step": 13
+    },
+    {
+      "a": 8,
+      "answer": null,
+      "arm": "no_memory",
+      "b": 7,
+      "correct": false,
+      "event_kinds": [
+        "reason",
+        "ground"
+      ],
+      "expected": 6,
+      "first_appearance": false,
+      "learned_after_feedback": false,
+      "learned_memory_id": null,
+      "operator": "quan",
+      "response": "The problem involves the novel operator \"quan,\" but no authorized rule or memory is provided to define its behavior. Without a defined rule, it is not possible to compute the result. \n\nANSWER=undefined",
+      "retrieved_memory_ids": [],
+      "rule": "quan(a,b) = |a - b| + 5",
+      "seed": 20260710,
+      "step": 14
+    },
+    {
+      "a": 6,
+      "answer": 5,
+      "arm": "no_memory",
+      "b": 5,
+      "correct": false,
+      "event_kinds": [
+        "reason",
+        "ground"
+      ],
+      "expected": 16,
+      "first_appearance": false,
+      "learned_after_feedback": false,
+      "learned_memory_id": null,
+      "operator": "frotz",
+      "response": "The problem frotz(6, 5) is presented, but no authorized rules or memories are available to solve the novel-operator problem. Therefore, no rule can be applied. \n\nANSWER=undefined",
+      "retrieved_memory_ids": [],
+      "rule": "frotz(a,b) = a + (b times 2)",
+      "seed": 20260710,
+      "step": 15
+    },
+    {
+      "a": 7,
+      "answer": 15,
+      "arm": "no_memory",
+      "b": 8,
+      "correct": false,
+      "event_kinds": [
+        "reason",
+        "ground"
+      ],
+      "expected": 18,
+      "first_appearance": false,
+      "learned_after_feedback": false,
+      "learned_memory_id": null,
+      "operator": "glorp",
+      "response": "No authorized rule is available to solve the glorp problem. ANSWER=15",
+      "retrieved_memory_ids": [],
+      "rule": "glorp(a,b) = a + b + 3",
+      "seed": 20260710,
+      "step": 16
+    },
+    {
+      "a": 7,
+      "answer": 4,
+      "arm": "no_memory",
+      "b": 4,
+      "correct": false,
+      "event_kinds": [
+        "reason",
+        "ground"
+      ],
+      "expected": 18,
+      "first_appearance": false,
+      "learned_after_feedback": false,
+      "learned_memory_id": null,
+      "operator": "zib",
+      "response": "The problem involves a novel operator \"zib\" with the input zib(7, 4). No authorized rule or memory is provided to define the operation of \"zib\". Therefore, it is not possible to compute the result based on the given information. \n\nANSWER=undefined",
+      "retrieved_memory_ids": [],
+      "rule": "zib(a,b) = (a times 2) + b",
+      "seed": 20260710,
+      "step": 17
+    },
+    {
+      "a": 8,
+      "answer": null,
+      "arm": "no_memory",
+      "b": 2,
+      "correct": false,
+      "event_kinds": [
+        "reason",
+        "ground"
+      ],
+      "expected": 16,
+      "first_appearance": false,
+      "learned_after_feedback": false,
+      "learned_memory_id": null,
+      "operator": "vlim",
+      "response": "The problem involves the novel operator \"vlim,\" but no authorized rule or memory is provided to define or solve it. Without a defined rule, the problem cannot be solved. ANSWER=undefined",
+      "retrieved_memory_ids": [],
+      "rule": "vlim(a,b) = 2 times max(a, b)",
+      "seed": 20260710,
+      "step": 18
+    },
+    {
+      "a": 9,
+      "answer": null,
+      "arm": "no_memory",
+      "b": 9,
+      "correct": false,
+      "event_kinds": [
+        "reason",
+        "ground"
+      ],
+      "expected": 5,
+      "first_appearance": false,
+      "learned_after_feedback": false,
+      "learned_memory_id": null,
+      "operator": "quan",
+      "response": "The problem involves the novel operator \"quan,\" but no authorized rule or memory is provided to define or solve it. Without a defined rule, the problem cannot be solved. ANSWER=undefined",
+      "retrieved_memory_ids": [],
+      "rule": "quan(a,b) = |a - b| + 5",
+      "seed": 20260710,
+      "step": 19
+    },
+    {
+      "a": 6,
+      "answer": null,
+      "arm": "no_memory",
+      "b": 4,
+      "correct": false,
+      "event_kinds": [
+        "reason",
+        "ground"
+      ],
+      "expected": 13,
+      "first_appearance": false,
+      "learned_after_feedback": false,
+      "learned_memory_id": null,
+      "operator": "glorp",
+      "response": "No authorized rule is available to solve the glorp problem. ANSWER=?.",
+      "retrieved_memory_ids": [],
+      "rule": "glorp(a,b) = a + b + 3",
+      "seed": 20260710,
+      "step": 20
+    },
+    {
+      "a": 7,
+      "answer": 4,
+      "arm": "no_memory",
+      "b": 4,
+      "correct": false,
+      "event_kinds": [
+        "reason",
+        "ground"
+      ],
+      "expected": 18,
+      "first_appearance": false,
+      "learned_after_feedback": false,
+      "learned_memory_id": null,
+      "operator": "zib",
+      "response": "The problem involves a novel operator \"zib\" with the input zib(7, 4). No authorized rule or memory is provided to define the operation of \"zib\". Therefore, it is not possible to compute the result based on the given information. \n\nANSWER=undefined",
+      "retrieved_memory_ids": [],
+      "rule": "zib(a,b) = (a times 2) + b",
+      "seed": 20260710,
+      "step": 21
+    },
+    {
+      "a": 5,
+      "answer": 6,
+      "arm": "no_memory",
+      "b": 6,
+      "correct": false,
+      "event_kinds": [
+        "reason",
+        "ground"
+      ],
+      "expected": 12,
+      "first_appearance": false,
+      "learned_after_feedback": false,
+      "learned_memory_id": null,
+      "operator": "vlim",
+      "response": "The operator \"vlim\" is not defined in the provided context, and no authorized rules are available to solve this problem. Therefore, it is not possible to compute the result of \"vlim(5, 6)\" with the given information.\n\nANSWER=undefined",
+      "retrieved_memory_ids": [],
+      "rule": "vlim(a,b) = 2 times max(a, b)",
+      "seed": 20260710,
+      "step": 22
+    },
+    {
+      "a": 4,
+      "answer": 8,
+      "arm": "no_memory",
+      "b": 8,
+      "correct": false,
+      "event_kinds": [
+        "reason",
+        "ground"
+      ],
+      "expected": 20,
+      "first_appearance": false,
+      "learned_after_feedback": false,
+      "learned_memory_id": null,
+      "operator": "frotz",
+      "response": "The function frotz is not defined in the provided context, and no authorized rule is available to solve the problem. Therefore, it is not possible to compute frotz(4, 8) with the given information. ANSWER=undefined",
+      "retrieved_memory_ids": [],
+      "rule": "frotz(a,b) = a + (b times 2)",
+      "seed": 20260710,
+      "step": 23
+    },
+    {
+      "a": 9,
+      "answer": 5,
+      "arm": "no_memory",
+      "b": 5,
+      "correct": false,
+      "event_kinds": [
+        "reason",
+        "ground"
+      ],
+      "expected": 9,
+      "first_appearance": false,
+      "learned_after_feedback": false,
+      "learned_memory_id": null,
+      "operator": "quan",
+      "response": "The problem involves a novel operator \"quan\" with inputs (9, 5). No authorized rule is available to interpret or solve the operator. Therefore, the problem cannot be resolved with the given information.\n\nANSWER=undefined",
+      "retrieved_memory_ids": [],
+      "rule": "quan(a,b) = |a - b| + 5",
+      "seed": 20260710,
+      "step": 24
+    },
+    {
+      "a": 4,
+      "answer": null,
+      "arm": "coala",
+      "b": 9,
+      "correct": false,
+      "event_kinds": [
+        "retrieve",
+        "reason",
+        "ground"
+      ],
+      "expected": 10,
+      "first_appearance": true,
+      "learned_after_feedback": true,
+      "learned_memory_id": "mem-0001",
+      "operator": "quan",
+      "response": "The problem involves the novel operator \"quan,\" but no authorized rule or memory is provided to define or solve it. Without a defined rule, the problem cannot be solved. ANSWER=undefined",
+      "retrieved_memory_ids": [],
+      "rule": "quan(a,b) = |a - b| + 5",
+      "seed": 20260710,
+      "step": 0
+    },
+    {
+      "a": 3,
+      "answer": 9,
+      "arm": "coala",
+      "b": 3,
+      "correct": true,
+      "event_kinds": [
+        "retrieve",
+        "reason",
+        "ground"
+      ],
+      "expected": 9,
+      "first_appearance": true,
+      "learned_after_feedback": true,
+      "learned_memory_id": "mem-0002",
+      "operator": "glorp",
+      "response": "No authorized rule is available to solve the glorp problem. ANSWER=9",
+      "retrieved_memory_ids": [],
+      "rule": "glorp(a,b) = a + b + 3",
+      "seed": 20260710,
+      "step": 1
+    },
+    {
+      "a": 5,
+      "answer": null,
+      "arm": "coala",
+      "b": 3,
+      "correct": false,
+      "event_kinds": [
+        "retrieve",
+        "reason",
+        "ground"
+      ],
+      "expected": 10,
+      "first_appearance": true,
+      "learned_after_feedback": true,
+      "learned_memory_id": "mem-0003",
+      "operator": "vlim",
+      "response": "The problem involves the novel operator \"vlim,\" but no authorized rule or memory is provided to define or solve it. Without a defined rule, the problem cannot be solved. ANSWER=undefined",
+      "retrieved_memory_ids": [],
+      "rule": "vlim(a,b) = 2 times max(a, b)",
+      "seed": 20260710,
+      "step": 2
+    },
+    {
+      "a": 8,
+      "answer": 6,
+      "arm": "coala",
+      "b": 6,
+      "correct": false,
+      "event_kinds": [
+        "retrieve",
+        "reason",
+        "ground"
+      ],
+      "expected": 20,
+      "first_appearance": true,
+      "learned_after_feedback": true,
+      "learned_memory_id": "mem-0004",
+      "operator": "frotz",
+      "response": "The problem frotz(8, 6) involves a novel operator for which no authorized rule is available. Since no rule can be applied, the solution cannot be determined. ANSWER=undefined",
+      "retrieved_memory_ids": [],
+      "rule": "frotz(a,b) = a + (b times 2)",
+      "seed": 20260710,
+      "step": 3
+    },
+    {
+      "a": 6,
+      "answer": null,
+      "arm": "coala",
+      "b": 3,
+      "correct": false,
+      "event_kinds": [
+        "retrieve",
+        "reason",
+        "ground"
+      ],
+      "expected": 15,
+      "first_appearance": true,
+      "learned_after_feedback": true,
+      "learned_memory_id": "mem-0005",
+      "operator": "zib",
+      "response": "No authorized rule is available to solve the zib problem. ANSWER=?.",
+      "retrieved_memory_ids": [],
+      "rule": "zib(a,b) = (a times 2) + b",
+      "seed": 20260710,
+      "step": 4
+    },
+    {
+      "a": 5,
+      "answer": 8,
+      "arm": "coala",
+      "b": 2,
+      "correct": true,
+      "event_kinds": [
+        "retrieve",
+        "reason",
+        "ground"
+      ],
+      "expected": 8,
+      "first_appearance": false,
+      "learned_after_feedback": false,
+      "learned_memory_id": null,
+      "operator": "quan",
+      "response": "The authorized rule states that quan(a, b) = |a - b| + 5. Applying this to quan(5, 2): |5 - 2| + 5 = 3 + 5 = 8. ANSWER=8",
+      "retrieved_memory_ids": [
+        "mem-0001"
+      ],
+      "rule": "quan(a,b) = |a - b| + 5",
+      "seed": 20260710,
+      "step": 5
+    },
+    {
+      "a": 9,
+      "answer": 18,
+      "arm": "coala",
+      "b": 3,
+      "correct": true,
+      "event_kinds": [
+        "retrieve",
+        "reason",
+        "ground"
+      ],
+      "expected": 18,
+      "first_appearance": false,
+      "learned_after_feedback": false,
+      "learned_memory_id": null,
+      "operator": "vlim",
+      "response": "The authorized rule states that vlim(a, b) = 2 times max(a, b). For vlim(9, 3), the maximum of 9 and 3 is 9. Multiplying 9 by 2 gives 18. ANSWER=18",
+      "retrieved_memory_ids": [
+        "mem-0003"
+      ],
+      "rule": "vlim(a,b) = 2 times max(a, b)",
+      "seed": 20260710,
+      "step": 6
+    },
+    {
+      "a": 6,
+      "answer": 12,
+      "arm": "coala",
+      "b": 3,
+      "correct": true,
+      "event_kinds": [
+        "retrieve",
+        "reason",
+        "ground"
+      ],
+      "expected": 12,
+      "first_appearance": false,
+      "learned_after_feedback": false,
+      "learned_memory_id": null,
+      "operator": "frotz",
+      "response": "The authorized rule states that frotz(a, b) = a + (b times 2). Applying this to frotz(6, 3):  \nfrotz(6, 3) = 6 + (3 \u00d7 2) = 6 + 6 = 12.  \nANSWER=12",
+      "retrieved_memory_ids": [
+        "mem-0004"
+      ],
+      "rule": "frotz(a,b) = a + (b times 2)",
+      "seed": 20260710,
+      "step": 7
+    },
+    {
+      "a": 2,
+      "answer": 10,
+      "arm": "coala",
+      "b": 5,
+      "correct": true,
+      "event_kinds": [
+        "retrieve",
+        "reason",
+        "ground"
+      ],
+      "expected": 10,
+      "first_appearance": false,
+      "learned_after_feedback": false,
+      "learned_memory_id": null,
+      "operator": "glorp",
+      "response": "The authorized memory provides the rule: glorp(a,b) = a + b + 3. Applying this rule to glorp(2, 5): 2 + 5 + 3 = 10. ANSWER=10",
+      "retrieved_memory_ids": [
+        "mem-0002"
+      ],
+      "rule": "glorp(a,b) = a + b + 3",
+      "seed": 20260710,
+      "step": 8
+    },
+    {
+      "a": 3,
+      "answer": 8,
+      "arm": "coala",
+      "b": 2,
+      "correct": true,
+      "event_kinds": [
+        "retrieve",
+        "reason",
+        "ground"
+      ],
+      "expected": 8,
+      "first_appearance": false,
+      "learned_after_feedback": false,
+      "learned_memory_id": null,
+      "operator": "zib",
+      "response": "The authorized rule states that zib(a, b) = (a times 2) + b. Applying this rule to zib(3, 2): (3 times 2) + 2 = 6 + 2 = 8. ANSWER=8",
+      "retrieved_memory_ids": [
+        "mem-0005"
+      ],
+      "rule": "zib(a,b) = (a times 2) + b",
+      "seed": 20260710,
+      "step": 9
+    },
+    {
+      "a": 9,
+      "answer": 13,
+      "arm": "coala",
+      "b": 2,
+      "correct": true,
+      "event_kinds": [
+        "retrieve",
+        "reason",
+        "ground"
+      ],
+      "expected": 13,
+      "first_appearance": false,
+      "learned_after_feedback": false,
+      "learned_memory_id": null,
+      "operator": "frotz",
+      "response": "The authorized rule states that frotz(a, b) = a + (b times 2). Applying this to frotz(9, 2), we calculate 9 + (2 times 2) = 9 + 4 = 13. ANSWER=13",
+      "retrieved_memory_ids": [
+        "mem-0004"
+      ],
+      "rule": "frotz(a,b) = a + (b times 2)",
+      "seed": 20260710,
+      "step": 10
+    },
+    {
+      "a": 5,
+      "answer": 18,
+      "arm": "coala",
+      "b": 9,
+      "correct": true,
+      "event_kinds": [
+        "retrieve",
+        "reason",
+        "ground"
+      ],
+      "expected": 18,
+      "first_appearance": false,
+      "learned_after_feedback": false,
+      "learned_memory_id": null,
+      "operator": "vlim",
+      "response": "The authorized memory provides the rule: vlim(a,b) = 2 times max(a, b). Applying this rule to vlim(5, 9), we find max(5, 9) = 9. Then, 2 times 9 = 18. ANSWER=18",
+      "retrieved_memory_ids": [
+        "mem-0003"
+      ],
+      "rule": "vlim(a,b) = 2 times max(a, b)",
+      "seed": 20260710,
+      "step": 11
+    },
+    {
+      "a": 5,
+      "answer": 12,
+      "arm": "coala",
+      "b": 2,
+      "correct": true,
+      "event_kinds": [
+        "retrieve",
+        "reason",
+        "ground"
+      ],
+      "expected": 12,
+      "first_appearance": false,
+      "learned_after_feedback": false,
+      "learned_memory_id": null,
+      "operator": "zib",
+      "response": "The authorized rule states that zib(a, b) = (a times 2) + b. Applying this to zib(5, 2): (5 \u00d7 2) + 2 = 10 + 2 = 12.  \nANSWER=12",
+      "retrieved_memory_ids": [
+        "mem-0005"
+      ],
+      "rule": "zib(a,b) = (a times 2) + b",
+      "seed": 20260710,
+      "step": 12
+    },
+    {
+      "a": 4,
+      "answer": 9,
+      "arm": "coala",
+      "b": 2,
+      "correct": true,
+      "event_kinds": [
+        "retrieve",
+        "reason",
+        "ground"
+      ],
+      "expected": 9,
+      "first_appearance": false,
+      "learned_after_feedback": false,
+      "learned_memory_id": null,
+      "operator": "glorp",
+      "response": "The authorized memory provides the rule: glorp(a,b) = a + b + 3. Applying this rule to glorp(4, 2): 4 + 2 + 3 = 9. ANSWER=9",
+      "retrieved_memory_ids": [
+        "mem-0002"
+      ],
+      "rule": "glorp(a,b) = a + b + 3",
+      "seed": 20260710,
+      "step": 13
+    },
+    {
+      "a": 8,
+      "answer": 6,
+      "arm": "coala",
+      "b": 7,
+      "correct": true,
+      "event_kinds": [
+        "retrieve",
+        "reason",
+        "ground"
+      ],
+      "expected": 6,
+      "first_appearance": false,
+      "learned_after_feedback": false,
+      "learned_memory_id": null,
+      "operator": "quan",
+      "response": "The authorized rule states that quan(a, b) = |a - b| + 5. Applying this to quan(8, 7): |8 - 7| + 5 = 1 + 5 = 6. ANSWER=6",
+      "retrieved_memory_ids": [
+        "mem-0001"
+      ],
+      "rule": "quan(a,b) = |a - b| + 5",
+      "seed": 20260710,
+      "step": 14
+    },
+    {
+      "a": 6,
+      "answer": 16,
+      "arm": "coala",
+      "b": 5,
+      "correct": true,
+      "event_kinds": [
+        "retrieve",
+        "reason",
+        "ground"
+      ],
+      "expected": 16,
+      "first_appearance": false,
+      "learned_after_feedback": false,
+      "learned_memory_id": null,
+      "operator": "frotz",
+      "response": "The authorized rule states that frotz(a, b) = a + (b times 2). Applying this to frotz(6, 5):  \nfrotz(6, 5) = 6 + (5 \u00d7 2) = 6 + 10 = 16.  \nANSWER=16",
+      "retrieved_memory_ids": [
+        "mem-0004"
+      ],
+      "rule": "frotz(a,b) = a + (b times 2)",
+      "seed": 20260710,
+      "step": 15
+    },
+    {
+      "a": 7,
+      "answer": 18,
+      "arm": "coala",
+      "b": 8,
+      "correct": true,
+      "event_kinds": [
+        "retrieve",
+        "reason",
+        "ground"
+      ],
+      "expected": 18,
+      "first_appearance": false,
+      "learned_after_feedback": false,
+      "learned_memory_id": null,
+      "operator": "glorp",
+      "response": "The authorized memory provides the rule: glorp(a,b) = a + b + 3. Applying this rule to glorp(7, 8): 7 + 8 + 3 = 18. ANSWER=18",
+      "retrieved_memory_ids": [
+        "mem-0002"
+      ],
+      "rule": "glorp(a,b) = a + b + 3",
+      "seed": 20260710,
+      "step": 16
+    },
+    {
+      "a": 7,
+      "answer": 18,
+      "arm": "coala",
+      "b": 4,
+      "correct": true,
+      "event_kinds": [
+        "retrieve",
+        "reason",
+        "ground"
+      ],
+      "expected": 18,
+      "first_appearance": false,
+      "learned_after_feedback": false,
+      "learned_memory_id": null,
+      "operator": "zib",
+      "response": "The authorized rule states that zib(a, b) = (a times 2) + b. Applying this to zib(7, 4): (7 \u00d7 2) + 4 = 14 + 4 = 18. ANSWER=18",
+      "retrieved_memory_ids": [
+        "mem-0005"
+      ],
+      "rule": "zib(a,b) = (a times 2) + b",
+      "seed": 20260710,
+      "step": 17
+    },
+    {
+      "a": 8,
+      "answer": 16,
+      "arm": "coala",
+      "b": 2,
+      "correct": true,
+      "event_kinds": [
+        "retrieve",
+        "reason",
+        "ground"
+      ],
+      "expected": 16,
+      "first_appearance": false,
+      "learned_after_feedback": false,
+      "learned_memory_id": null,
+      "operator": "vlim",
+      "response": "The authorized rule states that vlim(a, b) = 2 times max(a, b). For vlim(8, 2), the maximum of 8 and 2 is 8. Multiplying 8 by 2 gives 16. ANSWER=16",
+      "retrieved_memory_ids": [
+        "mem-0003"
+      ],
+      "rule": "vlim(a,b) = 2 times max(a, b)",
+      "seed": 20260710,
+      "step": 18
+    },
+    {
+      "a": 9,
+      "answer": 5,
+      "arm": "coala",
+      "b": 9,
+      "correct": true,
+      "event_kinds": [
+        "retrieve",
+        "reason",
+        "ground"
+      ],
+      "expected": 5,
+      "first_appearance": false,
+      "learned_after_feedback": false,
+      "learned_memory_id": null,
+      "operator": "quan",
+      "response": "The authorized rule states that quan(a,b) = |a - b| + 5. Applying this to quan(9, 9): |9 - 9| + 5 = 0 + 5 = 5. ANSWER=5",
+      "retrieved_memory_ids": [
+        "mem-0001"
+      ],
+      "rule": "quan(a,b) = |a - b| + 5",
+      "seed": 20260710,
+      "step": 19
+    },
+    {
+      "a": 6,
+      "answer": 13,
+      "arm": "coala",
+      "b": 4,
+      "correct": true,
+      "event_kinds": [
+        "retrieve",
+        "reason",
+        "ground"
+      ],
+      "expected": 13,
+      "first_appearance": false,
+      "learned_after_feedback": false,
+      "learned_memory_id": null,
+      "operator": "glorp",
+      "response": "The authorized memory provides the rule: glorp(a,b) = a + b + 3. Applying this rule to glorp(6, 4): 6 + 4 + 3 = 13. ANSWER=13",
+      "retrieved_memory_ids": [
+        "mem-0002"
+      ],
+      "rule": "glorp(a,b) = a + b + 3",
+      "seed": 20260710,
+      "step": 20
+    },
+    {
+      "a": 7,
+      "answer": 18,
+      "arm": "coala",
+      "b": 4,
+      "correct": true,
+      "event_kinds": [
+        "retrieve",
+        "reason",
+        "ground"
+      ],
+      "expected": 18,
+      "first_appearance": false,
+      "learned_after_feedback": false,
+      "learned_memory_id": null,
+      "operator": "zib",
+      "response": "The authorized rule states that zib(a, b) = (a times 2) + b. Applying this to zib(7, 4): (7 \u00d7 2) + 4 = 14 + 4 = 18. ANSWER=18",
+      "retrieved_memory_ids": [
+        "mem-0005"
+      ],
+      "rule": "zib(a,b) = (a times 2) + b",
+      "seed": 20260710,
+      "step": 21
+    },
+    {
+      "a": 5,
+      "answer": 12,
+      "arm": "coala",
+      "b": 6,
+      "correct": true,
+      "event_kinds": [
+        "retrieve",
+        "reason",
+        "ground"
+      ],
+      "expected": 12,
+      "first_appearance": false,
+      "learned_after_feedback": false,
+      "learned_memory_id": null,
+      "operator": "vlim",
+      "response": "The authorized memory provides the rule: vlim(a,b) = 2 times max(a, b). Applying this rule to vlim(5, 6), we find max(5, 6) = 6. Then, 2 times 6 = 12. ANSWER=12",
+      "retrieved_memory_ids": [
+        "mem-0003"
+      ],
+      "rule": "vlim(a,b) = 2 times max(a, b)",
+      "seed": 20260710,
+      "step": 22
+    },
+    {
+      "a": 4,
+      "answer": 20,
+      "arm": "coala",
+      "b": 8,
+      "correct": true,
+      "event_kinds": [
+        "retrieve",
+        "reason",
+        "ground"
+      ],
+      "expected": 20,
+      "first_appearance": false,
+      "learned_after_feedback": false,
+      "learned_memory_id": null,
+      "operator": "frotz",
+      "response": "The authorized rule states that frotz(a, b) = a + (b times 2). Applying this to frotz(4, 8):  \nfrotz(4, 8) = 4 + (8 \u00d7 2) = 4 + 16 = 20.  \nANSWER=20",
+      "retrieved_memory_ids": [
+        "mem-0004"
+      ],
+      "rule": "frotz(a,b) = a + (b times 2)",
+      "seed": 20260710,
+      "step": 23
+    },
+    {
+      "a": 9,
+      "answer": 9,
+      "arm": "coala",
+      "b": 5,
+      "correct": true,
+      "event_kinds": [
+        "retrieve",
+        "reason",
+        "ground"
+      ],
+      "expected": 9,
+      "first_appearance": false,
+      "learned_after_feedback": false,
+      "learned_memory_id": null,
+      "operator": "quan",
+      "response": "The operator rule states that quan(a,b) = |a - b| + 5. Applying this to quan(9, 5): |9 - 5| + 5 = 4 + 5 = 9. ANSWER=9",
+      "retrieved_memory_ids": [
+        "mem-0001"
+      ],
+      "rule": "quan(a,b) = |a - b| + 5",
+      "seed": 20260710,
+      "step": 24
+    }
+  ],
+  "seed": 20260710,
+  "summaries": [
+    {
+      "arm": "no_memory",
+      "first_appearance_accuracy": 0.2,
+      "first_appearance_correct": 1,
+      "first_appearance_tasks": 5,
+      "learned_memories": 0,
+      "mean_retrieved_memories": 0.0,
+      "recurrence_accuracy": 0.0,
+      "recurrence_correct": 0,
+      "recurrence_tasks": 20,
+      "tasks": 25
+    },
+    {
+      "arm": "coala",
+      "first_appearance_accuracy": 0.2,
+      "first_appearance_correct": 1,
+      "first_appearance_tasks": 5,
+      "learned_memories": 5,
+      "mean_retrieved_memories": 0.8,
+      "recurrence_accuracy": 1.0,
+      "recurrence_correct": 20,
+      "recurrence_tasks": 20,
+      "tasks": 25
+    }
+  ]
+}
