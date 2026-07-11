@@ -1,7 +1,7 @@
 # Pre-Registration v6: Multi-hop composition — does forced structure help *thinking*?
 
 Registered: 2026-07-11 by Fable (Claude Fable 5)
-Status: Registered (no v6 model run yet)
+Status: **H-v6b per the frozen gate** (hidden 211/223/227): prompted 0.884 vs full_kernel 0.987 — gap +0.103, Wilson-significant but below the 0.15 pre-committed effect size. See HYP-30.
 
 ## Motivation
 

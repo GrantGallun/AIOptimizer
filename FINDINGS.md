@@ -88,13 +88,20 @@ task knowledge, which a generic invariant cannot.* With qwen3:8b's dividend of 0
 kernel's forced structure never beat good prompting on single-hop accuracy at either capability end.
 Its accuracy case now rests entirely on the task-difficulty axis:
 
-### 8. Multi-hop composition — the decisive test *(prereg v6, in progress)*
+### 8. Multi-hop composition — the decisive test *(prereg v6, HYP-30: significant but modest)*
 Depth-2 composed operators (`outer(inner(a,b), c)`: retrieve TWO rules, chain them) finally give
 dynamic range instead of 0/1 cliffs. Dev (qwen3:8b, after two dated measurement amendments — reason-
 token truncation, then a composition-aware prompt for the prompted arm): **kernel 1.000 vs
 best-effort prompting 0.765**. A genuine mechanism appeared: the kernel's *deterministic retrieval
 query* (built from the full observation) reliably surfaces both rules; the prompted model's
-self-chosen query often missed one. Hidden verdict (fresh seeds, Wilson-significant gate) pending.
+self-chosen query often missed one. Hidden verdict (fresh seeds 211/223/227): **kernel 0.987 vs prompted 0.884 — gap +0.103,
+Wilson-significant but below the pre-registered 0.15 bar** → by the frozen gate, prompting largely
+suffices; the kernel keeps a small real edge where tasks stress completion and retrieval breadth.
+
+**The completed determinism-dividend curve:** weak model **−0.52** · capable/single-hop **0.00** ·
+capable/multi-hop **+0.10** (significant). The kernel is a guarantees layer with a modest
+composition-time edge — not a capability multiplier. Next: isolate whether that +0.10 reduces to one
+bolt-on mechanism (deterministic retrieval-query construction, prereg v7).
 
 ---
 
