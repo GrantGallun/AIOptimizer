@@ -6,6 +6,8 @@ import urllib.error
 import urllib.request
 from http.server import BaseHTTPRequestHandler, ThreadingHTTPServer
 
+from gateway.middleware import ShortCircuit
+
 
 class GatewayServer(ThreadingHTTPServer):
     """Proxy OpenAI chat-completion requests through a middleware pipeline."""
@@ -45,27 +47,39 @@ class _GatewayHandler(BaseHTTPRequestHandler):
             original_chars = len(raw_request.decode("utf-8"))
             original_body = json.loads(raw_request)
             body = original_body
+            applied_middlewares = []
+            short_circuit = None
             for middleware in self.server.middlewares:
-                body = middleware.before_request(body)
+                result = middleware.before_request(body)
+                if isinstance(result, ShortCircuit):
+                    short_circuit = result
+                    break
+                body = result
+                applied_middlewares.append(middleware)
             optimized_payload = json.dumps(body, ensure_ascii=False)
             request_chars = len(optimized_payload)
             optimized = body != original_body
             self._extra = {"request_chars_original": original_chars, "optimized": optimized}
 
-            status, response = self._upstream(optimized_payload)
+            if short_circuit is not None:
+                status = 200
+                response = short_circuit.response
+                self._extra["cached"] = True
+            else:
+                status, response = self._upstream(optimized_payload)
 
-            # Receipts: judge a deterministic sample of optimized requests against the
-            # unoptimized original, so savings always ship with quality evidence.
-            shadow = self.server.shadow
-            if optimized and shadow is not None and shadow.should_sample(original_body):
-                from gateway.receipts import response_text
+                # Receipts: judge a deterministic sample of optimized requests against the
+                # unoptimized original, so savings always ship with quality evidence.
+                shadow = self.server.shadow
+                if optimized and shadow is not None and shadow.should_sample(original_body):
+                    from gateway.receipts import response_text
 
-                _, raw_response = self._upstream(json.dumps(original_body, ensure_ascii=False))
-                self._extra["shadow"] = shadow.judge(
-                    response_text(raw_response), response_text(response)
-                )
+                    _, raw_response = self._upstream(json.dumps(original_body, ensure_ascii=False))
+                    self._extra["shadow"] = shadow.judge(
+                        response_text(raw_response), response_text(response)
+                    )
 
-            for middleware in reversed(self.server.middlewares):
+            for middleware in reversed(applied_middlewares):
                 response = middleware.after_response(body, response)
             response_bytes = self._write_json(status, response)
             response_chars = len(response_bytes.decode("utf-8"))
