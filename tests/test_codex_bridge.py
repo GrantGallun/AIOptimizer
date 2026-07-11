@@ -5,7 +5,8 @@ from pathlib import Path
 from tempfile import TemporaryDirectory
 from unittest.mock import patch
 
-from agent_bus.codex_bridge import PROMPT, build_codex_command, publish_presence, resolve_codex
+from agent_bus.board import Board
+from agent_bus.codex_bridge import PROMPT_TEMPLATE, build_codex_command, commit_completed_task, publish_presence, resolve_codex
 from agent_bus.cache import Cache
 
 
@@ -52,7 +53,7 @@ class CodexBridgeResolutionTests(unittest.TestCase):
 
 
 class CodexBridgeCommandTests(unittest.TestCase):
-    def test_default_command_keeps_workspace_sandbox_and_adds_only_git_metadata(self):
+    def test_default_command_targets_one_task_without_git_metadata_access(self):
         with TemporaryDirectory() as tmp:
             root = Path(tmp) / "agent_bus"
             root.mkdir()
@@ -60,27 +61,58 @@ class CodexBridgeCommandTests(unittest.TestCase):
                 "codex.exe",
                 root=root,
                 extra_args=["--full-auto"],
+                task_id="t0042",
             )
             self.assertEqual(command[:2], ["codex.exe", "--full-auto"])
             self.assertIn("never", command)
             self.assertIn("workspace-write", command)
-            add_dir = command.index("--add-dir")
-            self.assertEqual(Path(command[add_dir + 1]), Path(tmp).resolve() / ".git")
             self.assertEqual(command[-2], "exec")
-            self.assertEqual(command[-1], PROMPT)
+            self.assertIn("t0042 only", command[-1])
+            self.assertIn("Do not run git add/commit", command[-1])
             self.assertNotIn("--dangerously-bypass-approvals-and-sandbox", command)
+            self.assertNotIn("--add-dir", command)
 
-    def test_git_write_can_be_explicitly_disabled(self):
+    def test_prompt_template_requires_task_id(self):
+        self.assertIn("{task_id}", PROMPT_TEMPLATE)
+
+
+class CodexBridgeCommitTests(unittest.TestCase):
+    @staticmethod
+    def _git(root, *args):
+        import subprocess
+
+        return subprocess.run(["git", *args], cwd=root, capture_output=True, text=True)
+
+    def test_completed_task_is_committed_by_declared_write_set(self):
         with TemporaryDirectory() as tmp:
             root = Path(tmp) / "agent_bus"
             root.mkdir()
-            command = build_codex_command(
-                "codex.exe",
-                root=root,
-                extra_args=[],
-                allow_git_write=False,
-            )
-            self.assertNotIn("--add-dir", command)
+            self._git(tmp, "init", "-b", "main")
+            self._git(tmp, "config", "user.email", "bridge@example.invalid")
+            self._git(tmp, "config", "user.name", "bridge")
+            target = Path(tmp) / "target.txt"
+            target.write_text("base")
+            self._git(tmp, "add", "-A")
+            self._git(tmp, "commit", "-m", "seed")
+            board = Board(root)
+            task = board.add(op="impl", title="bridge commit", tier="codex", writes=["target.txt"])
+            claimed = board.dispatch(tier="codex", worker="codex")
+            target.write_text("changed")
+            board.submit(task["id"], worker=claimed["owner"], result="done")
+
+            revision = commit_completed_task(root, task["id"])
+            self.assertTrue(revision)
+            self.assertEqual(self._git(tmp, "show", "HEAD:target.txt").stdout, "changed")
+
+    def test_incomplete_or_undeclared_task_is_not_committed(self):
+        with TemporaryDirectory() as tmp:
+            root = Path(tmp) / "agent_bus"
+            root.mkdir()
+            board = Board(root)
+            incomplete = board.add(op="impl", title="queued", tier="codex", writes=["x.txt"])
+            undeclared = board.add(op="run", title="no writes", tier="codex")
+            self.assertIsNone(commit_completed_task(root, incomplete["id"]))
+            self.assertIsNone(commit_completed_task(root, undeclared["id"]))
 
 
 class CodexBridgePresenceTests(unittest.TestCase):

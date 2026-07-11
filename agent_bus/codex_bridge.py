@@ -29,11 +29,13 @@ from pathlib import Path
 sys.path.insert(0, str(Path(__file__).resolve().parents[1]))
 from agent_bus.board import Board  # noqa: E402
 from agent_bus.cache import Cache  # noqa: E402
+from agent_bus.scheduler import GitCommitter  # noqa: E402
 
-PROMPT = (
+PROMPT_TEMPLATE = (
     "Per AGENTS.md: read the agent bus (python agent_bus/bus.py read --for codex --new) and the "
-    "board (python agent_bus/board.py view). Take the next ready Codex-tier task, implement it, run "
-    "its acceptance command, commit only your declared writes, and post a result to fable on the bus. "
+    "board (python agent_bus/board.py view). Work on Codex task {task_id} only: claim it, implement it, run "
+    "its acceptance command, submit it, and post a result to fable on the bus. Do not run git add/commit; "
+    "the trusted bridge commits only the task's declared writes after this process exits. "
     "Do NOT write verdicts or edit memory/PREREGISTRATION/PROJECT_PLAN. If nothing is actionable, "
     "post a one-line status and stop."
 )
@@ -56,15 +58,30 @@ def build_codex_command(
     *,
     root: str | Path,
     extra_args: list[str],
-    allow_git_write: bool = True,
+    task_id: str,
 ) -> list[str]:
-    """Build a headless command with workspace scope plus narrowly writable Git metadata."""
+    """Build one sandboxed headless process for exactly one board task."""
     repo = Path(root).resolve().parent
     command = [codex, *extra_args, "-a", "never", "-s", "workspace-write", "-C", str(repo)]
-    if allow_git_write:
-        command.extend(["--add-dir", str(repo / ".git")])
-    command.extend(["exec", PROMPT])
+    command.extend(["exec", PROMPT_TEMPLATE.format(task_id=task_id)])
     return command
+
+
+def commit_completed_task(root: str | Path, task_id: str) -> str | None:
+    """Commit one completed task's declared paths outside the model sandbox."""
+    board = Board(Path(root))
+    task = board.get(task_id)
+    if task is None or task["state"] not in {"executed", "verified", "retired"}:
+        return None
+    if not task.get("writes"):
+        print(f"[bridge] {task_id} completed without declared writes; not committing")
+        return None
+    revision = GitCommitter(Path(root).resolve().parent)(task)
+    if revision:
+        print(f"[bridge] committed {task_id} declared writes as {revision}")
+    else:
+        print(f"[bridge] {task_id} has no uncommitted declared-path changes")
+    return revision
 
 
 def resolve_codex(explicit: str | None = None, *, environ: dict[str, str] | None = None) -> str | None:
@@ -101,7 +118,6 @@ def main() -> None:
     ap.add_argument("--codex-arg", action="append", default=[], help="Extra arg to `codex exec` (repeatable), e.g. --full-auto.")
     ap.add_argument("--once", action="store_true", help="Check once and exit (for testing).")
     ap.add_argument("--diagnose", action="store_true", help="Resolve Codex and exit without polling or claiming work.")
-    ap.add_argument("--no-git-write", action="store_true", help="Do not explicitly make this repository's .git directory writable.")
     args = ap.parse_args()
 
     codex = resolve_codex(args.codex)
@@ -127,19 +143,24 @@ def main() -> None:
             ids = []
         if ids:
             publish_presence(cache, f"bridge online; dispatching Codex tasks: {','.join(ids)}")
-            print(f"[bridge] {len(ids)} ready Codex task(s) {ids} -> codex exec")
-            cmd = build_codex_command(
-                args.codex,
-                root=args.root,
-                extra_args=args.codex_arg,
-                allow_git_write=not args.no_git_write,
-            )
-            try:
-                subprocess.run(cmd)
-                publish_presence(cache, "bridge online; Codex dispatch returned; polling")
-            except FileNotFoundError:
-                print(f"[bridge] codex binary '{args.codex}' not found — run this where codex is on PATH.")
-                return
+            print(f"[bridge] {len(ids)} ready Codex task(s) {ids}; dispatching one process per task")
+            for task_id in ids:
+                cmd = build_codex_command(
+                    args.codex,
+                    root=args.root,
+                    extra_args=args.codex_arg,
+                    task_id=task_id,
+                )
+                try:
+                    completed = subprocess.run(cmd)
+                except FileNotFoundError:
+                    print(f"[bridge] resolved Codex binary disappeared: {args.codex}")
+                    return
+                if completed.returncode == 0:
+                    commit_completed_task(args.root, task_id)
+                else:
+                    print(f"[bridge] {task_id} Codex process exited {completed.returncode}; not committing")
+            publish_presence(cache, "bridge online; Codex dispatch returned; polling")
         else:
             print("[bridge] no ready Codex task")
             now = time.monotonic()
