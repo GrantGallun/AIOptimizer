@@ -50,6 +50,10 @@ class _GatewayHandler(BaseHTTPRequestHandler):
             raw_request = self.rfile.read(content_length)
             original_chars = len(raw_request.decode("utf-8"))
             original_body = json.loads(raw_request)
+            self._extra = {
+                "path": self.path,
+                "model": original_body.get("model"),
+            }
             body = original_body
             applied_middlewares = []
             short_circuit = None
@@ -63,7 +67,9 @@ class _GatewayHandler(BaseHTTPRequestHandler):
             optimized_payload = json.dumps(body, ensure_ascii=False)
             request_chars = len(optimized_payload)
             optimized = body != original_body
-            self._extra = {"request_chars_original": original_chars, "optimized": optimized}
+            self._extra.update(
+                {"request_chars_original": original_chars, "optimized": optimized}
+            )
 
             if short_circuit is not None:
                 status = 200
@@ -86,6 +92,7 @@ class _GatewayHandler(BaseHTTPRequestHandler):
             for middleware in reversed(applied_middlewares):
                 response = middleware.after_response(body, response)
             response_bytes = self._write_json(status, response)
+            self._extra["status"] = status
             response_chars = len(response_bytes.decode("utf-8"))
         except (json.JSONDecodeError, UnicodeDecodeError, ValueError) as error:
             response_bytes = self._write_json(

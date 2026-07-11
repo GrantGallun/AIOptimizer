@@ -110,7 +110,12 @@ class ShadowEndToEndTests(unittest.TestCase):
             summary = summarize(str(ledger_path))
             self.assertEqual(summary["requests"], 1)
             self.assertEqual(summary["optimized_requests"], 1)
+            self.assertEqual(summary["cached_requests"], 0)
+            self.assertEqual(summary["passthrough_requests"], 0)
             self.assertGreater(summary["request_chars_saved"], 0)
+            self.assertEqual(summary["requests_by_path"], {"/v1/chat/completions": 1})
+            self.assertEqual(summary["responses_by_status"], {"200": 1})
+            self.assertGreaterEqual(summary["p95_latency_ms"], summary["p50_latency_ms"])
             self.assertEqual(summary["shadow_samples"], 1)
             self.assertEqual(len(summary["quality_parity_ci"]), 2)
         finally:

@@ -6,6 +6,7 @@
 from __future__ import annotations
 
 import argparse
+from collections import Counter
 import json
 import sys
 from pathlib import Path
@@ -30,15 +31,34 @@ def summarize(ledger_path: str) -> dict[str, Any]:
         for e in optimized
     )
     parity_hits = sum(bool(e["shadow"].get("parity")) for e in shadows)
+    latencies = sorted(float(e.get("latency_ms", 0.0)) for e in entries)
+
+    def percentile(fraction: float) -> float:
+        if not latencies:
+            return 0.0
+        index = round((len(latencies) - 1) * fraction)
+        return round(latencies[index], 1)
+
+    def counts(field: str) -> dict[str, int]:
+        values = Counter(str(e.get(field) or "unknown") for e in entries)
+        return dict(sorted(values.items()))
+
     summary: dict[str, Any] = {
         "requests": len(entries),
         "optimized_requests": len(optimized),
+        "cached_requests": sum(bool(e.get("cached")) for e in entries),
+        "passthrough_requests": sum(not e.get("optimized") and not e.get("cached") for e in entries),
         "request_chars_saved": chars_saved,
         "mean_latency_ms": (
             round(sum(e.get("latency_ms", 0.0) for e in entries) / len(entries), 1)
             if entries
             else 0.0
         ),
+        "p50_latency_ms": percentile(0.50),
+        "p95_latency_ms": percentile(0.95),
+        "requests_by_path": counts("path"),
+        "requests_by_model": counts("model"),
+        "responses_by_status": counts("status"),
         "shadow_samples": len(shadows),
         "quality_parity_rate": (parity_hits / len(shadows)) if shadows else None,
         "quality_parity_ci": (

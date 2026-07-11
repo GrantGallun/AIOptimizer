@@ -128,6 +128,8 @@ class GatewayTests(unittest.TestCase):
                 self.assertGreater(entry["response_chars"], 0)
                 self.assertGreaterEqual(entry["latency_ms"], 0)
                 self.assertEqual(entry["middlewares"], ["_TagMiddleware"])
+                self.assertEqual(entry["path"], "/v1/chat/completions")
+                self.assertEqual(entry["status"], 200)
 
 
 if __name__ == "__main__":
