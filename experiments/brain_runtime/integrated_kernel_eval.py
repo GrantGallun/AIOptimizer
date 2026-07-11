@@ -44,6 +44,7 @@ from experiments.brain_runtime.coala_ollama import (
 from experiments.brain_runtime.constrained_action_eval import _learn_verified_rule
 from experiments.brain_runtime.context_selection import make_operators
 from experiments.brain_runtime.session_runtime import PersistentBrainRuntime
+from experiments.brain_runtime.stats import wilson_interval
 from experiments.local_worker.ollama_client import DEFAULT_MODEL, Generation, OllamaClient
 
 ARMS = ("naive", "full_kernel")
@@ -84,7 +85,7 @@ def _make_adapter(client: Any, model: str, arm: str, *, max_reason_tokens: int =
             constrained=True,
             action_schema=ACTION_SCHEMA_CONDITIONAL,
         )
-    if arm == "prompted":  # fair baseline: TOLD the discipline, but no deterministic guarantee
+    if arm in ("prompted", "prompted_det_query"):  # fair baseline: TOLD the discipline, no guarantee
         return OllamaCoALAAdapter(
             client,
             model=model,
@@ -94,6 +95,9 @@ def _make_adapter(client: Any, model: str, arm: str, *, max_reason_tokens: int =
             require_reason_before_ground=False,
             constrained=False,
             policy_system=prompted_policy_system or STRONG_POLICY_SYSTEM,
+            # v7 isolation arm: identical to prompted except every retrieve query is
+            # deterministically rebuilt from goal+observation (the kernel's construction).
+            deterministic_retrieve_query=arm == "prompted_det_query",
         )
     return OllamaCoALAAdapter(  # naive: pure LLM-glue
         client,
@@ -109,7 +113,7 @@ def _make_adapter(client: Any, model: str, arm: str, *, max_reason_tokens: int =
 def _memory(arm: str) -> PersistentBrainRuntime:
     # prompted shares the kernel's encoder retrieval so the only thing the kernel adds is the
     # deterministic guarantee (invariants + constrained shape), not better retrieval.
-    return EncoderMemoryRuntime() if arm in ("full_kernel", "prompted") else PersistentBrainRuntime()
+    return EncoderMemoryRuntime() if arm in ("full_kernel", "prompted", "prompted_det_query") else PersistentBrainRuntime()
 
 
 def _answer_cycle(controller: CoALAController, adapter: OllamaCoALAAdapter, problem: dict[str, Any]):
@@ -204,11 +208,15 @@ def _summarize(arm: str, rows: list[dict[str, Any]], metrics: dict[str, Any]) ->
     # This is where the naive stack fails (it grounds immediately) — the real separator.
     retrieved = [r for r in rows if "retrieve" in r["event_kinds"]]
     reasoned = [r for r in rows if "reason" in r["event_kinds"]]
+    recurrence_correct = sum(r["correct"] for r in recurrence)
+    # Empty groups have no estimable interval; match the existing 0.0 empty-group accuracy.
+    recurrence_ci = list(wilson_interval(recurrence_correct, len(recurrence))) if recurrence else [0.0, 0.0]
     return {
         "arm": arm,
         **metrics,
         "first_appearance_accuracy": acc(first),
         "recurrence_accuracy": acc(recurrence),
+        "recurrence_ci": recurrence_ci,
         "recurrence_tasks": len(recurrence),
         "malformed_action_rate": metrics["malformed_actions"] / calls if calls else 0.0,
         "cycle_completion_rate": len(completed) / len(rows) if rows else 0.0,
@@ -245,7 +253,8 @@ def main() -> None:
     for arm in ARMS:
         s = payload["arms"][arm]
         print(f"{arm:<12} recurrence={s['recurrence_accuracy']:.3f} first={s['first_appearance_accuracy']:.3f} "
-              f"malformed={s['malformed_action_rate']:.3f} completion={s['cycle_completion_rate']:.3f}")
+              f"malformed={s['malformed_action_rate']:.3f} completion={s['cycle_completion_rate']:.3f} "
+              f"ci=[{s['recurrence_ci'][0]:.3f},{s['recurrence_ci'][1]:.3f}]")
     print(f"recurrence gap (full_kernel - naive) = {payload['gate']['observed_recurrence_gap']:.3f}")
 
 

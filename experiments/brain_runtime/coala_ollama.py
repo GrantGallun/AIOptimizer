@@ -204,6 +204,7 @@ class OllamaCoALAAdapter:
         action_schema: dict[str, Any] | None = None,
         require_reason_before_ground: bool = False,
         policy_system: str | None = None,
+        deterministic_retrieve_query: bool = False,
     ) -> None:
         actions = tuple(dict.fromkeys(str(action).strip() for action in grounding_actions))
         if not actions or any(not action for action in actions):
@@ -222,6 +223,9 @@ class OllamaCoALAAdapter:
         self.action_schema = action_schema if action_schema is not None else ACTION_SCHEMA
         self.require_reason_before_ground = require_reason_before_ground
         self.policy_system = policy_system if policy_system is not None else POLICY_SYSTEM
+        # v7: override every model-chosen retrieve query with the full goal+observation (the
+        # kernel-fallback construction). Isolates query construction as a bolt-on mechanism.
+        self.deterministic_retrieve_query = deterministic_retrieve_query
         self.metrics = AdapterMetrics()
 
     def policy(self, context: DecisionContext) -> CognitiveAction:
@@ -241,6 +245,11 @@ class OllamaCoALAAdapter:
         except ValueError:
             self.metrics.malformed_actions += 1
             action = CognitiveAction.retrieve(f"{context.goal} {context.observation}", limit=5)
+        if self.deterministic_retrieve_query and action.kind is ActionKind.RETRIEVE:
+            action = CognitiveAction.retrieve(
+                f"{context.goal} {context.observation}",
+                limit=action.arguments.get("limit", 5),
+            )
         retrieved_this_cycle = any(event.action.kind is ActionKind.RETRIEVE for event in context.events)
         if (
             self.require_retrieval_before_terminal
