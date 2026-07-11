@@ -13,10 +13,14 @@ class GatewayServer(ThreadingHTTPServer):
     allow_reuse_address = True
     daemon_threads = True
 
-    def __init__(self, upstream_url, middlewares=(), ledger=None, port=8000):
+    def __init__(self, upstream_url, middlewares=(), ledger=None, port=8000, shadow=None):
         self.upstream_url = str(upstream_url).rstrip("/")
         self.middlewares = tuple(middlewares)
         self.ledger = ledger
+        # Optional gateway.receipts.ShadowJudge: when middlewares changed the body and the
+        # judge samples this request, the ORIGINAL body is also sent upstream and the two
+        # responses are judged; the verdict lands in the ledger entry (the receipts).
+        self.shadow = shadow
         super().__init__(("127.0.0.1", port), _GatewayHandler)
 
 
@@ -34,28 +38,32 @@ class _GatewayHandler(BaseHTTPRequestHandler):
 
         request_chars = 0
         response_chars = 0
+        self._extra = {}
         try:
             content_length = int(self.headers.get("Content-Length", "0"))
             raw_request = self.rfile.read(content_length)
-            request_chars = len(raw_request.decode("utf-8"))
+            original_chars = len(raw_request.decode("utf-8"))
             original_body = json.loads(raw_request)
             body = original_body
             for middleware in self.server.middlewares:
                 body = middleware.before_request(body)
+            optimized_payload = json.dumps(body, ensure_ascii=False)
+            request_chars = len(optimized_payload)
+            optimized = body != original_body
+            self._extra = {"request_chars_original": original_chars, "optimized": optimized}
 
-            upstream_request = urllib.request.Request(
-                self.server.upstream_url + "/v1/chat/completions",
-                data=json.dumps(body, ensure_ascii=False).encode("utf-8"),
-                headers={"Content-Type": "application/json"},
-                method="POST",
-            )
-            try:
-                with urllib.request.urlopen(upstream_request) as upstream_response:
-                    status = upstream_response.status
-                    response = json.loads(upstream_response.read())
-            except urllib.error.HTTPError as error:
-                status = error.code
-                response = json.loads(error.read())
+            status, response = self._upstream(optimized_payload)
+
+            # Receipts: judge a deterministic sample of optimized requests against the
+            # unoptimized original, so savings always ship with quality evidence.
+            shadow = self.server.shadow
+            if optimized and shadow is not None and shadow.should_sample(original_body):
+                from gateway.receipts import response_text
+
+                _, raw_response = self._upstream(json.dumps(original_body, ensure_ascii=False))
+                self._extra["shadow"] = shadow.judge(
+                    response_text(raw_response), response_text(response)
+                )
 
             for middleware in reversed(self.server.middlewares):
                 response = middleware.after_response(body, response)
@@ -74,18 +82,31 @@ class _GatewayHandler(BaseHTTPRequestHandler):
         finally:
             self._record(request_chars, response_chars, started)
 
+    def _upstream(self, payload):
+        upstream_request = urllib.request.Request(
+            self.server.upstream_url + "/v1/chat/completions",
+            data=payload.encode("utf-8"),
+            headers={"Content-Type": "application/json"},
+            method="POST",
+        )
+        try:
+            with urllib.request.urlopen(upstream_request) as upstream_response:
+                return upstream_response.status, json.loads(upstream_response.read())
+        except urllib.error.HTTPError as error:
+            return error.code, json.loads(error.read())
+
     def _record(self, request_chars, response_chars, started):
         if self.server.ledger is not None:
-            self.server.ledger.record(
-                {
-                    "request_chars": request_chars,
-                    "response_chars": response_chars,
-                    "latency_ms": (time.perf_counter() - started) * 1000,
-                    "middlewares": [
-                        type(middleware).__name__ for middleware in self.server.middlewares
-                    ],
-                }
-            )
+            entry = {
+                "request_chars": request_chars,
+                "response_chars": response_chars,
+                "latency_ms": (time.perf_counter() - started) * 1000,
+                "middlewares": [
+                    type(middleware).__name__ for middleware in self.server.middlewares
+                ],
+            }
+            entry.update(getattr(self, "_extra", {}))
+            self.server.ledger.record(entry)
 
     def _write_json(self, status, body):
         payload = json.dumps(body, ensure_ascii=False, separators=(",", ":")).encode("utf-8")
