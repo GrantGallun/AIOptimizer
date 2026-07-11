@@ -174,6 +174,10 @@ def _summarize(arm: str, rows: list[dict[str, Any]], metrics: dict[str, Any]) ->
     completed = [r for r in rows if not r["incomplete"]]
     calls = metrics["calls"]
     acc = lambda group: (sum(r["correct"] for r in group) / len(group)) if group else 0.0
+    # Structural participation: did the cycle actually retrieve / reason before ending?
+    # This is where the naive stack fails (it grounds immediately) — the real separator.
+    retrieved = [r for r in rows if "retrieve" in r["event_kinds"]]
+    reasoned = [r for r in rows if "reason" in r["event_kinds"]]
     return {
         "arm": arm,
         **metrics,
@@ -182,6 +186,8 @@ def _summarize(arm: str, rows: list[dict[str, Any]], metrics: dict[str, Any]) ->
         "recurrence_tasks": len(recurrence),
         "malformed_action_rate": metrics["malformed_actions"] / calls if calls else 0.0,
         "cycle_completion_rate": len(completed) / len(rows) if rows else 0.0,
+        "retrieval_participation_rate": len(retrieved) / len(rows) if rows else 0.0,
+        "reasoning_participation_rate": len(reasoned) / len(rows) if rows else 0.0,
     }
 
 

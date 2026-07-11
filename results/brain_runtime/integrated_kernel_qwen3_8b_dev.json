@@ -1,0 +1,5752 @@
+{
+  "arms": {
+    "full_kernel": {
+      "arm": "full_kernel",
+      "calls": 600,
+      "completion_tokens": 16142,
+      "cycle_completion_rate": 1.0,
+      "first_appearance_accuracy": 0.0,
+      "forced_reasons": 150,
+      "forced_retrievals": 150,
+      "load_duration_ns": 76672268800,
+      "malformed_action_rate": 0.0,
+      "malformed_actions": 0,
+      "prompt_tokens": 229001,
+      "recurrence_accuracy": 1.0,
+      "recurrence_tasks": 120,
+      "total_duration_ns": 225908590200
+    },
+    "naive": {
+      "arm": "naive",
+      "calls": 150,
+      "completion_tokens": 2605,
+      "cycle_completion_rate": 1.0,
+      "first_appearance_accuracy": 0.0,
+      "forced_reasons": 0,
+      "forced_retrievals": 0,
+      "load_duration_ns": 21305683900,
+      "malformed_action_rate": 0.0,
+      "malformed_actions": 0,
+      "prompt_tokens": 29980,
+      "recurrence_accuracy": 0.0,
+      "recurrence_tasks": 120,
+      "total_duration_ns": 42956627200
+    }
+  },
+  "benchmark": "integrated-kernel-v4",
+  "elapsed_seconds": 291.522,
+  "gate": {
+    "full_kernel_malformed_rate": 0.0,
+    "naive_malformed_rate": 0.0,
+    "note": "Fable reads the hidden gate and writes the verdict.",
+    "observed_recurrence_gap": 1.0,
+    "owner": "fable",
+    "required_recurrence_gap": 0.3
+  },
+  "model": "qwen3:8b",
+  "operator_count": 30,
+  "repetitions": 5,
+  "rows": [
+    {
+      "a": 4,
+      "answer": null,
+      "arm": "naive",
+      "b": 5,
+      "correct": false,
+      "event_kinds": [
+        "ground"
+      ],
+      "expected": 20,
+      "first_appearance": true,
+      "incomplete": false,
+      "operator": "cpena",
+      "response": "",
+      "rule": "cpena(a,b) = 4 times max(a, b)",
+      "seed": 20260711,
+      "step": 0
+    },
+    {
+      "a": 7,
+      "answer": null,
+      "arm": "naive",
+      "b": 8,
+      "correct": false,
+      "event_kinds": [
+        "ground"
+      ],
+      "expected": 7,
+      "first_appearance": true,
+      "incomplete": false,
+      "operator": "kbape",
+      "response": "",
+      "rule": "kbape(a,b) = |a - b| + 6",
+      "seed": 20260711,
+      "step": 1
+    },
+    {
+      "a": 7,
+      "answer": null,
+      "arm": "naive",
+      "b": 7,
+      "correct": false,
+      "event_kinds": [
+        "ground"
+      ],
+      "expected": 9,
+      "first_appearance": true,
+      "incomplete": false,
+      "operator": "vnafo",
+      "response": "",
+      "rule": "vnafo(a,b) = |a - b| + 9",
+      "seed": 20260711,
+      "step": 2
+    },
+    {
+      "a": 6,
+      "answer": null,
+      "arm": "naive",
+      "b": 8,
+      "correct": false,
+      "event_kinds": [
+        "ground"
+      ],
+      "expected": 24,
+      "first_appearance": true,
+      "incomplete": false,
+      "operator": "rtefi",
+      "response": "",
+      "rule": "rtefi(a,b) = 3 times max(a, b)",
+      "seed": 20260711,
+      "step": 3
+    },
+    {
+      "a": 9,
+      "answer": null,
+      "arm": "naive",
+      "b": 4,
+      "correct": false,
+      "event_kinds": [
+        "ground"
+      ],
+      "expected": 18,
+      "first_appearance": true,
+      "incomplete": false,
+      "operator": "cpase",
+      "response": "",
+      "rule": "cpase(a,b) = a + b + 5",
+      "seed": 20260711,
+      "step": 4
+    },
+    {
+      "a": 4,
+      "answer": null,
+      "arm": "naive",
+      "b": 7,
+      "correct": false,
+      "event_kinds": [
+        "ground"
+      ],
+      "expected": 19,
+      "first_appearance": true,
+      "incomplete": false,
+      "operator": "cvuka",
+      "response": "",
+      "rule": "cvuka(a,b) = (a times 3) + b",
+      "seed": 20260711,
+      "step": 5
+    },
+    {
+      "a": 9,
+      "answer": null,
+      "arm": "naive",
+      "b": 5,
+      "correct": false,
+      "event_kinds": [
+        "ground"
+      ],
+      "expected": 15,
+      "first_appearance": true,
+      "incomplete": false,
+      "operator": "nkogu",
+      "response": "",
+      "rule": "nkogu(a,b) = a + b + 1",
+      "seed": 20260711,
+      "step": 6
+    },
+    {
+      "a": 2,
+      "answer": null,
+      "arm": "naive",
+      "b": 6,
+      "correct": false,
+      "event_kinds": [
+        "ground"
+      ],
+      "expected": 12,
+      "first_appearance": true,
+      "incomplete": false,
+      "operator": "bdisi",
+      "response": "",
+      "rule": "bdisi(a,b) = 2 times max(a, b)",
+      "seed": 20260711,
+      "step": 7
+    },
+    {
+      "a": 9,
+      "answer": null,
+      "arm": "naive",
+      "b": 2,
+      "correct": false,
+      "event_kinds": [
+        "ground"
+      ],
+      "expected": 12,
+      "first_appearance": true,
+      "incomplete": false,
+      "operator": "gnepo",
+      "response": "",
+      "rule": "gnepo(a,b) = a + b + 1",
+      "seed": 20260711,
+      "step": 8
+    },
+    {
+      "a": 2,
+      "answer": null,
+      "arm": "naive",
+      "b": 6,
+      "correct": false,
+      "event_kinds": [
+        "ground"
+      ],
+      "expected": 14,
+      "first_appearance": true,
+      "incomplete": false,
+      "operator": "mbazi",
+      "response": "",
+      "rule": "mbazi(a,b) = (a times 4) + b",
+      "seed": 20260711,
+      "step": 9
+    },
+    {
+      "a": 5,
+      "answer": null,
+      "arm": "naive",
+      "b": 8,
+      "correct": false,
+      "event_kinds": [
+        "ground"
+      ],
+      "expected": 16,
+      "first_appearance": true,
+      "incomplete": false,
+      "operator": "srira",
+      "response": "",
+      "rule": "srira(a,b) = a + b + 3",
+      "seed": 20260711,
+      "step": 10
+    },
+    {
+      "a": 2,
+      "answer": null,
+      "arm": "naive",
+      "b": 2,
+      "correct": false,
+      "event_kinds": [
+        "ground"
+      ],
+      "expected": 8,
+      "first_appearance": true,
+      "incomplete": false,
+      "operator": "rluco",
+      "response": "",
+      "rule": "rluco(a,b) = 4 times max(a, b)",
+      "seed": 20260711,
+      "step": 11
+    },
+    {
+      "a": 3,
+      "answer": null,
+      "arm": "naive",
+      "b": 6,
+      "correct": false,
+      "event_kinds": [
+        "ground"
+      ],
+      "expected": 18,
+      "first_appearance": true,
+      "incomplete": false,
+      "operator": "cfure",
+      "response": "",
+      "rule": "cfure(a,b) = 3 times max(a, b)",
+      "seed": 20260711,
+      "step": 12
+    },
+    {
+      "a": 4,
+      "answer": null,
+      "arm": "naive",
+      "b": 9,
+      "correct": false,
+      "event_kinds": [
+        "ground"
+      ],
+      "expected": 22,
+      "first_appearance": true,
+      "incomplete": false,
+      "operator": "cvonu",
+      "response": "",
+      "rule": "cvonu(a,b) = a + b + 9",
+      "seed": 20260711,
+      "step": 13
+    },
+    {
+      "a": 2,
+      "answer": null,
+      "arm": "naive",
+      "b": 2,
+      "correct": false,
+      "event_kinds": [
+        "ground"
+      ],
+      "expected": 6,
+      "first_appearance": true,
+      "incomplete": false,
+      "operator": "zlufi",
+      "response": "",
+      "rule": "zlufi(a,b) = 3 times max(a, b)",
+      "seed": 20260711,
+      "step": 14
+    },
+    {
+      "a": 2,
+      "answer": null,
+      "arm": "naive",
+      "b": 3,
+      "correct": false,
+      "event_kinds": [
+        "ground"
+      ],
+      "expected": 7,
+      "first_appearance": true,
+      "incomplete": false,
+      "operator": "gcaco",
+      "response": "",
+      "rule": "gcaco(a,b) = |a - b| + 6",
+      "seed": 20260711,
+      "step": 15
+    },
+    {
+      "a": 8,
+      "answer": null,
+      "arm": "naive",
+      "b": 2,
+      "correct": false,
+      "event_kinds": [
+        "ground"
+      ],
+      "expected": 34,
+      "first_appearance": true,
+      "incomplete": false,
+      "operator": "pfiso",
+      "response": "",
+      "rule": "pfiso(a,b) = (a times 4) + b",
+      "seed": 20260711,
+      "step": 16
+    },
+    {
+      "a": 7,
+      "answer": null,
+      "arm": "naive",
+      "b": 2,
+      "correct": false,
+      "event_kinds": [
+        "ground"
+      ],
+      "expected": 11,
+      "first_appearance": true,
+      "incomplete": false,
+      "operator": "nnosa",
+      "response": "",
+      "rule": "nnosa(a,b) = a + b + 2",
+      "seed": 20260711,
+      "step": 17
+    },
+    {
+      "a": 9,
+      "answer": null,
+      "arm": "naive",
+      "b": 8,
+      "correct": false,
+      "event_kinds": [
+        "ground"
+      ],
+      "expected": 18,
+      "first_appearance": true,
+      "incomplete": false,
+      "operator": "kramu",
+      "response": "",
+      "rule": "kramu(a,b) = 2 times max(a, b)",
+      "seed": 20260711,
+      "step": 18
+    },
+    {
+      "a": 4,
+      "answer": null,
+      "arm": "naive",
+      "b": 8,
+      "correct": false,
+      "event_kinds": [
+        "ground"
+      ],
+      "expected": 17,
+      "first_appearance": true,
+      "incomplete": false,
+      "operator": "rkofu",
+      "response": "",
+      "rule": "rkofu(a,b) = a + b + 5",
+      "seed": 20260711,
+      "step": 19
+    },
+    {
+      "a": 8,
+      "answer": null,
+      "arm": "naive",
+      "b": 4,
+      "correct": false,
+      "event_kinds": [
+        "ground"
+      ],
+      "expected": 24,
+      "first_appearance": true,
+      "incomplete": false,
+      "operator": "lnogu",
+      "response": "",
+      "rule": "lnogu(a,b) = 3 times max(a, b)",
+      "seed": 20260711,
+      "step": 20
+    },
+    {
+      "a": 4,
+      "answer": null,
+      "arm": "naive",
+      "b": 9,
+      "correct": false,
+      "event_kinds": [
+        "ground"
+      ],
+      "expected": 36,
+      "first_appearance": true,
+      "incomplete": false,
+      "operator": "zgelo",
+      "response": "",
+      "rule": "zgelo(a,b) = 4 times max(a, b)",
+      "seed": 20260711,
+      "step": 21
+    },
+    {
+      "a": 4,
+      "answer": null,
+      "arm": "naive",
+      "b": 7,
+      "correct": false,
+      "event_kinds": [
+        "ground"
+      ],
+      "expected": 21,
+      "first_appearance": true,
+      "incomplete": false,
+      "operator": "cpaku",
+      "response": "",
+      "rule": "cpaku(a,b) = 3 times max(a, b)",
+      "seed": 20260711,
+      "step": 22
+    },
+    {
+      "a": 5,
+      "answer": null,
+      "arm": "naive",
+      "b": 9,
+      "correct": false,
+      "event_kinds": [
+        "ground"
+      ],
+      "expected": 19,
+      "first_appearance": true,
+      "incomplete": false,
+      "operator": "ksilo",
+      "response": "",
+      "rule": "ksilo(a,b) = (a times 2) + b",
+      "seed": 20260711,
+      "step": 23
+    },
+    {
+      "a": 9,
+      "answer": null,
+      "arm": "naive",
+      "b": 9,
+      "correct": false,
+      "event_kinds": [
+        "ground"
+      ],
+      "expected": 18,
+      "first_appearance": true,
+      "incomplete": false,
+      "operator": "rpaza",
+      "response": "",
+      "rule": "rpaza(a,b) = 2 times max(a, b)",
+      "seed": 20260711,
+      "step": 24
+    },
+    {
+      "a": 8,
+      "answer": null,
+      "arm": "naive",
+      "b": 4,
+      "correct": false,
+      "event_kinds": [
+        "ground"
+      ],
+      "expected": 28,
+      "first_appearance": true,
+      "incomplete": false,
+      "operator": "nfunu",
+      "response": "",
+      "rule": "nfunu(a,b) = (a times 3) + b",
+      "seed": 20260711,
+      "step": 25
+    },
+    {
+      "a": 2,
+      "answer": null,
+      "arm": "naive",
+      "b": 8,
+      "correct": false,
+      "event_kinds": [
+        "ground"
+      ],
+      "expected": 32,
+      "first_appearance": true,
+      "incomplete": false,
+      "operator": "kvapa",
+      "response": "",
+      "rule": "kvapa(a,b) = 4 times max(a, b)",
+      "seed": 20260711,
+      "step": 26
+    },
+    {
+      "a": 8,
+      "answer": null,
+      "arm": "naive",
+      "b": 5,
+      "correct": false,
+      "event_kinds": [
+        "ground"
+      ],
+      "expected": 7,
+      "first_appearance": true,
+      "incomplete": false,
+      "operator": "rzude",
+      "response": "",
+      "rule": "rzude(a,b) = |a - b| + 4",
+      "seed": 20260711,
+      "step": 27
+    },
+    {
+      "a": 4,
+      "answer": null,
+      "arm": "naive",
+      "b": 5,
+      "correct": false,
+      "event_kinds": [
+        "ground"
+      ],
+      "expected": 20,
+      "first_appearance": true,
+      "incomplete": false,
+      "operator": "cfike",
+      "response": "",
+      "rule": "cfike(a,b) = 4 times max(a, b)",
+      "seed": 20260711,
+      "step": 28
+    },
+    {
+      "a": 7,
+      "answer": null,
+      "arm": "naive",
+      "b": 4,
+      "correct": false,
+      "event_kinds": [
+        "ground"
+      ],
+      "expected": 16,
+      "first_appearance": true,
+      "incomplete": false,
+      "operator": "grino",
+      "response": "",
+      "rule": "grino(a,b) = a + b + 5",
+      "seed": 20260711,
+      "step": 29
+    },
+    {
+      "a": 5,
+      "answer": null,
+      "arm": "naive",
+      "b": 3,
+      "correct": false,
+      "event_kinds": [
+        "ground"
+      ],
+      "expected": 23,
+      "first_appearance": false,
+      "incomplete": false,
+      "operator": "mbazi",
+      "response": "",
+      "rule": "mbazi(a,b) = (a times 4) + b",
+      "seed": 20260711,
+      "step": 30
+    },
+    {
+      "a": 7,
+      "answer": null,
+      "arm": "naive",
+      "b": 3,
+      "correct": false,
+      "event_kinds": [
+        "ground"
+      ],
+      "expected": 13,
+      "first_appearance": false,
+      "incomplete": false,
+      "operator": "srira",
+      "response": "",
+      "rule": "srira(a,b) = a + b + 3",
+      "seed": 20260711,
+      "step": 31
+    },
+    {
+      "a": 2,
+      "answer": null,
+      "arm": "naive",
+      "b": 3,
+      "correct": false,
+      "event_kinds": [
+        "ground"
+      ],
+      "expected": 9,
+      "first_appearance": false,
+      "incomplete": false,
+      "operator": "lnogu",
+      "response": "",
+      "rule": "lnogu(a,b) = 3 times max(a, b)",
+      "seed": 20260711,
+      "step": 32
+    },
+    {
+      "a": 8,
+      "answer": null,
+      "arm": "naive",
+      "b": 4,
+      "correct": false,
+      "event_kinds": [
+        "ground"
+      ],
+      "expected": 10,
+      "first_appearance": false,
+      "incomplete": false,
+      "operator": "kbape",
+      "response": "",
+      "rule": "kbape(a,b) = |a - b| + 6",
+      "seed": 20260711,
+      "step": 33
+    },
+    {
+      "a": 5,
+      "answer": null,
+      "arm": "naive",
+      "b": 2,
+      "correct": false,
+      "event_kinds": [
+        "ground"
+      ],
+      "expected": 7,
+      "first_appearance": false,
+      "incomplete": false,
+      "operator": "rzude",
+      "response": "",
+      "rule": "rzude(a,b) = |a - b| + 4",
+      "seed": 20260711,
+      "step": 34
+    },
+    {
+      "a": 8,
+      "answer": null,
+      "arm": "naive",
+      "b": 4,
+      "correct": false,
+      "event_kinds": [
+        "ground"
+      ],
+      "expected": 24,
+      "first_appearance": false,
+      "incomplete": false,
+      "operator": "cpaku",
+      "response": "",
+      "rule": "cpaku(a,b) = 3 times max(a, b)",
+      "seed": 20260711,
+      "step": 35
+    },
+    {
+      "a": 4,
+      "answer": null,
+      "arm": "naive",
+      "b": 4,
+      "correct": false,
+      "event_kinds": [
+        "ground"
+      ],
+      "expected": 16,
+      "first_appearance": false,
+      "incomplete": false,
+      "operator": "cpena",
+      "response": "",
+      "rule": "cpena(a,b) = 4 times max(a, b)",
+      "seed": 20260711,
+      "step": 36
+    },
+    {
+      "a": 7,
+      "answer": null,
+      "arm": "naive",
+      "b": 5,
+      "correct": false,
+      "event_kinds": [
+        "ground"
+      ],
+      "expected": 17,
+      "first_appearance": false,
+      "incomplete": false,
+      "operator": "rkofu",
+      "response": "",
+      "rule": "rkofu(a,b) = a + b + 5",
+      "seed": 20260711,
+      "step": 37
+    },
+    {
+      "a": 4,
+      "answer": null,
+      "arm": "naive",
+      "b": 4,
+      "correct": false,
+      "event_kinds": [
+        "ground"
+      ],
+      "expected": 13,
+      "first_appearance": false,
+      "incomplete": false,
+      "operator": "grino",
+      "response": "",
+      "rule": "grino(a,b) = a + b + 5",
+      "seed": 20260711,
+      "step": 38
+    },
+    {
+      "a": 6,
+      "answer": null,
+      "arm": "naive",
+      "b": 3,
+      "correct": false,
+      "event_kinds": [
+        "ground"
+      ],
+      "expected": 24,
+      "first_appearance": false,
+      "incomplete": false,
+      "operator": "zgelo",
+      "response": "",
+      "rule": "zgelo(a,b) = 4 times max(a, b)",
+      "seed": 20260711,
+      "step": 39
+    },
+    {
+      "a": 4,
+      "answer": null,
+      "arm": "naive",
+      "b": 9,
+      "correct": false,
+      "event_kinds": [
+        "ground"
+      ],
+      "expected": 36,
+      "first_appearance": false,
+      "incomplete": false,
+      "operator": "rluco",
+      "response": "",
+      "rule": "rluco(a,b) = 4 times max(a, b)",
+      "seed": 20260711,
+      "step": 40
+    },
+    {
+      "a": 5,
+      "answer": null,
+      "arm": "naive",
+      "b": 7,
+      "correct": false,
+      "event_kinds": [
+        "ground"
+      ],
+      "expected": 21,
+      "first_appearance": false,
+      "incomplete": false,
+      "operator": "cvonu",
+      "response": "",
+      "rule": "cvonu(a,b) = a + b + 9",
+      "seed": 20260711,
+      "step": 41
+    },
+    {
+      "a": 2,
+      "answer": null,
+      "arm": "naive",
+      "b": 9,
+      "correct": false,
+      "event_kinds": [
+        "ground"
+      ],
+      "expected": 15,
+      "first_appearance": false,
+      "incomplete": false,
+      "operator": "nfunu",
+      "response": "",
+      "rule": "nfunu(a,b) = (a times 3) + b",
+      "seed": 20260711,
+      "step": 42
+    },
+    {
+      "a": 8,
+      "answer": null,
+      "arm": "naive",
+      "b": 9,
+      "correct": false,
+      "event_kinds": [
+        "ground"
+      ],
+      "expected": 25,
+      "first_appearance": false,
+      "incomplete": false,
+      "operator": "ksilo",
+      "response": "",
+      "rule": "ksilo(a,b) = (a times 2) + b",
+      "seed": 20260711,
+      "step": 43
+    },
+    {
+      "a": 5,
+      "answer": null,
+      "arm": "naive",
+      "b": 7,
+      "correct": false,
+      "event_kinds": [
+        "ground"
+      ],
+      "expected": 21,
+      "first_appearance": false,
+      "incomplete": false,
+      "operator": "rtefi",
+      "response": "",
+      "rule": "rtefi(a,b) = 3 times max(a, b)",
+      "seed": 20260711,
+      "step": 44
+    },
+    {
+      "a": 6,
+      "answer": null,
+      "arm": "naive",
+      "b": 2,
+      "correct": false,
+      "event_kinds": [
+        "ground"
+      ],
+      "expected": 24,
+      "first_appearance": false,
+      "incomplete": false,
+      "operator": "kvapa",
+      "response": "",
+      "rule": "kvapa(a,b) = 4 times max(a, b)",
+      "seed": 20260711,
+      "step": 45
+    },
+    {
+      "a": 5,
+      "answer": null,
+      "arm": "naive",
+      "b": 3,
+      "correct": false,
+      "event_kinds": [
+        "ground"
+      ],
+      "expected": 9,
+      "first_appearance": false,
+      "incomplete": false,
+      "operator": "nkogu",
+      "response": "",
+      "rule": "nkogu(a,b) = a + b + 1",
+      "seed": 20260711,
+      "step": 46
+    },
+    {
+      "a": 9,
+      "answer": null,
+      "arm": "naive",
+      "b": 6,
+      "correct": false,
+      "event_kinds": [
+        "ground"
+      ],
+      "expected": 33,
+      "first_appearance": false,
+      "incomplete": false,
+      "operator": "cvuka",
+      "response": "",
+      "rule": "cvuka(a,b) = (a times 3) + b",
+      "seed": 20260711,
+      "step": 47
+    },
+    {
+      "a": 3,
+      "answer": null,
+      "arm": "naive",
+      "b": 6,
+      "correct": false,
+      "event_kinds": [
+        "ground"
+      ],
+      "expected": 12,
+      "first_appearance": false,
+      "incomplete": false,
+      "operator": "vnafo",
+      "response": "",
+      "rule": "vnafo(a,b) = |a - b| + 9",
+      "seed": 20260711,
+      "step": 48
+    },
+    {
+      "a": 4,
+      "answer": null,
+      "arm": "naive",
+      "b": 7,
+      "correct": false,
+      "event_kinds": [
+        "ground"
+      ],
+      "expected": 14,
+      "first_appearance": false,
+      "incomplete": false,
+      "operator": "kramu",
+      "response": "",
+      "rule": "kramu(a,b) = 2 times max(a, b)",
+      "seed": 20260711,
+      "step": 49
+    },
+    {
+      "a": 5,
+      "answer": null,
+      "arm": "naive",
+      "b": 4,
+      "correct": false,
+      "event_kinds": [
+        "ground"
+      ],
+      "expected": 10,
+      "first_appearance": false,
+      "incomplete": false,
+      "operator": "bdisi",
+      "response": "",
+      "rule": "bdisi(a,b) = 2 times max(a, b)",
+      "seed": 20260711,
+      "step": 50
+    },
+    {
+      "a": 5,
+      "answer": null,
+      "arm": "naive",
+      "b": 3,
+      "correct": false,
+      "event_kinds": [
+        "ground"
+      ],
+      "expected": 15,
+      "first_appearance": false,
+      "incomplete": false,
+      "operator": "zlufi",
+      "response": "",
+      "rule": "zlufi(a,b) = 3 times max(a, b)",
+      "seed": 20260711,
+      "step": 51
+    },
+    {
+      "a": 5,
+      "answer": null,
+      "arm": "naive",
+      "b": 5,
+      "correct": false,
+      "event_kinds": [
+        "ground"
+      ],
+      "expected": 10,
+      "first_appearance": false,
+      "incomplete": false,
+      "operator": "rpaza",
+      "response": "",
+      "rule": "rpaza(a,b) = 2 times max(a, b)",
+      "seed": 20260711,
+      "step": 52
+    },
+    {
+      "a": 7,
+      "answer": null,
+      "arm": "naive",
+      "b": 2,
+      "correct": false,
+      "event_kinds": [
+        "ground"
+      ],
+      "expected": 28,
+      "first_appearance": false,
+      "incomplete": false,
+      "operator": "cfike",
+      "response": "",
+      "rule": "cfike(a,b) = 4 times max(a, b)",
+      "seed": 20260711,
+      "step": 53
+    },
+    {
+      "a": 9,
+      "answer": null,
+      "arm": "naive",
+      "b": 4,
+      "correct": false,
+      "event_kinds": [
+        "ground"
+      ],
+      "expected": 14,
+      "first_appearance": false,
+      "incomplete": false,
+      "operator": "gnepo",
+      "response": "",
+      "rule": "gnepo(a,b) = a + b + 1",
+      "seed": 20260711,
+      "step": 54
+    },
+    {
+      "a": 6,
+      "answer": null,
+      "arm": "naive",
+      "b": 4,
+      "correct": false,
+      "event_kinds": [
+        "ground"
+      ],
+      "expected": 28,
+      "first_appearance": false,
+      "incomplete": false,
+      "operator": "pfiso",
+      "response": "",
+      "rule": "pfiso(a,b) = (a times 4) + b",
+      "seed": 20260711,
+      "step": 55
+    },
+    {
+      "a": 7,
+      "answer": null,
+      "arm": "naive",
+      "b": 8,
+      "correct": false,
+      "event_kinds": [
+        "ground"
+      ],
+      "expected": 17,
+      "first_appearance": false,
+      "incomplete": false,
+      "operator": "nnosa",
+      "response": "",
+      "rule": "nnosa(a,b) = a + b + 2",
+      "seed": 20260711,
+      "step": 56
+    },
+    {
+      "a": 3,
+      "answer": null,
+      "arm": "naive",
+      "b": 2,
+      "correct": false,
+      "event_kinds": [
+        "ground"
+      ],
+      "expected": 10,
+      "first_appearance": false,
+      "incomplete": false,
+      "operator": "cpase",
+      "response": "",
+      "rule": "cpase(a,b) = a + b + 5",
+      "seed": 20260711,
+      "step": 57
+    },
+    {
+      "a": 5,
+      "answer": null,
+      "arm": "naive",
+      "b": 7,
+      "correct": false,
+      "event_kinds": [
+        "ground"
+      ],
+      "expected": 21,
+      "first_appearance": false,
+      "incomplete": false,
+      "operator": "cfure",
+      "response": "",
+      "rule": "cfure(a,b) = 3 times max(a, b)",
+      "seed": 20260711,
+      "step": 58
+    },
+    {
+      "a": 5,
+      "answer": null,
+      "arm": "naive",
+      "b": 9,
+      "correct": false,
+      "event_kinds": [
+        "ground"
+      ],
+      "expected": 10,
+      "first_appearance": false,
+      "incomplete": false,
+      "operator": "gcaco",
+      "response": "",
+      "rule": "gcaco(a,b) = |a - b| + 6",
+      "seed": 20260711,
+      "step": 59
+    },
+    {
+      "a": 2,
+      "answer": null,
+      "arm": "naive",
+      "b": 4,
+      "correct": false,
+      "event_kinds": [
+        "ground"
+      ],
+      "expected": 11,
+      "first_appearance": false,
+      "incomplete": false,
+      "operator": "grino",
+      "response": "",
+      "rule": "grino(a,b) = a + b + 5",
+      "seed": 20260711,
+      "step": 60
+    },
+    {
+      "a": 4,
+      "answer": null,
+      "arm": "naive",
+      "b": 4,
+      "correct": false,
+      "event_kinds": [
+        "ground"
+      ],
+      "expected": 10,
+      "first_appearance": false,
+      "incomplete": false,
+      "operator": "nnosa",
+      "response": "",
+      "rule": "nnosa(a,b) = a + b + 2",
+      "seed": 20260711,
+      "step": 61
+    },
+    {
+      "a": 9,
+      "answer": null,
+      "arm": "naive",
+      "b": 2,
+      "correct": false,
+      "event_kinds": [
+        "ground"
+      ],
+      "expected": 13,
+      "first_appearance": false,
+      "incomplete": false,
+      "operator": "gcaco",
+      "response": "",
+      "rule": "gcaco(a,b) = |a - b| + 6",
+      "seed": 20260711,
+      "step": 62
+    },
+    {
+      "a": 8,
+      "answer": null,
+      "arm": "naive",
+      "b": 7,
+      "correct": false,
+      "event_kinds": [
+        "ground"
+      ],
+      "expected": 16,
+      "first_appearance": false,
+      "incomplete": false,
+      "operator": "gnepo",
+      "response": "",
+      "rule": "gnepo(a,b) = a + b + 1",
+      "seed": 20260711,
+      "step": 63
+    },
+    {
+      "a": 9,
+      "answer": null,
+      "arm": "naive",
+      "b": 4,
+      "correct": false,
+      "event_kinds": [
+        "ground"
+      ],
+      "expected": 18,
+      "first_appearance": false,
+      "incomplete": false,
+      "operator": "cpase",
+      "response": "",
+      "rule": "cpase(a,b) = a + b + 5",
+      "seed": 20260711,
+      "step": 64
+    },
+    {
+      "a": 2,
+      "answer": null,
+      "arm": "naive",
+      "b": 2,
+      "correct": false,
+      "event_kinds": [
+        "ground"
+      ],
+      "expected": 8,
+      "first_appearance": false,
+      "incomplete": false,
+      "operator": "kvapa",
+      "response": "",
+      "rule": "kvapa(a,b) = 4 times max(a, b)",
+      "seed": 20260711,
+      "step": 65
+    },
+    {
+      "a": 7,
+      "answer": null,
+      "arm": "naive",
+      "b": 5,
+      "correct": false,
+      "event_kinds": [
+        "ground"
+      ],
+      "expected": 33,
+      "first_appearance": false,
+      "incomplete": false,
+      "operator": "pfiso",
+      "response": "",
+      "rule": "pfiso(a,b) = (a times 4) + b",
+      "seed": 20260711,
+      "step": 66
+    },
+    {
+      "a": 7,
+      "answer": null,
+      "arm": "naive",
+      "b": 4,
+      "correct": false,
+      "event_kinds": [
+        "ground"
+      ],
+      "expected": 28,
+      "first_appearance": false,
+      "incomplete": false,
+      "operator": "rluco",
+      "response": "",
+      "rule": "rluco(a,b) = 4 times max(a, b)",
+      "seed": 20260711,
+      "step": 67
+    },
+    {
+      "a": 4,
+      "answer": null,
+      "arm": "naive",
+      "b": 2,
+      "correct": false,
+      "event_kinds": [
+        "ground"
+      ],
+      "expected": 12,
+      "first_appearance": false,
+      "incomplete": false,
+      "operator": "lnogu",
+      "response": "",
+      "rule": "lnogu(a,b) = 3 times max(a, b)",
+      "seed": 20260711,
+      "step": 68
+    },
+    {
+      "a": 7,
+      "answer": null,
+      "arm": "naive",
+      "b": 7,
+      "correct": false,
+      "event_kinds": [
+        "ground"
+      ],
+      "expected": 14,
+      "first_appearance": false,
+      "incomplete": false,
+      "operator": "kramu",
+      "response": "",
+      "rule": "kramu(a,b) = 2 times max(a, b)",
+      "seed": 20260711,
+      "step": 69
+    },
+    {
+      "a": 2,
+      "answer": null,
+      "arm": "naive",
+      "b": 2,
+      "correct": false,
+      "event_kinds": [
+        "ground"
+      ],
+      "expected": 8,
+      "first_appearance": false,
+      "incomplete": false,
+      "operator": "cvuka",
+      "response": "",
+      "rule": "cvuka(a,b) = (a times 3) + b",
+      "seed": 20260711,
+      "step": 70
+    },
+    {
+      "a": 3,
+      "answer": null,
+      "arm": "naive",
+      "b": 5,
+      "correct": false,
+      "event_kinds": [
+        "ground"
+      ],
+      "expected": 11,
+      "first_appearance": false,
+      "incomplete": false,
+      "operator": "srira",
+      "response": "",
+      "rule": "srira(a,b) = a + b + 3",
+      "seed": 20260711,
+      "step": 71
+    },
+    {
+      "a": 3,
+      "answer": null,
+      "arm": "naive",
+      "b": 2,
+      "correct": false,
+      "event_kinds": [
+        "ground"
+      ],
+      "expected": 9,
+      "first_appearance": false,
+      "incomplete": false,
+      "operator": "cpaku",
+      "response": "",
+      "rule": "cpaku(a,b) = 3 times max(a, b)",
+      "seed": 20260711,
+      "step": 72
+    },
+    {
+      "a": 4,
+      "answer": null,
+      "arm": "naive",
+      "b": 3,
+      "correct": false,
+      "event_kinds": [
+        "ground"
+      ],
+      "expected": 12,
+      "first_appearance": false,
+      "incomplete": false,
+      "operator": "zlufi",
+      "response": "",
+      "rule": "zlufi(a,b) = 3 times max(a, b)",
+      "seed": 20260711,
+      "step": 73
+    },
+    {
+      "a": 9,
+      "answer": null,
+      "arm": "naive",
+      "b": 4,
+      "correct": false,
+      "event_kinds": [
+        "ground"
+      ],
+      "expected": 9,
+      "first_appearance": false,
+      "incomplete": false,
+      "operator": "rzude",
+      "response": "",
+      "rule": "rzude(a,b) = |a - b| + 4",
+      "seed": 20260711,
+      "step": 74
+    },
+    {
+      "a": 7,
+      "answer": null,
+      "arm": "naive",
+      "b": 9,
+      "correct": false,
+      "event_kinds": [
+        "ground"
+      ],
+      "expected": 21,
+      "first_appearance": false,
+      "incomplete": false,
+      "operator": "rkofu",
+      "response": "",
+      "rule": "rkofu(a,b) = a + b + 5",
+      "seed": 20260711,
+      "step": 75
+    },
+    {
+      "a": 7,
+      "answer": null,
+      "arm": "naive",
+      "b": 4,
+      "correct": false,
+      "event_kinds": [
+        "ground"
+      ],
+      "expected": 21,
+      "first_appearance": false,
+      "incomplete": false,
+      "operator": "rtefi",
+      "response": "",
+      "rule": "rtefi(a,b) = 3 times max(a, b)",
+      "seed": 20260711,
+      "step": 76
+    },
+    {
+      "a": 4,
+      "answer": null,
+      "arm": "naive",
+      "b": 4,
+      "correct": false,
+      "event_kinds": [
+        "ground"
+      ],
+      "expected": 16,
+      "first_appearance": false,
+      "incomplete": false,
+      "operator": "nfunu",
+      "response": "",
+      "rule": "nfunu(a,b) = (a times 3) + b",
+      "seed": 20260711,
+      "step": 77
+    },
+    {
+      "a": 5,
+      "answer": null,
+      "arm": "naive",
+      "b": 5,
+      "correct": false,
+      "event_kinds": [
+        "ground"
+      ],
+      "expected": 15,
+      "first_appearance": false,
+      "incomplete": false,
+      "operator": "cfure",
+      "response": "",
+      "rule": "cfure(a,b) = 3 times max(a, b)",
+      "seed": 20260711,
+      "step": 78
+    },
+    {
+      "a": 2,
+      "answer": null,
+      "arm": "naive",
+      "b": 5,
+      "correct": false,
+      "event_kinds": [
+        "ground"
+      ],
+      "expected": 13,
+      "first_appearance": false,
+      "incomplete": false,
+      "operator": "mbazi",
+      "response": "",
+      "rule": "mbazi(a,b) = (a times 4) + b",
+      "seed": 20260711,
+      "step": 79
+    },
+    {
+      "a": 4,
+      "answer": null,
+      "arm": "naive",
+      "b": 5,
+      "correct": false,
+      "event_kinds": [
+        "ground"
+      ],
+      "expected": 10,
+      "first_appearance": false,
+      "incomplete": false,
+      "operator": "nkogu",
+      "response": "",
+      "rule": "nkogu(a,b) = a + b + 1",
+      "seed": 20260711,
+      "step": 80
+    },
+    {
+      "a": 8,
+      "answer": null,
+      "arm": "naive",
+      "b": 8,
+      "correct": false,
+      "event_kinds": [
+        "ground"
+      ],
+      "expected": 32,
+      "first_appearance": false,
+      "incomplete": false,
+      "operator": "cfike",
+      "response": "",
+      "rule": "cfike(a,b) = 4 times max(a, b)",
+      "seed": 20260711,
+      "step": 81
+    },
+    {
+      "a": 6,
+      "answer": null,
+      "arm": "naive",
+      "b": 6,
+      "correct": false,
+      "event_kinds": [
+        "ground"
+      ],
+      "expected": 12,
+      "first_appearance": false,
+      "incomplete": false,
+      "operator": "bdisi",
+      "response": "",
+      "rule": "bdisi(a,b) = 2 times max(a, b)",
+      "seed": 20260711,
+      "step": 82
+    },
+    {
+      "a": 3,
+      "answer": null,
+      "arm": "naive",
+      "b": 3,
+      "correct": false,
+      "event_kinds": [
+        "ground"
+      ],
+      "expected": 9,
+      "first_appearance": false,
+      "incomplete": false,
+      "operator": "vnafo",
+      "response": "",
+      "rule": "vnafo(a,b) = |a - b| + 9",
+      "seed": 20260711,
+      "step": 83
+    },
+    {
+      "a": 3,
+      "answer": null,
+      "arm": "naive",
+      "b": 9,
+      "correct": false,
+      "event_kinds": [
+        "ground"
+      ],
+      "expected": 15,
+      "first_appearance": false,
+      "incomplete": false,
+      "operator": "ksilo",
+      "response": "",
+      "rule": "ksilo(a,b) = (a times 2) + b",
+      "seed": 20260711,
+      "step": 84
+    },
+    {
+      "a": 4,
+      "answer": null,
+      "arm": "naive",
+      "b": 6,
+      "correct": false,
+      "event_kinds": [
+        "ground"
+      ],
+      "expected": 24,
+      "first_appearance": false,
+      "incomplete": false,
+      "operator": "zgelo",
+      "response": "",
+      "rule": "zgelo(a,b) = 4 times max(a, b)",
+      "seed": 20260711,
+      "step": 85
+    },
+    {
+      "a": 8,
+      "answer": null,
+      "arm": "naive",
+      "b": 3,
+      "correct": false,
+      "event_kinds": [
+        "ground"
+      ],
+      "expected": 20,
+      "first_appearance": false,
+      "incomplete": false,
+      "operator": "cvonu",
+      "response": "",
+      "rule": "cvonu(a,b) = a + b + 9",
+      "seed": 20260711,
+      "step": 86
+    },
+    {
+      "a": 2,
+      "answer": null,
+      "arm": "naive",
+      "b": 2,
+      "correct": false,
+      "event_kinds": [
+        "ground"
+      ],
+      "expected": 6,
+      "first_appearance": false,
+      "incomplete": false,
+      "operator": "kbape",
+      "response": "",
+      "rule": "kbape(a,b) = |a - b| + 6",
+      "seed": 20260711,
+      "step": 87
+    },
+    {
+      "a": 6,
+      "answer": null,
+      "arm": "naive",
+      "b": 5,
+      "correct": false,
+      "event_kinds": [
+        "ground"
+      ],
+      "expected": 12,
+      "first_appearance": false,
+      "incomplete": false,
+      "operator": "rpaza",
+      "response": "",
+      "rule": "rpaza(a,b) = 2 times max(a, b)",
+      "seed": 20260711,
+      "step": 88
+    },
+    {
+      "a": 5,
+      "answer": null,
+      "arm": "naive",
+      "b": 7,
+      "correct": false,
+      "event_kinds": [
+        "ground"
+      ],
+      "expected": 28,
+      "first_appearance": false,
+      "incomplete": false,
+      "operator": "cpena",
+      "response": "",
+      "rule": "cpena(a,b) = 4 times max(a, b)",
+      "seed": 20260711,
+      "step": 89
+    },
+    {
+      "a": 7,
+      "answer": null,
+      "arm": "naive",
+      "b": 2,
+      "correct": false,
+      "event_kinds": [
+        "ground"
+      ],
+      "expected": 23,
+      "first_appearance": false,
+      "incomplete": false,
+      "operator": "nfunu",
+      "response": "",
+      "rule": "nfunu(a,b) = (a times 3) + b",
+      "seed": 20260711,
+      "step": 90
+    },
+    {
+      "a": 6,
+      "answer": null,
+      "arm": "naive",
+      "b": 6,
+      "correct": false,
+      "event_kinds": [
+        "ground"
+      ],
+      "expected": 12,
+      "first_appearance": false,
+      "incomplete": false,
+      "operator": "rpaza",
+      "response": "",
+      "rule": "rpaza(a,b) = 2 times max(a, b)",
+      "seed": 20260711,
+      "step": 91
+    },
+    {
+      "a": 2,
+      "answer": null,
+      "arm": "naive",
+      "b": 4,
+      "correct": false,
+      "event_kinds": [
+        "ground"
+      ],
+      "expected": 15,
+      "first_appearance": false,
+      "incomplete": false,
+      "operator": "cvonu",
+      "response": "",
+      "rule": "cvonu(a,b) = a + b + 9",
+      "seed": 20260711,
+      "step": 92
+    },
+    {
+      "a": 4,
+      "answer": null,
+      "arm": "naive",
+      "b": 4,
+      "correct": false,
+      "event_kinds": [
+        "ground"
+      ],
+      "expected": 16,
+      "first_appearance": false,
+      "incomplete": false,
+      "operator": "rluco",
+      "response": "",
+      "rule": "rluco(a,b) = 4 times max(a, b)",
+      "seed": 20260711,
+      "step": 93
+    },
+    {
+      "a": 3,
+      "answer": null,
+      "arm": "naive",
+      "b": 3,
+      "correct": false,
+      "event_kinds": [
+        "ground"
+      ],
+      "expected": 8,
+      "first_appearance": false,
+      "incomplete": false,
+      "operator": "nnosa",
+      "response": "",
+      "rule": "nnosa(a,b) = a + b + 2",
+      "seed": 20260711,
+      "step": 94
+    },
+    {
+      "a": 7,
+      "answer": null,
+      "arm": "naive",
+      "b": 6,
+      "correct": false,
+      "event_kinds": [
+        "ground"
+      ],
+      "expected": 21,
+      "first_appearance": false,
+      "incomplete": false,
+      "operator": "rtefi",
+      "response": "",
+      "rule": "rtefi(a,b) = 3 times max(a, b)",
+      "seed": 20260711,
+      "step": 95
+    },
+    {
+      "a": 8,
+      "answer": null,
+      "arm": "naive",
+      "b": 7,
+      "correct": false,
+      "event_kinds": [
+        "ground"
+      ],
+      "expected": 16,
+      "first_appearance": false,
+      "incomplete": false,
+      "operator": "bdisi",
+      "response": "",
+      "rule": "bdisi(a,b) = 2 times max(a, b)",
+      "seed": 20260711,
+      "step": 96
+    },
+    {
+      "a": 9,
+      "answer": null,
+      "arm": "naive",
+      "b": 4,
+      "correct": false,
+      "event_kinds": [
+        "ground"
+      ],
+      "expected": 11,
+      "first_appearance": false,
+      "incomplete": false,
+      "operator": "gcaco",
+      "response": "",
+      "rule": "gcaco(a,b) = |a - b| + 6",
+      "seed": 20260711,
+      "step": 97
+    },
+    {
+      "a": 8,
+      "answer": null,
+      "arm": "naive",
+      "b": 3,
+      "correct": false,
+      "event_kinds": [
+        "ground"
+      ],
+      "expected": 24,
+      "first_appearance": false,
+      "incomplete": false,
+      "operator": "cpaku",
+      "response": "",
+      "rule": "cpaku(a,b) = 3 times max(a, b)",
+      "seed": 20260711,
+      "step": 98
+    },
+    {
+      "a": 5,
+      "answer": null,
+      "arm": "naive",
+      "b": 6,
+      "correct": false,
+      "event_kinds": [
+        "ground"
+      ],
+      "expected": 21,
+      "first_appearance": false,
+      "incomplete": false,
+      "operator": "cvuka",
+      "response": "",
+      "rule": "cvuka(a,b) = (a times 3) + b",
+      "seed": 20260711,
+      "step": 99
+    },
+    {
+      "a": 5,
+      "answer": null,
+      "arm": "naive",
+      "b": 6,
+      "correct": false,
+      "event_kinds": [
+        "ground"
+      ],
+      "expected": 16,
+      "first_appearance": false,
+      "incomplete": false,
+      "operator": "rkofu",
+      "response": "",
+      "rule": "rkofu(a,b) = a + b + 5",
+      "seed": 20260711,
+      "step": 100
+    },
+    {
+      "a": 3,
+      "answer": null,
+      "arm": "naive",
+      "b": 2,
+      "correct": false,
+      "event_kinds": [
+        "ground"
+      ],
+      "expected": 10,
+      "first_appearance": false,
+      "incomplete": false,
+      "operator": "cpase",
+      "response": "",
+      "rule": "cpase(a,b) = a + b + 5",
+      "seed": 20260711,
+      "step": 101
+    },
+    {
+      "a": 8,
+      "answer": null,
+      "arm": "naive",
+      "b": 9,
+      "correct": false,
+      "event_kinds": [
+        "ground"
+      ],
+      "expected": 27,
+      "first_appearance": false,
+      "incomplete": false,
+      "operator": "cfure",
+      "response": "",
+      "rule": "cfure(a,b) = 3 times max(a, b)",
+      "seed": 20260711,
+      "step": 102
+    },
+    {
+      "a": 3,
+      "answer": null,
+      "arm": "naive",
+      "b": 2,
+      "correct": false,
+      "event_kinds": [
+        "ground"
+      ],
+      "expected": 9,
+      "first_appearance": false,
+      "incomplete": false,
+      "operator": "zlufi",
+      "response": "",
+      "rule": "zlufi(a,b) = 3 times max(a, b)",
+      "seed": 20260711,
+      "step": 103
+    },
+    {
+      "a": 6,
+      "answer": null,
+      "arm": "naive",
+      "b": 7,
+      "correct": false,
+      "event_kinds": [
+        "ground"
+      ],
+      "expected": 14,
+      "first_appearance": false,
+      "incomplete": false,
+      "operator": "gnepo",
+      "response": "",
+      "rule": "gnepo(a,b) = a + b + 1",
+      "seed": 20260711,
+      "step": 104
+    },
+    {
+      "a": 6,
+      "answer": null,
+      "arm": "naive",
+      "b": 3,
+      "correct": false,
+      "event_kinds": [
+        "ground"
+      ],
+      "expected": 15,
+      "first_appearance": false,
+      "incomplete": false,
+      "operator": "ksilo",
+      "response": "",
+      "rule": "ksilo(a,b) = (a times 2) + b",
+      "seed": 20260711,
+      "step": 105
+    },
+    {
+      "a": 3,
+      "answer": null,
+      "arm": "naive",
+      "b": 5,
+      "correct": false,
+      "event_kinds": [
+        "ground"
+      ],
+      "expected": 8,
+      "first_appearance": false,
+      "incomplete": false,
+      "operator": "kbape",
+      "response": "",
+      "rule": "kbape(a,b) = |a - b| + 6",
+      "seed": 20260711,
+      "step": 106
+    },
+    {
+      "a": 6,
+      "answer": null,
+      "arm": "naive",
+      "b": 5,
+      "correct": false,
+      "event_kinds": [
+        "ground"
+      ],
+      "expected": 24,
+      "first_appearance": false,
+      "incomplete": false,
+      "operator": "cpena",
+      "response": "",
+      "rule": "cpena(a,b) = 4 times max(a, b)",
+      "seed": 20260711,
+      "step": 107
+    },
+    {
+      "a": 9,
+      "answer": null,
+      "arm": "naive",
+      "b": 9,
+      "correct": false,
+      "event_kinds": [
+        "ground"
+      ],
+      "expected": 45,
+      "first_appearance": false,
+      "incomplete": false,
+      "operator": "mbazi",
+      "response": "",
+      "rule": "mbazi(a,b) = (a times 4) + b",
+      "seed": 20260711,
+      "step": 108
+    },
+    {
+      "a": 8,
+      "answer": null,
+      "arm": "naive",
+      "b": 6,
+      "correct": false,
+      "event_kinds": [
+        "ground"
+      ],
+      "expected": 32,
+      "first_appearance": false,
+      "incomplete": false,
+      "operator": "cfike",
+      "response": "",
+      "rule": "cfike(a,b) = 4 times max(a, b)",
+      "seed": 20260711,
+      "step": 109
+    },
+    {
+      "a": 8,
+      "answer": null,
+      "arm": "naive",
+      "b": 9,
+      "correct": false,
+      "event_kinds": [
+        "ground"
+      ],
+      "expected": 36,
+      "first_appearance": false,
+      "incomplete": false,
+      "operator": "zgelo",
+      "response": "",
+      "rule": "zgelo(a,b) = 4 times max(a, b)",
+      "seed": 20260711,
+      "step": 110
+    },
+    {
+      "a": 3,
+      "answer": null,
+      "arm": "naive",
+      "b": 7,
+      "correct": false,
+      "event_kinds": [
+        "ground"
+      ],
+      "expected": 19,
+      "first_appearance": false,
+      "incomplete": false,
+      "operator": "pfiso",
+      "response": "",
+      "rule": "pfiso(a,b) = (a times 4) + b",
+      "seed": 20260711,
+      "step": 111
+    },
+    {
+      "a": 3,
+      "answer": null,
+      "arm": "naive",
+      "b": 6,
+      "correct": false,
+      "event_kinds": [
+        "ground"
+      ],
+      "expected": 12,
+      "first_appearance": false,
+      "incomplete": false,
+      "operator": "kramu",
+      "response": "",
+      "rule": "kramu(a,b) = 2 times max(a, b)",
+      "seed": 20260711,
+      "step": 112
+    },
+    {
+      "a": 9,
+      "answer": null,
+      "arm": "naive",
+      "b": 8,
+      "correct": false,
+      "event_kinds": [
+        "ground"
+      ],
+      "expected": 18,
+      "first_appearance": false,
+      "incomplete": false,
+      "operator": "nkogu",
+      "response": "",
+      "rule": "nkogu(a,b) = a + b + 1",
+      "seed": 20260711,
+      "step": 113
+    },
+    {
+      "a": 9,
+      "answer": null,
+      "arm": "naive",
+      "b": 7,
+      "correct": false,
+      "event_kinds": [
+        "ground"
+      ],
+      "expected": 36,
+      "first_appearance": false,
+      "incomplete": false,
+      "operator": "kvapa",
+      "response": "",
+      "rule": "kvapa(a,b) = 4 times max(a, b)",
+      "seed": 20260711,
+      "step": 114
+    },
+    {
+      "a": 5,
+      "answer": null,
+      "arm": "naive",
+      "b": 3,
+      "correct": false,
+      "event_kinds": [
+        "ground"
+      ],
+      "expected": 6,
+      "first_appearance": false,
+      "incomplete": false,
+      "operator": "rzude",
+      "response": "",
+      "rule": "rzude(a,b) = |a - b| + 4",
+      "seed": 20260711,
+      "step": 115
+    },
+    {
+      "a": 9,
+      "answer": null,
+      "arm": "naive",
+      "b": 7,
+      "correct": false,
+      "event_kinds": [
+        "ground"
+      ],
+      "expected": 11,
+      "first_appearance": false,
+      "incomplete": false,
+      "operator": "vnafo",
+      "response": "",
+      "rule": "vnafo(a,b) = |a - b| + 9",
+      "seed": 20260711,
+      "step": 116
+    },
+    {
+      "a": 5,
+      "answer": null,
+      "arm": "naive",
+      "b": 9,
+      "correct": false,
+      "event_kinds": [
+        "ground"
+      ],
+      "expected": 17,
+      "first_appearance": false,
+      "incomplete": false,
+      "operator": "srira",
+      "response": "",
+      "rule": "srira(a,b) = a + b + 3",
+      "seed": 20260711,
+      "step": 117
+    },
+    {
+      "a": 9,
+      "answer": null,
+      "arm": "naive",
+      "b": 4,
+      "correct": false,
+      "event_kinds": [
+        "ground"
+      ],
+      "expected": 18,
+      "first_appearance": false,
+      "incomplete": false,
+      "operator": "grino",
+      "response": "",
+      "rule": "grino(a,b) = a + b + 5",
+      "seed": 20260711,
+      "step": 118
+    },
+    {
+      "a": 7,
+      "answer": null,
+      "arm": "naive",
+      "b": 6,
+      "correct": false,
+      "event_kinds": [
+        "ground"
+      ],
+      "expected": 21,
+      "first_appearance": false,
+      "incomplete": false,
+      "operator": "lnogu",
+      "response": "",
+      "rule": "lnogu(a,b) = 3 times max(a, b)",
+      "seed": 20260711,
+      "step": 119
+    },
+    {
+      "a": 3,
+      "answer": null,
+      "arm": "naive",
+      "b": 9,
+      "correct": false,
+      "event_kinds": [
+        "ground"
+      ],
+      "expected": 18,
+      "first_appearance": false,
+      "incomplete": false,
+      "operator": "cvuka",
+      "response": "",
+      "rule": "cvuka(a,b) = (a times 3) + b",
+      "seed": 20260711,
+      "step": 120
+    },
+    {
+      "a": 9,
+      "answer": null,
+      "arm": "naive",
+      "b": 3,
+      "correct": false,
+      "event_kinds": [
+        "ground"
+      ],
+      "expected": 27,
+      "first_appearance": false,
+      "incomplete": false,
+      "operator": "cfure",
+      "response": "",
+      "rule": "cfure(a,b) = 3 times max(a, b)",
+      "seed": 20260711,
+      "step": 121
+    },
+    {
+      "a": 6,
+      "answer": null,
+      "arm": "naive",
+      "b": 8,
+      "correct": false,
+      "event_kinds": [
+        "ground"
+      ],
+      "expected": 23,
+      "first_appearance": false,
+      "incomplete": false,
+      "operator": "cvonu",
+      "response": "",
+      "rule": "cvonu(a,b) = a + b + 9",
+      "seed": 20260711,
+      "step": 122
+    },
+    {
+      "a": 6,
+      "answer": null,
+      "arm": "naive",
+      "b": 7,
+      "correct": false,
+      "event_kinds": [
+        "ground"
+      ],
+      "expected": 28,
+      "first_appearance": false,
+      "incomplete": false,
+      "operator": "kvapa",
+      "response": "",
+      "rule": "kvapa(a,b) = 4 times max(a, b)",
+      "seed": 20260711,
+      "step": 123
+    },
+    {
+      "a": 7,
+      "answer": null,
+      "arm": "naive",
+      "b": 5,
+      "correct": false,
+      "event_kinds": [
+        "ground"
+      ],
+      "expected": 28,
+      "first_appearance": false,
+      "incomplete": false,
+      "operator": "cpena",
+      "response": "",
+      "rule": "cpena(a,b) = 4 times max(a, b)",
+      "seed": 20260711,
+      "step": 124
+    },
+    {
+      "a": 9,
+      "answer": null,
+      "arm": "naive",
+      "b": 3,
+      "correct": false,
+      "event_kinds": [
+        "ground"
+      ],
+      "expected": 30,
+      "first_appearance": false,
+      "incomplete": false,
+      "operator": "nfunu",
+      "response": "",
+      "rule": "nfunu(a,b) = (a times 3) + b",
+      "seed": 20260711,
+      "step": 125
+    },
+    {
+      "a": 7,
+      "answer": null,
+      "arm": "naive",
+      "b": 4,
+      "correct": false,
+      "event_kinds": [
+        "ground"
+      ],
+      "expected": 13,
+      "first_appearance": false,
+      "incomplete": false,
+      "operator": "nnosa",
+      "response": "",
+      "rule": "nnosa(a,b) = a + b + 2",
+      "seed": 20260711,
+      "step": 126
+    },
+    {
+      "a": 3,
+      "answer": null,
+      "arm": "naive",
+      "b": 7,
+      "correct": false,
+      "event_kinds": [
+        "ground"
+      ],
+      "expected": 13,
+      "first_appearance": false,
+      "incomplete": false,
+      "operator": "srira",
+      "response": "",
+      "rule": "srira(a,b) = a + b + 3",
+      "seed": 20260711,
+      "step": 127
+    },
+    {
+      "a": 3,
+      "answer": null,
+      "arm": "naive",
+      "b": 2,
+      "correct": false,
+      "event_kinds": [
+        "ground"
+      ],
+      "expected": 5,
+      "first_appearance": false,
+      "incomplete": false,
+      "operator": "rzude",
+      "response": "",
+      "rule": "rzude(a,b) = |a - b| + 4",
+      "seed": 20260711,
+      "step": 128
+    },
+    {
+      "a": 2,
+      "answer": null,
+      "arm": "naive",
+      "b": 2,
+      "correct": false,
+      "event_kinds": [
+        "ground"
+      ],
+      "expected": 4,
+      "first_appearance": false,
+      "incomplete": false,
+      "operator": "rpaza",
+      "response": "",
+      "rule": "rpaza(a,b) = 2 times max(a, b)",
+      "seed": 20260711,
+      "step": 129
+    },
+    {
+      "a": 9,
+      "answer": null,
+      "arm": "naive",
+      "b": 5,
+      "correct": false,
+      "event_kinds": [
+        "ground"
+      ],
+      "expected": 15,
+      "first_appearance": false,
+      "incomplete": false,
+      "operator": "nkogu",
+      "response": "",
+      "rule": "nkogu(a,b) = a + b + 1",
+      "seed": 20260711,
+      "step": 130
+    },
+    {
+      "a": 4,
+      "answer": null,
+      "arm": "naive",
+      "b": 5,
+      "correct": false,
+      "event_kinds": [
+        "ground"
+      ],
+      "expected": 13,
+      "first_appearance": false,
+      "incomplete": false,
+      "operator": "ksilo",
+      "response": "",
+      "rule": "ksilo(a,b) = (a times 2) + b",
+      "seed": 20260711,
+      "step": 131
+    },
+    {
+      "a": 6,
+      "answer": null,
+      "arm": "naive",
+      "b": 4,
+      "correct": false,
+      "event_kinds": [
+        "ground"
+      ],
+      "expected": 12,
+      "first_appearance": false,
+      "incomplete": false,
+      "operator": "bdisi",
+      "response": "",
+      "rule": "bdisi(a,b) = 2 times max(a, b)",
+      "seed": 20260711,
+      "step": 132
+    },
+    {
+      "a": 3,
+      "answer": null,
+      "arm": "naive",
+      "b": 2,
+      "correct": false,
+      "event_kinds": [
+        "ground"
+      ],
+      "expected": 12,
+      "first_appearance": false,
+      "incomplete": false,
+      "operator": "zgelo",
+      "response": "",
+      "rule": "zgelo(a,b) = 4 times max(a, b)",
+      "seed": 20260711,
+      "step": 133
+    },
+    {
+      "a": 4,
+      "answer": null,
+      "arm": "naive",
+      "b": 7,
+      "correct": false,
+      "event_kinds": [
+        "ground"
+      ],
+      "expected": 28,
+      "first_appearance": false,
+      "incomplete": false,
+      "operator": "cfike",
+      "response": "",
+      "rule": "cfike(a,b) = 4 times max(a, b)",
+      "seed": 20260711,
+      "step": 134
+    },
+    {
+      "a": 9,
+      "answer": null,
+      "arm": "naive",
+      "b": 8,
+      "correct": false,
+      "event_kinds": [
+        "ground"
+      ],
+      "expected": 27,
+      "first_appearance": false,
+      "incomplete": false,
+      "operator": "rtefi",
+      "response": "",
+      "rule": "rtefi(a,b) = 3 times max(a, b)",
+      "seed": 20260711,
+      "step": 135
+    },
+    {
+      "a": 5,
+      "answer": null,
+      "arm": "naive",
+      "b": 6,
+      "correct": false,
+      "event_kinds": [
+        "ground"
+      ],
+      "expected": 16,
+      "first_appearance": false,
+      "incomplete": false,
+      "operator": "rkofu",
+      "response": "",
+      "rule": "rkofu(a,b) = a + b + 5",
+      "seed": 20260711,
+      "step": 136
+    },
+    {
+      "a": 9,
+      "answer": null,
+      "arm": "naive",
+      "b": 5,
+      "correct": false,
+      "event_kinds": [
+        "ground"
+      ],
+      "expected": 13,
+      "first_appearance": false,
+      "incomplete": false,
+      "operator": "vnafo",
+      "response": "",
+      "rule": "vnafo(a,b) = |a - b| + 9",
+      "seed": 20260711,
+      "step": 137
+    },
+    {
+      "a": 4,
+      "answer": null,
+      "arm": "naive",
+      "b": 3,
+      "correct": false,
+      "event_kinds": [
+        "ground"
+      ],
+      "expected": 7,
+      "first_appearance": false,
+      "incomplete": false,
+      "operator": "kbape",
+      "response": "",
+      "rule": "kbape(a,b) = |a - b| + 6",
+      "seed": 20260711,
+      "step": 138
+    },
+    {
+      "a": 8,
+      "answer": null,
+      "arm": "naive",
+      "b": 3,
+      "correct": false,
+      "event_kinds": [
+        "ground"
+      ],
+      "expected": 35,
+      "first_appearance": false,
+      "incomplete": false,
+      "operator": "mbazi",
+      "response": "",
+      "rule": "mbazi(a,b) = (a times 4) + b",
+      "seed": 20260711,
+      "step": 139
+    },
+    {
+      "a": 3,
+      "answer": null,
+      "arm": "naive",
+      "b": 4,
+      "correct": false,
+      "event_kinds": [
+        "ground"
+      ],
+      "expected": 8,
+      "first_appearance": false,
+      "incomplete": false,
+      "operator": "kramu",
+      "response": "",
+      "rule": "kramu(a,b) = 2 times max(a, b)",
+      "seed": 20260711,
+      "step": 140
+    },
+    {
+      "a": 6,
+      "answer": null,
+      "arm": "naive",
+      "b": 6,
+      "correct": false,
+      "event_kinds": [
+        "ground"
+      ],
+      "expected": 13,
+      "first_appearance": false,
+      "incomplete": false,
+      "operator": "gnepo",
+      "response": "",
+      "rule": "gnepo(a,b) = a + b + 1",
+      "seed": 20260711,
+      "step": 141
+    },
+    {
+      "a": 9,
+      "answer": null,
+      "arm": "naive",
+      "b": 8,
+      "correct": false,
+      "event_kinds": [
+        "ground"
+      ],
+      "expected": 22,
+      "first_appearance": false,
+      "incomplete": false,
+      "operator": "cpase",
+      "response": "",
+      "rule": "cpase(a,b) = a + b + 5",
+      "seed": 20260711,
+      "step": 142
+    },
+    {
+      "a": 2,
+      "answer": null,
+      "arm": "naive",
+      "b": 2,
+      "correct": false,
+      "event_kinds": [
+        "ground"
+      ],
+      "expected": 6,
+      "first_appearance": false,
+      "incomplete": false,
+      "operator": "zlufi",
+      "response": "",
+      "rule": "zlufi(a,b) = 3 times max(a, b)",
+      "seed": 20260711,
+      "step": 143
+    },
+    {
+      "a": 2,
+      "answer": null,
+      "arm": "naive",
+      "b": 4,
+      "correct": false,
+      "event_kinds": [
+        "ground"
+      ],
+      "expected": 11,
+      "first_appearance": false,
+      "incomplete": false,
+      "operator": "grino",
+      "response": "",
+      "rule": "grino(a,b) = a + b + 5",
+      "seed": 20260711,
+      "step": 144
+    },
+    {
+      "a": 4,
+      "answer": null,
+      "arm": "naive",
+      "b": 9,
+      "correct": false,
+      "event_kinds": [
+        "ground"
+      ],
+      "expected": 27,
+      "first_appearance": false,
+      "incomplete": false,
+      "operator": "lnogu",
+      "response": "",
+      "rule": "lnogu(a,b) = 3 times max(a, b)",
+      "seed": 20260711,
+      "step": 145
+    },
+    {
+      "a": 2,
+      "answer": null,
+      "arm": "naive",
+      "b": 3,
+      "correct": false,
+      "event_kinds": [
+        "ground"
+      ],
+      "expected": 7,
+      "first_appearance": false,
+      "incomplete": false,
+      "operator": "gcaco",
+      "response": "",
+      "rule": "gcaco(a,b) = |a - b| + 6",
+      "seed": 20260711,
+      "step": 146
+    },
+    {
+      "a": 8,
+      "answer": null,
+      "arm": "naive",
+      "b": 4,
+      "correct": false,
+      "event_kinds": [
+        "ground"
+      ],
+      "expected": 24,
+      "first_appearance": false,
+      "incomplete": false,
+      "operator": "cpaku",
+      "response": "",
+      "rule": "cpaku(a,b) = 3 times max(a, b)",
+      "seed": 20260711,
+      "step": 147
+    },
+    {
+      "a": 7,
+      "answer": null,
+      "arm": "naive",
+      "b": 7,
+      "correct": false,
+      "event_kinds": [
+        "ground"
+      ],
+      "expected": 35,
+      "first_appearance": false,
+      "incomplete": false,
+      "operator": "pfiso",
+      "response": "",
+      "rule": "pfiso(a,b) = (a times 4) + b",
+      "seed": 20260711,
+      "step": 148
+    },
+    {
+      "a": 2,
+      "answer": null,
+      "arm": "naive",
+      "b": 2,
+      "correct": false,
+      "event_kinds": [
+        "ground"
+      ],
+      "expected": 8,
+      "first_appearance": false,
+      "incomplete": false,
+      "operator": "rluco",
+      "response": "",
+      "rule": "rluco(a,b) = 4 times max(a, b)",
+      "seed": 20260711,
+      "step": 149
+    },
+    {
+      "a": 4,
+      "answer": 5,
+      "arm": "full_kernel",
+      "b": 5,
+      "correct": false,
+      "event_kinds": [
+        "retrieve",
+        "reason",
+        "ground"
+      ],
+      "expected": 20,
+      "first_appearance": true,
+      "incomplete": false,
+      "operator": "cpena",
+      "response": "The function cpena is not defined in the provided context, and no authorized memories or rules are available to compute its result. Therefore, it is not possible to determine the output of cpena(4, 5) with the given information. \n\nANSWER=undefined",
+      "rule": "cpena(a,b) = 4 times max(a, b)",
+      "seed": 20260711,
+      "step": 0
+    },
+    {
+      "a": 7,
+      "answer": 32,
+      "arm": "full_kernel",
+      "b": 8,
+      "correct": false,
+      "event_kinds": [
+        "retrieve",
+        "reason",
+        "ground"
+      ],
+      "expected": 7,
+      "first_appearance": true,
+      "incomplete": false,
+      "operator": "kbape",
+      "response": "The rule provided is: cpena(a,b) = 4 times max(a, b).  \nFor the operands 7 and 8, max(7, 8) = 8.  \nThen, 4 times 8 = 32.  \nANSWER=32",
+      "rule": "kbape(a,b) = |a - b| + 6",
+      "seed": 20260711,
+      "step": 1
+    },
+    {
+      "a": 7,
+      "answer": 0,
+      "arm": "full_kernel",
+      "b": 7,
+      "correct": false,
+      "event_kinds": [
+        "retrieve",
+        "reason",
+        "ground"
+      ],
+      "expected": 9,
+      "first_appearance": true,
+      "incomplete": false,
+      "operator": "vnafo",
+      "response": "The given problem is vnafo(7, 7). Since there is no authorized memory for the operator \"vnafo,\" we cannot apply any rule to compute the result. Therefore, the problem cannot be solved with the provided information.\n\nANSWER=0",
+      "rule": "vnafo(a,b) = |a - b| + 9",
+      "seed": 20260711,
+      "step": 2
+    },
+    {
+      "a": 6,
+      "answer": 0,
+      "arm": "full_kernel",
+      "b": 8,
+      "correct": false,
+      "event_kinds": [
+        "retrieve",
+        "reason",
+        "ground"
+      ],
+      "expected": 24,
+      "first_appearance": true,
+      "incomplete": false,
+      "operator": "rtefi",
+      "response": "The authorized rule for rtefi is not provided, so it cannot be applied. ANSWER=0",
+      "rule": "rtefi(a,b) = 3 times max(a, b)",
+      "seed": 20260711,
+      "step": 3
+    },
+    {
+      "a": 9,
+      "answer": 36,
+      "arm": "full_kernel",
+      "b": 4,
+      "correct": false,
+      "event_kinds": [
+        "retrieve",
+        "reason",
+        "ground"
+      ],
+      "expected": 18,
+      "first_appearance": true,
+      "incomplete": false,
+      "operator": "cpase",
+      "response": "The authorized rule for \"cpena(a,b)\" is: cpena(a,b) = 4 times max(a, b).  \nGiven operands 9 and 4, max(9, 4) = 9.  \nThus, cpena(9, 4) = 4 \u00d7 9 = 36.  \nANSWER=36",
+      "rule": "cpase(a,b) = a + b + 5",
+      "seed": 20260711,
+      "step": 4
+    },
+    {
+      "a": 4,
+      "answer": 7,
+      "arm": "full_kernel",
+      "b": 7,
+      "correct": false,
+      "event_kinds": [
+        "retrieve",
+        "reason",
+        "ground"
+      ],
+      "expected": 19,
+      "first_appearance": true,
+      "incomplete": false,
+      "operator": "cvuka",
+      "response": "The given problem is cvuka(4, 7). However, there is no authorized memory that defines the \"cvuka\" operator. Therefore, it is not possible to compute the result based on the provided information. \n\nANSWER=undefined",
+      "rule": "cvuka(a,b) = (a times 3) + b",
+      "seed": 20260711,
+      "step": 5
+    },
+    {
+      "a": 9,
+      "answer": null,
+      "arm": "full_kernel",
+      "b": 5,
+      "correct": false,
+      "event_kinds": [
+        "retrieve",
+        "reason",
+        "ground"
+      ],
+      "expected": 15,
+      "first_appearance": true,
+      "incomplete": false,
+      "operator": "nkogu",
+      "response": "The authorized memory does not contain a rule for \"nkogu\". Therefore, it is not possible to compute the result.",
+      "rule": "nkogu(a,b) = a + b + 1",
+      "seed": 20260711,
+      "step": 6
+    },
+    {
+      "a": 2,
+      "answer": 6,
+      "arm": "full_kernel",
+      "b": 6,
+      "correct": false,
+      "event_kinds": [
+        "retrieve",
+        "reason",
+        "ground"
+      ],
+      "expected": 12,
+      "first_appearance": true,
+      "incomplete": false,
+      "operator": "bdisi",
+      "response": "The given problem is bdisi(2, 6). None of the provided authorized memories define the operator \"bdisi\". Therefore, it is not possible to compute the result using the given rules. \n\nANSWER=undefined",
+      "rule": "bdisi(a,b) = 2 times max(a, b)",
+      "seed": 20260711,
+      "step": 7
+    },
+    {
+      "a": 9,
+      "answer": null,
+      "arm": "full_kernel",
+      "b": 2,
+      "correct": false,
+      "event_kinds": [
+        "retrieve",
+        "reason",
+        "ground"
+      ],
+      "expected": 12,
+      "first_appearance": true,
+      "incomplete": false,
+      "operator": "gnepo",
+      "response": "The authorized memories do not include a rule for \"gnepo\". Therefore, it is not possible to compute the result. ANSWER=undefined",
+      "rule": "gnepo(a,b) = a + b + 1",
+      "seed": 20260711,
+      "step": 8
+    },
+    {
+      "a": 2,
+      "answer": 6,
+      "arm": "full_kernel",
+      "b": 6,
+      "correct": false,
+      "event_kinds": [
+        "retrieve",
+        "reason",
+        "ground"
+      ],
+      "expected": 14,
+      "first_appearance": true,
+      "incomplete": false,
+      "operator": "mbazi",
+      "response": "The given problem is mbazi(2, 6). However, there is no authorized memory that defines the operator \"mbazi\". Therefore, it is not possible to compute the result using the provided rules. \n\nANSWER=undefined",
+      "rule": "mbazi(a,b) = (a times 4) + b",
+      "seed": 20260711,
+      "step": 9
+    },
+    {
+      "a": 5,
+      "answer": 8,
+      "arm": "full_kernel",
+      "b": 8,
+      "correct": false,
+      "event_kinds": [
+        "retrieve",
+        "reason",
+        "ground"
+      ],
+      "expected": 16,
+      "first_appearance": true,
+      "incomplete": false,
+      "operator": "srira",
+      "response": "The authorized memory contains several operator rules, but none of them are named \"srira\". Therefore, it is not possible to apply any of the provided rules to compute the result of \"srira(5, 8)\". \n\nANSWER=undefined",
+      "rule": "srira(a,b) = a + b + 3",
+      "seed": 20260711,
+      "step": 10
+    },
+    {
+      "a": 2,
+      "answer": null,
+      "arm": "full_kernel",
+      "b": 2,
+      "correct": false,
+      "event_kinds": [
+        "retrieve",
+        "reason",
+        "ground"
+      ],
+      "expected": 8,
+      "first_appearance": true,
+      "incomplete": false,
+      "operator": "rluco",
+      "response": "The authorized memory does not contain a rule for \"rluco(a,b)\". Therefore, it is not possible to compute the result.  \nANSWER=undefined",
+      "rule": "rluco(a,b) = 4 times max(a, b)",
+      "seed": 20260711,
+      "step": 11
+    },
+    {
+      "a": 3,
+      "answer": null,
+      "arm": "full_kernel",
+      "b": 6,
+      "correct": false,
+      "event_kinds": [
+        "retrieve",
+        "reason",
+        "ground"
+      ],
+      "expected": 18,
+      "first_appearance": true,
+      "incomplete": false,
+      "operator": "cfure",
+      "response": "The authorized memory does not contain a rule for \"cfure(a, b)\". Therefore, it is not possible to compute the result. ANSWER=undefined",
+      "rule": "cfure(a,b) = 3 times max(a, b)",
+      "seed": 20260711,
+      "step": 12
+    },
+    {
+      "a": 4,
+      "answer": null,
+      "arm": "full_kernel",
+      "b": 9,
+      "correct": false,
+      "event_kinds": [
+        "retrieve",
+        "reason",
+        "ground"
+      ],
+      "expected": 22,
+      "first_appearance": true,
+      "incomplete": false,
+      "operator": "cvonu",
+      "response": "The authorized rule for \"cvonu\" is not provided. Therefore, it is not possible to compute the result. ANSWER=undefined",
+      "rule": "cvonu(a,b) = a + b + 9",
+      "seed": 20260711,
+      "step": 13
+    },
+    {
+      "a": 2,
+      "answer": null,
+      "arm": "full_kernel",
+      "b": 2,
+      "correct": false,
+      "event_kinds": [
+        "retrieve",
+        "reason",
+        "ground"
+      ],
+      "expected": 6,
+      "first_appearance": true,
+      "incomplete": false,
+      "operator": "zlufi",
+      "response": "The authorized memory does not contain a rule for \"zlufi\". Therefore, it is not possible to compute the result.  \nANSWER=undefined",
+      "rule": "zlufi(a,b) = 3 times max(a, b)",
+      "seed": 20260711,
+      "step": 14
+    },
+    {
+      "a": 2,
+      "answer": 3,
+      "arm": "full_kernel",
+      "b": 3,
+      "correct": false,
+      "event_kinds": [
+        "retrieve",
+        "reason",
+        "ground"
+      ],
+      "expected": 7,
+      "first_appearance": true,
+      "incomplete": false,
+      "operator": "gcaco",
+      "response": "The given problem is gcaco(2, 3). None of the provided authorized memories define the operator \"gcaco\". Therefore, it is not possible to compute the result using the given rules. \n\nANSWER=undefined",
+      "rule": "gcaco(a,b) = |a - b| + 6",
+      "seed": 20260711,
+      "step": 15
+    },
+    {
+      "a": 8,
+      "answer": 2,
+      "arm": "full_kernel",
+      "b": 2,
+      "correct": false,
+      "event_kinds": [
+        "retrieve",
+        "reason",
+        "ground"
+      ],
+      "expected": 34,
+      "first_appearance": true,
+      "incomplete": false,
+      "operator": "pfiso",
+      "response": "The given problem is pfiso(8, 2). None of the provided authorized memories define the operator \"pfiso\". Therefore, it is not possible to compute the result using the given rules. \n\nANSWER=undefined",
+      "rule": "pfiso(a,b) = (a times 4) + b",
+      "seed": 20260711,
+      "step": 16
+    },
+    {
+      "a": 7,
+      "answer": 0,
+      "arm": "full_kernel",
+      "b": 2,
+      "correct": false,
+      "event_kinds": [
+        "retrieve",
+        "reason",
+        "ground"
+      ],
+      "expected": 11,
+      "first_appearance": true,
+      "incomplete": false,
+      "operator": "nnosa",
+      "response": "The authorized memories do not include a rule for \"nnosa\". Therefore, it is not possible to compute the result. ANSWER=0",
+      "rule": "nnosa(a,b) = a + b + 2",
+      "seed": 20260711,
+      "step": 17
+    },
+    {
+      "a": 9,
+      "answer": 8,
+      "arm": "full_kernel",
+      "b": 8,
+      "correct": false,
+      "event_kinds": [
+        "retrieve",
+        "reason",
+        "ground"
+      ],
+      "expected": 18,
+      "first_appearance": true,
+      "incomplete": false,
+      "operator": "kramu",
+      "response": "The authorized memories do not include a rule for \"kramu\". Therefore, it is not possible to compute the result of kramu(9, 8) with the provided information.  \nANSWER=undefined",
+      "rule": "kramu(a,b) = 2 times max(a, b)",
+      "seed": 20260711,
+      "step": 18
+    },
+    {
+      "a": 4,
+      "answer": 8,
+      "arm": "full_kernel",
+      "b": 8,
+      "correct": false,
+      "event_kinds": [
+        "retrieve",
+        "reason",
+        "ground"
+      ],
+      "expected": 17,
+      "first_appearance": true,
+      "incomplete": false,
+      "operator": "rkofu",
+      "response": "The authorized memories do not include a rule for \"rkofu\". Therefore, it is not possible to compute the result of rkofu(4, 8) based on the provided information.  \nANSWER=undefined",
+      "rule": "rkofu(a,b) = a + b + 5",
+      "seed": 20260711,
+      "step": 19
+    },
+    {
+      "a": 8,
+      "answer": null,
+      "arm": "full_kernel",
+      "b": 4,
+      "correct": false,
+      "event_kinds": [
+        "retrieve",
+        "reason",
+        "ground"
+      ],
+      "expected": 24,
+      "first_appearance": true,
+      "incomplete": false,
+      "operator": "lnogu",
+      "response": "None of the provided rules apply to the operator \"lnogu\". Therefore, it is not possible to compute the result with the given information. ANSWER=undefined",
+      "rule": "lnogu(a,b) = 3 times max(a, b)",
+      "seed": 20260711,
+      "step": 20
+    },
+    {
+      "a": 4,
+      "answer": null,
+      "arm": "full_kernel",
+      "b": 9,
+      "correct": false,
+      "event_kinds": [
+        "retrieve",
+        "reason",
+        "ground"
+      ],
+      "expected": 36,
+      "first_appearance": true,
+      "incomplete": false,
+      "operator": "zgelo",
+      "response": "The authorized memories do not include a rule for \"zgelo(a, b)\". Therefore, it is not possible to compute the result using the provided information. \n\nANSWER=undefined",
+      "rule": "zgelo(a,b) = 4 times max(a, b)",
+      "seed": 20260711,
+      "step": 21
+    },
+    {
+      "a": 4,
+      "answer": null,
+      "arm": "full_kernel",
+      "b": 7,
+      "correct": false,
+      "event_kinds": [
+        "retrieve",
+        "reason",
+        "ground"
+      ],
+      "expected": 21,
+      "first_appearance": true,
+      "incomplete": false,
+      "operator": "cpaku",
+      "response": "The authorized memories do not include a rule for \"cpaku(a, b)\". Therefore, it is not possible to compute the result based on the provided information. \n\nANSWER=undefined",
+      "rule": "cpaku(a,b) = 3 times max(a, b)",
+      "seed": 20260711,
+      "step": 22
+    },
+    {
+      "a": 5,
+      "answer": 9,
+      "arm": "full_kernel",
+      "b": 9,
+      "correct": false,
+      "event_kinds": [
+        "retrieve",
+        "reason",
+        "ground"
+      ],
+      "expected": 19,
+      "first_appearance": true,
+      "incomplete": false,
+      "operator": "ksilo",
+      "response": "The authorized memories do not include a rule for \"ksilo\". Therefore, it is not possible to compute the result of \"ksilo(5, 9)\" based on the provided information. ANSWER=undefined",
+      "rule": "ksilo(a,b) = (a times 2) + b",
+      "seed": 20260711,
+      "step": 23
+    },
+    {
+      "a": 9,
+      "answer": null,
+      "arm": "full_kernel",
+      "b": 9,
+      "correct": false,
+      "event_kinds": [
+        "retrieve",
+        "reason",
+        "ground"
+      ],
+      "expected": 18,
+      "first_appearance": true,
+      "incomplete": false,
+      "operator": "rpaza",
+      "response": "The authorized memory does not contain a rule for \"rpaza\". Therefore, it is not possible to compute the result. ANSWER=undefined",
+      "rule": "rpaza(a,b) = 2 times max(a, b)",
+      "seed": 20260711,
+      "step": 24
+    },
+    {
+      "a": 8,
+      "answer": null,
+      "arm": "full_kernel",
+      "b": 4,
+      "correct": false,
+      "event_kinds": [
+        "retrieve",
+        "reason",
+        "ground"
+      ],
+      "expected": 28,
+      "first_appearance": true,
+      "incomplete": false,
+      "operator": "nfunu",
+      "response": "The authorized memory does not contain a rule for \"nfunu\". Therefore, it is not possible to compute the result. ANSWER=undefined",
+      "rule": "nfunu(a,b) = (a times 3) + b",
+      "seed": 20260711,
+      "step": 25
+    },
+    {
+      "a": 2,
+      "answer": null,
+      "arm": "full_kernel",
+      "b": 8,
+      "correct": false,
+      "event_kinds": [
+        "retrieve",
+        "reason",
+        "ground"
+      ],
+      "expected": 32,
+      "first_appearance": true,
+      "incomplete": false,
+      "operator": "kvapa",
+      "response": "The authorized memory does not contain a rule for \"kvapa\". Therefore, it is not possible to compute the result. ANSWER=undefined",
+      "rule": "kvapa(a,b) = 4 times max(a, b)",
+      "seed": 20260711,
+      "step": 26
+    },
+    {
+      "a": 8,
+      "answer": 5,
+      "arm": "full_kernel",
+      "b": 5,
+      "correct": false,
+      "event_kinds": [
+        "retrieve",
+        "reason",
+        "ground"
+      ],
+      "expected": 7,
+      "first_appearance": true,
+      "incomplete": false,
+      "operator": "rzude",
+      "response": "The authorized memories do not include a rule for \"rzude(a, b)\". Therefore, it is not possible to compute the result of rzude(8, 5) with the provided information.  \n\nANSWER=undefined",
+      "rule": "rzude(a,b) = |a - b| + 4",
+      "seed": 20260711,
+      "step": 27
+    },
+    {
+      "a": 4,
+      "answer": null,
+      "arm": "full_kernel",
+      "b": 5,
+      "correct": false,
+      "event_kinds": [
+        "retrieve",
+        "reason",
+        "ground"
+      ],
+      "expected": 20,
+      "first_appearance": true,
+      "incomplete": false,
+      "operator": "cfike",
+      "response": "The authorized memory does not contain a rule for \"cfike(a, b)\". Therefore, it is not possible to compute the result. ANSWER=undefined",
+      "rule": "cfike(a,b) = 4 times max(a, b)",
+      "seed": 20260711,
+      "step": 28
+    },
+    {
+      "a": 7,
+      "answer": 4,
+      "arm": "full_kernel",
+      "b": 4,
+      "correct": false,
+      "event_kinds": [
+        "retrieve",
+        "reason",
+        "ground"
+      ],
+      "expected": 16,
+      "first_appearance": true,
+      "incomplete": false,
+      "operator": "grino",
+      "response": "The authorized memories do not include a rule for \"grino(a, b)\". Therefore, it is not possible to compute the result of \"grino(7, 4)\" based on the provided information. ANSWER=undefined",
+      "rule": "grino(a,b) = a + b + 5",
+      "seed": 20260711,
+      "step": 29
+    },
+    {
+      "a": 5,
+      "answer": 23,
+      "arm": "full_kernel",
+      "b": 3,
+      "correct": true,
+      "event_kinds": [
+        "retrieve",
+        "reason",
+        "ground"
+      ],
+      "expected": 23,
+      "first_appearance": false,
+      "incomplete": false,
+      "operator": "mbazi",
+      "response": "The authorized rule for mbazi(a,b) is (a times 4) + b. Applying this to mbazi(5, 3): (5 \u00d7 4) + 3 = 20 + 3 = 23.  \nANSWER=23",
+      "rule": "mbazi(a,b) = (a times 4) + b",
+      "seed": 20260711,
+      "step": 30
+    },
+    {
+      "a": 7,
+      "answer": 13,
+      "arm": "full_kernel",
+      "b": 3,
+      "correct": true,
+      "event_kinds": [
+        "retrieve",
+        "reason",
+        "ground"
+      ],
+      "expected": 13,
+      "first_appearance": false,
+      "incomplete": false,
+      "operator": "srira",
+      "response": "The authorized rule for srira(a,b) is: srira(a,b) = a + b + 3.  \nApplying this to the operands 7 and 3:  \n7 + 3 + 3 = 13  \nANSWER=13",
+      "rule": "srira(a,b) = a + b + 3",
+      "seed": 20260711,
+      "step": 31
+    },
+    {
+      "a": 2,
+      "answer": 9,
+      "arm": "full_kernel",
+      "b": 3,
+      "correct": true,
+      "event_kinds": [
+        "retrieve",
+        "reason",
+        "ground"
+      ],
+      "expected": 9,
+      "first_appearance": false,
+      "incomplete": false,
+      "operator": "lnogu",
+      "response": "The authorized rule for lnogu(a,b) is 3 times max(a, b). For lnogu(2, 3), max(2, 3) is 3. Then, 3 times 3 is 9.  \nANSWER=9",
+      "rule": "lnogu(a,b) = 3 times max(a, b)",
+      "seed": 20260711,
+      "step": 32
+    },
+    {
+      "a": 8,
+      "answer": 10,
+      "arm": "full_kernel",
+      "b": 4,
+      "correct": true,
+      "event_kinds": [
+        "retrieve",
+        "reason",
+        "ground"
+      ],
+      "expected": 10,
+      "first_appearance": false,
+      "incomplete": false,
+      "operator": "kbape",
+      "response": "The authorized rule for kbape(a,b) is |a - b| + 6. Applying this to kbape(8, 4):  \n|8 - 4| + 6 = 4 + 6 = 10  \nANSWER=10",
+      "rule": "kbape(a,b) = |a - b| + 6",
+      "seed": 20260711,
+      "step": 33
+    },
+    {
+      "a": 5,
+      "answer": 7,
+      "arm": "full_kernel",
+      "b": 2,
+      "correct": true,
+      "event_kinds": [
+        "retrieve",
+        "reason",
+        "ground"
+      ],
+      "expected": 7,
+      "first_appearance": false,
+      "incomplete": false,
+      "operator": "rzude",
+      "response": "The authorized rule for rzude(a,b) is |a - b| + 4. Applying this to rzude(5, 2):  \n|5 - 2| + 4 = 3 + 4 = 7  \nANSWER=7",
+      "rule": "rzude(a,b) = |a - b| + 4",
+      "seed": 20260711,
+      "step": 34
+    },
+    {
+      "a": 8,
+      "answer": 24,
+      "arm": "full_kernel",
+      "b": 4,
+      "correct": true,
+      "event_kinds": [
+        "retrieve",
+        "reason",
+        "ground"
+      ],
+      "expected": 24,
+      "first_appearance": false,
+      "incomplete": false,
+      "operator": "cpaku",
+      "response": "The authorized rule for cpaku(a,b) is 3 times max(a, b). For cpaku(8, 4), max(8, 4) is 8. 3 times 8 is 24.  \nANSWER=24",
+      "rule": "cpaku(a,b) = 3 times max(a, b)",
+      "seed": 20260711,
+      "step": 35
+    },
+    {
+      "a": 4,
+      "answer": 16,
+      "arm": "full_kernel",
+      "b": 4,
+      "correct": true,
+      "event_kinds": [
+        "retrieve",
+        "reason",
+        "ground"
+      ],
+      "expected": 16,
+      "first_appearance": false,
+      "incomplete": false,
+      "operator": "cpena",
+      "response": "The authorized rule for cpena(a,b) is 4 times max(a, b). For cpena(4, 4), max(4, 4) = 4. Then, 4 times 4 = 16.  \nANSWER=16",
+      "rule": "cpena(a,b) = 4 times max(a, b)",
+      "seed": 20260711,
+      "step": 36
+    },
+    {
+      "a": 7,
+      "answer": 17,
+      "arm": "full_kernel",
+      "b": 5,
+      "correct": true,
+      "event_kinds": [
+        "retrieve",
+        "reason",
+        "ground"
+      ],
+      "expected": 17,
+      "first_appearance": false,
+      "incomplete": false,
+      "operator": "rkofu",
+      "response": "The authorized rule for rkofu(a,b) is: rkofu(a,b) = a + b + 5.  \nApplying this to rkofu(7, 5):  \n7 + 5 + 5 = 17  \nANSWER=17",
+      "rule": "rkofu(a,b) = a + b + 5",
+      "seed": 20260711,
+      "step": 37
+    },
+    {
+      "a": 4,
+      "answer": 13,
+      "arm": "full_kernel",
+      "b": 4,
+      "correct": true,
+      "event_kinds": [
+        "retrieve",
+        "reason",
+        "ground"
+      ],
+      "expected": 13,
+      "first_appearance": false,
+      "incomplete": false,
+      "operator": "grino",
+      "response": "The authorized rule for grino(a,b) is: grino(a,b) = a + b + 5.  \nApplying this to grino(4, 4):  \n4 + 4 + 5 = 13  \nANSWER=13",
+      "rule": "grino(a,b) = a + b + 5",
+      "seed": 20260711,
+      "step": 38
+    },
+    {
+      "a": 6,
+      "answer": 24,
+      "arm": "full_kernel",
+      "b": 3,
+      "correct": true,
+      "event_kinds": [
+        "retrieve",
+        "reason",
+        "ground"
+      ],
+      "expected": 24,
+      "first_appearance": false,
+      "incomplete": false,
+      "operator": "zgelo",
+      "response": "The authorized rule for zgelo(a,b) is 4 times max(a, b). For zgelo(6, 3), max(6, 3) is 6. Then, 4 times 6 is 24.  \nANSWER=24",
+      "rule": "zgelo(a,b) = 4 times max(a, b)",
+      "seed": 20260711,
+      "step": 39
+    },
+    {
+      "a": 4,
+      "answer": 36,
+      "arm": "full_kernel",
+      "b": 9,
+      "correct": true,
+      "event_kinds": [
+        "retrieve",
+        "reason",
+        "ground"
+      ],
+      "expected": 36,
+      "first_appearance": false,
+      "incomplete": false,
+      "operator": "rluco",
+      "response": "The authorized rule for rluco(a,b) is 4 times max(a, b). For rluco(4, 9), max(4, 9) is 9. Then, 4 \u00d7 9 = 36.  \nANSWER=36",
+      "rule": "rluco(a,b) = 4 times max(a, b)",
+      "seed": 20260711,
+      "step": 40
+    },
+    {
+      "a": 5,
+      "answer": 21,
+      "arm": "full_kernel",
+      "b": 7,
+      "correct": true,
+      "event_kinds": [
+        "retrieve",
+        "reason",
+        "ground"
+      ],
+      "expected": 21,
+      "first_appearance": false,
+      "incomplete": false,
+      "operator": "cvonu",
+      "response": "The authorized rule for cvonu(a,b) is a + b + 9. Applying this to the operands 5 and 7:  \n5 + 7 + 9 = 21  \nANSWER=21",
+      "rule": "cvonu(a,b) = a + b + 9",
+      "seed": 20260711,
+      "step": 41
+    },
+    {
+      "a": 2,
+      "answer": 15,
+      "arm": "full_kernel",
+      "b": 9,
+      "correct": true,
+      "event_kinds": [
+        "retrieve",
+        "reason",
+        "ground"
+      ],
+      "expected": 15,
+      "first_appearance": false,
+      "incomplete": false,
+      "operator": "nfunu",
+      "response": "The authorized rule for nfunu(a,b) is (a times 3) + b. Applying this to nfunu(2, 9): (2 \u00d7 3) + 9 = 6 + 9 = 15.  \nANSWER=15",
+      "rule": "nfunu(a,b) = (a times 3) + b",
+      "seed": 20260711,
+      "step": 42
+    },
+    {
+      "a": 8,
+      "answer": 25,
+      "arm": "full_kernel",
+      "b": 9,
+      "correct": true,
+      "event_kinds": [
+        "retrieve",
+        "reason",
+        "ground"
+      ],
+      "expected": 25,
+      "first_appearance": false,
+      "incomplete": false,
+      "operator": "ksilo",
+      "response": "The authorized rule for ksilo(a,b) is (a times 2) + b. Applying this to the operands 8 and 9: (8 \u00d7 2) + 9 = 16 + 9 = 25.  \nANSWER=25",
+      "rule": "ksilo(a,b) = (a times 2) + b",
+      "seed": 20260711,
+      "step": 43
+    },
+    {
+      "a": 5,
+      "answer": 21,
+      "arm": "full_kernel",
+      "b": 7,
+      "correct": true,
+      "event_kinds": [
+        "retrieve",
+        "reason",
+        "ground"
+      ],
+      "expected": 21,
+      "first_appearance": false,
+      "incomplete": false,
+      "operator": "rtefi",
+      "response": "The authorized rule for rtefi(a,b) is: rtefi(a,b) = 3 times max(a, b).  \nFor rtefi(5, 7): max(5, 7) = 7.  \n3 times 7 = 21.  \nANSWER=21",
+      "rule": "rtefi(a,b) = 3 times max(a, b)",
+      "seed": 20260711,
+      "step": 44
+    },
+    {
+      "a": 6,
+      "answer": 24,
+      "arm": "full_kernel",
+      "b": 2,
+      "correct": true,
+      "event_kinds": [
+        "retrieve",
+        "reason",
+        "ground"
+      ],
+      "expected": 24,
+      "first_appearance": false,
+      "incomplete": false,
+      "operator": "kvapa",
+      "response": "The authorized rule for kvapa(a,b) is 4 times max(a, b). For kvapa(6, 2), max(6, 2) is 6. 4 times 6 is 24.  \nANSWER=24",
+      "rule": "kvapa(a,b) = 4 times max(a, b)",
+      "seed": 20260711,
+      "step": 45
+    },
+    {
+      "a": 5,
+      "answer": 9,
+      "arm": "full_kernel",
+      "b": 3,
+      "correct": true,
+      "event_kinds": [
+        "retrieve",
+        "reason",
+        "ground"
+      ],
+      "expected": 9,
+      "first_appearance": false,
+      "incomplete": false,
+      "operator": "nkogu",
+      "response": "The authorized rule for nkogu(a,b) is a + b + 1. Applying this to nkogu(5, 3):  \n5 + 3 + 1 = 9  \nANSWER=9",
+      "rule": "nkogu(a,b) = a + b + 1",
+      "seed": 20260711,
+      "step": 46
+    },
+    {
+      "a": 9,
+      "answer": 33,
+      "arm": "full_kernel",
+      "b": 6,
+      "correct": true,
+      "event_kinds": [
+        "retrieve",
+        "reason",
+        "ground"
+      ],
+      "expected": 33,
+      "first_appearance": false,
+      "incomplete": false,
+      "operator": "cvuka",
+      "response": "The authorized rule for cvuka(a,b) is (a times 3) + b. Applying this to the operands 9 and 6:  \n(9 \u00d7 3) + 6 = 27 + 6 = 33  \nANSWER=33",
+      "rule": "cvuka(a,b) = (a times 3) + b",
+      "seed": 20260711,
+      "step": 47
+    },
+    {
+      "a": 3,
+      "answer": 12,
+      "arm": "full_kernel",
+      "b": 6,
+      "correct": true,
+      "event_kinds": [
+        "retrieve",
+        "reason",
+        "ground"
+      ],
+      "expected": 12,
+      "first_appearance": false,
+      "incomplete": false,
+      "operator": "vnafo",
+      "response": "The authorized rule for vnafo(a,b) is |a - b| + 9.  \nFor vnafo(3, 6): |3 - 6| + 9 = 3 + 9 = 12.  \nANSWER=12",
+      "rule": "vnafo(a,b) = |a - b| + 9",
+      "seed": 20260711,
+      "step": 48
+    },
+    {
+      "a": 4,
+      "answer": 14,
+      "arm": "full_kernel",
+      "b": 7,
+      "correct": true,
+      "event_kinds": [
+        "retrieve",
+        "reason",
+        "ground"
+      ],
+      "expected": 14,
+      "first_appearance": false,
+      "incomplete": false,
+      "operator": "kramu",
+      "response": "The authorized rule for kramu(a,b) is 2 times max(a, b). For kramu(4, 7), max(4, 7) is 7. Therefore, 2 times 7 is 14.  \nANSWER=14",
+      "rule": "kramu(a,b) = 2 times max(a, b)",
+      "seed": 20260711,
+      "step": 49
+    },
+    {
+      "a": 5,
+      "answer": 10,
+      "arm": "full_kernel",
+      "b": 4,
+      "correct": true,
+      "event_kinds": [
+        "retrieve",
+        "reason",
+        "ground"
+      ],
+      "expected": 10,
+      "first_appearance": false,
+      "incomplete": false,
+      "operator": "bdisi",
+      "response": "The authorized rule for bdisi(a,b) is 2 times max(a, b). For bdisi(5, 4), max(5, 4) is 5. 2 times 5 is 10.  \nANSWER=10",
+      "rule": "bdisi(a,b) = 2 times max(a, b)",
+      "seed": 20260711,
+      "step": 50
+    },
+    {
+      "a": 5,
+      "answer": 15,
+      "arm": "full_kernel",
+      "b": 3,
+      "correct": true,
+      "event_kinds": [
+        "retrieve",
+        "reason",
+        "ground"
+      ],
+      "expected": 15,
+      "first_appearance": false,
+      "incomplete": false,
+      "operator": "zlufi",
+      "response": "The authorized rule for zlufi(a,b) is 3 times max(a, b). For zlufi(5, 3), max(5, 3) is 5. Then, 3 times 5 is 15.  \nANSWER=15",
+      "rule": "zlufi(a,b) = 3 times max(a, b)",
+      "seed": 20260711,
+      "step": 51
+    },
+    {
+      "a": 5,
+      "answer": 10,
+      "arm": "full_kernel",
+      "b": 5,
+      "correct": true,
+      "event_kinds": [
+        "retrieve",
+        "reason",
+        "ground"
+      ],
+      "expected": 10,
+      "first_appearance": false,
+      "incomplete": false,
+      "operator": "rpaza",
+      "response": "The authorized rule for rpaza(a,b) is 2 times max(a, b). For rpaza(5, 5), max(5, 5) = 5. Then, 2 \u00d7 5 = 10.  \nANSWER=10",
+      "rule": "rpaza(a,b) = 2 times max(a, b)",
+      "seed": 20260711,
+      "step": 52
+    },
+    {
+      "a": 7,
+      "answer": 28,
+      "arm": "full_kernel",
+      "b": 2,
+      "correct": true,
+      "event_kinds": [
+        "retrieve",
+        "reason",
+        "ground"
+      ],
+      "expected": 28,
+      "first_appearance": false,
+      "incomplete": false,
+      "operator": "cfike",
+      "response": "The authorized rule for cfike(a,b) is 4 times max(a, b). For cfike(7, 2), max(7, 2) is 7. 4 times 7 is 28.  \nANSWER=28",
+      "rule": "cfike(a,b) = 4 times max(a, b)",
+      "seed": 20260711,
+      "step": 53
+    },
+    {
+      "a": 9,
+      "answer": 14,
+      "arm": "full_kernel",
+      "b": 4,
+      "correct": true,
+      "event_kinds": [
+        "retrieve",
+        "reason",
+        "ground"
+      ],
+      "expected": 14,
+      "first_appearance": false,
+      "incomplete": false,
+      "operator": "gnepo",
+      "response": "The authorized rule for gnepo(a,b) is: gnepo(a,b) = a + b + 1.  \nApplying this to gnepo(9, 4):  \n9 + 4 + 1 = 14  \nANSWER=14",
+      "rule": "gnepo(a,b) = a + b + 1",
+      "seed": 20260711,
+      "step": 54
+    },
+    {
+      "a": 6,
+      "answer": 28,
+      "arm": "full_kernel",
+      "b": 4,
+      "correct": true,
+      "event_kinds": [
+        "retrieve",
+        "reason",
+        "ground"
+      ],
+      "expected": 28,
+      "first_appearance": false,
+      "incomplete": false,
+      "operator": "pfiso",
+      "response": "The authorized rule for pfiso(a,b) is (a times 4) + b. Applying this to pfiso(6, 4): (6 \u00d7 4) + 4 = 24 + 4 = 28.  \nANSWER=28",
+      "rule": "pfiso(a,b) = (a times 4) + b",
+      "seed": 20260711,
+      "step": 55
+    },
+    {
+      "a": 7,
+      "answer": 17,
+      "arm": "full_kernel",
+      "b": 8,
+      "correct": true,
+      "event_kinds": [
+        "retrieve",
+        "reason",
+        "ground"
+      ],
+      "expected": 17,
+      "first_appearance": false,
+      "incomplete": false,
+      "operator": "nnosa",
+      "response": "The authorized rule for nnosa(a,b) is a + b + 2. Applying this to the operands 7 and 8:  \n7 + 8 + 2 = 17  \nANSWER=17",
+      "rule": "nnosa(a,b) = a + b + 2",
+      "seed": 20260711,
+      "step": 56
+    },
+    {
+      "a": 3,
+      "answer": 10,
+      "arm": "full_kernel",
+      "b": 2,
+      "correct": true,
+      "event_kinds": [
+        "retrieve",
+        "reason",
+        "ground"
+      ],
+      "expected": 10,
+      "first_appearance": false,
+      "incomplete": false,
+      "operator": "cpase",
+      "response": "The authorized rule for cpase(a,b) is a + b + 5. Applying this to cpase(3, 2): 3 + 2 + 5 = 10.  \nANSWER=10",
+      "rule": "cpase(a,b) = a + b + 5",
+      "seed": 20260711,
+      "step": 57
+    },
+    {
+      "a": 5,
+      "answer": 21,
+      "arm": "full_kernel",
+      "b": 7,
+      "correct": true,
+      "event_kinds": [
+        "retrieve",
+        "reason",
+        "ground"
+      ],
+      "expected": 21,
+      "first_appearance": false,
+      "incomplete": false,
+      "operator": "cfure",
+      "response": "The authorized rule for cfure(a,b) is 3 times max(a, b). For the operands 5 and 7, the maximum is 7. Therefore, 3 times 7 equals 21.  \nANSWER=21",
+      "rule": "cfure(a,b) = 3 times max(a, b)",
+      "seed": 20260711,
+      "step": 58
+    },
+    {
+      "a": 5,
+      "answer": 10,
+      "arm": "full_kernel",
+      "b": 9,
+      "correct": true,
+      "event_kinds": [
+        "retrieve",
+        "reason",
+        "ground"
+      ],
+      "expected": 10,
+      "first_appearance": false,
+      "incomplete": false,
+      "operator": "gcaco",
+      "response": "gcaco(5, 9) = |5 - 9| + 6 = 4 + 6 = 10  \nANSWER=10",
+      "rule": "gcaco(a,b) = |a - b| + 6",
+      "seed": 20260711,
+      "step": 59
+    },
+    {
+      "a": 2,
+      "answer": 11,
+      "arm": "full_kernel",
+      "b": 4,
+      "correct": true,
+      "event_kinds": [
+        "retrieve",
+        "reason",
+        "ground"
+      ],
+      "expected": 11,
+      "first_appearance": false,
+      "incomplete": false,
+      "operator": "grino",
+      "response": "The authorized rule for grino(a,b) is: grino(a,b) = a + b + 5.  \nFor grino(2, 4): 2 + 4 + 5 = 11.  \nANSWER=11",
+      "rule": "grino(a,b) = a + b + 5",
+      "seed": 20260711,
+      "step": 60
+    },
+    {
+      "a": 4,
+      "answer": 10,
+      "arm": "full_kernel",
+      "b": 4,
+      "correct": true,
+      "event_kinds": [
+        "retrieve",
+        "reason",
+        "ground"
+      ],
+      "expected": 10,
+      "first_appearance": false,
+      "incomplete": false,
+      "operator": "nnosa",
+      "response": "The authorized rule for nnosa(a,b) is: nnosa(a,b) = a + b + 2.  \nApplying this to nnosa(4, 4):  \n4 + 4 + 2 = 10  \nANSWER=10",
+      "rule": "nnosa(a,b) = a + b + 2",
+      "seed": 20260711,
+      "step": 61
+    },
+    {
+      "a": 9,
+      "answer": 13,
+      "arm": "full_kernel",
+      "b": 2,
+      "correct": true,
+      "event_kinds": [
+        "retrieve",
+        "reason",
+        "ground"
+      ],
+      "expected": 13,
+      "first_appearance": false,
+      "incomplete": false,
+      "operator": "gcaco",
+      "response": "gcaco(9, 2) = |9 - 2| + 6 = 7 + 6 = 13  \nANSWER=13",
+      "rule": "gcaco(a,b) = |a - b| + 6",
+      "seed": 20260711,
+      "step": 62
+    },
+    {
+      "a": 8,
+      "answer": 16,
+      "arm": "full_kernel",
+      "b": 7,
+      "correct": true,
+      "event_kinds": [
+        "retrieve",
+        "reason",
+        "ground"
+      ],
+      "expected": 16,
+      "first_appearance": false,
+      "incomplete": false,
+      "operator": "gnepo",
+      "response": "The authorized rule for gnepo(a,b) is: gnepo(a,b) = a + b + 1.  \nApplying this to gnepo(8, 7):  \n8 + 7 + 1 = 16  \nANSWER=16",
+      "rule": "gnepo(a,b) = a + b + 1",
+      "seed": 20260711,
+      "step": 63
+    },
+    {
+      "a": 9,
+      "answer": 18,
+      "arm": "full_kernel",
+      "b": 4,
+      "correct": true,
+      "event_kinds": [
+        "retrieve",
+        "reason",
+        "ground"
+      ],
+      "expected": 18,
+      "first_appearance": false,
+      "incomplete": false,
+      "operator": "cpase",
+      "response": "The authorized rule for cpase(a,b) is a + b + 5. Applying this to cpase(9, 4): 9 + 4 + 5 = 18.  \nANSWER=18",
+      "rule": "cpase(a,b) = a + b + 5",
+      "seed": 20260711,
+      "step": 64
+    },
+    {
+      "a": 2,
+      "answer": 8,
+      "arm": "full_kernel",
+      "b": 2,
+      "correct": true,
+      "event_kinds": [
+        "retrieve",
+        "reason",
+        "ground"
+      ],
+      "expected": 8,
+      "first_appearance": false,
+      "incomplete": false,
+      "operator": "kvapa",
+      "response": "The authorized rule for kvapa(a, b) is: kvapa(a, b) = 4 times max(a, b).  \nFor kvapa(2, 2): max(2, 2) = 2, then 4 times 2 = 8.  \nANSWER=8",
+      "rule": "kvapa(a,b) = 4 times max(a, b)",
+      "seed": 20260711,
+      "step": 65
+    },
+    {
+      "a": 7,
+      "answer": 33,
+      "arm": "full_kernel",
+      "b": 5,
+      "correct": true,
+      "event_kinds": [
+        "retrieve",
+        "reason",
+        "ground"
+      ],
+      "expected": 33,
+      "first_appearance": false,
+      "incomplete": false,
+      "operator": "pfiso",
+      "response": "The authorized rule for pfiso(a,b) is (a times 4) + b. Applying this to pfiso(7, 5): (7 \u00d7 4) + 5 = 28 + 5 = 33.  \nANSWER=33",
+      "rule": "pfiso(a,b) = (a times 4) + b",
+      "seed": 20260711,
+      "step": 66
+    },
+    {
+      "a": 7,
+      "answer": 28,
+      "arm": "full_kernel",
+      "b": 4,
+      "correct": true,
+      "event_kinds": [
+        "retrieve",
+        "reason",
+        "ground"
+      ],
+      "expected": 28,
+      "first_appearance": false,
+      "incomplete": false,
+      "operator": "rluco",
+      "response": "The authorized rule for rluco(a,b) is 4 times max(a, b). For rluco(7, 4), max(7, 4) is 7. Then, 4 times 7 is 28.  \nANSWER=28",
+      "rule": "rluco(a,b) = 4 times max(a, b)",
+      "seed": 20260711,
+      "step": 67
+    },
+    {
+      "a": 4,
+      "answer": 12,
+      "arm": "full_kernel",
+      "b": 2,
+      "correct": true,
+      "event_kinds": [
+        "retrieve",
+        "reason",
+        "ground"
+      ],
+      "expected": 12,
+      "first_appearance": false,
+      "incomplete": false,
+      "operator": "lnogu",
+      "response": "The authorized rule for lnogu(a,b) is 3 times max(a, b). For lnogu(4, 2), max(4, 2) = 4. Then, 3 times 4 = 12.  \nANSWER=12",
+      "rule": "lnogu(a,b) = 3 times max(a, b)",
+      "seed": 20260711,
+      "step": 68
+    },
+    {
+      "a": 7,
+      "answer": 14,
+      "arm": "full_kernel",
+      "b": 7,
+      "correct": true,
+      "event_kinds": [
+        "retrieve",
+        "reason",
+        "ground"
+      ],
+      "expected": 14,
+      "first_appearance": false,
+      "incomplete": false,
+      "operator": "kramu",
+      "response": "The authorized rule for kramu(a,b) is 2 times max(a, b). For kramu(7, 7), max(7, 7) = 7. Therefore, 2 times 7 = 14.  \nANSWER=14",
+      "rule": "kramu(a,b) = 2 times max(a, b)",
+      "seed": 20260711,
+      "step": 69
+    },
+    {
+      "a": 2,
+      "answer": 8,
+      "arm": "full_kernel",
+      "b": 2,
+      "correct": true,
+      "event_kinds": [
+        "retrieve",
+        "reason",
+        "ground"
+      ],
+      "expected": 8,
+      "first_appearance": false,
+      "incomplete": false,
+      "operator": "cvuka",
+      "response": "The authorized rule for cvuka(a,b) is (a times 3) + b. Applying this to the operands 2 and 2: (2 \u00d7 3) + 2 = 6 + 2 = 8.  \nANSWER=8",
+      "rule": "cvuka(a,b) = (a times 3) + b",
+      "seed": 20260711,
+      "step": 70
+    },
+    {
+      "a": 3,
+      "answer": 11,
+      "arm": "full_kernel",
+      "b": 5,
+      "correct": true,
+      "event_kinds": [
+        "retrieve",
+        "reason",
+        "ground"
+      ],
+      "expected": 11,
+      "first_appearance": false,
+      "incomplete": false,
+      "operator": "srira",
+      "response": "The authorized rule for srira(a,b) is: srira(a,b) = a + b + 3.  \nApplying this to srira(3, 5):  \n3 + 5 + 3 = 11  \nANSWER=11",
+      "rule": "srira(a,b) = a + b + 3",
+      "seed": 20260711,
+      "step": 71
+    },
+    {
+      "a": 3,
+      "answer": 9,
+      "arm": "full_kernel",
+      "b": 2,
+      "correct": true,
+      "event_kinds": [
+        "retrieve",
+        "reason",
+        "ground"
+      ],
+      "expected": 9,
+      "first_appearance": false,
+      "incomplete": false,
+      "operator": "cpaku",
+      "response": "The authorized rule for cpaku(a,b) is 3 times max(a, b). For cpaku(3, 2), max(3, 2) is 3. Multiplying by 3 gives 9.  \nANSWER=9",
+      "rule": "cpaku(a,b) = 3 times max(a, b)",
+      "seed": 20260711,
+      "step": 72
+    },
+    {
+      "a": 4,
+      "answer": 12,
+      "arm": "full_kernel",
+      "b": 3,
+      "correct": true,
+      "event_kinds": [
+        "retrieve",
+        "reason",
+        "ground"
+      ],
+      "expected": 12,
+      "first_appearance": false,
+      "incomplete": false,
+      "operator": "zlufi",
+      "response": "The authorized rule for zlufi(a,b) is 3 times max(a, b). For zlufi(4, 3), max(4, 3) is 4. Then, 3 times 4 is 12.  \nANSWER=12",
+      "rule": "zlufi(a,b) = 3 times max(a, b)",
+      "seed": 20260711,
+      "step": 73
+    },
+    {
+      "a": 9,
+      "answer": 9,
+      "arm": "full_kernel",
+      "b": 4,
+      "correct": true,
+      "event_kinds": [
+        "retrieve",
+        "reason",
+        "ground"
+      ],
+      "expected": 9,
+      "first_appearance": false,
+      "incomplete": false,
+      "operator": "rzude",
+      "response": "The authorized rule for rzude(a,b) is |a - b| + 4.  \nFor rzude(9, 4): |9 - 4| + 4 = 5 + 4 = 9  \nANSWER=9",
+      "rule": "rzude(a,b) = |a - b| + 4",
+      "seed": 20260711,
+      "step": 74
+    },
+    {
+      "a": 7,
+      "answer": 21,
+      "arm": "full_kernel",
+      "b": 9,
+      "correct": true,
+      "event_kinds": [
+        "retrieve",
+        "reason",
+        "ground"
+      ],
+      "expected": 21,
+      "first_appearance": false,
+      "incomplete": false,
+      "operator": "rkofu",
+      "response": "The authorized rule for rkofu(a,b) is: rkofu(a,b) = a + b + 5.  \nApplying this to rkofu(7, 9):  \n7 + 9 + 5 = 21  \nANSWER=21",
+      "rule": "rkofu(a,b) = a + b + 5",
+      "seed": 20260711,
+      "step": 75
+    },
+    {
+      "a": 7,
+      "answer": 21,
+      "arm": "full_kernel",
+      "b": 4,
+      "correct": true,
+      "event_kinds": [
+        "retrieve",
+        "reason",
+        "ground"
+      ],
+      "expected": 21,
+      "first_appearance": false,
+      "incomplete": false,
+      "operator": "rtefi",
+      "response": "The authorized rule for rtefi(a,b) is: rtefi(a,b) = 3 times max(a, b).  \nGiven rtefi(7, 4), we compute max(7, 4) = 7.  \nThen, 3 times 7 = 21.  \nANSWER=21",
+      "rule": "rtefi(a,b) = 3 times max(a, b)",
+      "seed": 20260711,
+      "step": 76
+    },
+    {
+      "a": 4,
+      "answer": 16,
+      "arm": "full_kernel",
+      "b": 4,
+      "correct": true,
+      "event_kinds": [
+        "retrieve",
+        "reason",
+        "ground"
+      ],
+      "expected": 16,
+      "first_appearance": false,
+      "incomplete": false,
+      "operator": "nfunu",
+      "response": "The authorized rule for nfunu(a,b) is (a times 3) + b. Applying this to nfunu(4, 4): (4 \u00d7 3) + 4 = 12 + 4 = 16.  \nANSWER=16",
+      "rule": "nfunu(a,b) = (a times 3) + b",
+      "seed": 20260711,
+      "step": 77
+    },
+    {
+      "a": 5,
+      "answer": 15,
+      "arm": "full_kernel",
+      "b": 5,
+      "correct": true,
+      "event_kinds": [
+        "retrieve",
+        "reason",
+        "ground"
+      ],
+      "expected": 15,
+      "first_appearance": false,
+      "incomplete": false,
+      "operator": "cfure",
+      "response": "The authorized rule for cfure(a,b) is 3 times max(a, b). For the operands 5 and 5, max(5, 5) = 5. Therefore, 3 times 5 = 15.  \nANSWER=15",
+      "rule": "cfure(a,b) = 3 times max(a, b)",
+      "seed": 20260711,
+      "step": 78
+    },
+    {
+      "a": 2,
+      "answer": 13,
+      "arm": "full_kernel",
+      "b": 5,
+      "correct": true,
+      "event_kinds": [
+        "retrieve",
+        "reason",
+        "ground"
+      ],
+      "expected": 13,
+      "first_appearance": false,
+      "incomplete": false,
+      "operator": "mbazi",
+      "response": "The authorized rule for mbazi(a,b) is (a times 4) + b. Applying this to mbazi(2, 5): (2 \u00d7 4) + 5 = 8 + 5 = 13.  \nANSWER=13",
+      "rule": "mbazi(a,b) = (a times 4) + b",
+      "seed": 20260711,
+      "step": 79
+    },
+    {
+      "a": 4,
+      "answer": 10,
+      "arm": "full_kernel",
+      "b": 5,
+      "correct": true,
+      "event_kinds": [
+        "retrieve",
+        "reason",
+        "ground"
+      ],
+      "expected": 10,
+      "first_appearance": false,
+      "incomplete": false,
+      "operator": "nkogu",
+      "response": "The authorized rule for nkogu(a,b) is: nkogu(a,b) = a + b + 1.  \nApplying this to nkogu(4, 5):  \n4 + 5 + 1 = 10  \nANSWER=10",
+      "rule": "nkogu(a,b) = a + b + 1",
+      "seed": 20260711,
+      "step": 80
+    },
+    {
+      "a": 8,
+      "answer": 32,
+      "arm": "full_kernel",
+      "b": 8,
+      "correct": true,
+      "event_kinds": [
+        "retrieve",
+        "reason",
+        "ground"
+      ],
+      "expected": 32,
+      "first_appearance": false,
+      "incomplete": false,
+      "operator": "cfike",
+      "response": "The authorized rule for cfike(a,b) is 4 times max(a, b). For cfike(8, 8), max(8, 8) = 8. Then, 4 times 8 = 32.  \nANSWER=32",
+      "rule": "cfike(a,b) = 4 times max(a, b)",
+      "seed": 20260711,
+      "step": 81
+    },
+    {
+      "a": 6,
+      "answer": 12,
+      "arm": "full_kernel",
+      "b": 6,
+      "correct": true,
+      "event_kinds": [
+        "retrieve",
+        "reason",
+        "ground"
+      ],
+      "expected": 12,
+      "first_appearance": false,
+      "incomplete": false,
+      "operator": "bdisi",
+      "response": "The authorized rule for bdisi(a,b) is 2 times max(a, b). For bdisi(6, 6), max(6, 6) = 6. Then, 2 times 6 = 12.  \nANSWER=12",
+      "rule": "bdisi(a,b) = 2 times max(a, b)",
+      "seed": 20260711,
+      "step": 82
+    },
+    {
+      "a": 3,
+      "answer": 9,
+      "arm": "full_kernel",
+      "b": 3,
+      "correct": true,
+      "event_kinds": [
+        "retrieve",
+        "reason",
+        "ground"
+      ],
+      "expected": 9,
+      "first_appearance": false,
+      "incomplete": false,
+      "operator": "vnafo",
+      "response": "The authorized rule for vnafo(a,b) is |a - b| + 9. Applying this to vnafo(3, 3):  \n|3 - 3| + 9 = 0 + 9 = 9  \nANSWER=9",
+      "rule": "vnafo(a,b) = |a - b| + 9",
+      "seed": 20260711,
+      "step": 83
+    },
+    {
+      "a": 3,
+      "answer": 15,
+      "arm": "full_kernel",
+      "b": 9,
+      "correct": true,
+      "event_kinds": [
+        "retrieve",
+        "reason",
+        "ground"
+      ],
+      "expected": 15,
+      "first_appearance": false,
+      "incomplete": false,
+      "operator": "ksilo",
+      "response": "The authorized rule for ksilo(a,b) is (a times 2) + b. Applying this to ksilo(3, 9): (3 \u00d7 2) + 9 = 6 + 9 = 15.  \nANSWER=15",
+      "rule": "ksilo(a,b) = (a times 2) + b",
+      "seed": 20260711,
+      "step": 84
+    },
+    {
+      "a": 4,
+      "answer": 24,
+      "arm": "full_kernel",
+      "b": 6,
+      "correct": true,
+      "event_kinds": [
+        "retrieve",
+        "reason",
+        "ground"
+      ],
+      "expected": 24,
+      "first_appearance": false,
+      "incomplete": false,
+      "operator": "zgelo",
+      "response": "The authorized rule for zgelo(a,b) is 4 times max(a, b). For zgelo(4, 6), max(4, 6) = 6. Then, 4 \u00d7 6 = 24.  \nANSWER=24",
+      "rule": "zgelo(a,b) = 4 times max(a, b)",
+      "seed": 20260711,
+      "step": 85
+    },
+    {
+      "a": 8,
+      "answer": 20,
+      "arm": "full_kernel",
+      "b": 3,
+      "correct": true,
+      "event_kinds": [
+        "retrieve",
+        "reason",
+        "ground"
+      ],
+      "expected": 20,
+      "first_appearance": false,
+      "incomplete": false,
+      "operator": "cvonu",
+      "response": "The authorized rule for cvonu(a,b) is a + b + 9. Applying this to the operands 8 and 3: 8 + 3 + 9 = 20.  \nANSWER=20",
+      "rule": "cvonu(a,b) = a + b + 9",
+      "seed": 20260711,
+      "step": 86
+    },
+    {
+      "a": 2,
+      "answer": 6,
+      "arm": "full_kernel",
+      "b": 2,
+      "correct": true,
+      "event_kinds": [
+        "retrieve",
+        "reason",
+        "ground"
+      ],
+      "expected": 6,
+      "first_appearance": false,
+      "incomplete": false,
+      "operator": "kbape",
+      "response": "kbape(2, 2) = |2 - 2| + 6 = 0 + 6 = 6  \nANSWER=6",
+      "rule": "kbape(a,b) = |a - b| + 6",
+      "seed": 20260711,
+      "step": 87
+    },
+    {
+      "a": 6,
+      "answer": 12,
+      "arm": "full_kernel",
+      "b": 5,
+      "correct": true,
+      "event_kinds": [
+        "retrieve",
+        "reason",
+        "ground"
+      ],
+      "expected": 12,
+      "first_appearance": false,
+      "incomplete": false,
+      "operator": "rpaza",
+      "response": "The authorized rule for rpaza(a,b) is 2 times max(a, b). For rpaza(6, 5), max(6, 5) is 6. Then, 2 times 6 is 12.  \nANSWER=12",
+      "rule": "rpaza(a,b) = 2 times max(a, b)",
+      "seed": 20260711,
+      "step": 88
+    },
+    {
+      "a": 5,
+      "answer": 28,
+      "arm": "full_kernel",
+      "b": 7,
+      "correct": true,
+      "event_kinds": [
+        "retrieve",
+        "reason",
+        "ground"
+      ],
+      "expected": 28,
+      "first_appearance": false,
+      "incomplete": false,
+      "operator": "cpena",
+      "response": "The authorized rule for cpena(a,b) is 4 times max(a, b). For cpena(5, 7), max(5, 7) is 7. Then, 4 times 7 is 28.  \nANSWER=28",
+      "rule": "cpena(a,b) = 4 times max(a, b)",
+      "seed": 20260711,
+      "step": 89
+    },
+    {
+      "a": 7,
+      "answer": 23,
+      "arm": "full_kernel",
+      "b": 2,
+      "correct": true,
+      "event_kinds": [
+        "retrieve",
+        "reason",
+        "ground"
+      ],
+      "expected": 23,
+      "first_appearance": false,
+      "incomplete": false,
+      "operator": "nfunu",
+      "response": "The authorized rule for nfunu(a,b) is (a times 3) + b. Applying this to nfunu(7, 2): (7 \u00d7 3) + 2 = 21 + 2 = 23.  \nANSWER=23",
+      "rule": "nfunu(a,b) = (a times 3) + b",
+      "seed": 20260711,
+      "step": 90
+    },
+    {
+      "a": 6,
+      "answer": 12,
+      "arm": "full_kernel",
+      "b": 6,
+      "correct": true,
+      "event_kinds": [
+        "retrieve",
+        "reason",
+        "ground"
+      ],
+      "expected": 12,
+      "first_appearance": false,
+      "incomplete": false,
+      "operator": "rpaza",
+      "response": "The authorized rule for rpaza(a,b) is 2 times max(a, b). For rpaza(6, 6), max(6, 6) = 6. Therefore, 2 times 6 = 12.  \nANSWER=12",
+      "rule": "rpaza(a,b) = 2 times max(a, b)",
+      "seed": 20260711,
+      "step": 91
+    },
+    {
+      "a": 2,
+      "answer": 15,
+      "arm": "full_kernel",
+      "b": 4,
+      "correct": true,
+      "event_kinds": [
+        "retrieve",
+        "reason",
+        "ground"
+      ],
+      "expected": 15,
+      "first_appearance": false,
+      "incomplete": false,
+      "operator": "cvonu",
+      "response": "The authorized rule for cvonu(a,b) is a + b + 9. Applying this to the operands 2 and 4:  \n2 + 4 + 9 = 15  \nANSWER=15",
+      "rule": "cvonu(a,b) = a + b + 9",
+      "seed": 20260711,
+      "step": 92
+    },
+    {
+      "a": 4,
+      "answer": 16,
+      "arm": "full_kernel",
+      "b": 4,
+      "correct": true,
+      "event_kinds": [
+        "retrieve",
+        "reason",
+        "ground"
+      ],
+      "expected": 16,
+      "first_appearance": false,
+      "incomplete": false,
+      "operator": "rluco",
+      "response": "The authorized rule for rluco(a,b) is 4 times max(a, b). For rluco(4, 4), max(4, 4) = 4. Then, 4 times 4 = 16.  \nANSWER=16",
+      "rule": "rluco(a,b) = 4 times max(a, b)",
+      "seed": 20260711,
+      "step": 93
+    },
+    {
+      "a": 3,
+      "answer": 8,
+      "arm": "full_kernel",
+      "b": 3,
+      "correct": true,
+      "event_kinds": [
+        "retrieve",
+        "reason",
+        "ground"
+      ],
+      "expected": 8,
+      "first_appearance": false,
+      "incomplete": false,
+      "operator": "nnosa",
+      "response": "The authorized rule for nnosa(a,b) is a + b + 2. Applying this to nnosa(3, 3): 3 + 3 + 2 = 8.  \nANSWER=8",
+      "rule": "nnosa(a,b) = a + b + 2",
+      "seed": 20260711,
+      "step": 94
+    },
+    {
+      "a": 7,
+      "answer": 21,
+      "arm": "full_kernel",
+      "b": 6,
+      "correct": true,
+      "event_kinds": [
+        "retrieve",
+        "reason",
+        "ground"
+      ],
+      "expected": 21,
+      "first_appearance": false,
+      "incomplete": false,
+      "operator": "rtefi",
+      "response": "The authorized rule for rtefi(a,b) is: rtefi(a,b) = 3 times max(a, b).  \nFor rtefi(7, 6): max(7, 6) = 7.  \n3 times 7 = 21.  \nANSWER=21",
+      "rule": "rtefi(a,b) = 3 times max(a, b)",
+      "seed": 20260711,
+      "step": 95
+    },
+    {
+      "a": 8,
+      "answer": 16,
+      "arm": "full_kernel",
+      "b": 7,
+      "correct": true,
+      "event_kinds": [
+        "retrieve",
+        "reason",
+        "ground"
+      ],
+      "expected": 16,
+      "first_appearance": false,
+      "incomplete": false,
+      "operator": "bdisi",
+      "response": "The authorized rule for bdisi(a,b) is 2 times max(a, b). For bdisi(8, 7), max(8, 7) is 8. 2 times 8 is 16.  \nANSWER=16",
+      "rule": "bdisi(a,b) = 2 times max(a, b)",
+      "seed": 20260711,
+      "step": 96
+    },
+    {
+      "a": 9,
+      "answer": 11,
+      "arm": "full_kernel",
+      "b": 4,
+      "correct": true,
+      "event_kinds": [
+        "retrieve",
+        "reason",
+        "ground"
+      ],
+      "expected": 11,
+      "first_appearance": false,
+      "incomplete": false,
+      "operator": "gcaco",
+      "response": "The authorized rule for gcaco(a,b) is |a - b| + 6. Applying this to gcaco(9, 4):  \n|9 - 4| + 6 = 5 + 6 = 11  \nANSWER=11",
+      "rule": "gcaco(a,b) = |a - b| + 6",
+      "seed": 20260711,
+      "step": 97
+    },
+    {
+      "a": 8,
+      "answer": 24,
+      "arm": "full_kernel",
+      "b": 3,
+      "correct": true,
+      "event_kinds": [
+        "retrieve",
+        "reason",
+        "ground"
+      ],
+      "expected": 24,
+      "first_appearance": false,
+      "incomplete": false,
+      "operator": "cpaku",
+      "response": "The authorized rule for cpaku(a,b) is 3 times max(a, b). For cpaku(8, 3), max(8, 3) is 8. 3 times 8 is 24.  \nANSWER=24",
+      "rule": "cpaku(a,b) = 3 times max(a, b)",
+      "seed": 20260711,
+      "step": 98
+    },
+    {
+      "a": 5,
+      "answer": 21,
+      "arm": "full_kernel",
+      "b": 6,
+      "correct": true,
+      "event_kinds": [
+        "retrieve",
+        "reason",
+        "ground"
+      ],
+      "expected": 21,
+      "first_appearance": false,
+      "incomplete": false,
+      "operator": "cvuka",
+      "response": "The authorized rule for cvuka(a,b) is (a times 3) + b. Applying this to the operands 5 and 6:  \n(5 \u00d7 3) + 6 = 15 + 6 = 21  \nANSWER=21",
+      "rule": "cvuka(a,b) = (a times 3) + b",
+      "seed": 20260711,
+      "step": 99
+    },
+    {
+      "a": 5,
+      "answer": 16,
+      "arm": "full_kernel",
+      "b": 6,
+      "correct": true,
+      "event_kinds": [
+        "retrieve",
+        "reason",
+        "ground"
+      ],
+      "expected": 16,
+      "first_appearance": false,
+      "incomplete": false,
+      "operator": "rkofu",
+      "response": "The authorized rule for rkofu(a,b) is: rkofu(a,b) = a + b + 5.  \nApplying this to rkofu(5, 6):  \n5 + 6 + 5 = 16  \nANSWER=16",
+      "rule": "rkofu(a,b) = a + b + 5",
+      "seed": 20260711,
+      "step": 100
+    },
+    {
+      "a": 3,
+      "answer": 10,
+      "arm": "full_kernel",
+      "b": 2,
+      "correct": true,
+      "event_kinds": [
+        "retrieve",
+        "reason",
+        "ground"
+      ],
+      "expected": 10,
+      "first_appearance": false,
+      "incomplete": false,
+      "operator": "cpase",
+      "response": "The authorized rule for cpase(a,b) is a + b + 5. Applying this to cpase(3, 2): 3 + 2 + 5 = 10.  \nANSWER=10",
+      "rule": "cpase(a,b) = a + b + 5",
+      "seed": 20260711,
+      "step": 101
+    },
+    {
+      "a": 8,
+      "answer": 27,
+      "arm": "full_kernel",
+      "b": 9,
+      "correct": true,
+      "event_kinds": [
+        "retrieve",
+        "reason",
+        "ground"
+      ],
+      "expected": 27,
+      "first_appearance": false,
+      "incomplete": false,
+      "operator": "cfure",
+      "response": "The authorized rule for cfure(a,b) is 3 times max(a, b). For the operands 8 and 9, the maximum is 9. Therefore, 3 times 9 equals 27.  \nANSWER=27",
+      "rule": "cfure(a,b) = 3 times max(a, b)",
+      "seed": 20260711,
+      "step": 102
+    },
+    {
+      "a": 3,
+      "answer": 9,
+      "arm": "full_kernel",
+      "b": 2,
+      "correct": true,
+      "event_kinds": [
+        "retrieve",
+        "reason",
+        "ground"
+      ],
+      "expected": 9,
+      "first_appearance": false,
+      "incomplete": false,
+      "operator": "zlufi",
+      "response": "The authorized rule for zlufi(a,b) is 3 times max(a, b). For zlufi(3, 2), max(3, 2) is 3. Therefore, 3 times 3 is 9.  \nANSWER=9",
+      "rule": "zlufi(a,b) = 3 times max(a, b)",
+      "seed": 20260711,
+      "step": 103
+    },
+    {
+      "a": 6,
+      "answer": 14,
+      "arm": "full_kernel",
+      "b": 7,
+      "correct": true,
+      "event_kinds": [
+        "retrieve",
+        "reason",
+        "ground"
+      ],
+      "expected": 14,
+      "first_appearance": false,
+      "incomplete": false,
+      "operator": "gnepo",
+      "response": "The authorized rule for gnepo(a,b) is a + b + 1. Applying this to gnepo(6, 7): 6 + 7 + 1 = 14.  \nANSWER=14",
+      "rule": "gnepo(a,b) = a + b + 1",
+      "seed": 20260711,
+      "step": 104
+    },
+    {
+      "a": 6,
+      "answer": 15,
+      "arm": "full_kernel",
+      "b": 3,
+      "correct": true,
+      "event_kinds": [
+        "retrieve",
+        "reason",
+        "ground"
+      ],
+      "expected": 15,
+      "first_appearance": false,
+      "incomplete": false,
+      "operator": "ksilo",
+      "response": "The authorized rule for ksilo(a,b) is (a times 2) + b. Applying this to ksilo(6, 3): (6 \u00d7 2) + 3 = 12 + 3 = 15.  \nANSWER=15",
+      "rule": "ksilo(a,b) = (a times 2) + b",
+      "seed": 20260711,
+      "step": 105
+    },
+    {
+      "a": 3,
+      "answer": 8,
+      "arm": "full_kernel",
+      "b": 5,
+      "correct": true,
+      "event_kinds": [
+        "retrieve",
+        "reason",
+        "ground"
+      ],
+      "expected": 8,
+      "first_appearance": false,
+      "incomplete": false,
+      "operator": "kbape",
+      "response": "The authorized rule for kbape(a,b) is |a - b| + 6.  \nFor kbape(3, 5): |3 - 5| + 6 = 2 + 6 = 8  \nANSWER=8",
+      "rule": "kbape(a,b) = |a - b| + 6",
+      "seed": 20260711,
+      "step": 106
+    },
+    {
+      "a": 6,
+      "answer": 24,
+      "arm": "full_kernel",
+      "b": 5,
+      "correct": true,
+      "event_kinds": [
+        "retrieve",
+        "reason",
+        "ground"
+      ],
+      "expected": 24,
+      "first_appearance": false,
+      "incomplete": false,
+      "operator": "cpena",
+      "response": "The authorized rule for cpena(a,b) is 4 times max(a, b). For cpena(6, 5), max(6, 5) is 6. Then, 4 times 6 is 24.  \nANSWER=24",
+      "rule": "cpena(a,b) = 4 times max(a, b)",
+      "seed": 20260711,
+      "step": 107
+    },
+    {
+      "a": 9,
+      "answer": 45,
+      "arm": "full_kernel",
+      "b": 9,
+      "correct": true,
+      "event_kinds": [
+        "retrieve",
+        "reason",
+        "ground"
+      ],
+      "expected": 45,
+      "first_appearance": false,
+      "incomplete": false,
+      "operator": "mbazi",
+      "response": "The authorized rule for mbazi(a,b) is (a times 4) + b. Applying this to mbazi(9, 9): (9 \u00d7 4) + 9 = 36 + 9 = 45.  \nANSWER=45",
+      "rule": "mbazi(a,b) = (a times 4) + b",
+      "seed": 20260711,
+      "step": 108
+    },
+    {
+      "a": 8,
+      "answer": 32,
+      "arm": "full_kernel",
+      "b": 6,
+      "correct": true,
+      "event_kinds": [
+        "retrieve",
+        "reason",
+        "ground"
+      ],
+      "expected": 32,
+      "first_appearance": false,
+      "incomplete": false,
+      "operator": "cfike",
+      "response": "The authorized rule for cfike(a,b) is 4 times max(a, b). For cfike(8, 6), max(8, 6) is 8. 4 times 8 is 32.  \nANSWER=32",
+      "rule": "cfike(a,b) = 4 times max(a, b)",
+      "seed": 20260711,
+      "step": 109
+    },
+    {
+      "a": 8,
+      "answer": 36,
+      "arm": "full_kernel",
+      "b": 9,
+      "correct": true,
+      "event_kinds": [
+        "retrieve",
+        "reason",
+        "ground"
+      ],
+      "expected": 36,
+      "first_appearance": false,
+      "incomplete": false,
+      "operator": "zgelo",
+      "response": "The authorized rule for zgelo(a,b) is 4 times max(a, b). For zgelo(8, 9), max(8, 9) is 9. Therefore, 4 times 9 is 36.  \nANSWER=36",
+      "rule": "zgelo(a,b) = 4 times max(a, b)",
+      "seed": 20260711,
+      "step": 110
+    },
+    {
+      "a": 3,
+      "answer": 19,
+      "arm": "full_kernel",
+      "b": 7,
+      "correct": true,
+      "event_kinds": [
+        "retrieve",
+        "reason",
+        "ground"
+      ],
+      "expected": 19,
+      "first_appearance": false,
+      "incomplete": false,
+      "operator": "pfiso",
+      "response": "The authorized rule for pfiso(a,b) is (a times 4) + b. Applying this to pfiso(3, 7): (3 \u00d7 4) + 7 = 12 + 7 = 19.  \nANSWER=19",
+      "rule": "pfiso(a,b) = (a times 4) + b",
+      "seed": 20260711,
+      "step": 111
+    },
+    {
+      "a": 3,
+      "answer": 12,
+      "arm": "full_kernel",
+      "b": 6,
+      "correct": true,
+      "event_kinds": [
+        "retrieve",
+        "reason",
+        "ground"
+      ],
+      "expected": 12,
+      "first_appearance": false,
+      "incomplete": false,
+      "operator": "kramu",
+      "response": "The authorized rule for kramu(a,b) is 2 times max(a, b). For kramu(3, 6), max(3, 6) is 6. 2 times 6 is 12.  \nANSWER=12",
+      "rule": "kramu(a,b) = 2 times max(a, b)",
+      "seed": 20260711,
+      "step": 112
+    },
+    {
+      "a": 9,
+      "answer": 18,
+      "arm": "full_kernel",
+      "b": 8,
+      "correct": true,
+      "event_kinds": [
+        "retrieve",
+        "reason",
+        "ground"
+      ],
+      "expected": 18,
+      "first_appearance": false,
+      "incomplete": false,
+      "operator": "nkogu",
+      "response": "The authorized rule for nkogu(a,b) is: nkogu(a,b) = a + b + 1.  \nApplying this to nkogu(9, 8):  \n9 + 8 + 1 = 18  \nANSWER=18",
+      "rule": "nkogu(a,b) = a + b + 1",
+      "seed": 20260711,
+      "step": 113
+    },
+    {
+      "a": 9,
+      "answer": 36,
+      "arm": "full_kernel",
+      "b": 7,
+      "correct": true,
+      "event_kinds": [
+        "retrieve",
+        "reason",
+        "ground"
+      ],
+      "expected": 36,
+      "first_appearance": false,
+      "incomplete": false,
+      "operator": "kvapa",
+      "response": "The authorized rule for kvapa(a,b) is 4 times max(a, b). For kvapa(9, 7), max(9, 7) is 9. 4 times 9 is 36.  \nANSWER=36",
+      "rule": "kvapa(a,b) = 4 times max(a, b)",
+      "seed": 20260711,
+      "step": 114
+    },
+    {
+      "a": 5,
+      "answer": 6,
+      "arm": "full_kernel",
+      "b": 3,
+      "correct": true,
+      "event_kinds": [
+        "retrieve",
+        "reason",
+        "ground"
+      ],
+      "expected": 6,
+      "first_appearance": false,
+      "incomplete": false,
+      "operator": "rzude",
+      "response": "The authorized rule for rzude(a,b) is |a - b| + 4. Applying this to rzude(5, 3):  \n|5 - 3| + 4 = 2 + 4 = 6  \nANSWER=6",
+      "rule": "rzude(a,b) = |a - b| + 4",
+      "seed": 20260711,
+      "step": 115
+    },
+    {
+      "a": 9,
+      "answer": 11,
+      "arm": "full_kernel",
+      "b": 7,
+      "correct": true,
+      "event_kinds": [
+        "retrieve",
+        "reason",
+        "ground"
+      ],
+      "expected": 11,
+      "first_appearance": false,
+      "incomplete": false,
+      "operator": "vnafo",
+      "response": "The authorized rule for vnafo(a,b) is |a - b| + 9.  \nFor vnafo(9, 7): |9 - 7| + 9 = 2 + 9 = 11.  \nANSWER=11",
+      "rule": "vnafo(a,b) = |a - b| + 9",
+      "seed": 20260711,
+      "step": 116
+    },
+    {
+      "a": 5,
+      "answer": 17,
+      "arm": "full_kernel",
+      "b": 9,
+      "correct": true,
+      "event_kinds": [
+        "retrieve",
+        "reason",
+        "ground"
+      ],
+      "expected": 17,
+      "first_appearance": false,
+      "incomplete": false,
+      "operator": "srira",
+      "response": "The authorized rule for srira(a,b) is a + b + 3. Applying this to the operands 5 and 9: 5 + 9 + 3 = 17.  \nANSWER=17",
+      "rule": "srira(a,b) = a + b + 3",
+      "seed": 20260711,
+      "step": 117
+    },
+    {
+      "a": 9,
+      "answer": 18,
+      "arm": "full_kernel",
+      "b": 4,
+      "correct": true,
+      "event_kinds": [
+        "retrieve",
+        "reason",
+        "ground"
+      ],
+      "expected": 18,
+      "first_appearance": false,
+      "incomplete": false,
+      "operator": "grino",
+      "response": "The authorized rule for grino(a,b) is: grino(a,b) = a + b + 5.  \nApplying this to grino(9, 4):  \n9 + 4 + 5 = 18  \nANSWER=18",
+      "rule": "grino(a,b) = a + b + 5",
+      "seed": 20260711,
+      "step": 118
+    },
+    {
+      "a": 7,
+      "answer": 21,
+      "arm": "full_kernel",
+      "b": 6,
+      "correct": true,
+      "event_kinds": [
+        "retrieve",
+        "reason",
+        "ground"
+      ],
+      "expected": 21,
+      "first_appearance": false,
+      "incomplete": false,
+      "operator": "lnogu",
+      "response": "The authorized rule for lnogu(a,b) is 3 times max(a, b). For lnogu(7, 6), max(7, 6) is 7. Therefore, 3 times 7 is 21.  \nANSWER=21",
+      "rule": "lnogu(a,b) = 3 times max(a, b)",
+      "seed": 20260711,
+      "step": 119
+    },
+    {
+      "a": 3,
+      "answer": 18,
+      "arm": "full_kernel",
+      "b": 9,
+      "correct": true,
+      "event_kinds": [
+        "retrieve",
+        "reason",
+        "ground"
+      ],
+      "expected": 18,
+      "first_appearance": false,
+      "incomplete": false,
+      "operator": "cvuka",
+      "response": "The authorized rule for cvuka(a,b) is (a times 3) + b. Applying this to the operands 3 and 9: (3 times 3) + 9 = 9 + 9 = 18.  \nANSWER=18",
+      "rule": "cvuka(a,b) = (a times 3) + b",
+      "seed": 20260711,
+      "step": 120
+    },
+    {
+      "a": 9,
+      "answer": 27,
+      "arm": "full_kernel",
+      "b": 3,
+      "correct": true,
+      "event_kinds": [
+        "retrieve",
+        "reason",
+        "ground"
+      ],
+      "expected": 27,
+      "first_appearance": false,
+      "incomplete": false,
+      "operator": "cfure",
+      "response": "The authorized rule for cfure(a,b) is 3 times max(a, b). For the operands 9 and 3, the maximum is 9. Therefore, 3 times 9 equals 27.  \nANSWER=27",
+      "rule": "cfure(a,b) = 3 times max(a, b)",
+      "seed": 20260711,
+      "step": 121
+    },
+    {
+      "a": 6,
+      "answer": 23,
+      "arm": "full_kernel",
+      "b": 8,
+      "correct": true,
+      "event_kinds": [
+        "retrieve",
+        "reason",
+        "ground"
+      ],
+      "expected": 23,
+      "first_appearance": false,
+      "incomplete": false,
+      "operator": "cvonu",
+      "response": "The authorized rule for cvonu(a,b) is a + b + 9. Applying this to the operands 6 and 8:  \n6 + 8 + 9 = 23  \nANSWER=23",
+      "rule": "cvonu(a,b) = a + b + 9",
+      "seed": 20260711,
+      "step": 122
+    },
+    {
+      "a": 6,
+      "answer": 28,
+      "arm": "full_kernel",
+      "b": 7,
+      "correct": true,
+      "event_kinds": [
+        "retrieve",
+        "reason",
+        "ground"
+      ],
+      "expected": 28,
+      "first_appearance": false,
+      "incomplete": false,
+      "operator": "kvapa",
+      "response": "The authorized rule for kvapa(a,b) is: kvapa(a,b) = 4 times max(a, b).  \nGiven kvapa(6, 7), we compute max(6, 7) = 7.  \nThen, 4 times 7 = 28.  \nANSWER=28",
+      "rule": "kvapa(a,b) = 4 times max(a, b)",
+      "seed": 20260711,
+      "step": 123
+    },
+    {
+      "a": 7,
+      "answer": 28,
+      "arm": "full_kernel",
+      "b": 5,
+      "correct": true,
+      "event_kinds": [
+        "retrieve",
+        "reason",
+        "ground"
+      ],
+      "expected": 28,
+      "first_appearance": false,
+      "incomplete": false,
+      "operator": "cpena",
+      "response": "The authorized rule for cpena(a,b) is 4 times max(a, b). For cpena(7, 5), max(7, 5) is 7. Then, 4 times 7 is 28.  \nANSWER=28",
+      "rule": "cpena(a,b) = 4 times max(a, b)",
+      "seed": 20260711,
+      "step": 124
+    },
+    {
+      "a": 9,
+      "answer": 30,
+      "arm": "full_kernel",
+      "b": 3,
+      "correct": true,
+      "event_kinds": [
+        "retrieve",
+        "reason",
+        "ground"
+      ],
+      "expected": 30,
+      "first_appearance": false,
+      "incomplete": false,
+      "operator": "nfunu",
+      "response": "The authorized rule for nfunu(a,b) is (a times 3) + b. Applying this to nfunu(9, 3): (9 \u00d7 3) + 3 = 27 + 3 = 30.  \nANSWER=30",
+      "rule": "nfunu(a,b) = (a times 3) + b",
+      "seed": 20260711,
+      "step": 125
+    },
+    {
+      "a": 7,
+      "answer": 13,
+      "arm": "full_kernel",
+      "b": 4,
+      "correct": true,
+      "event_kinds": [
+        "retrieve",
+        "reason",
+        "ground"
+      ],
+      "expected": 13,
+      "first_appearance": false,
+      "incomplete": false,
+      "operator": "nnosa",
+      "response": "The authorized rule for nnosa(a,b) is: nnosa(a,b) = a + b + 2.  \nApplying this to nnosa(7, 4):  \n7 + 4 + 2 = 13  \nANSWER=13",
+      "rule": "nnosa(a,b) = a + b + 2",
+      "seed": 20260711,
+      "step": 126
+    },
+    {
+      "a": 3,
+      "answer": 13,
+      "arm": "full_kernel",
+      "b": 7,
+      "correct": true,
+      "event_kinds": [
+        "retrieve",
+        "reason",
+        "ground"
+      ],
+      "expected": 13,
+      "first_appearance": false,
+      "incomplete": false,
+      "operator": "srira",
+      "response": "The authorized rule for srira(a,b) is: srira(a,b) = a + b + 3.  \nApplying this to srira(3, 7):  \n3 + 7 + 3 = 13  \nANSWER=13",
+      "rule": "srira(a,b) = a + b + 3",
+      "seed": 20260711,
+      "step": 127
+    },
+    {
+      "a": 3,
+      "answer": 5,
+      "arm": "full_kernel",
+      "b": 2,
+      "correct": true,
+      "event_kinds": [
+        "retrieve",
+        "reason",
+        "ground"
+      ],
+      "expected": 5,
+      "first_appearance": false,
+      "incomplete": false,
+      "operator": "rzude",
+      "response": "The authorized rule for rzude(a,b) is |a - b| + 4. Applying this to rzude(3, 2):  \n|3 - 2| + 4 = 1 + 4 = 5  \nANSWER=5",
+      "rule": "rzude(a,b) = |a - b| + 4",
+      "seed": 20260711,
+      "step": 128
+    },
+    {
+      "a": 2,
+      "answer": 4,
+      "arm": "full_kernel",
+      "b": 2,
+      "correct": true,
+      "event_kinds": [
+        "retrieve",
+        "reason",
+        "ground"
+      ],
+      "expected": 4,
+      "first_appearance": false,
+      "incomplete": false,
+      "operator": "rpaza",
+      "response": "The authorized rule for rpaza(a,b) is 2 times max(a, b). For the operands 2 and 2, max(2, 2) = 2. Therefore, 2 times 2 = 4.  \nANSWER=4",
+      "rule": "rpaza(a,b) = 2 times max(a, b)",
+      "seed": 20260711,
+      "step": 129
+    },
+    {
+      "a": 9,
+      "answer": 15,
+      "arm": "full_kernel",
+      "b": 5,
+      "correct": true,
+      "event_kinds": [
+        "retrieve",
+        "reason",
+        "ground"
+      ],
+      "expected": 15,
+      "first_appearance": false,
+      "incomplete": false,
+      "operator": "nkogu",
+      "response": "The authorized rule for nkogu(a,b) is: nkogu(a,b) = a + b + 1.  \nApplying this to nkogu(9, 5):  \n9 + 5 + 1 = 15  \nANSWER=15",
+      "rule": "nkogu(a,b) = a + b + 1",
+      "seed": 20260711,
+      "step": 130
+    },
+    {
+      "a": 4,
+      "answer": 13,
+      "arm": "full_kernel",
+      "b": 5,
+      "correct": true,
+      "event_kinds": [
+        "retrieve",
+        "reason",
+        "ground"
+      ],
+      "expected": 13,
+      "first_appearance": false,
+      "incomplete": false,
+      "operator": "ksilo",
+      "response": "The authorized rule for ksilo(a,b) is (a times 2) + b. Applying this to the operands 4 and 5: (4 \u00d7 2) + 5 = 8 + 5 = 13.  \nANSWER=13",
+      "rule": "ksilo(a,b) = (a times 2) + b",
+      "seed": 20260711,
+      "step": 131
+    },
+    {
+      "a": 6,
+      "answer": 12,
+      "arm": "full_kernel",
+      "b": 4,
+      "correct": true,
+      "event_kinds": [
+        "retrieve",
+        "reason",
+        "ground"
+      ],
+      "expected": 12,
+      "first_appearance": false,
+      "incomplete": false,
+      "operator": "bdisi",
+      "response": "The authorized rule for bdisi(a,b) is 2 times max(a, b). For bdisi(6, 4), max(6, 4) = 6. Then, 2 times 6 = 12.  \nANSWER=12",
+      "rule": "bdisi(a,b) = 2 times max(a, b)",
+      "seed": 20260711,
+      "step": 132
+    },
+    {
+      "a": 3,
+      "answer": 12,
+      "arm": "full_kernel",
+      "b": 2,
+      "correct": true,
+      "event_kinds": [
+        "retrieve",
+        "reason",
+        "ground"
+      ],
+      "expected": 12,
+      "first_appearance": false,
+      "incomplete": false,
+      "operator": "zgelo",
+      "response": "The authorized rule for zgelo(a,b) is 4 times max(a, b). For zgelo(3, 2), max(3, 2) is 3. Therefore, 4 times 3 is 12.  \nANSWER=12",
+      "rule": "zgelo(a,b) = 4 times max(a, b)",
+      "seed": 20260711,
+      "step": 133
+    },
+    {
+      "a": 4,
+      "answer": 28,
+      "arm": "full_kernel",
+      "b": 7,
+      "correct": true,
+      "event_kinds": [
+        "retrieve",
+        "reason",
+        "ground"
+      ],
+      "expected": 28,
+      "first_appearance": false,
+      "incomplete": false,
+      "operator": "cfike",
+      "response": "The authorized rule for cfike(a,b) is 4 times max(a, b). For cfike(4, 7), max(4, 7) is 7. Therefore, 4 times 7 is 28.  \nANSWER=28",
+      "rule": "cfike(a,b) = 4 times max(a, b)",
+      "seed": 20260711,
+      "step": 134
+    },
+    {
+      "a": 9,
+      "answer": 27,
+      "arm": "full_kernel",
+      "b": 8,
+      "correct": true,
+      "event_kinds": [
+        "retrieve",
+        "reason",
+        "ground"
+      ],
+      "expected": 27,
+      "first_appearance": false,
+      "incomplete": false,
+      "operator": "rtefi",
+      "response": "The authorized rule for rtefi(a,b) is: rtefi(a,b) = 3 times max(a, b).  \nFor rtefi(9, 8): max(9, 8) = 9.  \n3 times 9 = 27.  \nANSWER=27",
+      "rule": "rtefi(a,b) = 3 times max(a, b)",
+      "seed": 20260711,
+      "step": 135
+    },
+    {
+      "a": 5,
+      "answer": 16,
+      "arm": "full_kernel",
+      "b": 6,
+      "correct": true,
+      "event_kinds": [
+        "retrieve",
+        "reason",
+        "ground"
+      ],
+      "expected": 16,
+      "first_appearance": false,
+      "incomplete": false,
+      "operator": "rkofu",
+      "response": "The authorized rule for rkofu(a,b) is: rkofu(a,b) = a + b + 5.  \nApplying this to rkofu(5, 6):  \n5 + 6 + 5 = 16  \nANSWER=16",
+      "rule": "rkofu(a,b) = a + b + 5",
+      "seed": 20260711,
+      "step": 136
+    },
+    {
+      "a": 9,
+      "answer": 13,
+      "arm": "full_kernel",
+      "b": 5,
+      "correct": true,
+      "event_kinds": [
+        "retrieve",
+        "reason",
+        "ground"
+      ],
+      "expected": 13,
+      "first_appearance": false,
+      "incomplete": false,
+      "operator": "vnafo",
+      "response": "The authorized rule for vnafo(a,b) is |a - b| + 9.  \nFor vnafo(9, 5): |9 - 5| + 9 = 4 + 9 = 13.  \nANSWER=13",
+      "rule": "vnafo(a,b) = |a - b| + 9",
+      "seed": 20260711,
+      "step": 137
+    },
+    {
+      "a": 4,
+      "answer": 7,
+      "arm": "full_kernel",
+      "b": 3,
+      "correct": true,
+      "event_kinds": [
+        "retrieve",
+        "reason",
+        "ground"
+      ],
+      "expected": 7,
+      "first_appearance": false,
+      "incomplete": false,
+      "operator": "kbape",
+      "response": "kbape(4, 3) = |4 - 3| + 6 = 1 + 6 = 7  \nANSWER=7",
+      "rule": "kbape(a,b) = |a - b| + 6",
+      "seed": 20260711,
+      "step": 138
+    },
+    {
+      "a": 8,
+      "answer": 35,
+      "arm": "full_kernel",
+      "b": 3,
+      "correct": true,
+      "event_kinds": [
+        "retrieve",
+        "reason",
+        "ground"
+      ],
+      "expected": 35,
+      "first_appearance": false,
+      "incomplete": false,
+      "operator": "mbazi",
+      "response": "The rule for mbazi(a,b) is (a times 4) + b. Applying this to mbazi(8, 3): (8 \u00d7 4) + 3 = 32 + 3 = 35.  \nANSWER=35",
+      "rule": "mbazi(a,b) = (a times 4) + b",
+      "seed": 20260711,
+      "step": 139
+    },
+    {
+      "a": 3,
+      "answer": 8,
+      "arm": "full_kernel",
+      "b": 4,
+      "correct": true,
+      "event_kinds": [
+        "retrieve",
+        "reason",
+        "ground"
+      ],
+      "expected": 8,
+      "first_appearance": false,
+      "incomplete": false,
+      "operator": "kramu",
+      "response": "The authorized rule for kramu(a,b) is 2 times max(a, b). For kramu(3, 4), max(3, 4) is 4. 2 times 4 is 8.  \nANSWER=8",
+      "rule": "kramu(a,b) = 2 times max(a, b)",
+      "seed": 20260711,
+      "step": 140
+    },
+    {
+      "a": 6,
+      "answer": 13,
+      "arm": "full_kernel",
+      "b": 6,
+      "correct": true,
+      "event_kinds": [
+        "retrieve",
+        "reason",
+        "ground"
+      ],
+      "expected": 13,
+      "first_appearance": false,
+      "incomplete": false,
+      "operator": "gnepo",
+      "response": "The authorized rule for gnepo(a,b) is: gnepo(a,b) = a + b + 1.  \nApplying this to gnepo(6, 6):  \n6 + 6 + 1 = 13  \nANSWER=13",
+      "rule": "gnepo(a,b) = a + b + 1",
+      "seed": 20260711,
+      "step": 141
+    },
+    {
+      "a": 9,
+      "answer": 22,
+      "arm": "full_kernel",
+      "b": 8,
+      "correct": true,
+      "event_kinds": [
+        "retrieve",
+        "reason",
+        "ground"
+      ],
+      "expected": 22,
+      "first_appearance": false,
+      "incomplete": false,
+      "operator": "cpase",
+      "response": "The authorized rule for cpase(a,b) is a + b + 5. Applying this to cpase(9, 8): 9 + 8 + 5 = 22.  \nANSWER=22",
+      "rule": "cpase(a,b) = a + b + 5",
+      "seed": 20260711,
+      "step": 142
+    },
+    {
+      "a": 2,
+      "answer": 6,
+      "arm": "full_kernel",
+      "b": 2,
+      "correct": true,
+      "event_kinds": [
+        "retrieve",
+        "reason",
+        "ground"
+      ],
+      "expected": 6,
+      "first_appearance": false,
+      "incomplete": false,
+      "operator": "zlufi",
+      "response": "The authorized memory states that zlufi(a,b) = 3 times max(a, b). For zlufi(2, 2), max(2, 2) = 2. Therefore, 3 times 2 = 6.  \nANSWER=6",
+      "rule": "zlufi(a,b) = 3 times max(a, b)",
+      "seed": 20260711,
+      "step": 143
+    },
+    {
+      "a": 2,
+      "answer": 11,
+      "arm": "full_kernel",
+      "b": 4,
+      "correct": true,
+      "event_kinds": [
+        "retrieve",
+        "reason",
+        "ground"
+      ],
+      "expected": 11,
+      "first_appearance": false,
+      "incomplete": false,
+      "operator": "grino",
+      "response": "The authorized rule for grino(a,b) is: grino(a,b) = a + b + 5.  \nFor grino(2, 4): 2 + 4 + 5 = 11.  \nANSWER=11",
+      "rule": "grino(a,b) = a + b + 5",
+      "seed": 20260711,
+      "step": 144
+    },
+    {
+      "a": 4,
+      "answer": 27,
+      "arm": "full_kernel",
+      "b": 9,
+      "correct": true,
+      "event_kinds": [
+        "retrieve",
+        "reason",
+        "ground"
+      ],
+      "expected": 27,
+      "first_appearance": false,
+      "incomplete": false,
+      "operator": "lnogu",
+      "response": "The authorized rule for lnogu(a,b) is 3 times max(a, b). For lnogu(4, 9), max(4, 9) = 9. Then, 3 times 9 = 27.  \nANSWER=27",
+      "rule": "lnogu(a,b) = 3 times max(a, b)",
+      "seed": 20260711,
+      "step": 145
+    },
+    {
+      "a": 2,
+      "answer": 7,
+      "arm": "full_kernel",
+      "b": 3,
+      "correct": true,
+      "event_kinds": [
+        "retrieve",
+        "reason",
+        "ground"
+      ],
+      "expected": 7,
+      "first_appearance": false,
+      "incomplete": false,
+      "operator": "gcaco",
+      "response": "The authorized rule for gcaco(a,b) is |a - b| + 6.  \nFor gcaco(2, 3): |2 - 3| + 6 = 1 + 6 = 7.  \nANSWER=7",
+      "rule": "gcaco(a,b) = |a - b| + 6",
+      "seed": 20260711,
+      "step": 146
+    },
+    {
+      "a": 8,
+      "answer": 24,
+      "arm": "full_kernel",
+      "b": 4,
+      "correct": true,
+      "event_kinds": [
+        "retrieve",
+        "reason",
+        "ground"
+      ],
+      "expected": 24,
+      "first_appearance": false,
+      "incomplete": false,
+      "operator": "cpaku",
+      "response": "The authorized rule for cpaku(a,b) is 3 times max(a, b). For cpaku(8, 4), max(8, 4) is 8. 3 times 8 is 24.  \nANSWER=24",
+      "rule": "cpaku(a,b) = 3 times max(a, b)",
+      "seed": 20260711,
+      "step": 147
+    },
+    {
+      "a": 7,
+      "answer": 35,
+      "arm": "full_kernel",
+      "b": 7,
+      "correct": true,
+      "event_kinds": [
+        "retrieve",
+        "reason",
+        "ground"
+      ],
+      "expected": 35,
+      "first_appearance": false,
+      "incomplete": false,
+      "operator": "pfiso",
+      "response": "The authorized rule for pfiso(a,b) is (a times 4) + b. Applying this to pfiso(7, 7): (7 \u00d7 4) + 7 = 28 + 7 = 35.  \nANSWER=35",
+      "rule": "pfiso(a,b) = (a times 4) + b",
+      "seed": 20260711,
+      "step": 148
+    },
+    {
+      "a": 2,
+      "answer": 8,
+      "arm": "full_kernel",
+      "b": 2,
+      "correct": true,
+      "event_kinds": [
+        "retrieve",
+        "reason",
+        "ground"
+      ],
+      "expected": 8,
+      "first_appearance": false,
+      "incomplete": false,
+      "operator": "rluco",
+      "response": "The authorized rule for rluco(a,b) is 4 times max(a, b). For rluco(2, 2), max(2, 2) = 2. Then, 4 \u00d7 2 = 8.  \nANSWER=8",
+      "rule": "rluco(a,b) = 4 times max(a, b)",
+      "seed": 20260711,
+      "step": 149
+    }
+  ],
+  "seed": 20260711
+}

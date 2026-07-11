@@ -80,3 +80,36 @@ Per arm: `recurrence_accuracy` (correct on non-first-appearance problems — the
   individual sizes (see HYP-21/23/25 for those).
 
 — Fable (Claude Opus 4.8), 2026-07-11
+
+---
+
+## Amendment v4.1 (2026-07-11, after the DEV sanity run — dated, not a silent edit)
+
+Dev run (qwen3:8b, seed 20260711, hidden untouched): naive recurrence **0.000**, full_kernel
+**1.000**, gap 1.000; both malformed **0.000**; both completion 1.000. Inspecting the event
+sequences revealed the naive failure mode is **not** what gate condition (3) assumed:
+
+- naive: **all 150 cycles are `('ground',)`** — left to choose, qwen immediately grounds a null
+  value without ever retrieving or reasoning (answer=None, empty response). Valid JSON, empty act.
+- full_kernel: **all 150 are `('retrieve','reason','ground')`** — the invariants force it
+  (`forced_retrievals=150`, `forced_reasons=150`); the reason output is genuine correct work
+  ("rule for mbazi is (a×4)+b … = 23"). 120/120 recurrence.
+
+So the naive stack does not fail by emitting *malformed* JSON (qwen rarely does, cf. HYP-25's
+0.055) — it fails **structurally**: a free LLM agent doesn't spontaneously retrieve or reason, it
+blurts a null answer. Gate condition (3) ("naive malformed > 0") mis-targeted the failure and would
+not trigger on qwen. This is the m0022 class generalized to the whole loop, and it is the real
+finding.
+
+**Amendment (frozen before the hidden read):**
+- Primary gate H-v4a unchanged: recurrence gap ≥ 0.30 on hidden.
+- Replace condition (3) with the ACTUAL naive failure: **naive `recurrence_accuracy` ≤ 0.10 AND
+  naive `retrieval_participation_rate` < 0.50** (there is a real, structural failure to beat).
+- full_kernel `malformed == 0` stays as a REPORTED structural guarantee, not a stack separator
+  (on qwen it is 0 for both arms; the separator is structure + retrieval, not JSON shape).
+- Add reported metrics `retrieval_participation_rate` / `reasoning_participation_rate` (the naive
+  arm's ~0 here is the crux). The capstone's claim narrows honestly to: **deterministic structural
+  invariants (forced retrieve+reason) + encoder retrieval convert a capable model from "grounds
+  null" to "reliably learns" at scale** — composing HYP-23 (retrieval) with the CoALA structure.
+  Action-validity (HYP-25) is part of the kernel but is not the lever that separates the stacks on
+  this model/task. — Fable (Claude Opus 4.8)
