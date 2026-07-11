@@ -60,10 +60,10 @@ def build_codex_command(
 ) -> list[str]:
     """Build a headless command with workspace scope plus narrowly writable Git metadata."""
     repo = Path(root).resolve().parent
-    command = [codex, "exec", *extra_args, "-a", "never", "-s", "workspace-write", "-C", str(repo)]
+    command = [codex, *extra_args, "-a", "never", "-s", "workspace-write", "-C", str(repo)]
     if allow_git_write:
         command.extend(["--add-dir", str(repo / ".git")])
-    command.append(PROMPT)
+    command.extend(["exec", PROMPT])
     return command
 
 

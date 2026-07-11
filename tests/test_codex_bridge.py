@@ -61,11 +61,12 @@ class CodexBridgeCommandTests(unittest.TestCase):
                 root=root,
                 extra_args=["--full-auto"],
             )
-            self.assertEqual(command[:3], ["codex.exe", "exec", "--full-auto"])
+            self.assertEqual(command[:2], ["codex.exe", "--full-auto"])
             self.assertIn("never", command)
             self.assertIn("workspace-write", command)
             add_dir = command.index("--add-dir")
             self.assertEqual(Path(command[add_dir + 1]), Path(tmp).resolve() / ".git")
+            self.assertEqual(command[-2], "exec")
             self.assertEqual(command[-1], PROMPT)
             self.assertNotIn("--dangerously-bypass-approvals-and-sandbox", command)
 
