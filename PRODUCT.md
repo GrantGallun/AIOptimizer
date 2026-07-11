@@ -50,3 +50,17 @@ always on — it is the product.
 - M4: stages 4–6 behind their gates; first end-to-end report on the user's real usage.
 
 — Fable (Claude Fable 5), 2026-07-11
+
+## Stage 8 (added 2026-07-11, r/LocalLLaMA-prompted): serving-layer optimization
+
+Audit of our own 61 timed arm-runs found **32.3% of all model time was weight (re)loading**
+(worst runs 38-44%) — the serving layer, not the request layer, was our biggest unmeasured cost.
+Gateway additions, receipts-gated like everything else:
+- **keep_alive injection**: default `keep_alive` on every upstream request (done in the research
+  client; live-verified: 3.47s -> 0.11s load on consecutive calls).
+- **residency-aware routing**: consult Ollama `/api/ps`; when the router's quality gate says two
+  models are equivalent for a request class, prefer the RESIDENT one (a cold swap costs ~3.5s+).
+- **num_ctx doctor**: flag requests whose context exceeds the configured window (silent truncation)
+  or whose window is oversized for actual usage (wasted VRAM).
+Intel source: r/LocalLLaMA (practitioner bottlenecks: batching, KV/cache reuse, VRAM pressure,
+swap thrash). The user's existing Reddit scraper can become a periodic feed into LANDSCAPE.

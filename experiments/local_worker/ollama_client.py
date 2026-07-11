@@ -77,6 +77,9 @@ class OllamaClient:
             "prompt": prompt,
             "stream": False,
             "think": False,
+            # Keep the model resident between calls: 32.3% of all measured model time across
+            # 61 arm-runs was weight (re)loading (r/LocalLLaMA-prompted audit, 2026-07-11).
+            "keep_alive": "60m",
             "options": {"temperature": temperature, "num_predict": max_tokens},
         }
         if system:
