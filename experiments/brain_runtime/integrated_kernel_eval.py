@@ -36,7 +36,11 @@ from experiments.brain_runtime.coala_learning_eval_scale import (
     EncoderMemoryRuntime,
     build_sequence,
 )
-from experiments.brain_runtime.coala_ollama import ACTION_SCHEMA_CONDITIONAL, OllamaCoALAAdapter
+from experiments.brain_runtime.coala_ollama import (
+    ACTION_SCHEMA_CONDITIONAL,
+    STRONG_POLICY_SYSTEM,
+    OllamaCoALAAdapter,
+)
 from experiments.brain_runtime.constrained_action_eval import _learn_verified_rule
 from experiments.brain_runtime.context_selection import make_operators
 from experiments.brain_runtime.session_runtime import PersistentBrainRuntime
@@ -79,6 +83,17 @@ def _make_adapter(client: Any, model: str, arm: str) -> OllamaCoALAAdapter:
             constrained=True,
             action_schema=ACTION_SCHEMA_CONDITIONAL,
         )
+    if arm == "prompted":  # fair baseline: TOLD the discipline, but no deterministic guarantee
+        return OllamaCoALAAdapter(
+            client,
+            model=model,
+            grounding_actions=["answer"],
+            max_reason_tokens=96,
+            require_retrieval_before_terminal=False,
+            require_reason_before_ground=False,
+            constrained=False,
+            policy_system=STRONG_POLICY_SYSTEM,
+        )
     return OllamaCoALAAdapter(  # naive: pure LLM-glue
         client,
         model=model,
@@ -91,7 +106,9 @@ def _make_adapter(client: Any, model: str, arm: str) -> OllamaCoALAAdapter:
 
 
 def _memory(arm: str) -> PersistentBrainRuntime:
-    return EncoderMemoryRuntime() if arm == "full_kernel" else PersistentBrainRuntime()
+    # prompted shares the kernel's encoder retrieval so the only thing the kernel adds is the
+    # deterministic guarantee (invariants + constrained shape), not better retrieval.
+    return EncoderMemoryRuntime() if arm in ("full_kernel", "prompted") else PersistentBrainRuntime()
 
 
 def _answer_cycle(controller: CoALAController, adapter: OllamaCoALAAdapter, problem: dict[str, Any]):
@@ -107,11 +124,12 @@ def _answer_cycle(controller: CoALAController, adapter: OllamaCoALAAdapter, prob
     return answer, reason_output, event_kinds
 
 
-def evaluate(operators, sequence, *, model: str, seed: int, clients: dict[str, Any] | None = None):
+def evaluate(operators, sequence, *, model: str, seed: int, clients: dict[str, Any] | None = None,
+             arms_to_run: tuple[str, ...] = ARMS):
     started = time.perf_counter()
     rows: list[dict[str, Any]] = []
     arms: dict[str, dict[str, Any]] = {}
-    for arm in ARMS:
+    for arm in arms_to_run:
         client = (clients or {}).get(arm) or ScaleMockClient()
         adapter = _make_adapter(client, model, arm)
         memory = _memory(arm)
@@ -147,7 +165,11 @@ def evaluate(operators, sequence, *, model: str, seed: int, clients: dict[str, A
             )
         rows.extend(arm_rows)
         arms[arm] = _summarize(arm, arm_rows, adapter.metrics.as_dict())
-    gap = arms["full_kernel"]["recurrence_accuracy"] - arms["naive"]["recurrence_accuracy"]
+    gap = (
+        arms["full_kernel"]["recurrence_accuracy"] - arms["naive"]["recurrence_accuracy"]
+        if {"full_kernel", "naive"} <= arms.keys()
+        else None
+    )
     return {
         "benchmark": "integrated-kernel-v4",
         "model": model,
@@ -160,8 +182,8 @@ def evaluate(operators, sequence, *, model: str, seed: int, clients: dict[str, A
             "owner": "fable",
             "required_recurrence_gap": 0.30,
             "observed_recurrence_gap": gap,
-            "full_kernel_malformed_rate": arms["full_kernel"]["malformed_action_rate"],
-            "naive_malformed_rate": arms["naive"]["malformed_action_rate"],
+            "full_kernel_malformed_rate": arms.get("full_kernel", {}).get("malformed_action_rate"),
+            "naive_malformed_rate": arms.get("naive", {}).get("malformed_action_rate"),
             "note": "Fable reads the hidden gate and writes the verdict.",
         },
         "elapsed_seconds": round(time.perf_counter() - started, 3),

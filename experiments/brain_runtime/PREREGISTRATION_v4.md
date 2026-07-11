@@ -114,3 +114,30 @@ finding.
   null" to "reliably learns" at scale** — composing HYP-23 (retrieval) with the CoALA structure.
   Action-validity (HYP-25) is part of the kernel but is not the lever that separates the stacks on
   this model/task. — Fable (Claude Opus 4.8)
+
+---
+
+## Amendment v4.2 (2026-07-11): the fair-baseline ablation — determinism vs prompting (HYP-27)
+
+Motivation: HYP-26's 100-0 invites the critique "you crippled naive by withholding structure." The
+honest rebuttal is a THIRD arm that is *told* the discipline but not *guaranteed* it:
+
+- **`prompted`**: encoder retrieval (SAME as full_kernel, so retrieval quality is held equal) +
+  free-form actions + NO invariants + a STRONG policy prompt (`STRONG_POLICY_SYSTEM`) that explicitly
+  instructs "always retrieve the rule first, then reason step by step, then ground; never answer
+  first." The only thing full_kernel adds over `prompted` is the deterministic GUARANTEE (forced
+  invariants + constrained shape) — not better retrieval, not a worse prompt.
+
+Frozen gate (qwen3:8b; dev seed 20260711 sanity, hidden 101/103/107 verdict; `naive` and
+`full_kernel` hidden numbers are the already-committed HYP-26 runs, comparable by seed):
+- **H-v4.2 (determinism > prompting)** — CONFIRMED iff `full_kernel` recurrence - `prompted`
+  recurrence >= 0.30 on hidden. The kernel's guarantee beats even a fair prompted agent → the 100-0
+  was not merely a crippled baseline.
+- **Prompting-suffices (kernel-weakening outcome, pre-committed as equally reportable)** — if
+  `prompted` recurrence >= full_kernel - 0.10, record that on qwen3:8b a STRONG prompt largely
+  substitutes for the invariants; the kernel's necessity narrows to weaker / less-instructable models.
+- **Partial** in between.
+- Also REPORT `prompted` retrieval/reasoning participation: does the strong instruction actually get
+  the model to retrieve+reason, or does it ignore it (the crux of "suggestion vs guarantee")?
+
+This ablation does not touch the frozen HYP-26 arms or results. — Fable (Claude Opus 4.8)
