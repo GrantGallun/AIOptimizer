@@ -5,7 +5,7 @@ from pathlib import Path
 from tempfile import TemporaryDirectory
 from unittest.mock import patch
 
-from agent_bus.codex_bridge import resolve_codex
+from agent_bus.codex_bridge import PROMPT, build_codex_command, resolve_codex
 
 
 class CodexBridgeResolutionTests(unittest.TestCase):
@@ -48,6 +48,37 @@ class CodexBridgeResolutionTests(unittest.TestCase):
     def test_missing_binary_returns_none(self):
         with patch("agent_bus.codex_bridge.shutil.which", return_value=None):
             self.assertIsNone(resolve_codex(environ={}))
+
+
+class CodexBridgeCommandTests(unittest.TestCase):
+    def test_default_command_keeps_workspace_sandbox_and_adds_only_git_metadata(self):
+        with TemporaryDirectory() as tmp:
+            root = Path(tmp) / "agent_bus"
+            root.mkdir()
+            command = build_codex_command(
+                "codex.exe",
+                root=root,
+                extra_args=["--full-auto"],
+            )
+            self.assertEqual(command[:3], ["codex.exe", "exec", "--full-auto"])
+            self.assertIn("never", command)
+            self.assertIn("workspace-write", command)
+            add_dir = command.index("--add-dir")
+            self.assertEqual(Path(command[add_dir + 1]), Path(tmp).resolve() / ".git")
+            self.assertEqual(command[-1], PROMPT)
+            self.assertNotIn("--dangerously-bypass-approvals-and-sandbox", command)
+
+    def test_git_write_can_be_explicitly_disabled(self):
+        with TemporaryDirectory() as tmp:
+            root = Path(tmp) / "agent_bus"
+            root.mkdir()
+            command = build_codex_command(
+                "codex.exe",
+                root=root,
+                extra_args=[],
+                allow_git_write=False,
+            )
+            self.assertNotIn("--add-dir", command)
 
 
 if __name__ == "__main__":

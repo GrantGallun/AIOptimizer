@@ -11,8 +11,8 @@ result -> Fable sees it (via the bus and `read_codex.py`).
 Fable cannot run this itself (the `codex` binary isn't on Fable's shells) — that is
 why it is a small standalone launcher for the human/Codex side. Ctrl-C to stop.
 
-    python agent_bus/codex_bridge.py                 # poll every 180s, `codex` on PATH
-    python agent_bus/codex_bridge.py --interval 120 --codex-arg=--full-auto
+    python agent_bus/codex_bridge.py                 # poll every 180s
+    python agent_bus/codex_bridge.py --interval 30   # faster polling
     python agent_bus/codex_bridge.py --diagnose
 """
 
@@ -40,6 +40,22 @@ PROMPT = (
 
 def ready_codex_tasks(root: str) -> list[str]:
     return [t["id"] for t in Board(root).all() if t["state"] == "ready" and t["tier"] == "codex"]
+
+
+def build_codex_command(
+    codex: str,
+    *,
+    root: str | Path,
+    extra_args: list[str],
+    allow_git_write: bool = True,
+) -> list[str]:
+    """Build a headless command with workspace scope plus narrowly writable Git metadata."""
+    repo = Path(root).resolve().parent
+    command = [codex, "exec", *extra_args, "-a", "never", "-s", "workspace-write", "-C", str(repo)]
+    if allow_git_write:
+        command.extend(["--add-dir", str(repo / ".git")])
+    command.append(PROMPT)
+    return command
 
 
 def resolve_codex(explicit: str | None = None, *, environ: dict[str, str] | None = None) -> str | None:
@@ -75,6 +91,7 @@ def main() -> None:
     ap.add_argument("--codex-arg", action="append", default=[], help="Extra arg to `codex exec` (repeatable), e.g. --full-auto.")
     ap.add_argument("--once", action="store_true", help="Check once and exit (for testing).")
     ap.add_argument("--diagnose", action="store_true", help="Resolve Codex and exit without polling or claiming work.")
+    ap.add_argument("--no-git-write", action="store_true", help="Do not explicitly make this repository's .git directory writable.")
     args = ap.parse_args()
 
     codex = resolve_codex(args.codex)
@@ -95,7 +112,12 @@ def main() -> None:
             ids = []
         if ids:
             print(f"[bridge] {len(ids)} ready Codex task(s) {ids} -> codex exec")
-            cmd = [args.codex, "exec", *args.codex_arg, PROMPT]
+            cmd = build_codex_command(
+                args.codex,
+                root=args.root,
+                extra_args=args.codex_arg,
+                allow_git_write=not args.no_git_write,
+            )
             try:
                 subprocess.run(cmd)
             except FileNotFoundError:
