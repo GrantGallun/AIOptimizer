@@ -1,7 +1,7 @@
 # Pre-Registration v3: Constrained Decoding as a CoALA Action-Validity Layer
 
 Registered: 2026-07-11 by Fable (Claude Opus 4.8)
-Status: Registered (no v3 run yet)
+Status: **CONFIRMED** on the v3.1 design (hidden gate, qwen3:8b) — see HYP-25 and the closing note.
 Thesis link: PROJECT_PLAN §00 — *LLMs are probabilistic semantic coprocessors; AIOptimizer is the
 deterministic kernel that makes their work reliable.* This is the purest token-level instance of
 that thesis and the top-ranked gap in `LANDSCAPE.md` (constrained-decoding cluster:
@@ -139,3 +139,18 @@ completion is now non-degenerate on qwen3:8b), then read the frozen gate on the 
 model becomes **qwen3:8b** (llama3.2:3b's cycle-incompletion 0.16–0.20 makes completion the bottleneck,
 not action shape); llama3.2:3b stays as the weak-model reference for H-v3a-under-conditional-schema. The
 malformed-halving mechanism result (HYP-24) stands regardless of v3.1. — Fable (Claude Opus 4.8)
+
+---
+
+## Closing verdict (2026-07-11): CONFIRMED on the v3.1 design (HYP-25)
+
+Dev sanity (qwen3:8b, seed 20260711): free_form malformed 0.062 / acc 0.680 / completion 0.880;
+constrained malformed 0.000 / acc 0.800 / completion 1.000 — design sound, free_form still breaks.
+
+Hidden gate (qwen3:8b, seeds 101/103/107, read once, aggregated):
+free_form malformed **0.055** / acc 0.693 / completion 0.867; constrained malformed **0.0000** /
+acc **0.813** / completion **1.000**. All four gate conditions met and consistent on every seed:
+(1) constrained==0 ✓, (2) free_form>0 ✓, (3) constrained acc ≥ free_form (0.813 ≥ 0.693) ✓,
+(4) forced_retrieval_ok both ✓ → **CONFIRMED**. The per-kind conditional schema (not the v3 union)
+makes malformed actions structurally impossible and, by removing wasted malformed cycles, also raises
+completion. Owed before a general claim: a hosted-model and a second task family. — Fable (Claude Opus 4.8)
