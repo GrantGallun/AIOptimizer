@@ -5,7 +5,8 @@ from pathlib import Path
 from tempfile import TemporaryDirectory
 from unittest.mock import patch
 
-from agent_bus.codex_bridge import PROMPT, build_codex_command, resolve_codex
+from agent_bus.codex_bridge import PROMPT, build_codex_command, publish_presence, resolve_codex
+from agent_bus.cache import Cache
 
 
 class CodexBridgeResolutionTests(unittest.TestCase):
@@ -79,6 +80,16 @@ class CodexBridgeCommandTests(unittest.TestCase):
                 allow_git_write=False,
             )
             self.assertNotIn("--add-dir", command)
+
+
+class CodexBridgePresenceTests(unittest.TestCase):
+    def test_presence_is_written_to_shared_cache(self):
+        with TemporaryDirectory() as tmp:
+            cache = Cache(Path(tmp))
+            publish_presence(cache, "bridge online/idle; no ready Codex tasks")
+            row = cache.get("status.codex")
+            self.assertEqual(row["value"], "bridge online/idle; no ready Codex tasks")
+            self.assertEqual(row["writer"], "codex")
 
 
 if __name__ == "__main__":

@@ -28,6 +28,7 @@ from pathlib import Path
 
 sys.path.insert(0, str(Path(__file__).resolve().parents[1]))
 from agent_bus.board import Board  # noqa: E402
+from agent_bus.cache import Cache  # noqa: E402
 
 PROMPT = (
     "Per AGENTS.md: read the agent bus (python agent_bus/bus.py read --for codex --new) and the "
@@ -40,6 +41,14 @@ PROMPT = (
 
 def ready_codex_tasks(root: str) -> list[str]:
     return [t["id"] for t in Board(root).all() if t["state"] == "ready" and t["tier"] == "codex"]
+
+
+def publish_presence(cache: Cache, value: str) -> None:
+    """Write bridge liveness to shared state without making polling depend on it."""
+    try:
+        cache.set("status.codex", value, writer="codex", scope="shared")
+    except Exception as exc:  # noqa: BLE001
+        print(f"[bridge] presence update failed: {exc}")
 
 
 def build_codex_command(
@@ -87,6 +96,7 @@ def main() -> None:
     ap = argparse.ArgumentParser(description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter)
     ap.add_argument("--root", default=str(Path(__file__).resolve().parent), help="Board directory.")
     ap.add_argument("--interval", type=float, default=180.0, help="Seconds between board polls.")
+    ap.add_argument("--heartbeat", type=float, default=300.0, help="Seconds between shared-cache presence updates.")
     ap.add_argument("--codex", default=None, help="Optional Codex path/name override.")
     ap.add_argument("--codex-arg", action="append", default=[], help="Extra arg to `codex exec` (repeatable), e.g. --full-auto.")
     ap.add_argument("--once", action="store_true", help="Check once and exit (for testing).")
@@ -103,6 +113,11 @@ def main() -> None:
     print(f"codex_bridge: using {codex}")
     if args.diagnose:
         return
+    if args.interval <= 0 or args.heartbeat <= 0:
+        ap.error("--interval and --heartbeat must be positive")
+    cache = Cache(Path(args.root))
+    publish_presence(cache, "bridge online; starting poll loop")
+    last_heartbeat = time.monotonic()
     print(f"codex_bridge: polling {args.root} every {args.interval:.0f}s (Ctrl-C to stop)")
     while True:
         try:
@@ -111,6 +126,7 @@ def main() -> None:
             print(f"[bridge] board read error: {exc}")
             ids = []
         if ids:
+            publish_presence(cache, f"bridge online; dispatching Codex tasks: {','.join(ids)}")
             print(f"[bridge] {len(ids)} ready Codex task(s) {ids} -> codex exec")
             cmd = build_codex_command(
                 args.codex,
@@ -120,11 +136,16 @@ def main() -> None:
             )
             try:
                 subprocess.run(cmd)
+                publish_presence(cache, "bridge online; Codex dispatch returned; polling")
             except FileNotFoundError:
                 print(f"[bridge] codex binary '{args.codex}' not found — run this where codex is on PATH.")
                 return
         else:
             print("[bridge] no ready Codex task")
+            now = time.monotonic()
+            if now - last_heartbeat >= args.heartbeat:
+                publish_presence(cache, "bridge online/idle; no ready Codex tasks")
+                last_heartbeat = now
         if args.once:
             return
         time.sleep(args.interval)
