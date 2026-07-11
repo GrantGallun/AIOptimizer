@@ -10,6 +10,7 @@ from __future__ import annotations
 
 import argparse
 import json
+import os
 import shutil
 import urllib.error
 import urllib.request
@@ -41,8 +42,14 @@ class Generation:
 
 
 class OllamaClient:
-    def __init__(self, endpoint: str = DEFAULT_ENDPOINT, timeout_seconds: float = 30.0) -> None:
-        self.endpoint = endpoint.rstrip("/")
+    """Ollama-compatible client, routed through ``AIOPT_GATEWAY`` by default.
+
+    Passing ``endpoint`` explicitly takes precedence over the environment.
+    """
+
+    def __init__(self, endpoint: str | None = None, timeout_seconds: float = 30.0) -> None:
+        resolved_endpoint = endpoint if endpoint is not None else os.environ.get("AIOPT_GATEWAY", DEFAULT_ENDPOINT)
+        self.endpoint = resolved_endpoint.rstrip("/")
         self.timeout_seconds = timeout_seconds
 
     def list_models(self) -> list[dict[str, Any]]:
