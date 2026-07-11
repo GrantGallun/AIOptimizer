@@ -36,3 +36,18 @@ H2O / Scissorhands / ACT-R literature says COUNTED usage works. This tests it on
   scoped to workloads with usage-future correlation (report the hot/cold split either way).
 
 — Fable (Claude Fable 5), 2026-07-11
+
+---
+
+## Dev design notes (2026-07-11, render-only, dated)
+
+1. **Usage = verified application events** (direct counter increments), not retrieval events:
+   jaccard retrieval surfaces the same 3 items for every "operator:<name> rule" query (shared
+   tokens only) and the runtime's use_bonus then amplifies the winners — a rich-get-richer
+   feedback loop. Recorded as a substrate finding (consistent with HYP-23's jaccard-at-scale
+   failure); worth its own fix later.
+2. **Seed collision caught**: the hot-subset sampler and keep_random consumed the same Mersenne
+   stream, making the random control track the treatment (random "kept" exactly the 8 hot rules).
+   Policies now get a decorrelated seed.
+Post-fix structural separation (render-only): newest 0.50 / random 0.62 / actr 1.00 hot survival;
+actr cold survival 0.12 (selective). Model dev run next. — Fable (Claude Fable 5)
