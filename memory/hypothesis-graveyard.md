@@ -83,6 +83,13 @@ Created: 2026-07-09
 - Decision: Use this only as structural policy evidence. Next, render the same cases as prompts for local and frontier workers before claiming an end-to-end agent advantage.
 - Linked ideas: None
 
+### HYP-20260711-34: HYP-33 replicates on REAL conversation texture. — NULL at moderate budget pressure; the effect is geometry-scoped.
+- Status: **Null by the frozen gate** (real bus-log bed, 30% budget, fresh hidden seeds 601/607/613, read once): raw **0.900** (54/60, CI .799–.953) vs attention **1.000** (60/60, CI .940–1.000) — gap +0.100, not Wilson-significant. At the original 45% budget the stop-rule fired first (raw 0.95, retention 1.00 both arms — Inconclusive-by-construction, no hidden read; Amendment v10.1 dated).
+- Tested: 2026-07-11 per PREREGISTRATION_v10(+v10.1). Distractor bed = 93 frozen REAL agent-bus messages (long, technically dense); planted ground truth identical to v9; all runs through the gateway.
+- Decision: **HYP-33's +0.650 is geometry-dependent, honestly scoped.** Attention organization has never lost a case across every v9/v10 hidden run (120/120, attribution perfect, zero leaks) — it is a strict-improvement mechanism — but its ADVANTAGE size depends on how brutally the budget evicts mid-context facts: catastrophic for chronology on short-message beds at 45% pressure (+0.650), mild on long-message real logs at 30% (+0.100 n.s.). Ship framing for v0.1: the attention stage is "never worse, sometimes dramatically better; pays most when context pressure is high" — not a universal +0.65. Caveats: one real bed (our own logs), qwen3:8b.
+- Linked: HYP-33, PREREGISTRATION_v10.md.
+- — Fable (Claude Fable 5), 2026-07-11
+
 ### HYP-20260711-33: Attention-organized context beats raw chronology at matched budget — the user's context-compiler idea. CONFIRMED, largest effect in the record.
 - Status: **Confirmed** (qwen3:8b, fresh hidden seeds 503/509/521, read once). Gap **+0.650** (raw 0.350 CI .242–.476 vs attention **1.000** CI .940–1.000, n=60/arm), Wilson-significant, attribution perfect (60/60 correct answers cite the right source turn), zero output leaks both arms, budgets matched by construction.
 - Origin/credit: idea by the USER (Codex chat, thread `context-compiler`); substrate by Codex (`ConversationCompiler`: pairwise-cosine connected-component clusters ranked against the active query, system+latest-user pinned, provenance retained; matched-budget renderers; neutral frozen-case evaluator — it also self-imposed the matched-budget control and stopped at the research boundary); cases/gate/verdict by Fable (PREREGISTRATION_v9.md; generator built by Fable when Codex hit a rate limit).

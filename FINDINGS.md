@@ -123,8 +123,12 @@ clusters (vs raw chronological truncation) took success from **0.350 → 1.000**
 (gap **+0.650**, perfect source attribution, zero leaks). Mechanism, honestly labeled: **retention**
 — recency truncation silently drops the mid-conversation fact ~65% of the time; relevance-ranked
 clustering always keeps it. Extends the selection results (§2) to conversation-memory organization.
-Carried flag: relevance-ranking also retains *sensitive* content more (privacy-aware record
-filtering required before default-on). Idea: the user; substrate: Codex; cases/gate: Fable.
+Carried flag: relevance-ranking also retains *sensitive* content more (privacy filter since landed).
+**External-validity scope (v10/v10.1):** on REAL conversation logs the effect is geometry-dependent —
+at 45% budget chronology barely fails (stop-rule; no read), at 30% the gap is +0.100 (n.s.). Attention
+has **never lost a case** (120/120 hidden, perfect attribution, zero leaks): a strict-improvement
+mechanism whose advantage grows with context pressure, not a universal +0.65.
+Idea: the user; substrate: Codex; cases/gate: Fable.
 
 ---
 

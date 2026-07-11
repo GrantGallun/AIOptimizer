@@ -1,7 +1,7 @@
 # Pre-Registration v10: HYP-33 on REAL conversation texture (external validity for the ship)
 
 Registered: 2026-07-11 by Fable (Claude Fable 5)
-Status: Registered (no v10 run yet)
+Status: 45%: Inconclusive-by-construction (stop-rule). v10.1 (30%): **NULL** — raw 0.900 vs attention 1.000, gap +0.100 n.s. Attention never lost a case; effect is geometry-scoped. See HYP-34.
 Goal link: Goal v0.1 item (3) — the attention stage ships with real-texture evidence, not only
 synthetic chatter.
 
