@@ -61,24 +61,28 @@ class AgentState(TypedDict):
     retrieved: bool
 
 
-def _encoder_retrieve(operator: str, store: dict[str, str]) -> Optional[str]:
-    """Encoder top-1 over the learned-rule store — the SAME retrieval the kernel uses."""
+def _encoder_retrieve(operator: str, store: dict[str, str], k: int = 1) -> Optional[str]:
+    """Encoder top-k over the learned-rule store, newline-joined for the answer prompt.
+
+    k=1 was the original HYP-28 run; the kernel retrieves limit=5 and renders every
+    candidate, so a k-matched comparison (HYP-31) must pass k>=3 here.
+    """
     if not store:
         return None
     rules = list(store.values())
-    if len(rules) == 1:
-        return rules[0]
-    best = select_topk(f"{operator} rule", rules, 1)
-    return best[0] if best else None
+    if len(rules) <= k:
+        return "\n".join(rules)
+    return "\n".join(select_topk(f"{operator} rule", rules, k))
 
 
 class LangGraphAgent:
     """Idiomatic LLM-routed agent; ``store`` is the shared learned-rule memory."""
 
-    def __init__(self, client: Any, model: str, store: dict[str, str]) -> None:
+    def __init__(self, client: Any, model: str, store: dict[str, str], retrieve_k: int = 1) -> None:
         self.client = client
         self.model = model
         self.store = store
+        self.retrieve_k = retrieve_k
         self.app = self._build()
 
     def _router(self, state: AgentState) -> dict[str, Any]:
@@ -96,12 +100,13 @@ class LangGraphAgent:
         return {"action": action, "steps": state["steps"] + 1}
 
     def _retrieve(self, state: AgentState) -> dict[str, Any]:
-        return {"retrieved_rule": _encoder_retrieve(state["operator"], self.store), "retrieved": True}
+        rule = _encoder_retrieve(state["operator"], self.store, self.retrieve_k)
+        return {"retrieved_rule": rule, "retrieved": True}
 
     def _answer(self, state: AgentState) -> dict[str, Any]:
         rule = state.get("retrieved_rule")
         prompt = (
-            f"{'Authorized rule: ' + rule if rule else 'No rule was retrieved.'}\n"
+            f"{'Authorized rules (use the one for this operator):' + chr(10) + rule if rule else 'No rule was retrieved.'}\n"
             f"Compute {state['operator']}({state['a']}, {state['b']})."
         )
         text = self.client.generate_with_metrics(
@@ -144,10 +149,10 @@ class RouterMockClient:
         return Generation("ANSWER=0", 0, 0, 0, 0)
 
 
-def evaluate(operators, sequence, *, model: str, seed: int, client: Any) -> dict[str, Any]:
+def evaluate(operators, sequence, *, model: str, seed: int, client: Any, retrieve_k: int = 1) -> dict[str, Any]:
     started = time.perf_counter()
     store: dict[str, str] = {}
-    agent = LangGraphAgent(client, model, store)
+    agent = LangGraphAgent(client, model, store, retrieve_k=retrieve_k)
     learned: set[str] = set()
     rows: list[dict[str, Any]] = []
     for problem in sequence:
@@ -168,6 +173,7 @@ def evaluate(operators, sequence, *, model: str, seed: int, client: Any) -> dict
         "seed": seed,
         "operator_count": len(operators),
         "rows": rows,
+        "retrieve_k": agent.retrieve_k,
         "summary": {
             "arm": "langgraph_idiomatic",
             "recurrence_accuracy": acc(recurrence),
@@ -180,11 +186,11 @@ def evaluate(operators, sequence, *, model: str, seed: int, client: Any) -> dict
 
 
 def run(*, model: str, seed: int, operator_count: int = 30, repetitions: int = 5,
-        render_only: bool = False) -> dict[str, Any]:
+        render_only: bool = False, retrieve_k: int = 1) -> dict[str, Any]:
     operators = make_operators(operator_count, seed=seed)
     sequence = build_sequence(operators, seed=seed, repetitions=repetitions)
     client = RouterMockClient() if render_only else OllamaClient(timeout_seconds=180.0)
-    return evaluate(operators, sequence, model=model, seed=seed, client=client)
+    return evaluate(operators, sequence, model=model, seed=seed, client=client, retrieve_k=retrieve_k)
 
 
 def main() -> None:
@@ -195,9 +201,10 @@ def main() -> None:
     parser.add_argument("--repetitions", type=int, default=5)
     parser.add_argument("--out", default=None)
     parser.add_argument("--render-only", action="store_true")
+    parser.add_argument("--retrieve-k", type=int, default=1)
     args = parser.parse_args()
     payload = run(model=args.model, seed=args.seed, operator_count=args.n_operators,
-                  repetitions=args.repetitions, render_only=args.render_only)
+                  repetitions=args.repetitions, render_only=args.render_only, retrieve_k=args.retrieve_k)
     out = args.out or f"results/brain_runtime/langgraph_agent_{re.sub(r'[^A-Za-z0-9]+','_',args.model)}_{args.seed}.json"
     Path(out).parent.mkdir(parents=True, exist_ok=True)
     Path(out).write_text(json.dumps(payload, indent=2, sort_keys=True) + "\n", encoding="utf-8")

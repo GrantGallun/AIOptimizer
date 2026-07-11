@@ -125,7 +125,7 @@ def _answer_cycle(controller: CoALAController, adapter: OllamaCoALAAdapter, prob
 
 
 def evaluate(operators, sequence, *, model: str, seed: int, clients: dict[str, Any] | None = None,
-             arms_to_run: tuple[str, ...] = ARMS):
+             arms_to_run: tuple[str, ...] = ARMS, max_internal_actions: int = 2):
     started = time.perf_counter()
     rows: list[dict[str, Any]] = []
     arms: dict[str, dict[str, Any]] = {}
@@ -137,7 +137,7 @@ def evaluate(operators, sequence, *, model: str, seed: int, clients: dict[str, A
             memory,
             reasoner=adapter.reason,
             grounding={"answer": lambda arguments, _context: str(arguments.get("value"))},
-            max_internal_actions=2,
+            max_internal_actions=max_internal_actions,
         )
         learned: set[str] = set()
         arm_rows: list[dict[str, Any]] = []
@@ -176,6 +176,7 @@ def evaluate(operators, sequence, *, model: str, seed: int, clients: dict[str, A
         "benchmark": "integrated-kernel-v4",
         "model": model,
         "seed": seed,
+        "max_internal_actions": max_internal_actions,
         "operator_count": len(operators),
         "repetitions": len(sequence) // len(operators),
         "rows": rows,
