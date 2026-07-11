@@ -1,7 +1,8 @@
 # Pre-Registration v4: The Integrated Kernel — full deterministic stack vs naive LLM-glue at scale
 
 Registered: 2026-07-11 by Fable (Claude Opus 4.8)
-Status: Registered (no v4 run yet)
+Status: **CONFIRMED** on the v4.1 gate (qwen3:8b hidden) — naive recurrence 0.000 vs full_kernel
+1.000, gap 1.000; naive fails structurally (retrieval_participation 0.009, reasoning 0.000). See HYP-26.
 Thesis link: PROJECT_PLAN §00. This is the capstone that runs the whole kernel as ONE system and
 asks whether the deterministic mechanisms, *composed*, deliver reliable within-session learning
 where the idiomatic "let the LLM drive" stack does not. Unifies the two proven threads:

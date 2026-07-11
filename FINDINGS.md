@@ -51,14 +51,15 @@ parse (a "malformed action").
   (0.693 → 0.813). The guarantee is model-independent (holds on llama3.2:3b too).
   *One-liner: "constrain the shape" only equals "guarantee the contract" when the schema is the contract.*
 
-### 5. The whole kernel vs the naive stack *(prereg v4 — in progress)*
+### 5. The whole kernel vs the naive stack — **Confirmed** (prereg v4, HYP-26)
 Composing everything (encoder retrieval + constrained actions + forced retrieve→reason→ground) and
-letting the model choose its own actions at scale. Dev (qwen3:8b): the **naive** stack scores
-**0.000** recurrence — left free, the model *grounds a null answer immediately*, never retrieving or
-reasoning (a **structural** failure, not malformed JSON); the **full kernel** scores **1.000**. The
-hidden-seed verdict is pending. *This is the thesis in one number: a capable model left to "decide
-for itself" blurts null answers; deterministic structure + good retrieval convert it into reliable
-learning.*
+letting the model choose its own actions at scale (30 operators, qwen3:8b, hidden seeds).
+**naive** recurrence **0.000** vs **full_kernel 1.000** (identical on all three hidden seeds). The
+naive failure is **structural**: reasoning-participation **0.000**, retrieval-participation 0.009 —
+left free, the model *grounds a null answer immediately*, never retrieving or reasoning. The kernel's
+invariants force `retrieve→reason→ground` (participation 1.000) and encoder retrieval feeds the right
+rule → 120/120. *The thesis in one number: a capable model left to "decide for itself" blurts null
+answers; deterministic structure + good retrieval convert it into reliable learning.*
 
 ---
 
