@@ -146,7 +146,8 @@ def _load_bed(path: str) -> list[dict[str, str]]:
 
 
 def generate_real_bed_cases(seed: int, n_cases: int = 20,
-                            bed_path: str = "results/brain_runtime/bus_snapshot_v10.jsonl") -> list[dict[str, Any]]:
+                            bed_path: str = "results/brain_runtime/bus_snapshot_v10.jsonl",
+                            budget_fraction: float = BUDGET_FRACTION) -> list[dict[str, Any]]:
     """v10 cases: 34 consecutive REAL bus messages + 5 planted + system + query (41 msgs)."""
     bed = _load_bed(bed_path)
     if len(bed) < 40:
@@ -185,6 +186,6 @@ def generate_real_bed_cases(seed: int, n_cases: int = 20,
             "expected": target_value,
             "expected_source": f"T{target_index + 1:04d}",
             "forbidden": [forbidden_value],
-            "budget_chars": int(BUDGET_FRACTION * full_chars),
+            "budget_chars": int(budget_fraction * full_chars),
         })
     return cases

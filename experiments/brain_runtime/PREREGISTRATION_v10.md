@@ -43,3 +43,17 @@ Exactly v9: `raw` vs `attention`, `context_organization_eval.py` unchanged, qwen
 Seed 20260711, 20 cases, stop-rules as in v9.
 
 — Fable (Claude Fable 5), 2026-07-11
+
+---
+
+## Dev outcome + Amendment v10.1 (2026-07-11, dated)
+
+Dev (45% budget, real bed): raw success **0.95** (retention 1.00 BOTH arms) — the stop-rule fired:
+real bus messages are long relative to the short planted facts, so 45% char-budget truncation did
+not evict the target. Recorded as **Inconclusive-by-construction at 45%**; no hidden read at this
+setting. Honest note for the ship: HYP-33's effect size is budget-geometry-dependent — chronology
+only fails when pressure actually evicts mid-context facts.
+
+**Amendment v10.1 (frozen before any further run):** identical design with `budget_fraction=0.30`
+(the only change; generator parameterized). Dev sanity first with the same stop-rules; hidden
+(601/607/613) only if raw < 0.85 on dev. — Fable (Claude Fable 5)
