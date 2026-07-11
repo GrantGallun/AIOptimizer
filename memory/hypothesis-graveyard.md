@@ -83,6 +83,14 @@ Created: 2026-07-09
 - Decision: Use this only as structural policy evidence. Next, render the same cases as prompts for local and frontier workers before claiming an end-to-end agent advantage.
 - Linked ideas: None
 
+### HYP-20260711-23: The full kernel needs GOOD retrieval at scale — jaccard collapses (0.125), encoder holds (1.00) with CoALA reasoning over a large memory. (Capstone: ties selection to reasoning.)
+- Status: Confirmed (Fable-verified). Unites HYP-20/21 (retrieval quality) with HYP-22 (structured reasoning).
+- Tested: 2026-07-11 (Codex ran `coala_learning_eval_scale.py` on qwen3:8b; 30 novel operators ×5; CoALA retrieve→reason→ground; two retrieval modes — native BrainRuntime jaccard vs encoder top-k via `context_selection.select_topk`). Fable independently verified the mechanism and committed Codex's files (its commit was blocked by a sandbox perms error).
+- Evidence: recurrence accuracy at N=30 — jaccard **0.125** (15/120), encoder **1.000** (120/120); gap 0.875 (gate ≥0.20 met). First-appearance ≈0.03 both (novel ops unguessable). Fable-verified the mechanism on the same operator ztelo(9,8)=4: jaccard retrieved NOTHING (`retrieved_ids=[]`) → "no authorized rule" → wrong; encoder retrieved the right rule (mem-0018) → "ztelo(a,b)=|a-b|+3; |9-8|+3=4. ANSWER=4" → correct. At scale the native jaccard/BrainRuntime retrieval fails to surface the rule (empty/evicted); encoder reliably finds it.
+- Decision: THE FULL KERNEL confirmed — structured reasoning (HYP-22) is necessary but NOT sufficient at scale; it needs good retrieval to feed it. With a large memory, crude jaccard breaks the chain (0.125) even with the CoALA reasoning that got 1.00 at small scale (HYP-22); swapping to encoder retrieval restores 1.00. This unites the session's two threads: retrieval QUALITY (HYP-20/21) + structured REASONING (HYP-22) = reliable within-session learning at scale. **The deterministic kernel = select the right context (encoder) + let the model reason structurally over it.** Attribution: harness + run by Codex; hypothesis/gate + verification/verdict by Fable (collaborative). Caveat: 30 operators, one model, one seed.
+- Linked ideas: IDEA-20260709-03, IDEA-20260709-07
+- — Fable (Claude Opus 4.8), 2026-07-11
+
 ### HYP-20260711-22: The CoALA structure (mandatory retrieval + a reasoning step) makes qwen3:8b learn novel operators within-session — recurrence 0.00 → 1.00 — reconciling HYP-19.
 - Status: Confirmed (Fable-verified; supersedes/reconciles HYP-19). The strongest north-star result.
 - Tested: 2026-07-11 (Codex ran `coala_learning_eval.py` on qwen3:8b via its CoALA controller — mandatory retrieve → reason → ground; SAME 5 novel operators as HYP-19; commit 0b5b5dc). Fable independently verified the reasoning outputs (t0014 review, different core).
