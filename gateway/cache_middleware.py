@@ -27,7 +27,19 @@ class ExactCacheMiddleware:
         serialized = json.dumps(body, sort_keys=True, ensure_ascii=False)
         return hashlib.sha256(serialized.encode("utf-8")).hexdigest()
 
+    @staticmethod
+    def _is_sampled(body):
+        """True when the request expects stochastic output — caching would collapse
+        independent samples into one (found dogfooding the v8 self-consistency runs,
+        whose 5 identical temp-0.7 prompts must each hit the model)."""
+        temperature = body.get("temperature")
+        if temperature is None:
+            temperature = (body.get("options") or {}).get("temperature")
+        return bool(temperature)
+
     def before_request(self, body):
+        if self._is_sampled(body):
+            return body
         key = self._key(body)
         now = self.clock()
         with self._lock:
@@ -41,6 +53,8 @@ class ExactCacheMiddleware:
             return ShortCircuit(copy.deepcopy(response))
 
     def after_response(self, body, response):
+        if self._is_sampled(body):
+            return response
         key = self._key(body)
         with self._lock:
             self._entries[key] = (self.clock(), copy.deepcopy(response))

@@ -17,6 +17,7 @@ import math
 FRESH_HIDDEN_SEEDS: dict[str, tuple[int, int, int]] = {
     "v6": (211, 223, 227),
     "v7": (307, 311, 313),
+    "v8": (401, 409, 419),
 }
 
 

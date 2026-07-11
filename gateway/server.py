@@ -29,9 +29,13 @@ class GatewayServer(ThreadingHTTPServer):
 class _GatewayHandler(BaseHTTPRequestHandler):
     server: GatewayServer
 
+    # OpenAI-compatible chat plus Ollama's native generate, so local research/agent
+    # traffic (OllamaClient uses /api/generate) can flow through the same pipeline.
+    PROXIED_PATHS = ("/v1/chat/completions", "/api/generate", "/api/chat")
+
     def do_POST(self):
         started = time.perf_counter()
-        if self.path != "/v1/chat/completions":
+        if self.path not in self.PROXIED_PATHS:
             response_bytes = self._write_json(
                 404, {"error": {"message": "Not found", "type": "not_found"}}
             )
@@ -98,7 +102,7 @@ class _GatewayHandler(BaseHTTPRequestHandler):
 
     def _upstream(self, payload):
         upstream_request = urllib.request.Request(
-            self.server.upstream_url + "/v1/chat/completions",
+            self.server.upstream_url + self.path,
             data=payload.encode("utf-8"),
             headers={"Content-Type": "application/json"},
             method="POST",
@@ -108,6 +112,23 @@ class _GatewayHandler(BaseHTTPRequestHandler):
                 return upstream_response.status, json.loads(upstream_response.read())
         except urllib.error.HTTPError as error:
             return error.code, json.loads(error.read())
+
+    def do_GET(self):
+        # Transparent passthrough for Ollama utility endpoints (/api/tags, /api/ps, ...).
+        try:
+            with urllib.request.urlopen(self.server.upstream_url + self.path) as upstream:
+                payload = upstream.read()
+                self.send_response(upstream.status)
+        except urllib.error.HTTPError as error:
+            payload = error.read()
+            self.send_response(error.code)
+        except urllib.error.URLError as error:
+            payload = json.dumps({"error": {"message": str(error.reason)}}).encode("utf-8")
+            self.send_response(502)
+        self.send_header("Content-Type", "application/json")
+        self.send_header("Content-Length", str(len(payload)))
+        self.end_headers()
+        self.wfile.write(payload)
 
     def _record(self, request_chars, response_chars, started):
         if self.server.ledger is not None:

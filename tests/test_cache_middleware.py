@@ -134,3 +134,24 @@ class CacheEndToEndTests(unittest.TestCase):
 
 if __name__ == "__main__":
     unittest.main()
+
+
+class SampledRequestBypassTests(unittest.TestCase):
+    def test_sampled_requests_are_never_cached(self):
+        from gateway.cache_middleware import ExactCacheMiddleware
+        from gateway.middleware import ShortCircuit
+
+        cache = ExactCacheMiddleware()
+        body = {"prompt": "x", "options": {"temperature": 0.7}}
+        cache.after_response(body, {"response": "a"})
+        self.assertIsNot(cache.before_request(body), ShortCircuit)
+        self.assertEqual(cache.before_request(body), body)  # miss: sampled requests bypass
+
+    def test_temp_zero_requests_still_cache(self):
+        from gateway.cache_middleware import ExactCacheMiddleware
+        from gateway.middleware import ShortCircuit
+
+        cache = ExactCacheMiddleware()
+        body = {"prompt": "x", "options": {"temperature": 0.0}}
+        cache.after_response(body, {"response": "a"})
+        self.assertIsInstance(cache.before_request(body), ShortCircuit)

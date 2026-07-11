@@ -44,11 +44,13 @@ def _cosine(left: list[float], right: list[float]) -> float:
 
 
 def response_text(response: dict[str, Any]) -> str:
-    """The assistant text of an OpenAI-style chat completion (empty when absent)."""
+    """The assistant text of an OpenAI chat completion or an Ollama /api/generate reply."""
     try:
         return str(response["choices"][0]["message"]["content"])
     except (KeyError, IndexError, TypeError):
-        return ""
+        pass
+    value = response.get("response")
+    return str(value) if isinstance(value, str) else ""
 
 
 class ShadowJudge:
