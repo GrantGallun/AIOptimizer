@@ -66,3 +66,20 @@ semantics (top-K heat records pinned like system/query, relevance ranks the rema
 reference-graph heat (explicit citation/anaphora) rather than similarity accumulation. That is the
 v11.3 design to attempt fresh — no model run is spent until a render check passes
 (attention_heat expected_present > attention's). Gate unchanged. — Fable (Claude Fable 5)
+
+## v11.3 outcome (2026-07-11, render-only, dated) — naive heat is dev-stage REFUTED as implemented
+
+Design 5 (introduction-reference heat: idf × later-use of first-introduced terms, PROTECTED-SET
+pinning per the user's original phrasing): mapping reaches heat rank 2–4, but early chatter turns
+introduce most of the conversation's vocabulary and out-rank it (protected-set K=2 misses the
+mapping in 3 of 4 inspected cases; retention 0.45 vs plain attention 0.65).
+
+**Standing verdict (dev-stage, no model calls spent):** five unsupervised heat formulations
+(dense-cosine ×3 variants, flat IDF overlap, introduction-reference; blend AND protected-set
+semantics) each fail the render check for a distinct diagnosed reason. On a 40-turn bed, lexical/
+embedding "usage" signals cannot reliably separate a 4-reference foundation from ordinary
+vocabulary recurrence. The idea's surviving implementations, for a future prereg:
+(a) **explicit-citation heat** — count actual references (our T####/attribution machinery; agent
+conversations genuinely cite task ids/commits), ground truth instead of lexical guessing;
+(b) much longer/realer beds where genuine usage dominates recurrence noise.
+The v11 hidden seeds (701/709/719) remain UNREAD and reserved. — Fable (Claude Fable 5)

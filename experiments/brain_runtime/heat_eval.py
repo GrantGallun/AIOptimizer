@@ -45,11 +45,12 @@ def _heat_with_self_exclusion(compiler: ConversationCompiler, compiled, case: Ma
     degenerates heat into 'keep the user's own chatter' — caught by the render check)."""
     from gateway.context_compiler import _as_vector, _cosine
 
-    # v11.2 (dated, pre-model, via render-only iteration): dense-cosine heat FAILS
-    # structurally — it confounds REFERENCE (a turn citing the mapping's distinctive
-    # token) with generic SIMILARITY (template/topic recurrence heats all chatter).
-    # Reference-style heat instead: IDF-weighted shared-token overlap, self-excluded.
-    # A record is "used" when later turns cite its rare vocabulary.
+    # v11.3 (dated, pre-model): INTRODUCTION-REFERENCE heat. Dense-cosine and flat
+    # IDF-overlap heat both failed at render level (see the prereg design log) because
+    # they reward similarity, not reference. A foundational record is one that
+    # INTRODUCES a rare term which LATER turns go on to use (the antecedent/definition
+    # signal): heat = sum over first-introduced rare tokens of idf * later-use count.
+    # Cold definitions (introduced, never used again) get zero heat for free.
     import math
     import re as _re
 
@@ -57,47 +58,62 @@ def _heat_with_self_exclusion(compiler: ConversationCompiler, compiled, case: Ma
         return {t for t in _re.findall(r"[a-z0-9]+", text.lower()) if len(t) > 2}
 
     turns = [t for t in compiled.turns if t["role"] in ("user", "assistant")]
-    queries = [(t["id"], _tokens(t["content"])) for t in turns[:-1]]
-    records = list(compiled.records)
+    final_id = turns[-1]["id"] if turns else None
+    turn_tokens = [(t["id"], _tokens(t["content"])) for t in turns]
     doc_freq: dict[str, int] = {}
-    for t in turns:
-        for tok in _tokens(t["content"]):
+    first_seen: dict[str, str] = {}
+    for tid, toks in turn_tokens:
+        for tok in toks:
             doc_freq[tok] = doc_freq.get(tok, 0) + 1
+            first_seen.setdefault(tok, tid)
     n_turns = max(1, len(turns))
 
     def idf(tok: str) -> float:
         return math.log(n_turns / doc_freq.get(tok, n_turns))
 
+    later_use: dict[str, int] = {}
+    for tid, toks in turn_tokens:
+        if tid == final_id:
+            continue  # the active query must not feed the prior
+        for tok in toks:
+            if first_seen.get(tok) != tid:
+                later_use[tok] = later_use.get(tok, 0) + 1
+
     heat: dict[str, float] = {}
-    for record in records:
+    for record in compiled.records:
         sources = set(record.get("source_ids", []))
         rtoks = _tokens(str(record["text"]))
         heat[str(record["id"])] = sum(
-            sum(idf(tok) for tok in (rtoks & qtoks))
-            for qid, qtoks in queries
-            if qid not in sources
+            idf(tok) * later_use.get(tok, 0)
+            for tok in rtoks
+            if first_seen.get(tok) in sources  # this record INTRODUCED the term
         )
     return heat
 
 
-def _reorder_by_heat(organized: dict[str, Any], heat: Mapping[str, float]) -> dict[str, Any]:
-    clusters = list(organized.get("clusters", []))
-    if not clusters:
-        return organized
-    cluster_heat = [
-        max((float(heat.get(str(r.get("id")), 0.0)) for r in c.get("records", [])), default=0.0)
+PROTECT_TOP_K = 2  # v11.3 frozen: protected-set size
+
+
+def _protect_by_heat(organized: dict[str, Any], heat: Mapping[str, float]) -> dict[str, Any]:
+    """v11.3: protected-set semantics — the user's original phrasing ('keep the entire
+    thing'). The top-K heat records are PINNED alongside system/query; relevance ranks
+    the remainder unchanged. Blending (v11.1/.2) displaced instead of protecting."""
+    pinned = list(organized.get("pinned", []))
+    pinned_ids = {str(r.get("id")) for r in pinned}
+    clusters = [dict(c) for c in organized.get("clusters", [])]
+    candidates = [
+        r for c in clusters for r in c.get("records", [])
+        if float(heat.get(str(r.get("id")), 0.0)) > 0.0 and str(r.get("id")) not in pinned_ids
+    ]
+    protected = sorted(candidates, key=lambda r: -float(heat.get(str(r.get("id")), 0.0)))[:PROTECT_TOP_K]
+    protected_ids = {str(r.get("id")) for r in protected}
+    out = dict(organized)
+    out["pinned"] = pinned + protected
+    out["clusters"] = [
+        {**c, "records": [r for r in c.get("records", []) if str(r.get("id")) not in protected_ids]}
         for c in clusters
     ]
-    max_heat = max(cluster_heat) or 1.0
-    # Rank-reciprocal keeps organize's own relevance ordering as the relevance term.
-    scores = [
-        (1.0 - HEAT_WEIGHT) * (1.0 / (rank + 1)) + HEAT_WEIGHT * (h / max_heat)
-        for rank, h in enumerate(cluster_heat)
-    ]
-    order = sorted(range(len(clusters)), key=lambda i: (-scores[i], i))
-    reordered = dict(organized)
-    reordered["clusters"] = [clusters[i] for i in order]
-    return reordered
+    return out
 
 
 def render_arms_v11(case: Mapping[str, Any], compiler: ConversationCompiler):
@@ -109,7 +125,7 @@ def render_arms_v11(case: Mapping[str, Any], compiler: ConversationCompiler):
     contexts = {
         "raw": compiler.render_raw(compiled, budget_chars=budget),
         "attention": compiler.render_organized(organized, budget_chars=budget),
-        "attention_heat": compiler.render_organized(_reorder_by_heat(organized, heat), budget_chars=budget),
+        "attention_heat": compiler.render_organized(_protect_by_heat(organized, heat), budget_chars=budget),
     }
     cold = case.get("cold_mappings", [])
     diagnostics = {
