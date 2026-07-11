@@ -59,6 +59,68 @@ ACTION_SCHEMA: dict[str, Any] = {
     },
 }
 
+# Prereg v3.1 conditional schema: a per-kind oneOf whose branches mirror the exact
+# per-kind required/allowed fields that parse_action enforces (each branch pins `kind`
+# and forbids other fields). Unlike the permissive union above, a schema-valid object
+# here is also parse_action-valid — so constrained decoding can guarantee malformed=0
+# rather than merely reduce it (HYP-24). Ollama compiles this to a llama.cpp grammar;
+# whether its grammar honors oneOf + additionalProperties:false is itself under test.
+ACTION_SCHEMA_CONDITIONAL: dict[str, Any] = {
+    "oneOf": [
+        {
+            "type": "object",
+            "additionalProperties": False,
+            "required": ["kind", "query"],
+            "properties": {
+                "kind": {"type": "string", "enum": ["retrieve"]},
+                "query": {"type": "string"},
+                "limit": {"type": "integer", "minimum": 1, "maximum": 20},
+            },
+        },
+        {
+            "type": "object",
+            "additionalProperties": False,
+            "required": ["kind", "prompt"],
+            "properties": {
+                "kind": {"type": "string", "enum": ["reason"]},
+                "prompt": {"type": "string"},
+            },
+        },
+        {
+            "type": "object",
+            "additionalProperties": False,
+            "required": ["kind", "name"],
+            "properties": {
+                "kind": {"type": "string", "enum": ["ground"]},
+                "name": {"type": "string"},
+                "arguments": {"type": "object"},
+            },
+        },
+        {
+            "type": "object",
+            "additionalProperties": False,
+            "required": ["kind", "memory_kind", "topic", "content"],
+            "properties": {
+                "kind": {"type": "string", "enum": ["learn"]},
+                "memory_kind": {"type": "string", "enum": ["episodic", "semantic", "procedural"]},
+                "topic": {"type": "string"},
+                "content": {"type": "string"},
+                "confidence": {"type": "number", "minimum": 0, "maximum": 1},
+                "utility": {"type": "number", "minimum": 0, "maximum": 1},
+                "key": {"type": "string"},
+                "value": {},
+                "links": {"type": "array", "items": {"type": "string", "minLength": 1}},
+            },
+        },
+    ]
+}
+
+# Instruction used when the reason-before-ground invariant redirects a premature GROUND.
+REASON_BEFORE_GROUND_INSTRUCTION = (
+    "Apply the authorized retrieved rule to the operands and compute the result. "
+    "Show the arithmetic, then end with exactly ANSWER=<integer>."
+)
+
 
 @dataclass
 class AdapterMetrics:
@@ -68,6 +130,7 @@ class AdapterMetrics:
     total_duration_ns: int = 0
     load_duration_ns: int = 0
     forced_retrievals: int = 0
+    forced_reasons: int = 0
     malformed_actions: int = 0
 
     def add(self, generation: Generation) -> None:
@@ -85,6 +148,7 @@ class AdapterMetrics:
             "total_duration_ns": self.total_duration_ns,
             "load_duration_ns": self.load_duration_ns,
             "forced_retrievals": self.forced_retrievals,
+            "forced_reasons": self.forced_reasons,
             "malformed_actions": self.malformed_actions,
         }
 
@@ -102,6 +166,8 @@ class OllamaCoALAAdapter:
         max_reason_tokens: int = 192,
         require_retrieval_before_terminal: bool = True,
         constrained: bool = False,
+        action_schema: dict[str, Any] | None = None,
+        require_reason_before_ground: bool = False,
     ) -> None:
         actions = tuple(dict.fromkeys(str(action).strip() for action in grounding_actions))
         if not actions or any(not action for action in actions):
@@ -115,6 +181,10 @@ class OllamaCoALAAdapter:
         self.max_reason_tokens = max_reason_tokens
         self.require_retrieval_before_terminal = require_retrieval_before_terminal
         self.constrained = constrained
+        # Default to the permissive union schema (v3) unless a caller supplies one
+        # (v3.1 passes ACTION_SCHEMA_CONDITIONAL). Only used when constrained is True.
+        self.action_schema = action_schema if action_schema is not None else ACTION_SCHEMA
+        self.require_reason_before_ground = require_reason_before_ground
         self.metrics = AdapterMetrics()
 
     def policy(self, context: DecisionContext) -> CognitiveAction:
@@ -126,7 +196,7 @@ class OllamaCoALAAdapter:
             "max_tokens": self.max_policy_tokens,
         }
         if self.constrained:
-            generation_kwargs["format"] = ACTION_SCHEMA
+            generation_kwargs["format"] = self.action_schema
         generation = self.client.generate_with_metrics(prompt, **generation_kwargs)
         self.metrics.add(generation)
         try:
@@ -142,6 +212,17 @@ class OllamaCoALAAdapter:
         ):
             self.metrics.forced_retrievals += 1
             return CognitiveAction.retrieve(f"{context.goal} {context.observation}", limit=5)
+        # Reason-before-ground invariant (v3.1): a GROUND with no prior REASON this cycle
+        # means the model never computed an answer (it would ground a null value). Redirect
+        # to a REASON so the answer is actually produced and gradable. Symmetric across arms.
+        reasoned_this_cycle = any(event.action.kind is ActionKind.REASON for event in context.events)
+        if (
+            self.require_reason_before_ground
+            and action.kind is ActionKind.GROUND
+            and not reasoned_this_cycle
+        ):
+            self.metrics.forced_reasons += 1
+            return CognitiveAction.reason(REASON_BEFORE_GROUND_INSTRUCTION)
         return action
 
     def reason(self, instruction: str, context: DecisionContext) -> str:
