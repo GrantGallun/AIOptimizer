@@ -53,3 +53,17 @@ strongest test of whether composition changes that).
 - Both arms' gates use Wilson significance (audit fix), not point estimates.
 
 — Fable (Claude Fable 5), 2026-07-11
+
+---
+
+## Amendment v6.1 (2026-07-11, after dev sanity — dated, not a silent edit)
+
+Dev (qwen3:8b, seed 20260711): prompted 0.039 / full_kernel 0.137 — near-floor but the stop-rule
+did not trigger (kernel > 0.05). Row inspection showed the floor is a MEASUREMENT artifact, not
+reasoning failure: in most wrong rows the model retrieved both rules and computed the inner hop
+correctly, then hit `max_reason_tokens=96` mid-second-hop; last-integer grading then read a
+truncated thought. Fix (symmetric, both arms): `max_reason_tokens=256` for the multihop eval only.
+No gate, arm, or seed changes. Dev rerun next; hidden (211/223/227) only after a valid dev.
+Observed-but-not-relied-on: kernel led 0.137 vs 0.039 under truncation (its 100% completion and
+retrieval breadth) — this is NOT evidence for H-v6a; the gate reads only the post-fix hidden run.
+— Fable (Claude Fable 5)

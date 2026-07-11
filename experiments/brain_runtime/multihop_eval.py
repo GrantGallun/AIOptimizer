@@ -99,7 +99,9 @@ def evaluate(operators, sequence, *, model: str, seed: int, clients: dict[str, A
     arms: dict[str, dict[str, Any]] = {}
     for arm in arms_to_run:
         client = (clients or {}).get(arm) or ScaleMockClient()
-        adapter = _make_adapter(client, model, arm)
+        # v6.1: two-hop arithmetic with shown work truncates at the single-hop budget of 96
+        # (dev diagnosis: correct reasoning cut mid-second-hop, last-integer grading then fails).
+        adapter = _make_adapter(client, model, arm, max_reason_tokens=256)
         controller = CoALAController(
             _memory(arm),
             reasoner=adapter.reason,

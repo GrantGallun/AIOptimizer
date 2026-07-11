@@ -71,13 +71,13 @@ class ScaleMockClient:
         return Generation(response, 0, 0, 0, 0)
 
 
-def _make_adapter(client: Any, model: str, arm: str) -> OllamaCoALAAdapter:
+def _make_adapter(client: Any, model: str, arm: str, *, max_reason_tokens: int = 96) -> OllamaCoALAAdapter:
     if arm == "full_kernel":
         return OllamaCoALAAdapter(
             client,
             model=model,
             grounding_actions=["answer"],
-            max_reason_tokens=96,
+            max_reason_tokens=max_reason_tokens,
             require_retrieval_before_terminal=True,
             require_reason_before_ground=True,
             constrained=True,
@@ -88,7 +88,7 @@ def _make_adapter(client: Any, model: str, arm: str) -> OllamaCoALAAdapter:
             client,
             model=model,
             grounding_actions=["answer"],
-            max_reason_tokens=96,
+            max_reason_tokens=max_reason_tokens,
             require_retrieval_before_terminal=False,
             require_reason_before_ground=False,
             constrained=False,
@@ -98,7 +98,7 @@ def _make_adapter(client: Any, model: str, arm: str) -> OllamaCoALAAdapter:
         client,
         model=model,
         grounding_actions=["answer"],
-        max_reason_tokens=96,
+        max_reason_tokens=max_reason_tokens,
         require_retrieval_before_terminal=False,
         require_reason_before_ground=False,
         constrained=False,
