@@ -101,3 +101,16 @@ Reported industry wins: prompt caching 45-80% cost cut; routing 60-75%; semantic
 in production. **The uniform gap: every gateway reports cost saved; none proves quality preserved.**
 Our differentiator (PRODUCT.md): ship each optimization behind a pre-registered quality gate and an
 always-on shadow-A/B "receipts" report — the optimizer you can *verify*.
+
+## Usage-based retention / "heat" compaction (added 2026-07-11, post-v11)
+
+Three literature levels validate usage-heat retention — all using OBSERVED usage, never inferred:
+- **Token/KV**: H2O (NeurIPS'23) evicts by accumulated ATTENTION (up to 29x throughput);
+  Scissorhands' "persistence of importance" = the heat hypothesis, empirically confirmed.
+- **Cognitive**: ACT-R base-level activation (Anderson) — retention strength = log-sum of actual
+  past uses with power-law decay; ACT-R-inspired LLM memory (HAI 2025) applies it directly.
+- **Agent memory (2025-26)**: surveys taxonomize time-/frequency-/importance-driven forgetting
+  (LFU on retrieval behavior); AgeMem (2026) learns the policy via RL.
+**Lesson vs our v11 failures**: every working system COUNTS usage (attention, retrievals, hits);
+our five failed designs INFERRED it from similarity. v12: ACT-R activation over the runtime's
+real `uses`/`last_accessed` counters at compaction time.
