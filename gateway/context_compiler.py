@@ -7,6 +7,8 @@ query-specific working set plus a complete lightweight index of the conversation
 
 from __future__ import annotations
 
+import hashlib
+import json
 import re
 from dataclasses import dataclass
 from typing import Any, Callable, Iterable, Mapping, Sequence
@@ -20,6 +22,14 @@ DEFAULT_DENY_PATTERNS = (
     r"do not (share|repeat|reveal)",
     r"confidential",
 )
+COMPILER_SCHEMA = "aioptimizer.context-ir.v1"
+RECORD_KINDS = frozenset(
+    {
+        "instruction", "constraint", "decision", "fact", "evidence", "result",
+        "open_question", "artifact", "preference", "hypothesis", "note", "verbatim_turn",
+    }
+)
+AUTHORITIES = frozenset({"source", "derived", "inferred"})
 
 
 @dataclass(frozen=True)
@@ -92,6 +102,8 @@ class ConversationCompiler:
                 "text": turn["content"],
                 "source_ids": [turn["id"]],
                 "tags": [turn["role"]],
+                "authority": "source",
+                "binding": turn["role"] in {"system", "user"},
             }
             for index, turn in enumerate(turns)
         ]
@@ -106,15 +118,29 @@ class ConversationCompiler:
                 raise ValueError("compiled records need non-empty text")
             if not isinstance(cited, list) or not cited or any(item not in source_ids for item in cited):
                 raise ValueError("compiled records must cite existing source turn IDs")
+            kind = str(record.get("kind") or "note")
+            authority = str(record.get("authority") or "inferred")
+            binding = bool(record.get("binding", False))
+            if kind not in RECORD_KINDS:
+                raise ValueError(f"unsupported record kind: {kind}")
+            if authority not in AUTHORITIES:
+                raise ValueError(f"unsupported record authority: {authority}")
+            if binding and authority == "inferred":
+                raise ValueError("inferred records cannot be binding")
             normalized.append(
                 {
                     "id": str(record.get("id") or f"R{index + 1:04d}"),
-                    "kind": str(record.get("kind") or "note"),
+                    "kind": kind,
                     "text": text,
                     "source_ids": list(dict.fromkeys(cited)),
                     "tags": [str(tag) for tag in record.get("tags", [])],
+                    "authority": authority,
+                    "binding": binding,
                 }
             )
+        ids = [record["id"] for record in normalized]
+        if len(ids) != len(set(ids)):
+            raise ValueError("compiled record IDs must be unique")
         return normalized
 
     def compile(self, messages: Sequence[Mapping[str, Any]]) -> CompiledConversation:
@@ -122,6 +148,57 @@ class ConversationCompiler:
         candidate = self._rewrite_fn(turns) if self._rewrite_fn else self._lossless_records(turns)
         records = self._validate_records(candidate, {turn["id"] for turn in turns})
         return CompiledConversation(tuple(turns), tuple(records))
+
+    @staticmethod
+    def canonical_bytes(value: Any) -> bytes:
+        """Canonical UTF-8 encoding used for replay hashes and exact caches."""
+        return json.dumps(
+            value, ensure_ascii=False, sort_keys=True, separators=(",", ":")
+        ).encode("utf-8")
+
+    def canonical_snapshot(self, compiled: CompiledConversation) -> dict[str, Any]:
+        """Return the versioned, serialization-safe deterministic context IR."""
+        return {
+            "schema": COMPILER_SCHEMA,
+            "turns": [dict(turn) for turn in compiled.turns],
+            "records": [dict(record) for record in compiled.records],
+        }
+
+    def fingerprint(self, compiled: CompiledConversation) -> str:
+        """Content address for byte-identical replay verification."""
+        payload = self.canonical_bytes(self.canonical_snapshot(compiled))
+        return "sha256:" + hashlib.sha256(payload).hexdigest()
+
+    def audit_integrity(self, compiled: CompiledConversation) -> dict[str, Any]:
+        """Verify provenance, extractive source fidelity, and active-request preservation."""
+        turns = {turn["id"]: turn for turn in compiled.turns}
+        failures: list[dict[str, str]] = []
+        for record in compiled.records:
+            missing = [source for source in record["source_ids"] if source not in turns]
+            if missing:
+                failures.append({"record": record["id"], "reason": "missing_source"})
+                continue
+            if record["authority"] == "source" and not any(
+                record["text"] == turns[source]["content"] for source in record["source_ids"]
+            ):
+                failures.append({"record": record["id"], "reason": "source_text_changed"})
+        latest_user = next(
+            (turn for turn in reversed(compiled.turns) if turn["role"] == "user"), None
+        )
+        active_preserved = latest_user is None or any(
+            record["authority"] == "source"
+            and latest_user["id"] in record["source_ids"]
+            and record["text"] == latest_user["content"]
+            for record in compiled.records
+        )
+        if not active_preserved:
+            failures.append({"record": "active_request", "reason": "not_preserved_verbatim"})
+        return {
+            "ok": not failures,
+            "active_request_preserved": active_preserved,
+            "failures": failures,
+            "fingerprint": self.fingerprint(compiled),
+        }
 
     def record_heat(
         self,

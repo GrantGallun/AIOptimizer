@@ -1,4 +1,5 @@
 import unittest
+import json
 
 from gateway.context_compiler import ConversationCompiler
 
@@ -23,6 +24,8 @@ class ConversationCompilerTests(unittest.TestCase):
         self.assertEqual([r["text"] for r in compiled.records], [m["content"] for m in self.messages])
         self.assertEqual(compiled.records[0]["source_ids"], ["T0001"])
         self.assertEqual(compiled.turns[0]["content"], self.messages[0]["content"])
+        self.assertEqual(compiled.records[0]["authority"], "source")
+        self.assertTrue(compiled.records[0]["binding"])
 
     def test_local_rewriter_can_emit_typed_records(self):
         def rewrite(turns):
@@ -39,6 +42,8 @@ class ConversationCompilerTests(unittest.TestCase):
 
         self.assertEqual(compiled.records[0]["kind"], "decision")
         self.assertEqual(compiled.records[0]["source_ids"], ["T0002", "T0003"])
+        self.assertEqual(compiled.records[0]["authority"], "inferred")
+        self.assertFalse(compiled.records[0]["binding"])
 
     def test_rewriter_cannot_cite_nonexistent_source(self):
         compiler = ConversationCompiler(
@@ -121,6 +126,50 @@ class ConversationCompilerTests(unittest.TestCase):
 
         with self.assertRaisesRegex(ValueError, "too small"):
             compiler.render_raw(compiled, budget_chars=10)
+
+    def test_canonical_snapshot_and_hash_are_reproducible(self):
+        compiler = ConversationCompiler(embed_fn=_embed)
+        hashes = {compiler.fingerprint(compiler.compile(self.messages)) for _ in range(100)}
+
+        self.assertEqual(len(hashes), 1)
+        compiled = compiler.compile(self.messages)
+        encoded = compiler.canonical_bytes(compiler.canonical_snapshot(compiled))
+        self.assertEqual(encoded, compiler.canonical_bytes(json.loads(encoded)))
+        self.assertTrue(next(iter(hashes)).startswith("sha256:"))
+
+    def test_compilation_copies_input_and_integrity_audit_preserves_active_request(self):
+        messages = [dict(message) for message in self.messages]
+        compiler = ConversationCompiler(embed_fn=_embed)
+        compiled = compiler.compile(messages)
+        messages[-1]["content"] = "mutated later"
+
+        audit = compiler.audit_integrity(compiled)
+        self.assertTrue(audit["ok"])
+        self.assertTrue(audit["active_request_preserved"])
+        self.assertEqual(compiled.turns[-1]["content"], "How should memory be organized?")
+
+    def test_inferred_record_cannot_be_promoted_to_binding(self):
+        compiler = ConversationCompiler(
+            rewrite_fn=lambda turns: [{
+                "kind": "constraint", "text": "Use enterprise framing.",
+                "source_ids": [turns[-1]["id"]], "authority": "inferred", "binding": True,
+            }],
+            embed_fn=_embed,
+        )
+        with self.assertRaisesRegex(ValueError, "cannot be binding"):
+            compiler.compile(self.messages)
+
+    def test_integrity_audit_detects_falsely_authoritative_rewrite(self):
+        compiler = ConversationCompiler(
+            rewrite_fn=lambda turns: [{
+                "kind": "fact", "text": "A changed claim",
+                "source_ids": [turns[-1]["id"]], "authority": "source",
+            }],
+            embed_fn=_embed,
+        )
+        audit = compiler.audit_integrity(compiler.compile(self.messages))
+        self.assertFalse(audit["ok"])
+        self.assertIn("source_text_changed", {item["reason"] for item in audit["failures"]})
 
 
 if __name__ == "__main__":

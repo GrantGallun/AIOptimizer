@@ -47,7 +47,7 @@ class ContextOrganizationEvalTests(unittest.TestCase):
         self.assertLessEqual(len(contexts["raw"]), CASE["budget_chars"])
         self.assertLessEqual(len(contexts["attention"]), CASE["budget_chars"])
         for arm in ("raw", "attention"):
-            self.assertTrue(diagnostics[arm]["forbidden_present"])
+            self.assertFalse(diagnostics[arm]["forbidden_present"])
             self.assertIn("Which port belongs", contexts[arm])
         self.assertTrue(diagnostics["attention"]["expected_present"])
         self.assertTrue(diagnostics["attention"]["expected_source_present"])
