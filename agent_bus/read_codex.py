@@ -15,8 +15,14 @@ the bus. Read-only; no dependency on Codex being invocable from here.
 from __future__ import annotations
 
 import argparse
+import io
 import json
 from pathlib import Path
+import sys
+from typing import TextIO
+
+if hasattr(sys.stdout, "buffer"):
+    sys.stdout = io.TextIOWrapper(sys.stdout.buffer, encoding="utf-8", errors="replace")
 
 SESSIONS = Path.home() / ".codex" / "sessions"
 NOISE_PREFIXES = ("<recommended_plugins", "<environment", "<user_instructions", "<plugins", "<system", "# Instructions")
@@ -32,7 +38,7 @@ def latest_rollouts(n: int) -> list[Path]:
 def extract(path: Path) -> list[tuple[str, str]]:
     """Return (who, text) for message + tool-call entries, in order."""
     out: list[tuple[str, str]] = []
-    for line in path.read_text(encoding="utf-8", errors="ignore").splitlines():
+    for line in path.read_text(encoding="utf-8", errors="replace").splitlines():
         try:
             o = json.loads(line)
         except json.JSONDecodeError:
@@ -55,6 +61,20 @@ def extract(path: Path) -> list[tuple[str, str]]:
     return out
 
 
+def print_messages(
+    entries: list[tuple[str, str]],
+    *,
+    tail: int,
+    full: bool,
+    stream: TextIO | None = None,
+) -> None:
+    """Print message entries using the CLI's established formatting."""
+    output = sys.stdout if stream is None else stream
+    for who, text in entries[-tail:]:
+        body = text if full else (text[:500] + ("…" if len(text) > 500 else ""))
+        print(f"--- {who} ---\n{body}\n", file=output)
+
+
 def main() -> None:
     ap = argparse.ArgumentParser(description=__doc__)
     ap.add_argument("--sessions", type=int, default=1, help="How many recent session files to read.")
@@ -73,9 +93,7 @@ def main() -> None:
     if args.grep:
         needle = args.grep.lower()
         entries = [(w, t) for w, t in entries if needle in t.lower()]
-    for who, text in entries[-args.tail:]:
-        body = text if args.full else (text[:500] + ("…" if len(text) > 500 else ""))
-        print(f"--- {who} ---\n{body}\n")
+    print_messages(entries, tail=args.tail, full=args.full)
 
 
 if __name__ == "__main__":
