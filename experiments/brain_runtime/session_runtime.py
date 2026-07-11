@@ -13,6 +13,11 @@ import json
 from pathlib import Path
 from typing import Any
 
+from experiments.brain_runtime.compaction_policies import (
+    keep_actr,
+    keep_newest,
+    keep_random,
+)
 from experiments.brain_runtime.runtime import (
     BrainRuntime,
     Contradiction,
@@ -27,6 +32,28 @@ SNAPSHOT_SCHEMA = "brain-runtime-session-v1"
 
 class PersistentBrainRuntime(BrainRuntime):
     """A ``BrainRuntime`` whose complete state can cross a process boundary."""
+
+    def compact_long_term(self, keep: int, policy: str = "actr", seed: int = 0) -> int:
+        """Compact long-term memory with a governed, model-free policy."""
+        policies = {
+            "actr": keep_actr,
+            "newest": keep_newest,
+            "random": keep_random,
+        }
+        try:
+            select = policies[policy]
+        except KeyError as exc:
+            raise ValueError(f"unknown compaction policy: {policy!r}") from exc
+
+        before = len(self.long_term_memory)
+        kept = select(
+            list(self.long_term_memory.values()),
+            keep,
+            clock=self.clock,
+            seed=seed,
+        )
+        self.long_term_memory = {item.id: item for item in kept}
+        return before - len(self.long_term_memory)
 
     def snapshot(self) -> dict[str, Any]:
         """Return a JSON-serializable, versioned representation of runtime state."""
@@ -192,4 +219,3 @@ class PersistentBrainRuntime(BrainRuntime):
             value=row.get("value"),
             contradicted_by={str(value) for value in row.get("contradicted_by", [])},
         )
-
