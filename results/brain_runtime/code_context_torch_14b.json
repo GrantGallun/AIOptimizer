@@ -1,0 +1,1389 @@
+{
+  "benchmark": "brain-runtime-code-context",
+  "context_sizes": [
+    10,
+    40
+  ],
+  "elapsed_seconds": 123.727,
+  "k": 3,
+  "model": "qwen3:14b",
+  "n_functions": 1788,
+  "n_qa": 12,
+  "paths": [
+    "C:/Users/grant/AppData/Roaming/Python/Python314/site-packages/torch/utils"
+  ],
+  "render_only": false,
+  "rows": [
+    {
+      "N": 10,
+      "answer": "",
+      "arm": "dump_all",
+      "correct": false,
+      "func": "__init__",
+      "param": "attributes",
+      "qa_i": 0
+    },
+    {
+      "N": 10,
+      "answer": "",
+      "arm": "selected",
+      "correct": false,
+      "func": "__init__",
+      "param": "attributes",
+      "qa_i": 0
+    },
+    {
+      "N": 10,
+      "answer": "",
+      "arm": "selected_ce",
+      "correct": false,
+      "func": "__init__",
+      "param": "attributes",
+      "qa_i": 0
+    },
+    {
+      "N": 10,
+      "answer": "",
+      "arm": "abstracted",
+      "correct": false,
+      "func": "__init__",
+      "param": "attributes",
+      "qa_i": 0
+    },
+    {
+      "N": 10,
+      "answer": "",
+      "arm": "random_k",
+      "correct": false,
+      "func": "__init__",
+      "param": "attributes",
+      "qa_i": 0
+    },
+    {
+      "N": 10,
+      "answer": "",
+      "arm": "oracle",
+      "correct": false,
+      "func": "__init__",
+      "param": "attributes",
+      "qa_i": 0
+    },
+    {
+      "N": 40,
+      "answer": "",
+      "arm": "dump_all",
+      "correct": false,
+      "func": "__init__",
+      "param": "attributes",
+      "qa_i": 0
+    },
+    {
+      "N": 40,
+      "answer": "",
+      "arm": "selected",
+      "correct": false,
+      "func": "__init__",
+      "param": "attributes",
+      "qa_i": 0
+    },
+    {
+      "N": 40,
+      "answer": "",
+      "arm": "selected_ce",
+      "correct": false,
+      "func": "__init__",
+      "param": "attributes",
+      "qa_i": 0
+    },
+    {
+      "N": 40,
+      "answer": "",
+      "arm": "abstracted",
+      "correct": false,
+      "func": "__init__",
+      "param": "attributes",
+      "qa_i": 0
+    },
+    {
+      "N": 40,
+      "answer": "",
+      "arm": "random_k",
+      "correct": false,
+      "func": "__init__",
+      "param": "attributes",
+      "qa_i": 0
+    },
+    {
+      "N": 40,
+      "answer": "",
+      "arm": "oracle",
+      "correct": false,
+      "func": "__init__",
+      "param": "attributes",
+      "qa_i": 0
+    },
+    {
+      "N": 10,
+      "answer": "CHW",
+      "arm": "dump_all",
+      "correct": true,
+      "func": "image_boxes",
+      "param": "dataformats",
+      "qa_i": 1
+    },
+    {
+      "N": 10,
+      "answer": "CHW",
+      "arm": "selected",
+      "correct": true,
+      "func": "image_boxes",
+      "param": "dataformats",
+      "qa_i": 1
+    },
+    {
+      "N": 10,
+      "answer": "CHW",
+      "arm": "selected_ce",
+      "correct": true,
+      "func": "image_boxes",
+      "param": "dataformats",
+      "qa_i": 1
+    },
+    {
+      "N": 10,
+      "answer": "CHW",
+      "arm": "abstracted",
+      "correct": true,
+      "func": "image_boxes",
+      "param": "dataformats",
+      "qa_i": 1
+    },
+    {
+      "N": 10,
+      "answer": "CHW",
+      "arm": "random_k",
+      "correct": false,
+      "func": "image_boxes",
+      "param": "dataformats",
+      "qa_i": 1
+    },
+    {
+      "N": 10,
+      "answer": "CHW",
+      "arm": "oracle",
+      "correct": true,
+      "func": "image_boxes",
+      "param": "dataformats",
+      "qa_i": 1
+    },
+    {
+      "N": 40,
+      "answer": "CHW",
+      "arm": "dump_all",
+      "correct": true,
+      "func": "image_boxes",
+      "param": "dataformats",
+      "qa_i": 1
+    },
+    {
+      "N": 40,
+      "answer": "CHW",
+      "arm": "selected",
+      "correct": true,
+      "func": "image_boxes",
+      "param": "dataformats",
+      "qa_i": 1
+    },
+    {
+      "N": 40,
+      "answer": "CHW",
+      "arm": "selected_ce",
+      "correct": true,
+      "func": "image_boxes",
+      "param": "dataformats",
+      "qa_i": 1
+    },
+    {
+      "N": 40,
+      "answer": "CHW",
+      "arm": "abstracted",
+      "correct": true,
+      "func": "image_boxes",
+      "param": "dataformats",
+      "qa_i": 1
+    },
+    {
+      "N": 40,
+      "answer": "CHW",
+      "arm": "random_k",
+      "correct": false,
+      "func": "image_boxes",
+      "param": "dataformats",
+      "qa_i": 1
+    },
+    {
+      "N": 40,
+      "answer": "CHW",
+      "arm": "oracle",
+      "correct": true,
+      "func": "image_boxes",
+      "param": "dataformats",
+      "qa_i": 1
+    },
+    {
+      "N": 10,
+      "answer": "1",
+      "arm": "dump_all",
+      "correct": true,
+      "func": "__init__",
+      "param": "coeff",
+      "qa_i": 2
+    },
+    {
+      "N": 10,
+      "answer": "1",
+      "arm": "selected",
+      "correct": true,
+      "func": "__init__",
+      "param": "coeff",
+      "qa_i": 2
+    },
+    {
+      "N": 10,
+      "answer": "1",
+      "arm": "selected_ce",
+      "correct": true,
+      "func": "__init__",
+      "param": "coeff",
+      "qa_i": 2
+    },
+    {
+      "N": 10,
+      "answer": "1",
+      "arm": "abstracted",
+      "correct": true,
+      "func": "__init__",
+      "param": "coeff",
+      "qa_i": 2
+    },
+    {
+      "N": 10,
+      "answer": "1",
+      "arm": "random_k",
+      "correct": false,
+      "func": "__init__",
+      "param": "coeff",
+      "qa_i": 2
+    },
+    {
+      "N": 10,
+      "answer": "1",
+      "arm": "oracle",
+      "correct": true,
+      "func": "__init__",
+      "param": "coeff",
+      "qa_i": 2
+    },
+    {
+      "N": 40,
+      "answer": "1",
+      "arm": "dump_all",
+      "correct": true,
+      "func": "__init__",
+      "param": "coeff",
+      "qa_i": 2
+    },
+    {
+      "N": 40,
+      "answer": "1",
+      "arm": "selected",
+      "correct": true,
+      "func": "__init__",
+      "param": "coeff",
+      "qa_i": 2
+    },
+    {
+      "N": 40,
+      "answer": "1",
+      "arm": "selected_ce",
+      "correct": true,
+      "func": "__init__",
+      "param": "coeff",
+      "qa_i": 2
+    },
+    {
+      "N": 40,
+      "answer": "1",
+      "arm": "abstracted",
+      "correct": true,
+      "func": "__init__",
+      "param": "coeff",
+      "qa_i": 2
+    },
+    {
+      "N": 40,
+      "answer": "1",
+      "arm": "random_k",
+      "correct": false,
+      "func": "__init__",
+      "param": "coeff",
+      "qa_i": 2
+    },
+    {
+      "N": 40,
+      "answer": "1",
+      "arm": "oracle",
+      "correct": true,
+      "func": "__init__",
+      "param": "coeff",
+      "qa_i": 2
+    },
+    {
+      "N": 10,
+      "answer": "10000",
+      "arm": "dump_all",
+      "correct": true,
+      "func": "groupby",
+      "param": "buffer_size",
+      "qa_i": 3
+    },
+    {
+      "N": 10,
+      "answer": "10000",
+      "arm": "selected",
+      "correct": true,
+      "func": "groupby",
+      "param": "buffer_size",
+      "qa_i": 3
+    },
+    {
+      "N": 10,
+      "answer": "10000",
+      "arm": "selected_ce",
+      "correct": true,
+      "func": "groupby",
+      "param": "buffer_size",
+      "qa_i": 3
+    },
+    {
+      "N": 10,
+      "answer": "10000",
+      "arm": "abstracted",
+      "correct": true,
+      "func": "groupby",
+      "param": "buffer_size",
+      "qa_i": 3
+    },
+    {
+      "N": 10,
+      "answer": "10000",
+      "arm": "random_k",
+      "correct": false,
+      "func": "groupby",
+      "param": "buffer_size",
+      "qa_i": 3
+    },
+    {
+      "N": 10,
+      "answer": "10000",
+      "arm": "oracle",
+      "correct": true,
+      "func": "groupby",
+      "param": "buffer_size",
+      "qa_i": 3
+    },
+    {
+      "N": 40,
+      "answer": "10000",
+      "arm": "dump_all",
+      "correct": true,
+      "func": "groupby",
+      "param": "buffer_size",
+      "qa_i": 3
+    },
+    {
+      "N": 40,
+      "answer": "10000",
+      "arm": "selected",
+      "correct": true,
+      "func": "groupby",
+      "param": "buffer_size",
+      "qa_i": 3
+    },
+    {
+      "N": 40,
+      "answer": "10000",
+      "arm": "selected_ce",
+      "correct": true,
+      "func": "groupby",
+      "param": "buffer_size",
+      "qa_i": 3
+    },
+    {
+      "N": 40,
+      "answer": "10000",
+      "arm": "abstracted",
+      "correct": true,
+      "func": "groupby",
+      "param": "buffer_size",
+      "qa_i": 3
+    },
+    {
+      "N": 40,
+      "answer": "10000",
+      "arm": "random_k",
+      "correct": false,
+      "func": "groupby",
+      "param": "buffer_size",
+      "qa_i": 3
+    },
+    {
+      "N": 40,
+      "answer": "10000",
+      "arm": "oracle",
+      "correct": true,
+      "func": "groupby",
+      "param": "buffer_size",
+      "qa_i": 3
+    },
+    {
+      "N": 10,
+      "answer": "44100",
+      "arm": "dump_all",
+      "correct": true,
+      "func": "add_audio",
+      "param": "sample_rate",
+      "qa_i": 4
+    },
+    {
+      "N": 10,
+      "answer": "44100",
+      "arm": "selected",
+      "correct": true,
+      "func": "add_audio",
+      "param": "sample_rate",
+      "qa_i": 4
+    },
+    {
+      "N": 10,
+      "answer": "44100",
+      "arm": "selected_ce",
+      "correct": true,
+      "func": "add_audio",
+      "param": "sample_rate",
+      "qa_i": 4
+    },
+    {
+      "N": 10,
+      "answer": "44100",
+      "arm": "abstracted",
+      "correct": true,
+      "func": "add_audio",
+      "param": "sample_rate",
+      "qa_i": 4
+    },
+    {
+      "N": 10,
+      "answer": "44100",
+      "arm": "random_k",
+      "correct": false,
+      "func": "add_audio",
+      "param": "sample_rate",
+      "qa_i": 4
+    },
+    {
+      "N": 10,
+      "answer": "44100",
+      "arm": "oracle",
+      "correct": true,
+      "func": "add_audio",
+      "param": "sample_rate",
+      "qa_i": 4
+    },
+    {
+      "N": 40,
+      "answer": "44100",
+      "arm": "dump_all",
+      "correct": false,
+      "func": "add_audio",
+      "param": "sample_rate",
+      "qa_i": 4
+    },
+    {
+      "N": 40,
+      "answer": "44100",
+      "arm": "selected",
+      "correct": true,
+      "func": "add_audio",
+      "param": "sample_rate",
+      "qa_i": 4
+    },
+    {
+      "N": 40,
+      "answer": "44100",
+      "arm": "selected_ce",
+      "correct": true,
+      "func": "add_audio",
+      "param": "sample_rate",
+      "qa_i": 4
+    },
+    {
+      "N": 40,
+      "answer": "44100",
+      "arm": "abstracted",
+      "correct": true,
+      "func": "add_audio",
+      "param": "sample_rate",
+      "qa_i": 4
+    },
+    {
+      "N": 40,
+      "answer": "44100",
+      "arm": "random_k",
+      "correct": false,
+      "func": "add_audio",
+      "param": "sample_rate",
+      "qa_i": 4
+    },
+    {
+      "N": 40,
+      "answer": "44100",
+      "arm": "oracle",
+      "correct": true,
+      "func": "add_audio",
+      "param": "sample_rate",
+      "qa_i": 4
+    },
+    {
+      "N": 10,
+      "answer": "NCHW",
+      "arm": "dump_all",
+      "correct": true,
+      "func": "add_images",
+      "param": "dataformats",
+      "qa_i": 5
+    },
+    {
+      "N": 10,
+      "answer": "NCHW",
+      "arm": "selected",
+      "correct": true,
+      "func": "add_images",
+      "param": "dataformats",
+      "qa_i": 5
+    },
+    {
+      "N": 10,
+      "answer": "NCHW",
+      "arm": "selected_ce",
+      "correct": true,
+      "func": "add_images",
+      "param": "dataformats",
+      "qa_i": 5
+    },
+    {
+      "N": 10,
+      "answer": "NCHW",
+      "arm": "abstracted",
+      "correct": true,
+      "func": "add_images",
+      "param": "dataformats",
+      "qa_i": 5
+    },
+    {
+      "N": 10,
+      "answer": "NCHW",
+      "arm": "random_k",
+      "correct": true,
+      "func": "add_images",
+      "param": "dataformats",
+      "qa_i": 5
+    },
+    {
+      "N": 10,
+      "answer": "NCHW",
+      "arm": "oracle",
+      "correct": true,
+      "func": "add_images",
+      "param": "dataformats",
+      "qa_i": 5
+    },
+    {
+      "N": 40,
+      "answer": "NCHW",
+      "arm": "dump_all",
+      "correct": true,
+      "func": "add_images",
+      "param": "dataformats",
+      "qa_i": 5
+    },
+    {
+      "N": 40,
+      "answer": "NCHW",
+      "arm": "selected",
+      "correct": true,
+      "func": "add_images",
+      "param": "dataformats",
+      "qa_i": 5
+    },
+    {
+      "N": 40,
+      "answer": "NCHW",
+      "arm": "selected_ce",
+      "correct": true,
+      "func": "add_images",
+      "param": "dataformats",
+      "qa_i": 5
+    },
+    {
+      "N": 40,
+      "answer": "NCHW",
+      "arm": "abstracted",
+      "correct": true,
+      "func": "add_images",
+      "param": "dataformats",
+      "qa_i": 5
+    },
+    {
+      "N": 40,
+      "answer": "NCHW",
+      "arm": "random_k",
+      "correct": false,
+      "func": "add_images",
+      "param": "dataformats",
+      "qa_i": 5
+    },
+    {
+      "N": 40,
+      "answer": "NCHW",
+      "arm": "oracle",
+      "correct": true,
+      "func": "add_images",
+      "param": "dataformats",
+      "qa_i": 5
+    },
+    {
+      "N": 10,
+      "answer": "2",
+      "arm": "dump_all",
+      "correct": true,
+      "func": "_draw_single_box",
+      "param": "thickness",
+      "qa_i": 6
+    },
+    {
+      "N": 10,
+      "answer": "2",
+      "arm": "selected",
+      "correct": true,
+      "func": "_draw_single_box",
+      "param": "thickness",
+      "qa_i": 6
+    },
+    {
+      "N": 10,
+      "answer": "2",
+      "arm": "selected_ce",
+      "correct": true,
+      "func": "_draw_single_box",
+      "param": "thickness",
+      "qa_i": 6
+    },
+    {
+      "N": 10,
+      "answer": "2",
+      "arm": "abstracted",
+      "correct": true,
+      "func": "_draw_single_box",
+      "param": "thickness",
+      "qa_i": 6
+    },
+    {
+      "N": 10,
+      "answer": "2",
+      "arm": "random_k",
+      "correct": false,
+      "func": "_draw_single_box",
+      "param": "thickness",
+      "qa_i": 6
+    },
+    {
+      "N": 10,
+      "answer": "2",
+      "arm": "oracle",
+      "correct": true,
+      "func": "_draw_single_box",
+      "param": "thickness",
+      "qa_i": 6
+    },
+    {
+      "N": 40,
+      "answer": "2",
+      "arm": "dump_all",
+      "correct": false,
+      "func": "_draw_single_box",
+      "param": "thickness",
+      "qa_i": 6
+    },
+    {
+      "N": 40,
+      "answer": "2",
+      "arm": "selected",
+      "correct": true,
+      "func": "_draw_single_box",
+      "param": "thickness",
+      "qa_i": 6
+    },
+    {
+      "N": 40,
+      "answer": "2",
+      "arm": "selected_ce",
+      "correct": true,
+      "func": "_draw_single_box",
+      "param": "thickness",
+      "qa_i": 6
+    },
+    {
+      "N": 40,
+      "answer": "2",
+      "arm": "abstracted",
+      "correct": true,
+      "func": "_draw_single_box",
+      "param": "thickness",
+      "qa_i": 6
+    },
+    {
+      "N": 40,
+      "answer": "2",
+      "arm": "random_k",
+      "correct": false,
+      "func": "_draw_single_box",
+      "param": "thickness",
+      "qa_i": 6
+    },
+    {
+      "N": 40,
+      "answer": "2",
+      "arm": "oracle",
+      "correct": true,
+      "func": "_draw_single_box",
+      "param": "thickness",
+      "qa_i": 6
+    },
+    {
+      "N": 10,
+      "answer": "",
+      "arm": "dump_all",
+      "correct": false,
+      "func": "__init__",
+      "param": "masks",
+      "qa_i": 7
+    },
+    {
+      "N": 10,
+      "answer": "",
+      "arm": "selected",
+      "correct": false,
+      "func": "__init__",
+      "param": "masks",
+      "qa_i": 7
+    },
+    {
+      "N": 10,
+      "answer": "",
+      "arm": "selected_ce",
+      "correct": false,
+      "func": "__init__",
+      "param": "masks",
+      "qa_i": 7
+    },
+    {
+      "N": 10,
+      "answer": "",
+      "arm": "abstracted",
+      "correct": false,
+      "func": "__init__",
+      "param": "masks",
+      "qa_i": 7
+    },
+    {
+      "N": 10,
+      "answer": "",
+      "arm": "random_k",
+      "correct": false,
+      "func": "__init__",
+      "param": "masks",
+      "qa_i": 7
+    },
+    {
+      "N": 10,
+      "answer": "",
+      "arm": "oracle",
+      "correct": false,
+      "func": "__init__",
+      "param": "masks",
+      "qa_i": 7
+    },
+    {
+      "N": 40,
+      "answer": "",
+      "arm": "dump_all",
+      "correct": false,
+      "func": "__init__",
+      "param": "masks",
+      "qa_i": 7
+    },
+    {
+      "N": 40,
+      "answer": "",
+      "arm": "selected",
+      "correct": false,
+      "func": "__init__",
+      "param": "masks",
+      "qa_i": 7
+    },
+    {
+      "N": 40,
+      "answer": "",
+      "arm": "selected_ce",
+      "correct": false,
+      "func": "__init__",
+      "param": "masks",
+      "qa_i": 7
+    },
+    {
+      "N": 40,
+      "answer": "",
+      "arm": "abstracted",
+      "correct": false,
+      "func": "__init__",
+      "param": "masks",
+      "qa_i": 7
+    },
+    {
+      "N": 40,
+      "answer": "",
+      "arm": "random_k",
+      "correct": false,
+      "func": "__init__",
+      "param": "masks",
+      "qa_i": 7
+    },
+    {
+      "N": 40,
+      "answer": "",
+      "arm": "oracle",
+      "correct": false,
+      "func": "__init__",
+      "param": "masks",
+      "qa_i": 7
+    },
+    {
+      "N": 10,
+      "answer": "CHW",
+      "arm": "dump_all",
+      "correct": true,
+      "func": "add_image",
+      "param": "dataformats",
+      "qa_i": 8
+    },
+    {
+      "N": 10,
+      "answer": "CHW",
+      "arm": "selected",
+      "correct": true,
+      "func": "add_image",
+      "param": "dataformats",
+      "qa_i": 8
+    },
+    {
+      "N": 10,
+      "answer": "CHW",
+      "arm": "selected_ce",
+      "correct": true,
+      "func": "add_image",
+      "param": "dataformats",
+      "qa_i": 8
+    },
+    {
+      "N": 10,
+      "answer": "CHW",
+      "arm": "abstracted",
+      "correct": true,
+      "func": "add_image",
+      "param": "dataformats",
+      "qa_i": 8
+    },
+    {
+      "N": 10,
+      "answer": "CHW",
+      "arm": "random_k",
+      "correct": false,
+      "func": "add_image",
+      "param": "dataformats",
+      "qa_i": 8
+    },
+    {
+      "N": 10,
+      "answer": "CHW",
+      "arm": "oracle",
+      "correct": true,
+      "func": "add_image",
+      "param": "dataformats",
+      "qa_i": 8
+    },
+    {
+      "N": 40,
+      "answer": "CHW",
+      "arm": "dump_all",
+      "correct": false,
+      "func": "add_image",
+      "param": "dataformats",
+      "qa_i": 8
+    },
+    {
+      "N": 40,
+      "answer": "CHW",
+      "arm": "selected",
+      "correct": true,
+      "func": "add_image",
+      "param": "dataformats",
+      "qa_i": 8
+    },
+    {
+      "N": 40,
+      "answer": "CHW",
+      "arm": "selected_ce",
+      "correct": true,
+      "func": "add_image",
+      "param": "dataformats",
+      "qa_i": 8
+    },
+    {
+      "N": 40,
+      "answer": "CHW",
+      "arm": "abstracted",
+      "correct": true,
+      "func": "add_image",
+      "param": "dataformats",
+      "qa_i": 8
+    },
+    {
+      "N": 40,
+      "answer": "CHW",
+      "arm": "random_k",
+      "correct": false,
+      "func": "add_image",
+      "param": "dataformats",
+      "qa_i": 8
+    },
+    {
+      "N": 40,
+      "answer": "CHW",
+      "arm": "oracle",
+      "correct": true,
+      "func": "add_image",
+      "param": "dataformats",
+      "qa_i": 8
+    },
+    {
+      "N": 10,
+      "answer": "No",
+      "arm": "dump_all",
+      "correct": true,
+      "func": "replace_bools",
+      "param": "false",
+      "qa_i": 9
+    },
+    {
+      "N": 10,
+      "answer": "No",
+      "arm": "selected",
+      "correct": true,
+      "func": "replace_bools",
+      "param": "false",
+      "qa_i": 9
+    },
+    {
+      "N": 10,
+      "answer": "No",
+      "arm": "selected_ce",
+      "correct": true,
+      "func": "replace_bools",
+      "param": "false",
+      "qa_i": 9
+    },
+    {
+      "N": 10,
+      "answer": "No",
+      "arm": "abstracted",
+      "correct": true,
+      "func": "replace_bools",
+      "param": "false",
+      "qa_i": 9
+    },
+    {
+      "N": 10,
+      "answer": "No",
+      "arm": "random_k",
+      "correct": false,
+      "func": "replace_bools",
+      "param": "false",
+      "qa_i": 9
+    },
+    {
+      "N": 10,
+      "answer": "No",
+      "arm": "oracle",
+      "correct": true,
+      "func": "replace_bools",
+      "param": "false",
+      "qa_i": 9
+    },
+    {
+      "N": 40,
+      "answer": "No",
+      "arm": "dump_all",
+      "correct": false,
+      "func": "replace_bools",
+      "param": "false",
+      "qa_i": 9
+    },
+    {
+      "N": 40,
+      "answer": "No",
+      "arm": "selected",
+      "correct": true,
+      "func": "replace_bools",
+      "param": "false",
+      "qa_i": 9
+    },
+    {
+      "N": 40,
+      "answer": "No",
+      "arm": "selected_ce",
+      "correct": true,
+      "func": "replace_bools",
+      "param": "false",
+      "qa_i": 9
+    },
+    {
+      "N": 40,
+      "answer": "No",
+      "arm": "abstracted",
+      "correct": true,
+      "func": "replace_bools",
+      "param": "false",
+      "qa_i": 9
+    },
+    {
+      "N": 40,
+      "answer": "No",
+      "arm": "random_k",
+      "correct": false,
+      "func": "replace_bools",
+      "param": "false",
+      "qa_i": 9
+    },
+    {
+      "N": 40,
+      "answer": "No",
+      "arm": "oracle",
+      "correct": true,
+      "func": "replace_bools",
+      "param": "false",
+      "qa_i": 9
+    },
+    {
+      "N": 10,
+      "answer": "1000",
+      "arm": "dump_all",
+      "correct": true,
+      "func": "__new__",
+      "param": "buffer_size",
+      "qa_i": 10
+    },
+    {
+      "N": 10,
+      "answer": "1000",
+      "arm": "selected",
+      "correct": true,
+      "func": "__new__",
+      "param": "buffer_size",
+      "qa_i": 10
+    },
+    {
+      "N": 10,
+      "answer": "1000",
+      "arm": "selected_ce",
+      "correct": true,
+      "func": "__new__",
+      "param": "buffer_size",
+      "qa_i": 10
+    },
+    {
+      "N": 10,
+      "answer": "1000",
+      "arm": "abstracted",
+      "correct": true,
+      "func": "__new__",
+      "param": "buffer_size",
+      "qa_i": 10
+    },
+    {
+      "N": 10,
+      "answer": "1000",
+      "arm": "random_k",
+      "correct": true,
+      "func": "__new__",
+      "param": "buffer_size",
+      "qa_i": 10
+    },
+    {
+      "N": 10,
+      "answer": "1000",
+      "arm": "oracle",
+      "correct": true,
+      "func": "__new__",
+      "param": "buffer_size",
+      "qa_i": 10
+    },
+    {
+      "N": 40,
+      "answer": "1000",
+      "arm": "dump_all",
+      "correct": false,
+      "func": "__new__",
+      "param": "buffer_size",
+      "qa_i": 10
+    },
+    {
+      "N": 40,
+      "answer": "1000",
+      "arm": "selected",
+      "correct": true,
+      "func": "__new__",
+      "param": "buffer_size",
+      "qa_i": 10
+    },
+    {
+      "N": 40,
+      "answer": "1000",
+      "arm": "selected_ce",
+      "correct": true,
+      "func": "__new__",
+      "param": "buffer_size",
+      "qa_i": 10
+    },
+    {
+      "N": 40,
+      "answer": "1000",
+      "arm": "abstracted",
+      "correct": true,
+      "func": "__new__",
+      "param": "buffer_size",
+      "qa_i": 10
+    },
+    {
+      "N": 40,
+      "answer": "1000",
+      "arm": "random_k",
+      "correct": false,
+      "func": "__new__",
+      "param": "buffer_size",
+      "qa_i": 10
+    },
+    {
+      "N": 40,
+      "answer": "1000",
+      "arm": "oracle",
+      "correct": true,
+      "func": "__new__",
+      "param": "buffer_size",
+      "qa_i": 10
+    },
+    {
+      "N": 10,
+      "answer": "127",
+      "arm": "dump_all",
+      "correct": true,
+      "func": "pr_curve_raw",
+      "param": "num_thresholds",
+      "qa_i": 11
+    },
+    {
+      "N": 10,
+      "answer": "127",
+      "arm": "selected",
+      "correct": true,
+      "func": "pr_curve_raw",
+      "param": "num_thresholds",
+      "qa_i": 11
+    },
+    {
+      "N": 10,
+      "answer": "127",
+      "arm": "selected_ce",
+      "correct": true,
+      "func": "pr_curve_raw",
+      "param": "num_thresholds",
+      "qa_i": 11
+    },
+    {
+      "N": 10,
+      "answer": "127",
+      "arm": "abstracted",
+      "correct": true,
+      "func": "pr_curve_raw",
+      "param": "num_thresholds",
+      "qa_i": 11
+    },
+    {
+      "N": 10,
+      "answer": "127",
+      "arm": "random_k",
+      "correct": false,
+      "func": "pr_curve_raw",
+      "param": "num_thresholds",
+      "qa_i": 11
+    },
+    {
+      "N": 10,
+      "answer": "127",
+      "arm": "oracle",
+      "correct": true,
+      "func": "pr_curve_raw",
+      "param": "num_thresholds",
+      "qa_i": 11
+    },
+    {
+      "N": 40,
+      "answer": "127",
+      "arm": "dump_all",
+      "correct": false,
+      "func": "pr_curve_raw",
+      "param": "num_thresholds",
+      "qa_i": 11
+    },
+    {
+      "N": 40,
+      "answer": "127",
+      "arm": "selected",
+      "correct": true,
+      "func": "pr_curve_raw",
+      "param": "num_thresholds",
+      "qa_i": 11
+    },
+    {
+      "N": 40,
+      "answer": "127",
+      "arm": "selected_ce",
+      "correct": true,
+      "func": "pr_curve_raw",
+      "param": "num_thresholds",
+      "qa_i": 11
+    },
+    {
+      "N": 40,
+      "answer": "127",
+      "arm": "abstracted",
+      "correct": true,
+      "func": "pr_curve_raw",
+      "param": "num_thresholds",
+      "qa_i": 11
+    },
+    {
+      "N": 40,
+      "answer": "127",
+      "arm": "random_k",
+      "correct": false,
+      "func": "pr_curve_raw",
+      "param": "num_thresholds",
+      "qa_i": 11
+    },
+    {
+      "N": 40,
+      "answer": "127",
+      "arm": "oracle",
+      "correct": true,
+      "func": "pr_curve_raw",
+      "param": "num_thresholds",
+      "qa_i": 11
+    }
+  ],
+  "seed": 0,
+  "summary": {
+    "abstracted|10": {
+      "N": 10,
+      "accuracy": 0.8333333333333334,
+      "arm": "abstracted",
+      "n": 12
+    },
+    "abstracted|40": {
+      "N": 40,
+      "accuracy": 0.8333333333333334,
+      "arm": "abstracted",
+      "n": 12
+    },
+    "dump_all|10": {
+      "N": 10,
+      "accuracy": 0.8333333333333334,
+      "arm": "dump_all",
+      "n": 12
+    },
+    "dump_all|40": {
+      "N": 40,
+      "accuracy": 0.3333333333333333,
+      "arm": "dump_all",
+      "n": 12
+    },
+    "oracle|10": {
+      "N": 10,
+      "accuracy": 0.8333333333333334,
+      "arm": "oracle",
+      "n": 12
+    },
+    "oracle|40": {
+      "N": 40,
+      "accuracy": 0.8333333333333334,
+      "arm": "oracle",
+      "n": 12
+    },
+    "random_k|10": {
+      "N": 10,
+      "accuracy": 0.16666666666666666,
+      "arm": "random_k",
+      "n": 12
+    },
+    "random_k|40": {
+      "N": 40,
+      "accuracy": 0.0,
+      "arm": "random_k",
+      "n": 12
+    },
+    "selected_ce|10": {
+      "N": 10,
+      "accuracy": 0.8333333333333334,
+      "arm": "selected_ce",
+      "n": 12
+    },
+    "selected_ce|40": {
+      "N": 40,
+      "accuracy": 0.8333333333333334,
+      "arm": "selected_ce",
+      "n": 12
+    },
+    "selected|10": {
+      "N": 10,
+      "accuracy": 0.8333333333333334,
+      "arm": "selected",
+      "n": 12
+    },
+    "selected|40": {
+      "N": 40,
+      "accuracy": 0.8333333333333334,
+      "arm": "selected",
+      "n": 12
+    }
+  }
+}
