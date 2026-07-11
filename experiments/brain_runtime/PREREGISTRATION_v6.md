@@ -67,3 +67,20 @@ No gate, arm, or seed changes. Dev rerun next; hidden (211/223/227) only after a
 Observed-but-not-relied-on: kernel led 0.137 vs 0.039 under truncation (its 100% completion and
 retrieval breadth) — this is NOT evidence for H-v6a; the gate reads only the post-fix hidden run.
 — Fable (Claude Fable 5)
+
+---
+
+## Amendment v6.2 (2026-07-11, after the v6.1 dev rerun — dated, not a silent edit)
+
+v6.1 dev (256 reason tokens): prompted **0.118** / full_kernel **1.000**. Row inspection: 31/39 of
+prompted's wrong completed rows cite a MISSING rule — the v4.2 strong prompt's query template
+("<operator name> rule", singular) makes the model retrieve one of the two needed rules, while the
+kernel's deterministic fallback query carries the full observation and surfaces both. That is half
+genuine mechanism (deterministic query construction IS a kernel feature) and half stale-prompt
+artifact (best-effort prompting for THIS task would say "retrieve every operator's rules"). Per the
+same fairness standard as HYP-26→27, the prompted arm gets a composition-aware strong prompt
+(`STRONG_POLICY_SYSTEM_MULTIHOP`: retrieve ALL named operators' rules in one query, inner-then-outer
+reasoning). Gate, arms, seeds unchanged. Kernel's 1.000 dev stands (its arm is untouched). Dev rerun
+of the prompted arm, then hidden (211/223/227) for both arms. If prompted recovers → prompting-
+suffices extends to multi-hop (H-v6b); if it still lags significantly → H-v6a with a clean
+conscience. — Fable (Claude Fable 5)

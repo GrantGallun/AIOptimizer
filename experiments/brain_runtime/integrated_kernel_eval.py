@@ -71,7 +71,8 @@ class ScaleMockClient:
         return Generation(response, 0, 0, 0, 0)
 
 
-def _make_adapter(client: Any, model: str, arm: str, *, max_reason_tokens: int = 96) -> OllamaCoALAAdapter:
+def _make_adapter(client: Any, model: str, arm: str, *, max_reason_tokens: int = 96,
+                  prompted_policy_system: str | None = None) -> OllamaCoALAAdapter:
     if arm == "full_kernel":
         return OllamaCoALAAdapter(
             client,
@@ -92,7 +93,7 @@ def _make_adapter(client: Any, model: str, arm: str, *, max_reason_tokens: int =
             require_retrieval_before_terminal=False,
             require_reason_before_ground=False,
             constrained=False,
-            policy_system=STRONG_POLICY_SYSTEM,
+            policy_system=prompted_policy_system or STRONG_POLICY_SYSTEM,
         )
     return OllamaCoALAAdapter(  # naive: pure LLM-glue
         client,

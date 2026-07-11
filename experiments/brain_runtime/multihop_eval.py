@@ -101,7 +101,12 @@ def evaluate(operators, sequence, *, model: str, seed: int, clients: dict[str, A
         client = (clients or {}).get(arm) or ScaleMockClient()
         # v6.1: two-hop arithmetic with shown work truncates at the single-hop budget of 96
         # (dev diagnosis: correct reasoning cut mid-second-hop, last-integer grading then fails).
-        adapter = _make_adapter(client, model, arm, max_reason_tokens=256)
+        # v6.2: the prompted arm gets the composition-aware strong prompt (the v4.2 single-rule
+        # query template made it retrieve one of the two needed rules — a stale-prompt artifact).
+        from experiments.brain_runtime.coala_ollama import STRONG_POLICY_SYSTEM_MULTIHOP
+
+        adapter = _make_adapter(client, model, arm, max_reason_tokens=256,
+                                prompted_policy_system=STRONG_POLICY_SYSTEM_MULTIHOP)
         controller = CoALAController(
             _memory(arm),
             reasoner=adapter.reason,
