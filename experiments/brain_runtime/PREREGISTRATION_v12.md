@@ -1,7 +1,7 @@
 # Pre-Registration v12: Observed-usage activation (ACT-R) vs recency at compaction time
 
 Registered: 2026-07-11 by Fable (Claude Fable 5)
-Status: Registered (no v12 run yet)
+Status: **CONFIRMED** (hidden 809/811/821): actr 0.736 vs newest 0.403 vs random 0.444 — +0.333, Wilson-significant vs both controls. See HYP-35.
 
 ## Question (the surviving form of the user's heat idea, literature-grounded)
 

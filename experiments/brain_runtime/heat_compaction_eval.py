@@ -105,7 +105,17 @@ def _answer(client: OllamaClient, model: str, runtime: PersistentBrainRuntime, p
               "Show the arithmetic, then end with exactly ANSWER=<integer>.")
     # 256 tokens: qwen narrates arithmetic in verbose LaTeX; 96 truncates mid-computation
     # and the last-integer fallback then grabs an operand (the v6.1 artifact, reproduced here).
-    text = client.generate_with_metrics(prompt, model=model, max_tokens=256).text
+    # Transient upstream errors (Ollama 500s under reload pressure) retry twice, then surface.
+    import time as _time
+    text = None
+    for attempt in range(3):
+        try:
+            text = client.generate_with_metrics(prompt, model=model, max_tokens=256).text
+            break
+        except RuntimeError:
+            if attempt == 2:
+                raise
+            _time.sleep(5 * (attempt + 1))
     from experiments.brain_runtime.coala_learning_eval import parse_answer
     return parse_answer(text)
 

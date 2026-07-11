@@ -130,6 +130,14 @@ has **never lost a case** (120/120 hidden, perfect attribution, zero leaks): a s
 mechanism whose advantage grows with context pressure, not a universal +0.65.
 Idea: the user; substrate: Codex; cases/gate: Fable.
 
+### 11. Usage-heat compaction — the user's second confirmed idea (prereg v12, **Confirmed**)
+"If context is repeatedly used, don't compact it." Naive similarity-based heat failed five render-
+level falsification rounds (v11 — inferred usage confounds reference with resemblance). The
+literature-correct form — **ACT-R base-level activation over OBSERVED usage counters**, deciding
+what survives memory compaction when the future workload is unknown — passed its hidden gate:
+**0.736 vs 0.403** (newest-first) and 0.444 (random), +0.333 Wilson-significant vs both controls,
+perfect hot-rule retention with cold-rule eviction. Count usage; never infer it.
+
 ---
 
 ## Two failure modes the kernel eliminates
