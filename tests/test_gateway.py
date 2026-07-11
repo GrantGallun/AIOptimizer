@@ -44,6 +44,11 @@ class _TagMiddleware:
         return {**response, "after": response.get("after", "") + self.name}
 
 
+class _ReceiptMiddleware(_TagMiddleware):
+    def receipt_metadata(self):
+        return {"applied": True, "compiler_fingerprint": "sha256:test"}
+
+
 class GatewayTests(unittest.TestCase):
     def setUp(self):
         _StubHandler.requests = []
@@ -130,6 +135,24 @@ class GatewayTests(unittest.TestCase):
                 self.assertEqual(entry["middlewares"], ["_TagMiddleware"])
                 self.assertEqual(entry["path"], "/v1/chat/completions")
                 self.assertEqual(entry["status"], 200)
+
+    def test_ledger_records_middleware_specific_receipts(self):
+        with tempfile.TemporaryDirectory() as directory:
+            path = Path(directory) / "requests.jsonl"
+            middleware = _ReceiptMiddleware("R", [])
+            url = self._start_gateway(ledger=JsonlLedger(path), middlewares=(middleware,))
+
+            self._post(url, {"messages": [{"role": "user", "content": "hello"}]})
+
+            for _ in range(100):
+                if path.exists() and path.read_text(encoding="utf-8").strip():
+                    break
+                import time
+                time.sleep(0.01)
+            entry = json.loads(path.read_text(encoding="utf-8").splitlines()[0])
+            receipt = entry["middleware_receipts"]["_ReceiptMiddleware"]
+            self.assertTrue(receipt["applied"])
+            self.assertEqual(receipt["compiler_fingerprint"], "sha256:test")
 
 
 if __name__ == "__main__":

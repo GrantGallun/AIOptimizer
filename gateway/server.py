@@ -70,6 +70,13 @@ class _GatewayHandler(BaseHTTPRequestHandler):
             self._extra.update(
                 {"request_chars_original": original_chars, "optimized": optimized}
             )
+            middleware_receipts = {}
+            for middleware in self.server.middlewares:
+                receipt = getattr(middleware, "receipt_metadata", None)
+                if callable(receipt):
+                    middleware_receipts[type(middleware).__name__] = receipt()
+            if middleware_receipts:
+                self._extra["middleware_receipts"] = middleware_receipts
 
             if short_circuit is not None:
                 status = 200

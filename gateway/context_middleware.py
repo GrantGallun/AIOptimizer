@@ -3,6 +3,7 @@
 from __future__ import annotations
 
 import json
+import threading
 from typing import Any, Sequence
 
 from gateway.context_compiler import DEFAULT_DENY_PATTERNS, ConversationCompiler
@@ -27,8 +28,18 @@ class AttentionContextMiddleware:
             raise ValueError("budget_chars must be positive")
         self.budget_chars = budget_chars
         self.compiler = compiler or ConversationCompiler(deny_patterns=deny_patterns)
+        self._local = threading.local()
+
+    def _set_receipt(self, **values: Any) -> None:
+        self._local.receipt = {"applied": False, **values}
+
+    def receipt_metadata(self) -> dict[str, Any]:
+        """Current handler-thread metadata consumed by the gateway ledger."""
+        return dict(getattr(self._local, "receipt", {"applied": False}))
 
     def before_request(self, body: dict[str, Any]) -> dict[str, Any]:
+        original_chars = len(json.dumps(body, ensure_ascii=False))
+        self._set_receipt(original_chars=original_chars)
         messages = body.get("messages")
         if not isinstance(messages, list) or len(messages) < 3:
             return body
@@ -66,6 +77,11 @@ class AttentionContextMiddleware:
             return body
 
         compiled = self.compiler.compile(history)
+        integrity = self.compiler.audit_integrity(compiled)
+        if not integrity["ok"]:
+            self._set_receipt(original_chars=original_chars, integrity_ok=False)
+            return body
+        cache_before = self.compiler.embedding_cache_stats()
         organized = self.compiler.organize(
             compiled,
             query=latest_user["content"],
@@ -92,6 +108,19 @@ class AttentionContextMiddleware:
             {"role": "system", "content": header + rendered},
             dict(latest_user),
         ]
+        cache_after = self.compiler.embedding_cache_stats()
+        self._local.receipt = {
+            "applied": True,
+            "original_chars": original_chars,
+            "rewritten_chars": len(json.dumps(rewritten, ensure_ascii=False)),
+            "compiler_fingerprint": integrity["fingerprint"],
+            "integrity_ok": True,
+            "active_request_preserved": rewritten["messages"][-1] == latest_user,
+            "source_records": len(compiled.records),
+            "selected_records": len(candidates),
+            "embedding_cache_hits": cache_after["hits"] - cache_before["hits"],
+            "embedding_cache_misses": cache_after["misses"] - cache_before["misses"],
+        }
         return rewritten
 
     def after_response(self, body: dict[str, Any], response: dict[str, Any]) -> dict[str, Any]:

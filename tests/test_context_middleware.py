@@ -37,12 +37,19 @@ class AttentionContextMiddlewareTests(unittest.TestCase):
         self.assertIn("source-grounded", out["messages"][-2]["content"])
         self.assertIn("cache", out["messages"][-2]["content"].lower())
         self.assertLess(len(json.dumps(out)), len(json.dumps(self.body)))
+        receipt = self.middleware.receipt_metadata()
+        self.assertTrue(receipt["applied"])
+        self.assertTrue(receipt["integrity_ok"])
+        self.assertTrue(receipt["active_request_preserved"])
+        self.assertTrue(receipt["compiler_fingerprint"].startswith("sha256:"))
+        self.assertGreater(receipt["embedding_cache_misses"], 0)
 
     def test_small_or_nonchat_requests_pass_through_by_identity(self):
         small = {"messages": self.body["messages"][-2:]}
         self.assertIs(self.middleware.before_request(small), small)
         native = {"model": "qwen3:8b", "prompt": "hello"}
         self.assertIs(self.middleware.before_request(native), native)
+        self.assertFalse(self.middleware.receipt_metadata()["applied"])
 
     def test_response_is_unchanged(self):
         response = {"choices": [{"message": {"content": "ok"}}]}
