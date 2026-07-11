@@ -60,6 +60,44 @@ class ConversationCompilerTests(unittest.TestCase):
         self.assertIn("cache", context["working_set"][0]["text"].lower())
         self.assertEqual(len(context["index"]), len(self.messages))
 
+    def test_attention_organization_clusters_topics_and_pins_instructions(self):
+        compiler = ConversationCompiler(embed_fn=_embed)
+        compiled = compiler.compile(self.messages)
+
+        context = compiler.organize(
+            compiled, query="cache latency", similarity_threshold=0.7, max_records=4
+        )
+
+        self.assertEqual(context["schema"], "aioptimizer.attention-context.v1")
+        self.assertEqual(
+            [record["source_ids"] for record in context["pinned"]],
+            [["T0001"], ["T0004"]],
+        )
+        self.assertEqual(
+            [record["source_ids"] for record in context["clusters"][0]["records"]],
+            [["T0002"], ["T0003"]],
+        )
+        self.assertEqual(len(context["index"]), 4)
+
+    def test_attention_budget_cannot_remove_latest_user_or_system(self):
+        compiler = ConversationCompiler(embed_fn=_embed)
+        context = compiler.organize(
+            compiler.compile(self.messages), query="cache", max_records=1
+        )
+
+        self.assertEqual(len(context["pinned"]), 2)
+        self.assertEqual(context["clusters"], [])
+
+    def test_attention_organization_validates_threshold_and_embedding_count(self):
+        compiler = ConversationCompiler(embed_fn=_embed)
+        compiled = compiler.compile(self.messages)
+        with self.assertRaisesRegex(ValueError, "threshold"):
+            compiler.organize(compiled, query="cache", similarity_threshold=2.0)
+
+        broken = ConversationCompiler(embed_fn=lambda texts: [[1.0]])
+        with self.assertRaisesRegex(ValueError, "one vector"):
+            broken.organize(broken.compile(self.messages), query="cache")
+
 
 if __name__ == "__main__":
     unittest.main()

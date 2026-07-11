@@ -10,7 +10,7 @@ from __future__ import annotations
 from dataclasses import dataclass
 from typing import Any, Callable, Iterable, Mapping, Sequence
 
-from agent_bus.context import ContextCompactor, EmbedFn
+from agent_bus.context import ContextCompactor, EmbedFn, _as_vector, _cosine
 
 Record = dict[str, Any]
 RewriteFn = Callable[[list[dict[str, str]]], Iterable[Mapping[str, Any]]]
@@ -106,5 +106,104 @@ class ConversationCompiler:
                     "tags": record["tags"],
                 }
                 for record in compiled.records
+            ],
+        }
+
+    def organize(
+        self,
+        compiled: CompiledConversation,
+        *,
+        query: str,
+        similarity_threshold: float = 0.72,
+        max_records: int = 8,
+    ) -> dict[str, Any]:
+        """Attention-group records, rank groups, and pin load-bearing turns.
+
+        Clustering is deterministic connected-components over pairwise cosine
+        similarity.  System turns and the latest user turn are always present in
+        the working set; attention ranking cannot displace instructions or the
+        active request.
+        """
+        if not -1.0 <= similarity_threshold <= 1.0:
+            raise ValueError("similarity_threshold must be between -1 and 1")
+        if max_records < 0:
+            raise ValueError("max_records must be non-negative")
+        records = list(compiled.records)
+        if not records:
+            return {
+                "schema": "aioptimizer.attention-context.v1",
+                "query": query,
+                "pinned": [],
+                "clusters": [],
+                "index": [],
+            }
+
+        vectors = [_as_vector(value) for value in self._selector._embed(
+            [query] + [record["text"] for record in records]
+        )]
+        if len(vectors) != len(records) + 1:
+            raise ValueError("embed_fn must return one vector per input text")
+        query_vector, record_vectors = vectors[0], vectors[1:]
+
+        parent = list(range(len(records)))
+
+        def find(index: int) -> int:
+            while parent[index] != index:
+                parent[index] = parent[parent[index]]
+                index = parent[index]
+            return index
+
+        def union(left: int, right: int) -> None:
+            left_root, right_root = find(left), find(right)
+            if left_root != right_root:
+                parent[max(left_root, right_root)] = min(left_root, right_root)
+
+        for left in range(len(records)):
+            for right in range(left + 1, len(records)):
+                if _cosine(record_vectors[left], record_vectors[right]) >= similarity_threshold:
+                    union(left, right)
+
+        grouped: dict[int, list[int]] = {}
+        for index in range(len(records)):
+            grouped.setdefault(find(index), []).append(index)
+        ranked_groups = sorted(
+            grouped.values(),
+            key=lambda group: (-max(_cosine(query_vector, record_vectors[i]) for i in group), group[0]),
+        )
+
+        role_by_source = {turn["id"]: turn["role"] for turn in compiled.turns}
+        latest_user = next(
+            (turn["id"] for turn in reversed(compiled.turns) if turn["role"] == "user"), None
+        )
+        pinned_ids = {
+            record["id"]
+            for record in records
+            if latest_user in record["source_ids"]
+            or any(role_by_source[source] == "system" for source in record["source_ids"])
+        }
+        pinned = [record for record in records if record["id"] in pinned_ids]
+        remaining = max(0, max_records - len(pinned))
+        clusters = []
+        for group in ranked_groups:
+            members = [records[index] for index in group if records[index]["id"] not in pinned_ids]
+            members = members[:remaining]
+            if members:
+                clusters.append(
+                    {
+                        "score": round(max(_cosine(query_vector, record_vectors[i]) for i in group), 4),
+                        "records": members,
+                    }
+                )
+                remaining -= len(members)
+            if remaining == 0:
+                break
+        return {
+            "schema": "aioptimizer.attention-context.v1",
+            "query": query,
+            "pinned": pinned,
+            "clusters": clusters,
+            "index": [
+                {"id": record["id"], "kind": record["kind"], "source_ids": record["source_ids"]}
+                for record in records
             ],
         }
