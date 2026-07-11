@@ -12,12 +12,15 @@ Fable cannot run this itself (the `codex` binary isn't on Fable's shells) — th
 why it is a small standalone launcher for the human/Codex side. Ctrl-C to stop.
 
     python agent_bus/codex_bridge.py                 # poll every 180s, `codex` on PATH
-    python agent_bus/codex_bridge.py --interval 120 --codex-arg --full-auto
+    python agent_bus/codex_bridge.py --interval 120 --codex-arg=--full-auto
+    python agent_bus/codex_bridge.py --diagnose
 """
 
 from __future__ import annotations
 
 import argparse
+import os
+import shutil
 import subprocess
 import sys
 import time
@@ -39,15 +42,50 @@ def ready_codex_tasks(root: str) -> list[str]:
     return [t["id"] for t in Board(root).all() if t["state"] == "ready" and t["tier"] == "codex"]
 
 
+def resolve_codex(explicit: str | None = None, *, environ: dict[str, str] | None = None) -> str | None:
+    """Resolve Codex without requiring a session-scoped PowerShell variable."""
+    env = os.environ if environ is None else environ
+    requested = explicit or env.get("CODEX_BIN")
+    if requested:
+        candidate = Path(requested).expanduser()
+        if candidate.is_file():
+            return str(candidate.resolve())
+        found = shutil.which(requested)
+        return str(Path(found).resolve()) if found else None
+
+    found = shutil.which("codex")
+    if found:
+        return str(Path(found).resolve())
+
+    local_app_data = env.get("LOCALAPPDATA")
+    if local_app_data:
+        install_root = Path(local_app_data) / "OpenAI" / "Codex" / "bin"
+        candidates = [path for path in install_root.glob("*/codex.exe") if path.is_file()]
+        if candidates:
+            newest = max(candidates, key=lambda path: (path.stat().st_mtime_ns, str(path)))
+            return str(newest.resolve())
+    return None
+
+
 def main() -> None:
     ap = argparse.ArgumentParser(description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter)
     ap.add_argument("--root", default=str(Path(__file__).resolve().parent), help="Board directory.")
     ap.add_argument("--interval", type=float, default=180.0, help="Seconds between board polls.")
-    ap.add_argument("--codex", default="codex", help="Path to the codex binary.")
+    ap.add_argument("--codex", default=None, help="Optional Codex path/name override.")
     ap.add_argument("--codex-arg", action="append", default=[], help="Extra arg to `codex exec` (repeatable), e.g. --full-auto.")
     ap.add_argument("--once", action="store_true", help="Check once and exit (for testing).")
+    ap.add_argument("--diagnose", action="store_true", help="Resolve Codex and exit without polling or claiming work.")
     args = ap.parse_args()
 
+    codex = resolve_codex(args.codex)
+    if codex is None:
+        requested = args.codex or os.environ.get("CODEX_BIN") or "automatic discovery"
+        print(f"codex_bridge: could not resolve Codex via {requested}")
+        raise SystemExit(2)
+    args.codex = codex
+    print(f"codex_bridge: using {codex}")
+    if args.diagnose:
+        return
     print(f"codex_bridge: polling {args.root} every {args.interval:.0f}s (Ctrl-C to stop)")
     while True:
         try:
