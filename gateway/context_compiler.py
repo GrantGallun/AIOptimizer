@@ -123,8 +123,45 @@ class ConversationCompiler:
         records = self._validate_records(candidate, {turn["id"] for turn in turns})
         return CompiledConversation(tuple(turns), tuple(records))
 
+    def record_heat(
+        self,
+        records: Sequence[Mapping[str, Any]],
+        queries: Sequence[str],
+    ) -> dict[str, float]:
+        """Accumulate non-negative record/query similarity using the context encoder."""
+        heat = {str(record["id"]): 0.0 for record in records}
+        public_records = [
+            record for record in records if not self._is_denied(str(record["text"]))
+        ]
+        if not public_records or not queries:
+            return heat
+
+        vectors = [
+            _as_vector(value)
+            for value in self._selector._embed(
+                [record["text"] for record in public_records] + list(queries)
+            )
+        ]
+        expected = len(public_records) + len(queries)
+        if len(vectors) != expected:
+            raise ValueError("embed_fn must return one vector per input text")
+        record_vectors = vectors[: len(public_records)]
+        query_vectors = vectors[len(public_records) :]
+        for record, record_vector in zip(public_records, record_vectors):
+            heat[str(record["id"])] = sum(
+                max(0.0, _cosine(record_vector, query_vector))
+                for query_vector in query_vectors
+            )
+        return heat
+
     def materialize(
-        self, compiled: CompiledConversation, *, query: str, max_records: int = 8
+        self,
+        compiled: CompiledConversation,
+        *,
+        query: str,
+        max_records: int = 8,
+        heat: Mapping[str, float] | None = None,
+        heat_weight: float = 0.0,
     ) -> dict[str, Any]:
         """Build a relevant working set while retaining a complete lookup index."""
         if max_records < 0:
@@ -134,7 +171,29 @@ class ConversationCompiler:
             {"id": record["id"], "text": record["text"], "record": record}
             for record in public_records
         ]
-        selected = self._selector.select(query, chunks, min(max_records, len(chunks)))
+        limit = min(max_records, len(chunks))
+        if heat_weight <= 0.0 or not chunks:
+            selected = self._selector.select(query, chunks, limit)
+        else:
+            vectors = [
+                _as_vector(value)
+                for value in self._selector._embed([query] + [chunk["text"] for chunk in chunks])
+            ]
+            if len(vectors) != len(chunks) + 1:
+                raise ValueError("embed_fn must return one vector per input text")
+            relevance = [_cosine(vectors[0], vector) for vector in vectors[1:]]
+            heat_values = [
+                max(0.0, float((heat or {}).get(str(chunk["id"]), 0.0)))
+                for chunk in chunks
+            ]
+            max_heat = max(heat_values, default=0.0)
+            normalized_heat = [value / max_heat if max_heat else 0.0 for value in heat_values]
+            scores = [
+                (1.0 - heat_weight) * relevance_score + heat_weight * heat_score
+                for relevance_score, heat_score in zip(relevance, normalized_heat)
+            ]
+            order = sorted(range(len(chunks)), key=lambda index: (-scores[index], index))
+            selected = [chunks[index] for index in order[:limit]]
         working_set = [chunk["record"] for chunk in selected]
         return {
             "schema": "aioptimizer.compiled-context.v1",
