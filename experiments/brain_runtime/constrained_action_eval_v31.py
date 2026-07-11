@@ -91,7 +91,7 @@ def evaluate(sequence: list[dict[str, Any]], *, model: str, seed: int, clients: 
                     controller, adapter, problem
                 )
                 incomplete = False
-            except CycleLimitExceeded:
+            except (CycleLimitExceeded, PermissionError):
                 answer, response, event_kinds, retrieved_before_terminal = None, "", (), False
                 incomplete = True
             correct = answer == problem["expected"]

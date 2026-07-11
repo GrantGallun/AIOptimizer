@@ -145,7 +145,9 @@ def evaluate(operators, sequence, *, model: str, seed: int, clients: dict[str, A
             try:
                 answer, response, event_kinds = _answer_cycle(controller, adapter, problem)
                 incomplete = False
-            except CycleLimitExceeded:
+            except (CycleLimitExceeded, PermissionError):
+                # A weak model can also pick a DISALLOWED action (e.g. learn/procedural) mid-answer:
+                # a bad action choice that produces no answer. Count it incomplete, don't crash.
                 answer, response, event_kinds, incomplete = None, "", (), True
             correct = answer == problem["expected"]
             if problem["operator"] not in learned:
