@@ -100,8 +100,22 @@ suffices; the kernel keeps a small real edge where tasks stress completion and r
 
 **The completed determinism-dividend curve:** weak model **−0.52** · capable/single-hop **0.00** ·
 capable/multi-hop **+0.10** (significant). The kernel is a guarantees layer with a modest
-composition-time edge — not a capability multiplier. Next: isolate whether that +0.10 reduces to one
-bolt-on mechanism (deterministic retrieval-query construction, prereg v7).
+composition-time edge — not a capability multiplier.
+
+### 9. The distillation — the kernel's accuracy edge is ONE portable line (prereg v7, **Confirmed**)
+Three arms on fresh hidden seeds (307/311/313): prompted **0.796** · prompted + *deterministic
+query construction only* **0.974** · full kernel **1.000**. Rebuilding every retrieval query from
+task state (`goal + observation`) instead of trusting the model to compose it carries **~87% of the
+entire kernel advantage** (+0.178, Wilson-significant), with no invariants and no constrained
+decoding. Mechanism: model-composed queries intermittently omit one of the needed rule names; the
+deterministic query never does. **This is the project's most useful artifact: a one-line mechanism
+any agent — LangGraph node, gateway middleware, prompted loop — can adopt.** The full kernel keeps a
+last ~2.6% via its completion/ordering guarantees.
+
+**Final thesis (evidence-forced, v1→v3):** *v1: determinism constrains the model's single pass.
+v2: the kernel is a guarantees layer, not a capability multiplier. v3: where determinism does buy
+accuracy, it buys it at specific decision boundaries — query construction today; sample-aggregation
+contracts (self-consistency votes, disagreement-based cascades) are the pre-registered next test.*
 
 ---
 

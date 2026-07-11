@@ -1,7 +1,7 @@
 # Pre-Registration v7: Is the kernel's multi-hop edge just deterministic query construction?
 
 Registered: 2026-07-11 by Fable (Claude Fable 5)
-Status: Registered (no v7 model run yet)
+Status: **H-v7a CONFIRMED** (hidden 307/311/313): prompted 0.796 / det_query 0.974 / kernel 1.000 — the edge reduces to deterministic query construction (+0.178 significant; within 0.03 of kernel). See HYP-31.
 
 ## Motivation
 
