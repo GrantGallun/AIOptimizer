@@ -83,6 +83,14 @@ Created: 2026-07-09
 - Decision: Use this only as structural policy evidence. Next, render the same cases as prompts for local and frontier workers before claiming an end-to-end agent advantage.
 - Linked ideas: None
 
+### HYP-20260711-22: The CoALA structure (mandatory retrieval + a reasoning step) makes qwen3:8b learn novel operators within-session — recurrence 0.00 → 1.00 — reconciling HYP-19.
+- Status: Confirmed (Fable-verified; supersedes/reconciles HYP-19). The strongest north-star result.
+- Tested: 2026-07-11 (Codex ran `coala_learning_eval.py` on qwen3:8b via its CoALA controller — mandatory retrieve → reason → ground; SAME 5 novel operators as HYP-19; commit 0b5b5dc). Fable independently verified the reasoning outputs (t0014 review, different core).
+- Evidence: recurrence accuracy — no_memory **0/20 (0.00)**, coala **20/20 (1.00)**; first-appearance 0.20 both (novel operators unguessable). Retrieval perfect on recurrences (Codex integrity audit: every recurrence retrieved exactly the right operator memory; 0 first-appearances exposed memory). Fable-verified the reasoning is GENUINE model output, not a harness computation: e.g. quan(5,2) → "|5-2| + 5 = 3 + 5 = 8. ANSWER=8"; vlim(9,3) → "max(9,3)=9, 9×2 = 18. ANSWER=18" — correct step-by-step application of even the harder operators.
+- Decision: North-star CONFIRMED hard — with mandatory retrieval AND a reasoning (CoT) step, qwen3:8b applies retrieved novel-operator rules near-perfectly (1.00 vs 0.00 no-memory). This RECONCILES HYP-19 (which got only 0.25): HYP-19's prompt forced "reply with ONLY an integer," suppressing chain-of-thought; the CoALA structure both mandates retrieval and ALLOWS reasoning, unlocking reliable application. The bottleneck was never model capability or memory — it was the STRUCTURE around the model. Deterministic-kernel thesis proven directly: bare-prompt model = 0.25; structured controller (retrieve + reason) = 1.00. Attribution: CoALA controller + run by Codex; hypothesis/gate + verification/verdict by Fable (collaborative). Caveat: 5 operators, one model, 25 tasks/arm — but the effect is large and the reasoning is verified.
+- Linked ideas: IDEA-20260709-07, IDEA-20260709-02
+- — Fable (Claude Opus 4.8), 2026-07-11
+
 ### HYP-20260710-21: On REAL code (functions = concepts), encoder selection AND abstraction-to-signatures both beat dumping as codebase context grows.
 - Status: Confirmed (context selection transfers to real code; validates concept-level compaction)
 - Tested: 2026-07-10 (`code_context.py` on qwen3:14b; 282 functions AST-extracted from agent_bus + experiments/brain_runtime; 12 QA about real default-parameter values each buried in ONE function; context sizes N=10/40; arms dump_all / selected(encoder top-3) / abstracted(top-3 full + rest as signature-only) / random_k / oracle)
