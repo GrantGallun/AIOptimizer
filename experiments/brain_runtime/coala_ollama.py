@@ -232,14 +232,23 @@ class OllamaCoALAAdapter:
         ):
             self.metrics.forced_retrievals += 1
             return CognitiveAction.retrieve(f"{context.goal} {context.observation}", limit=5)
-        # Reason-before-ground invariant (v3.1): a GROUND with no prior REASON this cycle
-        # means the model never computed an answer (it would ground a null value). Redirect
-        # to a REASON so the answer is actually produced and gradable. Symmetric across arms.
-        reasoned_this_cycle = any(event.action.kind is ActionKind.REASON for event in context.events)
+        # Reason-before-ground invariant (v3.1, ordering fixed after HYP-29's llama diagnosis):
+        # the REASON must come AFTER the last RETRIEVE, or the reasoning never sees the retrieved
+        # rule (llama3.2:3b emitted reason->reason->retrieve->ground, which passed the old
+        # any-reason check while inventing rules). The intent was always "reason over the
+        # retrieved context" (HYP-22). If there was no retrieve, any reason counts.
+        events = context.events
+        last_retrieve = max(
+            (i for i, event in enumerate(events) if event.action.kind is ActionKind.RETRIEVE),
+            default=-1,
+        )
+        reasoned_after_retrieve = any(
+            event.action.kind is ActionKind.REASON for event in events[last_retrieve + 1 :]
+        )
         if (
             self.require_reason_before_ground
             and action.kind is ActionKind.GROUND
-            and not reasoned_this_cycle
+            and not reasoned_after_retrieve
         ):
             self.metrics.forced_reasons += 1
             return CognitiveAction.reason(REASON_BEFORE_GROUND_INSTRUCTION)
