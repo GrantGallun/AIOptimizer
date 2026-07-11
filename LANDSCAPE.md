@@ -114,3 +114,20 @@ Three literature levels validate usage-heat retention — all using OBSERVED usa
 **Lesson vs our v11 failures**: every working system COUNTS usage (attention, retrievals, hits);
 our five failed designs INFERRED it from similarity. v12: ACT-R activation over the runtime's
 real `uses`/`last_accessed` counters at compaction time.
+
+## "Context rot" framing (Prime Intellect talk, via user, 2026-07-11)
+
+Claim: GPT-5.5 retrieval drops 80% (256k) -> 36% (1M) — "the model accepts the context, it just
+can't reason across it"; bigger windows won't save agents; their fix = continual learning +
+training on your own traces + real environments (weight-level).
+
+**Where our evidence agrees (measured locally, small scale):** context rot is real and shows up
+long before 256k — dump_all 0.83->0.33 on 1,788 real torch functions (HYP-21); raw chronology
+0.35 vs organized 1.00 at matched budget (HYP-33). We never needed a million tokens to see it.
+
+**Where we diverge:** their fix is TRAINING (weights); ours is deterministic context engineering
+at inference — encoder selection (HYP-20/21), query-ranked organization (HYP-33), ACT-R usage
+compaction (v12, running) — local, cheap, receipts-gated, and shippable today as gateway
+middlewares. The approaches compose: engineered context is also better TRACE data if you later
+train. Honest scope note: our measurements are 8B models at 10^3-10^4-char contexts; the 256k->1M
+frontier regime is extrapolation, not our data.
