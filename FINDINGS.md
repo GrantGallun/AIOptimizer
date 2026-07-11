@@ -117,6 +117,15 @@ v2: the kernel is a guarantees layer, not a capability multiplier. v3: where det
 accuracy, it buys it at specific decision boundaries — query construction today; sample-aggregation
 contracts (self-consistency votes, disagreement-based cascades) are the pre-registered next test.*
 
+### 10. Attention-organized conversation memory — the user's idea, the record's largest effect (prereg v9, **Confirmed**)
+At an identical character budget, organizing conversation history into query-ranked semantic
+clusters (vs raw chronological truncation) took success from **0.350 → 1.000** on hidden seeds
+(gap **+0.650**, perfect source attribution, zero leaks). Mechanism, honestly labeled: **retention**
+— recency truncation silently drops the mid-conversation fact ~65% of the time; relevance-ranked
+clustering always keeps it. Extends the selection results (§2) to conversation-memory organization.
+Carried flag: relevance-ranking also retains *sensitive* content more (privacy-aware record
+filtering required before default-on). Idea: the user; substrate: Codex; cases/gate: Fable.
+
 ---
 
 ## Two failure modes the kernel eliminates

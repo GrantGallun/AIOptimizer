@@ -1,7 +1,7 @@
 # Pre-Registration v9: Attention-organized context vs raw chronology at matched budget
 
 Registered: 2026-07-11 by Fable (Claude Fable 5)
-Status: Registered (no v9 model run yet)
+Status: **CONFIRMED** (hidden 503/509/521): raw 0.350 vs attention 1.000 — gap +0.650, Wilson-significant, attribution 60/60, zero leaks. Mechanism = RETENTION. See HYP-33.
 Origin: the user's context-compiler idea (Codex thread `context-compiler`). Codex built the
 substrate — `ConversationCompiler` (pairwise-cosine clusters ranked against the active query,
 system + latest-user pinned, provenance retained), matched-budget renderers, and a neutral
