@@ -9,10 +9,9 @@ if hasattr(sys.stdout, "reconfigure"):
     sys.stdout.reconfigure(encoding="utf-8", errors="strict")
 
 PLUGIN_ROOT = Path(__file__).resolve().parents[1]
-PROJECT_ROOT = PLUGIN_ROOT.parents[1]
-sys.path.insert(0, str(PROJECT_ROOT))
+sys.path.insert(0, str(PLUGIN_ROOT / "scripts"))
 
-from aioptimizer.codex_hook import append_receipt, process_hook, request_context
+from codex_hook_adapter import append_receipt, process_hook, request_context
 
 
 def main() -> None:
