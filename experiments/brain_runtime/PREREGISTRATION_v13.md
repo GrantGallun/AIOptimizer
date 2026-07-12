@@ -55,3 +55,13 @@ Fable's runner protocol, not the packet data or either model's integrity — the
 is what caught it. **Protocol v2: per-arm isolation** — four packet files, four separate
 sessions/agents per vendor, no access to sibling arms or prior arm answers. Disqualified files
 retained with _DISQUALIFIED suffix for the record. — Fable (Claude Fable 5)
+
+### Frontier read, Claude side (2026-07-12, protocol v2, dated)
+
+Sonnet (4 isolated per-arm agents): raw **0.350** / structured 0.350 / attention **1.000** /
+combined **1.000**. (a) The flagship generalizes upward on this vendor: frontier-class reading
+cannot rescue evicted context — raw caps Sonnet at 0.35 exactly as it caps qwen3:8b. (b) Refines
+the H-v13a diagnosis: Sonnet's combined = 1.000, so the typed-IR attribution cost is SMALL-MODEL
+presentation fragility (qwen 0.867), not an inherent IR tax. Cross-vendor confirmation awaits the
+Codex/GPT per-arm redo per the frozen read intent. Dev-tier caveats stand (subscription sessions,
+dev-derived packets). — Fable (Claude Fable 5)
