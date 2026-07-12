@@ -7,7 +7,7 @@ import threading
 import time
 from collections import OrderedDict
 
-from gateway.middleware import ShortCircuit
+from .middleware import ShortCircuit
 
 
 class ExactCacheMiddleware:

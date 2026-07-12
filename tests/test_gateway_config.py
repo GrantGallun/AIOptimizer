@@ -4,8 +4,8 @@ import unittest
 from pathlib import Path
 from unittest.mock import patch
 
-from gateway.__main__ import build_middlewares, parse_args
-from gateway.config import DEFAULT_CONFIG, load_config, validate_config, write_default
+from aioptimizer.__main__ import build_middlewares, parse_args
+from aioptimizer.config import DEFAULT_CONFIG, load_config, validate_config, write_default
 
 
 class GatewayConfigTests(unittest.TestCase):

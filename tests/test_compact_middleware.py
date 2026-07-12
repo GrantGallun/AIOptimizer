@@ -1,6 +1,6 @@
 import unittest
 
-from gateway.compact_middleware import CompactContextMiddleware
+from aioptimizer.compact_middleware import CompactContextMiddleware
 
 
 def _embed(texts):

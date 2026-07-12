@@ -1,6 +1,6 @@
 import unittest
 
-from gateway.context_compiler import ConversationCompiler
+from aioptimizer.context_compiler import ConversationCompiler
 
 
 VOCABULARY = ("foundation", "current", "cold", "private")

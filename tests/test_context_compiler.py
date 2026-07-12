@@ -1,7 +1,7 @@
 import unittest
 import json
 
-from gateway.context_compiler import ConversationCompiler
+from aioptimizer.context_compiler import ConversationCompiler
 
 
 def _embed(texts):

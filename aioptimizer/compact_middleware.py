@@ -17,6 +17,7 @@ import json
 from typing import Any, Callable
 
 from agent_bus.context import ContextCompactor
+from .encoder import embed_texts
 
 DEFAULT_BUDGET_CHARS = 12_000
 MIN_CHUNKS_TO_COMPACT = 4
@@ -34,7 +35,7 @@ class CompactContextMiddleware:
         if budget_chars <= 0:
             raise ValueError("budget_chars must be positive")
         self.budget_chars = budget_chars
-        self._compactor = ContextCompactor(embed_fn)
+        self._compactor = ContextCompactor(embed_fn or embed_texts)
 
     def before_request(self, body: dict[str, Any]) -> dict[str, Any]:
         messages = body.get("messages")

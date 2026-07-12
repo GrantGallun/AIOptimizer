@@ -8,9 +8,9 @@ import time
 from collections import OrderedDict
 from typing import Any, Callable
 
-from gateway.cache_middleware import ExactCacheMiddleware
-from gateway.middleware import ShortCircuit
-from gateway.receipts import _as_vector, _cosine
+from .cache_middleware import ExactCacheMiddleware
+from .encoder import as_vector, cosine, embed_texts
+from .middleware import ShortCircuit
 
 EmbedFn = Callable[[list[str]], Any]
 
@@ -31,10 +31,8 @@ def _request_text(body: dict) -> str | None:
 
 
 def _default_embed(texts: list[str]) -> Any:
-    """Load the research encoder only when semantic caching is actually used."""
-    from agent_bus.context import DEFAULT_ENCODER, _encoder_embed
-
-    return _encoder_embed(texts, model_name=DEFAULT_ENCODER)
+    """Load the encoder only when semantic caching is actually used."""
+    return embed_texts(texts)
 
 
 class SemanticCacheMiddleware:
@@ -61,7 +59,7 @@ class SemanticCacheMiddleware:
     def _embed(self, text: str) -> list[float]:
         embed = self._embed_fn or _default_embed
         values = embed([text])
-        return _as_vector(values[0])
+        return as_vector(values[0])
 
     def before_request(self, body):
         if ExactCacheMiddleware._is_sampled(body):
@@ -80,7 +78,7 @@ class SemanticCacheMiddleware:
                 if self.ttl_seconds is not None and now - created_at > self.ttl_seconds:
                     expired.append(key)
                     continue
-                similarity = _cosine(embedding, stored_embedding)
+                similarity = cosine(embedding, stored_embedding)
                 if similarity > best_similarity:
                     best_key = key
                     best_similarity = similarity

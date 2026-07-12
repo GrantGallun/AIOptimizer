@@ -1,6 +1,7 @@
 import unittest
 
-from experiments.brain_runtime.stats import FRESH_HIDDEN_SEEDS, gap_significant, wilson_interval
+from aioptimizer.stats import gap_significant, wilson_interval
+from experiments.brain_runtime.stats import FRESH_HIDDEN_SEEDS
 
 
 class WilsonIntervalTests(unittest.TestCase):

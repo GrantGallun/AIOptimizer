@@ -11,7 +11,7 @@ from experiments.brain_runtime.context_organization_eval import (
     validate_case,
 )
 from experiments.local_worker.ollama_client import Generation
-from gateway.context_compiler import ConversationCompiler
+from aioptimizer.context_compiler import ConversationCompiler
 
 
 def _embed(texts):

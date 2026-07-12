@@ -1,7 +1,7 @@
 import unittest
 
-from gateway.middleware import ShortCircuit
-from gateway.semantic_cache import SemanticCacheMiddleware, _request_text
+from aioptimizer.middleware import ShortCircuit
+from aioptimizer.semantic_cache import SemanticCacheMiddleware, _request_text
 
 
 def _embed(texts):

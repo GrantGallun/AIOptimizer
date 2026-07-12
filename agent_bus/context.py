@@ -12,57 +12,19 @@ from __future__ import annotations
 
 import argparse
 import json
-import math
-from functools import lru_cache
 from pathlib import Path
 from typing import Any, Callable, Mapping, Sequence
 
+from aioptimizer.encoder import DEFAULT_ENCODER, as_vector, cosine, embed_texts
 
-DEFAULT_ENCODER = "sentence-transformers/all-MiniLM-L6-v2"
 Chunk = dict[str, Any]
 EmbedFn = Callable[[list[str]], Any]
 AbstractFn = Callable[[Any], Any]
 
-
-@lru_cache(maxsize=2)
-def _load_encoder(model_name: str) -> tuple[Any, Any, Any]:
-    """Load the local attention encoder only when the default embedder is used."""
-    import torch
-    from transformers import AutoModel, AutoTokenizer
-
-    tokenizer = AutoTokenizer.from_pretrained(model_name, local_files_only=True)
-    model = AutoModel.from_pretrained(model_name, local_files_only=True)
-    model.eval()
-    return torch, tokenizer, model
-
-
-def _encoder_embed(texts: list[str], *, model_name: str) -> Any:
-    torch, tokenizer, model = _load_encoder(model_name)
-    inputs = tokenizer(texts, padding=True, truncation=True, max_length=256, return_tensors="pt")
-    with torch.no_grad():
-        output = model(**inputs)
-    mask = inputs["attention_mask"].unsqueeze(-1).float()
-    summed = (output.last_hidden_state * mask).sum(dim=1)
-    counts = mask.sum(dim=1).clamp(min=1e-9)
-    embeddings = summed / counts
-    return torch.nn.functional.normalize(embeddings, p=2, dim=1)
-
-
-def _as_vector(value: Any) -> list[float]:
-    """Convert torch/numpy/plain vectors to a small common representation."""
-    if hasattr(value, "detach"):
-        value = value.detach().cpu()
-    if hasattr(value, "tolist"):
-        value = value.tolist()
-    return [float(item) for item in value]
-
-
-def _cosine(left: Sequence[float], right: Sequence[float]) -> float:
-    left_norm = math.sqrt(sum(value * value for value in left))
-    right_norm = math.sqrt(sum(value * value for value in right))
-    if left_norm == 0.0 or right_norm == 0.0:
-        return 0.0
-    return sum(a * b for a, b in zip(left, right)) / (left_norm * right_norm)
+# Backward-compatible private aliases used by frozen research modules.
+_encoder_embed = embed_texts
+_as_vector = as_vector
+_cosine = cosine
 
 
 class ContextCompactor:

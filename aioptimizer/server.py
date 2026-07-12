@@ -8,10 +8,10 @@ import urllib.request
 from http.server import BaseHTTPRequestHandler, ThreadingHTTPServer
 from urllib.parse import urlsplit
 
-from gateway.middleware import ShortCircuit
-from gateway.receipts import response_text
-from gateway.requirements import evaluate_requirements, extract_requirements
-from gateway.usage import StreamUsageAccumulator, extract_usage
+from .middleware import ShortCircuit
+from .receipts import response_text
+from .requirements import evaluate_requirements, extract_requirements
+from .usage import StreamUsageAccumulator, extract_usage
 
 
 class UpstreamProtocolError(RuntimeError):

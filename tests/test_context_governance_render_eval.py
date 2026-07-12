@@ -2,7 +2,7 @@ import unittest
 
 from experiments.brain_runtime.context_governance_render_eval import render_arms, run
 from experiments.local_worker.ollama_client import Generation
-from gateway.context_compiler import ConversationCompiler
+from aioptimizer.context_compiler import ConversationCompiler
 from tests.test_context_organization_eval import CASE, _embed
 
 

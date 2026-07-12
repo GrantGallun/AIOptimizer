@@ -12,35 +12,16 @@ from __future__ import annotations
 
 import hashlib
 import json
-import math
 from typing import Any, Callable
+
+from .encoder import as_vector, cosine, embed_texts
 
 EmbedFn = Callable[[list[str]], Any]
 DEFAULT_PARITY_THRESHOLD = 0.90
 
 
 def _default_embed(texts: list[str]) -> Any:
-    # Same local MiniLM encoder the research stack uses (lazy import: torch/transformers
-    # only load if a judge actually runs without an injected embed_fn).
-    from agent_bus.context import DEFAULT_ENCODER, _encoder_embed
-
-    return _encoder_embed(texts, model_name=DEFAULT_ENCODER)
-
-
-def _as_vector(value: Any) -> list[float]:
-    if hasattr(value, "detach"):
-        value = value.detach().cpu()
-    if hasattr(value, "tolist"):
-        value = value.tolist()
-    return [float(item) for item in value]
-
-
-def _cosine(left: list[float], right: list[float]) -> float:
-    left_norm = math.sqrt(sum(v * v for v in left))
-    right_norm = math.sqrt(sum(v * v for v in right))
-    if left_norm == 0.0 or right_norm == 0.0:
-        return 0.0
-    return sum(a * b for a, b in zip(left, right)) / (left_norm * right_norm)
+    return embed_texts(texts)
 
 
 def response_text(response: dict[str, Any]) -> str:
@@ -96,8 +77,8 @@ class ShadowJudge:
             similarity = 1.0
         else:
             embed = self._embed_fn or _default_embed
-            vectors = [_as_vector(v) for v in embed([raw_text, optimized_text])]
-            similarity = _cosine(vectors[0], vectors[1])
+            vectors = [as_vector(v) for v in embed([raw_text, optimized_text])]
+            similarity = cosine(vectors[0], vectors[1])
         return {
             "similarity": round(similarity, 4),
             "parity": similarity >= self.parity_threshold,

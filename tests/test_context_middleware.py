@@ -1,8 +1,8 @@
 import json
 import unittest
 
-from gateway.context_compiler import ConversationCompiler
-from gateway.context_middleware import AttentionContextMiddleware
+from aioptimizer.context_compiler import ConversationCompiler
+from aioptimizer.context_middleware import AttentionContextMiddleware
 
 
 def _embed(texts):

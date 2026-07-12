@@ -7,11 +7,11 @@ import urllib.request
 from http.server import BaseHTTPRequestHandler, ThreadingHTTPServer
 from pathlib import Path
 
-from gateway.cache_middleware import ExactCacheMiddleware
-from gateway.context_compiler import ConversationCompiler
-from gateway.context_middleware import AttentionContextMiddleware
-from gateway.ledger import JsonlLedger
-from gateway.server import GatewayServer
+from aioptimizer.cache_middleware import ExactCacheMiddleware
+from aioptimizer.context_compiler import ConversationCompiler
+from aioptimizer.context_middleware import AttentionContextMiddleware
+from aioptimizer.ledger import JsonlLedger
+from aioptimizer.server import GatewayServer
 
 
 def _embed(texts):

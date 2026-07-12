@@ -3,8 +3,8 @@ import unittest
 from pathlib import Path
 
 from experiments.brain_runtime.context_organization_eval import render_arms
-from gateway.context_compiler import ConversationCompiler
-from gateway.context_middleware import AttentionContextMiddleware
+from aioptimizer.context_compiler import ConversationCompiler
+from aioptimizer.context_middleware import AttentionContextMiddleware
 
 
 VOCABULARY = (

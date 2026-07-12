@@ -8,10 +8,10 @@ import urllib.request
 from http.server import BaseHTTPRequestHandler, ThreadingHTTPServer
 from pathlib import Path
 
-from gateway.ledger import JsonlLedger
-from gateway.cache_middleware import ExactCacheMiddleware
-from gateway.server import GatewayServer
-from gateway.receipts import ShadowJudge, response_text
+from aioptimizer.ledger import JsonlLedger
+from aioptimizer.cache_middleware import ExactCacheMiddleware
+from aioptimizer.server import GatewayServer
+from aioptimizer.receipts import ShadowJudge, response_text
 
 
 class _StubHandler(BaseHTTPRequestHandler):

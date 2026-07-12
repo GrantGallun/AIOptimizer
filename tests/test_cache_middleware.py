@@ -7,10 +7,10 @@ import urllib.request
 from http.server import BaseHTTPRequestHandler, ThreadingHTTPServer
 from pathlib import Path
 
-from gateway.cache_middleware import ExactCacheMiddleware
-from gateway.ledger import JsonlLedger
-from gateway.middleware import ShortCircuit
-from gateway.server import GatewayServer
+from aioptimizer.cache_middleware import ExactCacheMiddleware
+from aioptimizer.ledger import JsonlLedger
+from aioptimizer.middleware import ShortCircuit
+from aioptimizer.server import GatewayServer
 
 
 class _FakeClock:
@@ -145,8 +145,8 @@ class SampledRequestBypassTests(unittest.TestCase):
         self.assertIs(cache.before_request(body), body)
 
     def test_sampled_requests_are_never_cached(self):
-        from gateway.cache_middleware import ExactCacheMiddleware
-        from gateway.middleware import ShortCircuit
+        from aioptimizer.cache_middleware import ExactCacheMiddleware
+        from aioptimizer.middleware import ShortCircuit
 
         cache = ExactCacheMiddleware()
         body = {"prompt": "x", "options": {"temperature": 0.7}}
@@ -155,8 +155,8 @@ class SampledRequestBypassTests(unittest.TestCase):
         self.assertEqual(cache.before_request(body), body)  # miss: sampled requests bypass
 
     def test_temp_zero_requests_still_cache(self):
-        from gateway.cache_middleware import ExactCacheMiddleware
-        from gateway.middleware import ShortCircuit
+        from aioptimizer.cache_middleware import ExactCacheMiddleware
+        from aioptimizer.middleware import ShortCircuit
 
         cache = ExactCacheMiddleware()
         body = {"prompt": "x", "options": {"temperature": 0.0}}

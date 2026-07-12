@@ -1,6 +1,6 @@
 import unittest
 
-from gateway.requirements import evaluate_requirements, extract_requirements
+from aioptimizer.requirements import evaluate_requirements, extract_requirements
 
 
 class RequirementContractTests(unittest.TestCase):

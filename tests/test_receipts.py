@@ -6,10 +6,10 @@ import urllib.request
 from http.server import BaseHTTPRequestHandler, ThreadingHTTPServer
 from pathlib import Path
 
-from gateway.ledger import JsonlLedger
-from gateway.receipts import ShadowJudge, response_text
-from gateway.report import summarize
-from gateway.server import GatewayServer
+from aioptimizer.ledger import JsonlLedger
+from aioptimizer.receipts import ShadowJudge, response_text
+from aioptimizer.report import summarize
+from aioptimizer.server import GatewayServer
 
 
 def _embed(texts):

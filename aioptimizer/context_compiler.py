@@ -15,7 +15,13 @@ from collections import OrderedDict
 from dataclasses import dataclass
 from typing import Any, Callable, Iterable, Mapping, Sequence
 
-from agent_bus.context import ContextCompactor, EmbedFn, _as_vector, _cosine
+from agent_bus.context import ContextCompactor
+
+from .encoder import EmbedFn, as_vector, cosine, embed_texts
+
+# Backward-compatible research aliases. Product code uses the public encoder names.
+_as_vector = as_vector
+_cosine = cosine
 
 Record = dict[str, Any]
 RewriteFn = Callable[[list[dict[str, str]]], Iterable[Mapping[str, Any]]]
@@ -60,7 +66,7 @@ class ConversationCompiler:
         if embed_cache_entries < 0:
             raise ValueError("embed_cache_entries must be non-negative")
         self._rewrite_fn = rewrite_fn
-        self._raw_selector = ContextCompactor(embed_fn)
+        self._raw_selector = ContextCompactor(embed_fn or embed_texts)
         self._embed_cache_entries = embed_cache_entries
         self._embed_cache: OrderedDict[str, list[float]] = OrderedDict()
         self._embed_cache_lock = threading.Lock()

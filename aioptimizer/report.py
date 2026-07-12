@@ -1,6 +1,6 @@
 """Turn a gateway ledger into the receipts report: savings + quality evidence.
 
-    python -m gateway.report results/gateway/ledger.jsonl
+    python -m aioptimizer.report results/gateway/ledger.jsonl
 """
 
 from __future__ import annotations
@@ -8,14 +8,10 @@ from __future__ import annotations
 import argparse
 from collections import Counter
 import json
-import sys
 from pathlib import Path
 from typing import Any
 
-if __package__ in {None, ""}:
-    sys.path.append(str(Path(__file__).resolve().parents[1]))
-
-from experiments.brain_runtime.stats import wilson_interval
+from .stats import wilson_interval
 
 
 def summarize(ledger_path: str) -> dict[str, Any]:

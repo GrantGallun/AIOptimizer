@@ -6,7 +6,7 @@ import json
 import threading
 from typing import Any, Sequence
 
-from gateway.context_compiler import DEFAULT_DENY_PATTERNS, ConversationCompiler
+from .context_compiler import DEFAULT_DENY_PATTERNS, ConversationCompiler
 
 
 class AttentionContextMiddleware:

@@ -1,7 +1,7 @@
 import unittest
 
 from experiments.brain_runtime.frontier_context_eval import export_packets, score_packets
-from gateway.context_compiler import ConversationCompiler
+from aioptimizer.context_compiler import ConversationCompiler
 from tests.test_context_organization_eval import CASE, _embed
 
 

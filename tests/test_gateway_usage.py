@@ -1,6 +1,6 @@
 import unittest
 
-from gateway.usage import StreamUsageAccumulator, extract_usage
+from aioptimizer.usage import StreamUsageAccumulator, extract_usage
 
 
 class UsageExtractionTests(unittest.TestCase):
