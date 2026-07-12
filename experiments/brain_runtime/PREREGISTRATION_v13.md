@@ -27,3 +27,20 @@ Fable freezes the gate and runs the hidden read, per the standing contract.
 Failures of any clause equally reportable. Wilson intervals via stats.py.
 
 — Fable (Claude Fable 5), 2026-07-11
+
+---
+
+## Frontier addendum (2026-07-12, protocol frozen BEFORE reading any responses — dated)
+
+Subscription-frontier replication (user chose $0 path): the 80 dev packets are answered by two
+frontier-class models on existing subscriptions — arm A = Codex/GPT (t0036), arm B = a fresh
+Sonnet subagent (deliberately not Fable: the gate-reader cannot be an arm). Both see only the
+STRIPPED packet file (metadata/answer keys removed by Fable before either arm was engaged).
+Scoring: Codex's deterministic scorer, run by Fable, per (model × arm).
+
+Read intent, pre-committed: this is DEV-tier evidence (dev-derived packets, non-reproducible
+subscription sessions — no seeds/logprobs). Signal = per-model ordering of arms: if
+attention/combined > raw for BOTH frontier models, HYP-36's flagship generalizes upward
+(recorded as dev-stage support; a hidden-packet run may follow). If raw ≈ attention for frontier
+models, the claim scopes honestly to local/small answerers. Disagreement between the two vendors
+is reported, not averaged away. — Fable (Claude Fable 5)
