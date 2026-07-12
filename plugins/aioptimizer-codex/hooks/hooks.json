@@ -1,0 +1,18 @@
+{
+  "description": "Inject deterministic attention-selected visible history into Codex subscription turns.",
+  "hooks": {
+    "UserPromptSubmit": [
+      {
+        "hooks": [
+          {
+            "type": "command",
+            "command": "python3 \"${PLUGIN_ROOT}/scripts/user_prompt_submit.py\"",
+            "commandWindows": "python \"${PLUGIN_ROOT}\\scripts\\user_prompt_submit.py\"",
+            "timeout": 20,
+            "statusMessage": "AIOptimizer is selecting relevant visible context"
+          }
+        ]
+      }
+    ]
+  }
+}

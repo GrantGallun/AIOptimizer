@@ -73,9 +73,14 @@ class _GatewayHandler(BaseHTTPRequestHandler):
         "OpenAI-Project",
         "X-API-Key",
     )
+    CONTEXT_OPTIMIZE_PATH = "/optimize/context"
+    MAX_CONTEXT_REQUEST_BYTES = 8 * 1024 * 1024
 
     def do_POST(self):
         started = time.perf_counter()
+        if urlsplit(self.path).path == self.CONTEXT_OPTIMIZE_PATH:
+            self._optimize_context()
+            return
         if urlsplit(self.path).path not in self.PROXIED_PATHS:
             response_bytes = self._write_json(
                 404, {"error": {"message": "Not found", "type": "not_found"}}
@@ -220,6 +225,48 @@ class _GatewayHandler(BaseHTTPRequestHandler):
             response_chars = len(response_bytes.decode("utf-8"))
         finally:
             self._record(request_chars, response_chars, started)
+
+    def _optimize_context(self):
+        """Serve the local Codex-hook compiler API; no provider request is made."""
+        try:
+            content_length = int(self.headers.get("Content-Length", "0"))
+            if content_length <= 0 or content_length > self.MAX_CONTEXT_REQUEST_BYTES:
+                raise ValueError(
+                    f"Content-Length must be between 1 and {self.MAX_CONTEXT_REQUEST_BYTES}"
+                )
+            body = json.loads(self.rfile.read(content_length))
+            if not isinstance(body, dict):
+                raise ValueError("request body must be a JSON object")
+            messages = body.get("messages")
+            query = body.get("query")
+            output_budget_chars = body.get("output_budget_chars", 6_000)
+            if not isinstance(messages, list):
+                raise ValueError("messages must be a list")
+            optimizer = next(
+                (
+                    middleware
+                    for middleware in self.server.middlewares
+                    if callable(getattr(middleware, "compile_additional_context", None))
+                ),
+                None,
+            )
+            if optimizer is None:
+                self._write_json(
+                    503,
+                    {"error": {"message": "attention compiler is not enabled", "type": "unavailable"}},
+                )
+                return
+            result = optimizer.compile_additional_context(
+                messages,
+                query=query,
+                output_budget_chars=output_budget_chars,
+            )
+            self._write_json(200, result)
+        except (json.JSONDecodeError, UnicodeDecodeError, ValueError) as error:
+            self._write_json(
+                400,
+                {"error": {"message": str(error), "type": "invalid_request_error"}},
+            )
 
     def _upstream(self, payload):
         upstream_request = urllib.request.Request(

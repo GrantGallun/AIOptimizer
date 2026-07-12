@@ -72,6 +72,34 @@ class AttentionContextMiddlewareTests(unittest.TestCase):
         with self.assertRaisesRegex(ValueError, "positive"):
             AttentionContextMiddleware(budget_chars=0)
 
+    def test_additive_compiler_injects_only_for_large_focused_history(self):
+        history = self.body["messages"][1:-1]
+        focused = self.middleware.compile_additional_context(
+            history,
+            query="What did we decide about cache latency?",
+            output_budget_chars=300,
+        )
+        vague = self.middleware.compile_additional_context(
+            history,
+            query="What stands out?",
+            output_budget_chars=300,
+        )
+
+        self.assertEqual(focused["route"], "attention")
+        self.assertIn("cache", focused["context"].lower())
+        self.assertLessEqual(focused["output_chars"], 300)
+        self.assertEqual(vague["route"], "raw")
+        self.assertEqual(vague["context"], "")
+
+    def test_additive_compiler_skips_small_history(self):
+        result = self.middleware.compile_additional_context(
+            [{"role": "user", "content": "cache"}],
+            query="cache?",
+            output_budget_chars=300,
+        )
+        self.assertEqual(result["route"], "below_threshold")
+        self.assertEqual(result["context"], "")
+
 
 if __name__ == "__main__":
     unittest.main()

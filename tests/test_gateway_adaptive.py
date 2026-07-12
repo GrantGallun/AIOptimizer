@@ -54,6 +54,7 @@ class AdaptiveGatewayEndToEndTests(unittest.TestCase):
         self.gateway_thread = threading.Thread(target=self.gateway.serve_forever, daemon=True)
         self.gateway_thread.start()
         self.url = f"http://127.0.0.1:{self.gateway.server_port}/v1/chat/completions"
+        self.optimize_url = f"http://127.0.0.1:{self.gateway.server_port}/optimize/context"
 
     def tearDown(self):
         self.gateway.shutdown(); self.gateway.server_close(); self.gateway_thread.join()
@@ -63,6 +64,14 @@ class AdaptiveGatewayEndToEndTests(unittest.TestCase):
     def _post(self, body):
         request = urllib.request.Request(
             self.url, data=json.dumps(body).encode(),
+            headers={"Content-Type": "application/json"}, method="POST",
+        )
+        with urllib.request.urlopen(request) as response:
+            return json.loads(response.read())
+
+    def _optimize(self, body):
+        request = urllib.request.Request(
+            self.optimize_url, data=json.dumps(body).encode(),
             headers={"Content-Type": "application/json"}, method="POST",
         )
         with urllib.request.urlopen(request) as response:
@@ -107,6 +116,26 @@ class AdaptiveGatewayEndToEndTests(unittest.TestCase):
         self.assertEqual(receipts[1]["route"], "raw")
         self.assertTrue(entries[2]["cached"])
         self.assertEqual(receipts[2], {"applied": False})  # cache short-circuited before routing
+
+    def test_local_compiler_endpoint_never_calls_upstream(self):
+        messages = self._body("unused")["messages"][1:-1]
+
+        focused = self._optimize({
+            "messages": messages,
+            "query": "What did we decide about cache latency?",
+            "output_budget_chars": 300,
+        })
+        vague = self._optimize({
+            "messages": messages,
+            "query": "What stands out?",
+            "output_budget_chars": 300,
+        })
+
+        self.assertEqual(focused["route"], "attention")
+        self.assertIn("cache", focused["context"].lower())
+        self.assertEqual(vague["route"], "raw")
+        self.assertEqual(vague["context"], "")
+        self.assertEqual(_CaptureUpstream.bodies, [])
 
 
 if __name__ == "__main__":

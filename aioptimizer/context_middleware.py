@@ -49,6 +49,85 @@ class AttentionContextMiddleware:
             "adaptive_routing": True,
         }
 
+    def compile_additional_context(
+        self,
+        messages: Sequence[dict[str, Any]],
+        *,
+        query: str,
+        output_budget_chars: int = 6_000,
+    ) -> dict[str, Any]:
+        """Compile additive context for a local client hook without calling a model.
+
+        Low-pressure histories and vague queries intentionally return no context: the
+        caller already retains its chronological transcript, so duplicating raw history
+        would only increase token use. The persistent middleware instance owns the
+        encoder cache across hook invocations.
+        """
+        if not isinstance(query, str) or not query.strip():
+            raise ValueError("query must be a non-empty string")
+        if not isinstance(output_budget_chars, int) or isinstance(output_budget_chars, bool):
+            raise ValueError("output_budget_chars must be an integer")
+        if output_budget_chars <= 0 or output_budget_chars > self.budget_chars:
+            raise ValueError(
+                f"output_budget_chars must be between 1 and {self.budget_chars}"
+            )
+        history_chars = len(json.dumps(list(messages), ensure_ascii=False))
+        if history_chars <= self.budget_chars:
+            return {
+                "route": "below_threshold",
+                "context": "",
+                "history_chars": history_chars,
+                "output_chars": 0,
+            }
+        compiled = self.compiler.compile(messages)
+        integrity = self.compiler.audit_integrity(compiled)
+        if not integrity["ok"]:
+            return {
+                "route": "integrity_failure",
+                "context": "",
+                "history_chars": history_chars,
+                "output_chars": 0,
+                "integrity_ok": False,
+            }
+        cache_before = self.compiler.embedding_cache_stats()
+        mode, relevance = self.compiler.choose_context_mode(
+            compiled, query=query, min_relevance=self.min_relevance
+        )
+        if mode == "raw":
+            cache_after = self.compiler.embedding_cache_stats()
+            return {
+                "route": "raw",
+                "context": "",
+                "history_chars": history_chars,
+                "output_chars": 0,
+                "relevance": relevance,
+                "integrity_ok": True,
+                "compiler_fingerprint": integrity["fingerprint"],
+                "embedding_cache_hits": cache_after["hits"] - cache_before["hits"],
+                "embedding_cache_misses": cache_after["misses"] - cache_before["misses"],
+            }
+        organized = self.compiler.organize(
+            compiled,
+            query=query,
+            max_records=len(compiled.records),
+        )
+        rendered = self.compiler.render_organized(
+            organized, budget_chars=output_budget_chars
+        )
+        cache_after = self.compiler.embedding_cache_stats()
+        return {
+            "route": "attention" if rendered else "empty",
+            "context": rendered,
+            "history_chars": history_chars,
+            "output_chars": len(rendered),
+            "relevance": relevance,
+            "integrity_ok": True,
+            "compiler_fingerprint": integrity["fingerprint"],
+            "source_records": len(compiled.records),
+            "embedding_cache_hits": cache_after["hits"] - cache_before["hits"],
+            "embedding_cache_misses": cache_after["misses"] - cache_before["misses"],
+        }
+
     def before_request(self, body: dict[str, Any]) -> dict[str, Any]:
         original_chars = len(json.dumps(body, ensure_ascii=False))
         self._set_receipt(original_chars=original_chars)

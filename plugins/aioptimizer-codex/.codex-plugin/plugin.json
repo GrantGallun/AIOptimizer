@@ -1,0 +1,21 @@
+{
+  "name": "aioptimizer-codex",
+  "version": "0.1.0+codex.20260712190105",
+  "description": "Deterministic visible-context selection and receipts for subscription-backed Codex.",
+  "author": {
+    "name": "Grant Gallun"
+  },
+  "skills": "./skills/",
+  "interface": {
+    "displayName": "AIOptimizer for Codex",
+    "shortDescription": "Select relevant visible context locally before Codex turns.",
+    "longDescription": "Adds a fail-open UserPromptSubmit hook backed by AIOptimizer's deterministic attention compiler. Authentication remains inside Codex.",
+    "developerName": "Grant Gallun",
+    "category": "Productivity",
+    "capabilities": [
+      "Context",
+      "Receipts"
+    ],
+    "defaultPrompt": "Check whether AIOptimizer context selection is active for this workspace."
+  }
+}
