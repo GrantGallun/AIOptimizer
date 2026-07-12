@@ -78,3 +78,6 @@ class CompactContextMiddleware:
 
     def after_response(self, body: dict[str, Any], response: dict[str, Any]) -> dict[str, Any]:
         return response
+
+    def status_metadata(self) -> dict[str, Any]:
+        return {"budget_chars": self.budget_chars, "minimum_chunks": MIN_CHUNKS_TO_COMPACT}

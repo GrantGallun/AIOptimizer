@@ -41,6 +41,14 @@ class AttentionContextMiddleware:
         """Current handler-thread metadata consumed by the gateway ledger."""
         return dict(getattr(self._local, "receipt", {"applied": False}))
 
+    def status_metadata(self) -> dict[str, Any]:
+        return {
+            "budget_chars": self.budget_chars,
+            "min_relevance": self.min_relevance,
+            "embedding_cache": self.compiler.embedding_cache_stats(),
+            "adaptive_routing": True,
+        }
+
     def before_request(self, body: dict[str, Any]) -> dict[str, Any]:
         original_chars = len(json.dumps(body, ensure_ascii=False))
         self._set_receipt(original_chars=original_chars)

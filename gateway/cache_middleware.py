@@ -62,3 +62,12 @@ class ExactCacheMiddleware:
             while len(self._entries) > self.max_entries:
                 self._entries.popitem(last=False)
         return response
+
+    def status_metadata(self):
+        with self._lock:
+            return {
+                "entries": len(self._entries),
+                "max_entries": self.max_entries,
+                "ttl_seconds": self.ttl_seconds,
+                "sampled_requests_bypass": True,
+            }

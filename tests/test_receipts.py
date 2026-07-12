@@ -122,6 +122,29 @@ class ShadowEndToEndTests(unittest.TestCase):
             gateway.shutdown()
             upstream.shutdown()
 
+    def test_report_aggregates_adaptive_routes_and_embedding_cache(self):
+        with tempfile.TemporaryDirectory() as directory:
+            path = Path(directory) / "ledger.jsonl"
+            rows = [
+                {"request_chars": 10, "response_chars": 2, "latency_ms": 1,
+                 "optimized": True, "request_chars_original": 20,
+                 "middleware_receipts": {"AttentionContextMiddleware": {
+                     "route": "attention", "applied": True,
+                     "embedding_cache_hits": 7, "embedding_cache_misses": 3}}},
+                {"request_chars": 10, "response_chars": 2, "latency_ms": 2,
+                 "optimized": False,
+                 "middleware_receipts": {"AttentionContextMiddleware": {
+                     "route": "raw", "applied": False,
+                     "embedding_cache_hits": 4, "embedding_cache_misses": 1}}},
+            ]
+            path.write_text("".join(json.dumps(row) + "\n" for row in rows), encoding="utf-8")
+            summary = summarize(str(path))
+
+        self.assertEqual(summary["attention_route_counts"], {"attention": 1, "raw": 1})
+        self.assertEqual(summary["attention_applied_requests"], 1)
+        self.assertEqual(summary["embedding_cache_hits"], 11)
+        self.assertEqual(summary["embedding_cache_misses"], 4)
+
 
 if __name__ == "__main__":
     unittest.main()

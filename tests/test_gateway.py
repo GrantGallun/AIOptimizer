@@ -8,6 +8,7 @@ from http.server import BaseHTTPRequestHandler, ThreadingHTTPServer
 from pathlib import Path
 
 from gateway.ledger import JsonlLedger
+from gateway.cache_middleware import ExactCacheMiddleware
 from gateway.server import GatewayServer
 
 
@@ -103,6 +104,20 @@ class GatewayTests(unittest.TestCase):
         self.assertEqual(response["after"], "BA")
         self.assertEqual(events, ["before:A", "before:B", "after:B", "after:A"])
 
+    def test_exact_cache_uses_its_original_input_when_later_middleware_rewrites(self):
+        events = []
+        url = self._start_gateway(
+            middlewares=(ExactCacheMiddleware(), _TagMiddleware("A", events))
+        )
+        body = {"messages": [{"role": "user", "content": "repeat"}]}
+
+        first = self._post(url, body)
+        second = self._post(url, body)
+
+        self.assertEqual(first, second)
+        self.assertEqual(len(_StubHandler.requests), 1)
+        self.assertEqual(events, ["before:A", "after:A"])
+
     def test_unknown_path_returns_json_404(self):
         url = self._start_gateway()
         request = urllib.request.Request(url + "/unknown", data=b"{}", method="POST")
@@ -116,6 +131,20 @@ class GatewayTests(unittest.TestCase):
             self.assertEqual(json.loads(error.read())["error"]["type"], "not_found")
         finally:
             error.close()
+
+    def test_health_and_status_are_local_and_describe_active_middlewares(self):
+        middleware = _ReceiptMiddleware("R", [])
+        url = self._start_gateway(middlewares=(middleware,))
+
+        with urllib.request.urlopen(url + "/health") as response:
+            self.assertEqual(json.loads(response.read()), {"status": "ok"})
+        with urllib.request.urlopen(url + "/status") as response:
+            status = json.loads(response.read())
+
+        self.assertEqual(status["status"], "ok")
+        self.assertIn("_ReceiptMiddleware", status["middlewares"])
+        self.assertFalse(status["receipts_enabled"])
+        self.assertEqual(_StubHandler.requests, [])
 
     def test_ledger_records_one_valid_line_per_request(self):
         with tempfile.TemporaryDirectory() as directory:

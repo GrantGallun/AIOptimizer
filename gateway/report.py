@@ -31,6 +31,11 @@ def summarize(ledger_path: str) -> dict[str, Any]:
         for e in optimized
     )
     parity_hits = sum(bool(e["shadow"].get("parity")) for e in shadows)
+    attention_receipts = [
+        e.get("middleware_receipts", {}).get("AttentionContextMiddleware", {})
+        for e in entries
+        if "AttentionContextMiddleware" in e.get("middleware_receipts", {})
+    ]
     latencies = sorted(float(e.get("latency_ms", 0.0)) for e in entries)
 
     def percentile(fraction: float) -> float:
@@ -59,6 +64,12 @@ def summarize(ledger_path: str) -> dict[str, Any]:
         "requests_by_path": counts("path"),
         "requests_by_model": counts("model"),
         "responses_by_status": counts("status"),
+        "attention_route_counts": dict(sorted(Counter(
+            str(receipt.get("route") or "not_evaluated") for receipt in attention_receipts
+        ).items())),
+        "attention_applied_requests": sum(bool(receipt.get("applied")) for receipt in attention_receipts),
+        "embedding_cache_hits": sum(int(receipt.get("embedding_cache_hits", 0)) for receipt in attention_receipts),
+        "embedding_cache_misses": sum(int(receipt.get("embedding_cache_misses", 0)) for receipt in attention_receipts),
         "shadow_samples": len(shadows),
         "quality_parity_rate": (parity_hits / len(shadows)) if shadows else None,
         "quality_parity_ci": (

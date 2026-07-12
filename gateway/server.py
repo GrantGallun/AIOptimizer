@@ -25,6 +25,20 @@ class GatewayServer(ThreadingHTTPServer):
         self.shadow = shadow
         super().__init__(("127.0.0.1", port), _GatewayHandler)
 
+    def status_payload(self):
+        middleware_status = {}
+        for middleware in self.middlewares:
+            status = getattr(middleware, "status_metadata", None)
+            middleware_status[type(middleware).__name__] = status() if callable(status) else {}
+        return {
+            "status": "ok",
+            "upstream": self.upstream_url,
+            "middlewares": middleware_status,
+            "receipts_enabled": self.ledger is not None,
+            "shadow_enabled": self.shadow is not None and self.shadow.rate > 0.0,
+            "shadow_rate": self.shadow.rate if self.shadow is not None else 0.0,
+        }
+
 
 class _GatewayHandler(BaseHTTPRequestHandler):
     server: GatewayServer
@@ -58,12 +72,13 @@ class _GatewayHandler(BaseHTTPRequestHandler):
             applied_middlewares = []
             short_circuit = None
             for middleware in self.server.middlewares:
+                middleware_input = body
                 result = middleware.before_request(body)
                 if isinstance(result, ShortCircuit):
                     short_circuit = result
                     break
                 body = result
-                applied_middlewares.append(middleware)
+                applied_middlewares.append((middleware, middleware_input))
             optimized_payload = json.dumps(body, ensure_ascii=False)
             request_chars = len(optimized_payload)
             optimized = body != original_body
@@ -96,8 +111,8 @@ class _GatewayHandler(BaseHTTPRequestHandler):
                         response_text(raw_response), response_text(response)
                     )
 
-            for middleware in reversed(applied_middlewares):
-                response = middleware.after_response(body, response)
+            for middleware, middleware_input in reversed(applied_middlewares):
+                response = middleware.after_response(middleware_input, response)
             response_bytes = self._write_json(status, response)
             self._extra["status"] = status
             response_chars = len(response_bytes.decode("utf-8"))
@@ -128,6 +143,10 @@ class _GatewayHandler(BaseHTTPRequestHandler):
             return error.code, json.loads(error.read())
 
     def do_GET(self):
+        if self.path in {"/health", "/status"}:
+            body = {"status": "ok"} if self.path == "/health" else self.server.status_payload()
+            self._write_json(200, body)
+            return
         # Transparent passthrough for Ollama utility endpoints (/api/tags, /api/ps, ...).
         try:
             with urllib.request.urlopen(self.server.upstream_url + self.path) as upstream:
