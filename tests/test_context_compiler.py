@@ -243,6 +243,21 @@ class ConversationCompilerTests(unittest.TestCase):
         with self.assertRaisesRegex(ValueError, "between"):
             compiler.choose_context_mode(compiled, query="x", min_relevance=2.0)
 
+    def test_governed_render_is_byte_identical_to_flat_attention_presentation(self):
+        compiler = ConversationCompiler(embed_fn=_embed)
+        compiled = compiler.compile(self.messages)
+        records = list(compiled.records)
+
+        attention = compiler.render_record_set(records)
+        governed = compiler.render_governed_record_set(compiled, records)
+
+        self.assertEqual(governed.encode("utf-8"), attention.encode("utf-8"))
+        self.assertIn("source:T0002", governed)
+        self.assertNotIn("## ", governed)
+        foreign = {**records[0], "id": "R9999"}
+        with self.assertRaisesRegex(ValueError, "outside"):
+            compiler.render_governed_record_set(compiled, [foreign])
+
 
 if __name__ == "__main__":
     unittest.main()

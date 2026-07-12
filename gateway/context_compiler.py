@@ -494,6 +494,25 @@ class ConversationCompiler:
                 sections.append(f"## {kind.upper()}\n{body}")
         return "\n\n".join(sections)
 
+    def render_governed_record_set(
+        self,
+        compiled: CompiledConversation,
+        records: Sequence[Mapping[str, Any]],
+    ) -> str:
+        """Validate typed governance internally, then emit the minimal flat model view.
+
+        Authority, binding, and provenance remain enforced by the IR but do not
+        reorder or decorate the model-facing record stream.  This deliberately
+        makes presentation byte-identical to attention-only rendering.
+        """
+        audit = self.audit_integrity(compiled)
+        if not audit["ok"]:
+            raise ValueError(f"context integrity failed: {audit['failures']}")
+        known = {record["id"] for record in compiled.records}
+        if any(str(record["id"]) not in known for record in records):
+            raise ValueError("governed render contains a record outside the compiled IR")
+        return self.render_record_set(records, structured=False)
+
     @classmethod
     def matched_record_pair(
         cls,
