@@ -41,3 +41,32 @@ Upstream connect/read operations default to a 300-second timeout. Set
 recorded as such. A stream that stalls after its response has begun is closed and
 receipted with `"stream_complete": false`. Shadow timeouts/errors never fail the
 primary request; reports count them separately as measurement failures.
+
+## Deterministic requirement receipts
+
+Normal traffic can opt into exact requirement-retention measurement without an
+LLM judge. Add a private envelope to the request; the gateway validates and
+removes it before middleware, caching, shadowing, or provider forwarding:
+
+```json
+{
+  "model": "qwen3:8b",
+  "messages": [{"role": "user", "content": "Return the deployment status."}],
+  "aioptimizer": {
+    "requirements": [{
+      "id": "status-format",
+      "must_include": ["STATUS:"],
+      "must_exclude": ["internal-token"],
+      "case_sensitive": true
+    }]
+  }
+}
+```
+
+Receipts contain only safe IDs and pass counts, never the include/exclude text.
+The same provider request may use different contracts on exact-cache hits.
+Streaming text is observed incrementally for OpenAI SSE, Anthropic SSE, and
+Ollama NDJSON without changing relayed bytes. This measures explicit contracts;
+it intentionally does not guess unstated requirements.
+For sampled optimized requests, the report compares primary and raw-shadow
+contract passes through `measured_requirement_pass_delta`.

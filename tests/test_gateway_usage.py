@@ -32,11 +32,16 @@ class UsageExtractionTests(unittest.TestCase):
         accumulator.feed(b'data: {"type":"message_start","message":{"usage":')
         accumulator.feed(b'{"input_tokens":12,"output_tokens":1}}}\n\n')
         accumulator.feed(b'data: {"type":"message_delta","usage":{"output_tokens":5}}\n')
+        accumulator.feed(
+            b'data: {"type":"content_block_delta","delta":{"type":"text_delta",'
+            b'"text":"hello"}}\n'
+        )
         accumulator.feed(b'\ndata: [DONE]\n\n')
         self.assertEqual(
             accumulator.finish(),
             {"input_tokens": 12, "output_tokens": 5, "total_tokens": 17},
         )
+        self.assertEqual(accumulator.text(), "hello")
 
     def test_stream_accumulator_handles_ollama_ndjson(self):
         accumulator = StreamUsageAccumulator()
@@ -46,6 +51,7 @@ class UsageExtractionTests(unittest.TestCase):
             accumulator.finish(),
             {"input_tokens": 20, "output_tokens": 6, "total_tokens": 26},
         )
+        self.assertEqual(accumulator.text(), "hi")
 
     def test_missing_or_malformed_usage_is_not_invented(self):
         self.assertIsNone(extract_usage({"usage": {"prompt_tokens": "10"}}))

@@ -35,7 +35,7 @@ class _StubHandler(BaseHTTPRequestHandler):
             return
         if body.get("stream"):
             payload = (
-                b'data: {"delta":"one"}\n\n'
+                b'data: {"choices":[{"delta":{"content":"one"}}]}\n\n'
                 b'data: {"usage":{"prompt_tokens":9,"completion_tokens":2,'
                 b'"total_tokens":11}}\n\ndata: [DONE]\n\n'
             )
@@ -45,6 +45,8 @@ class _StubHandler(BaseHTTPRequestHandler):
             self.wfile.write(payload)
             return
         response = {"id": "chatcmpl-test", "object": "chat.completion", "tag": body.get("tag")}
+        if isinstance(body.get("answer"), str):
+            response["choices"] = [{"message": {"content": body["answer"]}}]
         if body.get("usage_test"):
             response["usage"] = {
                 "prompt_tokens": 15,
@@ -176,7 +178,14 @@ class GatewayTests(unittest.TestCase):
             url = self._start_gateway(
                 middlewares=(ExactCacheMiddleware(),), ledger=JsonlLedger(ledger_path)
             )
-            body = {"model": "test", "messages": [], "stream": True}
+            body = {
+                "model": "test",
+                "messages": [],
+                "stream": True,
+                "aioptimizer": {"requirements": [{
+                    "id": "stream-word", "must_include": ["one"]
+                }]},
+            }
 
             responses = []
             for _ in range(2):
@@ -190,7 +199,7 @@ class GatewayTests(unittest.TestCase):
                     self.assertEqual(response.headers.get_content_type(), "text/event-stream")
                     responses.append(response.read())
 
-            self.assertIn(b'data: {"delta":"one"}', responses[0])
+            self.assertIn(b'"content":"one"', responses[0])
             self.assertIn(b'data: [DONE]', responses[0])
             self.assertEqual(responses[0], responses[1])
             self.assertEqual(len(_StubHandler.requests), 2)
@@ -203,6 +212,8 @@ class GatewayTests(unittest.TestCase):
             self.assertTrue(all(entry["usage"] == {
                 "input_tokens": 9, "output_tokens": 2, "total_tokens": 11
             } for entry in entries))
+            self.assertTrue(all(entry["requirements"]["all_passed"] for entry in entries))
+            self.assertTrue(all("aioptimizer" not in body for _, body in _StubHandler.requests))
 
     def test_json_usage_is_recorded_only_when_upstream_is_called(self):
         with tempfile.TemporaryDirectory() as directory:
@@ -223,6 +234,87 @@ class GatewayTests(unittest.TestCase):
             self.assertNotIn("usage", entries[1])
             self.assertNotIn("upstream_called", entries[1])
             self.assertTrue(entries[1]["cached"])
+
+    def test_private_requirement_contract_is_stripped_and_receipted_on_cache_hits(self):
+        with tempfile.TemporaryDirectory() as directory:
+            ledger_path = Path(directory) / "requirements.jsonl"
+            url = self._start_gateway(
+                middlewares=(ExactCacheMiddleware(),), ledger=JsonlLedger(ledger_path)
+            )
+            base = {"model": "test", "messages": [], "answer": "HELLO"}
+            passing = {**base, "aioptimizer": {"requirements": [{
+                "id": "greeting", "must_include": ["hello"]
+            }]}}
+            failing = {**base, "aioptimizer": {"requirements": [{
+                "id": "other", "must_include": ["goodbye"]
+            }]}}
+
+            self._post(url, passing)
+            self._post(url, failing)
+
+            self.assertEqual(len(_StubHandler.requests), 1)
+            self.assertNotIn("aioptimizer", _StubHandler.requests[0][1])
+            for _ in range(100):
+                if (
+                    ledger_path.exists()
+                    and len(ledger_path.read_text().splitlines()) == 2
+                ):
+                    break
+                time.sleep(0.01)
+            entries = [json.loads(line) for line in ledger_path.read_text().splitlines()]
+            self.assertTrue(entries[0]["requirements"]["all_passed"])
+            self.assertFalse(entries[1]["requirements"]["all_passed"])
+            self.assertTrue(entries[1]["cached"])
+            self.assertEqual(entries[0]["requirements"]["results"][0]["id"], "greeting")
+            self.assertNotIn("hello", json.dumps(entries[0]["requirements"]).lower())
+
+    def test_invalid_requirement_contract_returns_400_without_upstream_call(self):
+        url = self._start_gateway()
+        request = urllib.request.Request(
+            url + "/v1/chat/completions",
+            data=json.dumps({"messages": [], "aioptimizer": {"requirements": []}}).encode(),
+            headers={"Content-Type": "application/json"},
+            method="POST",
+        )
+        with self.assertRaises(urllib.error.HTTPError) as raised:
+            urllib.request.urlopen(request)
+        error = raised.exception
+        try:
+            self.assertEqual(error.code, 400)
+        finally:
+            error.close()
+        self.assertEqual(_StubHandler.requests, [])
+
+    def test_shadow_receipts_compare_explicit_requirements_without_forwarding_them(self):
+        with tempfile.TemporaryDirectory() as directory:
+            ledger_path = Path(directory) / "shadow-requirements.jsonl"
+            url = self._start_gateway(
+                ledger=JsonlLedger(ledger_path),
+                middlewares=(_TagMiddleware("A", []),),
+                shadow=ShadowJudge(rate=1.0, embed_fn=lambda texts: [[1.0] for _ in texts]),
+            )
+            body = {
+                "messages": [],
+                "answer": "STATUS: ready",
+                "aioptimizer": {"requirements": [{
+                    "id": "status", "must_include": ["STATUS:"]
+                }]},
+            }
+
+            self._post(url, body)
+
+            for _ in range(100):
+                if ledger_path.exists() and ledger_path.read_text().strip():
+                    break
+                time.sleep(0.01)
+            entry = json.loads(ledger_path.read_text().splitlines()[0])
+            self.assertTrue(entry["requirements"]["all_passed"])
+            self.assertTrue(entry["shadow_requirements"]["all_passed"])
+            self.assertEqual(len(_StubHandler.requests), 2)
+            self.assertTrue(all(
+                "aioptimizer" not in request_body
+                for _, request_body in _StubHandler.requests
+            ))
 
     def test_upstream_timeout_returns_504_and_records_failure_status(self):
         with tempfile.TemporaryDirectory() as directory:

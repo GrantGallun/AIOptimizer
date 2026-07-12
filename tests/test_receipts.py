@@ -139,6 +139,9 @@ class ShadowEndToEndTests(unittest.TestCase):
                  "upstream_called": True,
                  "usage": {"input_tokens": 10, "output_tokens": 2, "total_tokens": 12},
                  "shadow_usage": {"input_tokens": 10, "output_tokens": 3, "total_tokens": 13},
+                 "requirement_contracts": 2,
+                 "requirements": {"requirements": 2, "passed": 1, "all_passed": False},
+                 "shadow_requirements": {"requirements": 2, "passed": 2, "all_passed": True},
                  "middleware_receipts": {"AttentionContextMiddleware": {
                      "route": "attention", "applied": True,
                      "embedding_cache_hits": 7, "embedding_cache_misses": 3}}},
@@ -169,6 +172,18 @@ class ShadowEndToEndTests(unittest.TestCase):
         self.assertEqual(summary["incomplete_streams"], 0)
         self.assertEqual(summary["shadow_failures"], 0)
         self.assertEqual(summary["shadow_failure_types"], {})
+        self.assertEqual(summary["requirement_contract_requests"], 1)
+        self.assertEqual(summary["requirement_receipts"], 1)
+        self.assertEqual(summary["requirement_receipt_coverage_rate"], 1.0)
+        self.assertEqual(summary["requirements_checked"], 2)
+        self.assertEqual(summary["requirements_passed"], 1)
+        self.assertEqual(summary["requirement_retention_rate"], 0.5)
+        self.assertEqual(summary["all_requirements_passed_requests"], 0)
+        self.assertEqual(summary["shadow_requirement_receipts"], 1)
+        self.assertEqual(summary["shadow_requirements_checked"], 2)
+        self.assertEqual(summary["shadow_requirements_passed"], 2)
+        self.assertEqual(summary["paired_requirement_receipts"], 1)
+        self.assertEqual(summary["measured_requirement_pass_delta"], -1)
 
 
 if __name__ == "__main__":

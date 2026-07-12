@@ -43,6 +43,7 @@ class StreamUsageAccumulator:
     def __init__(self) -> None:
         self._buffer = b""
         self._usage: dict[str, int] = {}
+        self._text: list[str] = []
 
     def feed(self, chunk: bytes) -> None:
         self._buffer += chunk
@@ -61,6 +62,9 @@ class StreamUsageAccumulator:
             )
         return dict(self._usage) or None
 
+    def text(self) -> str:
+        return "".join(self._text)
+
     def _consume_line(self, line: bytes) -> None:
         line = line.strip()
         if line.startswith(b"data:"):
@@ -75,3 +79,25 @@ class StreamUsageAccumulator:
         if usage:
             for key, value in usage.items():
                 self._usage[key] = max(self._usage.get(key, 0), value)
+        text = _stream_text(payload)
+        if text:
+            self._text.append(text)
+
+
+def _stream_text(payload: Any) -> str:
+    if not isinstance(payload, dict):
+        return ""
+    try:
+        value = payload["choices"][0]["delta"]["content"]
+        if isinstance(value, str):
+            return value
+    except (KeyError, IndexError, TypeError):
+        pass
+    delta = payload.get("delta")
+    if isinstance(delta, dict) and isinstance(delta.get("text"), str):
+        return delta["text"]
+    message = payload.get("message")
+    if isinstance(message, dict) and isinstance(message.get("content"), str):
+        return message["content"]
+    value = payload.get("response")
+    return value if isinstance(value, str) else ""

@@ -45,6 +45,29 @@ def summarize(ledger_path: str) -> dict[str, Any]:
         if isinstance(e.get("usage"), dict) and isinstance(e.get("shadow_usage"), dict)
     ]
     shadow_errors = [e["shadow_error"] for e in entries if isinstance(e.get("shadow_error"), dict)]
+    requirement_receipts = [
+        e["requirements"] for e in entries if isinstance(e.get("requirements"), dict)
+    ]
+    shadow_requirement_receipts = [
+        e["shadow_requirements"]
+        for e in entries
+        if isinstance(e.get("shadow_requirements"), dict)
+    ]
+    paired_requirement_receipts = [
+        (e["requirements"], e["shadow_requirements"])
+        for e in entries
+        if isinstance(e.get("requirements"), dict)
+        and isinstance(e.get("shadow_requirements"), dict)
+    ]
+    requirement_contract_requests = sum(
+        int(e.get("requirement_contracts", 0)) > 0 for e in entries
+    )
+    requirements_checked = sum(
+        int(receipt.get("requirements", 0)) for receipt in requirement_receipts
+    )
+    requirements_passed = sum(
+        int(receipt.get("passed", 0)) for receipt in requirement_receipts
+    )
 
     def token_sum(rows: list[dict[str, Any]], field: str) -> int:
         return sum(int(row.get(field, 0)) for row in rows)
@@ -75,6 +98,33 @@ def summarize(ledger_path: str) -> dict[str, Any]:
         "requests_by_path": counts("path"),
         "requests_by_model": counts("model"),
         "responses_by_status": counts("status"),
+        "requirement_contract_requests": requirement_contract_requests,
+        "requirement_receipts": len(requirement_receipts),
+        "requirement_receipt_coverage_rate": (
+            len(requirement_receipts) / requirement_contract_requests
+            if requirement_contract_requests
+            else None
+        ),
+        "requirements_checked": requirements_checked,
+        "requirements_passed": requirements_passed,
+        "requirement_retention_rate": (
+            requirements_passed / requirements_checked if requirements_checked else None
+        ),
+        "all_requirements_passed_requests": sum(
+            receipt.get("all_passed") is True for receipt in requirement_receipts
+        ),
+        "shadow_requirement_receipts": len(shadow_requirement_receipts),
+        "shadow_requirements_checked": sum(
+            int(receipt.get("requirements", 0)) for receipt in shadow_requirement_receipts
+        ),
+        "shadow_requirements_passed": sum(
+            int(receipt.get("passed", 0)) for receipt in shadow_requirement_receipts
+        ),
+        "paired_requirement_receipts": len(paired_requirement_receipts),
+        "measured_requirement_pass_delta": sum(
+            int(optimized.get("passed", 0)) - int(raw.get("passed", 0))
+            for optimized, raw in paired_requirement_receipts
+        ),
         "streamed_requests": sum(bool(e.get("streamed")) for e in entries),
         "incomplete_streams": sum(
             e.get("streamed") is True and e.get("stream_complete") is False for e in entries

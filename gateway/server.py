@@ -9,6 +9,8 @@ from http.server import BaseHTTPRequestHandler, ThreadingHTTPServer
 from urllib.parse import urlsplit
 
 from gateway.middleware import ShortCircuit
+from gateway.receipts import response_text
+from gateway.requirements import evaluate_requirements, extract_requirements
 from gateway.usage import StreamUsageAccumulator, extract_usage
 
 
@@ -83,16 +85,17 @@ class _GatewayHandler(BaseHTTPRequestHandler):
 
         request_chars = 0
         response_chars = 0
-        self._extra = {}
+        self._extra = {"path": self.path}
         try:
             content_length = int(self.headers.get("Content-Length", "0"))
             raw_request = self.rfile.read(content_length)
             original_chars = len(raw_request.decode("utf-8"))
-            original_body = json.loads(raw_request)
-            self._extra = {
-                "path": self.path,
-                "model": original_body.get("model"),
-            }
+            original_body, requirements = extract_requirements(json.loads(raw_request))
+            if requirements:
+                original_chars = len(json.dumps(original_body, ensure_ascii=False))
+            self._extra["model"] = original_body.get("model")
+            if requirements:
+                self._extra["requirement_contracts"] = len(requirements)
             body = original_body
             applied_middlewares = []
             short_circuit = None
@@ -125,7 +128,7 @@ class _GatewayHandler(BaseHTTPRequestHandler):
             else:
                 self._extra["upstream_called"] = True
                 if body.get("stream") is True:
-                    status, response_chars, usage, complete = self._stream_upstream(
+                    status, response_chars, usage, output_text, complete = self._stream_upstream(
                         optimized_payload
                     )
                     self._extra.update({
@@ -133,6 +136,9 @@ class _GatewayHandler(BaseHTTPRequestHandler):
                     })
                     if usage is not None:
                         self._extra["usage"] = usage
+                    requirement_receipt = evaluate_requirements(output_text, requirements)
+                    if requirement_receipt is not None:
+                        self._extra["requirements"] = requirement_receipt
                     return
                 status, response = self._upstream(optimized_payload)
                 usage = extract_usage(response)
@@ -143,8 +149,6 @@ class _GatewayHandler(BaseHTTPRequestHandler):
                 # unoptimized original, so savings always ship with quality evidence.
                 shadow = self.server.shadow
                 if optimized and shadow is not None and shadow.should_sample(original_body):
-                    from gateway.receipts import response_text
-
                     try:
                         _, raw_response = self._upstream(
                             json.dumps(original_body, ensure_ascii=False)
@@ -155,6 +159,11 @@ class _GatewayHandler(BaseHTTPRequestHandler):
                         self._extra["shadow"] = shadow.judge(
                             response_text(raw_response), response_text(response)
                         )
+                        shadow_requirements = evaluate_requirements(
+                            response_text(raw_response), requirements
+                        )
+                        if shadow_requirements is not None:
+                            self._extra["shadow_requirements"] = shadow_requirements
                     except (
                         TimeoutError,
                         socket.timeout,
@@ -175,6 +184,9 @@ class _GatewayHandler(BaseHTTPRequestHandler):
 
             for middleware, middleware_input in reversed(applied_middlewares):
                 response = middleware.after_response(middleware_input, response)
+            requirement_receipt = evaluate_requirements(response_text(response), requirements)
+            if requirement_receipt is not None:
+                self._extra["requirements"] = requirement_receipt
             response_bytes = self._write_json(status, response)
             self._extra["status"] = status
             response_chars = len(response_bytes.decode("utf-8"))
@@ -279,7 +291,8 @@ class _GatewayHandler(BaseHTTPRequestHandler):
                 ConnectionAbortedError,
             ):
                 complete = False
-            return upstream.status, response_chars, usage.finish(), complete
+            normalized_usage = usage.finish()
+            return upstream.status, response_chars, normalized_usage, usage.text(), complete
 
     def do_GET(self):
         if self.path in {"/health", "/status"}:
