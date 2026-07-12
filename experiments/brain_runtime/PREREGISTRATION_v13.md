@@ -1,7 +1,7 @@
 # Pre-Registration v13: Five-arm deterministic input compiler — the cost/quality gate
 
 Registered: 2026-07-11 by Fable (Claude Fable 5)
-Status: Registered (no v13 hidden read yet)
+Status: **read once (hidden 1009/1013/1019)** — H-v13b CONFIRMED (attention 1.000 > llm_rewrite 0.900, CIs disjoint, ~0.01% cost); H-v13c null held (0.400=0.400); H-v13a FAILED (combined 0.867, all 8 misses attribution-formatting). See HYP-36.
 Provenance: user delegated the compiler phase to Codex; Codex built the typed IR (8ed834e), the
 five-arm harness (c890424), the embedding cache (e098d5d), and ran EXPLORATORY dev only (hidden
 untouched — dev: raw .35 / structured .35 / attention 1.00 / combined 1.00 answer, .95 e2e /
