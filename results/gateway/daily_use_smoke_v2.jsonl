@@ -1,0 +1,1 @@
+{"ts":1783834244.8596966,"request_chars":152,"response_chars":1738,"latency_ms":3974.4115000000875,"middlewares":[],"path":"/api/chat","model":"qwen3:8b","request_chars_original":340,"optimized":false,"upstream_called":true,"usage":{"input_tokens":19,"output_tokens":291,"total_tokens":310},"status":200}
