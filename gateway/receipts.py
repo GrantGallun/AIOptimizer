@@ -44,11 +44,22 @@ def _cosine(left: list[float], right: list[float]) -> float:
 
 
 def response_text(response: dict[str, Any]) -> str:
-    """The assistant text of an OpenAI chat completion or an Ollama /api/generate reply."""
+    """Extract assistant text from OpenAI, Anthropic, or Ollama response shapes."""
     try:
         return str(response["choices"][0]["message"]["content"])
     except (KeyError, IndexError, TypeError):
         pass
+    content = response.get("content")
+    if isinstance(content, list):
+        texts = [
+            block.get("text")
+            for block in content
+            if isinstance(block, dict)
+            and block.get("type") == "text"
+            and isinstance(block.get("text"), str)
+        ]
+        if texts:
+            return "\n".join(texts)
     value = response.get("response")
     return str(value) if isinstance(value, str) else ""
 

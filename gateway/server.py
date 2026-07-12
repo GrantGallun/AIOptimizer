@@ -5,6 +5,7 @@ import time
 import urllib.error
 import urllib.request
 from http.server import BaseHTTPRequestHandler, ThreadingHTTPServer
+from urllib.parse import urlsplit
 
 from gateway.middleware import ShortCircuit
 
@@ -45,11 +46,20 @@ class _GatewayHandler(BaseHTTPRequestHandler):
 
     # OpenAI-compatible chat plus Ollama's native generate, so local research/agent
     # traffic (OllamaClient uses /api/generate) can flow through the same pipeline.
-    PROXIED_PATHS = ("/v1/chat/completions", "/api/generate", "/api/chat")
+    PROXIED_PATHS = ("/v1/chat/completions", "/v1/messages", "/api/generate", "/api/chat")
+    FORWARDED_REQUEST_HEADERS = (
+        "Authorization",
+        "Accept",
+        "Anthropic-Version",
+        "Anthropic-Beta",
+        "OpenAI-Organization",
+        "OpenAI-Project",
+        "X-API-Key",
+    )
 
     def do_POST(self):
         started = time.perf_counter()
-        if self.path not in self.PROXIED_PATHS:
+        if urlsplit(self.path).path not in self.PROXIED_PATHS:
             response_bytes = self._write_json(
                 404, {"error": {"message": "Not found", "type": "not_found"}}
             )
@@ -98,6 +108,10 @@ class _GatewayHandler(BaseHTTPRequestHandler):
                 response = short_circuit.response
                 self._extra["cached"] = True
             else:
+                if body.get("stream") is True:
+                    status, response_chars = self._stream_upstream(optimized_payload)
+                    self._extra.update({"status": status, "streamed": True})
+                    return
                 status, response = self._upstream(optimized_payload)
 
                 # Receipts: judge a deterministic sample of optimized requests against the
@@ -133,7 +147,7 @@ class _GatewayHandler(BaseHTTPRequestHandler):
         upstream_request = urllib.request.Request(
             self.server.upstream_url + self.path,
             data=payload.encode("utf-8"),
-            headers={"Content-Type": "application/json"},
+            headers=self._upstream_headers(),
             method="POST",
         )
         try:
@@ -141,6 +155,42 @@ class _GatewayHandler(BaseHTTPRequestHandler):
                 return upstream_response.status, json.loads(upstream_response.read())
         except urllib.error.HTTPError as error:
             return error.code, json.loads(error.read())
+
+    def _upstream_headers(self):
+        headers = {"Content-Type": "application/json"}
+        for name in self.FORWARDED_REQUEST_HEADERS:
+            value = self.headers.get(name)
+            if value is not None:
+                headers[name] = value
+        return headers
+
+    def _stream_upstream(self, payload):
+        """Relay an upstream event/JSON stream without buffering or decoding it."""
+        upstream_request = urllib.request.Request(
+            self.server.upstream_url + self.path,
+            data=payload.encode("utf-8"),
+            headers=self._upstream_headers(),
+            method="POST",
+        )
+        try:
+            upstream = urllib.request.urlopen(upstream_request)
+        except urllib.error.HTTPError as error:
+            upstream = error
+        with upstream:
+            self.send_response(upstream.status)
+            content_type = upstream.headers.get("Content-Type", "application/octet-stream")
+            self.send_header("Content-Type", content_type)
+            self.send_header("Cache-Control", "no-cache")
+            self.end_headers()
+            response_chars = 0
+            while True:
+                chunk = upstream.read(64 * 1024)
+                if not chunk:
+                    break
+                self.wfile.write(chunk)
+                self.wfile.flush()
+                response_chars += len(chunk)
+            return upstream.status, response_chars
 
     def do_GET(self):
         if self.path in {"/health", "/status"}:

@@ -68,8 +68,10 @@ class ShadowJudgeTests(unittest.TestCase):
 class ShadowEndToEndTests(unittest.TestCase):
     def test_optimized_request_produces_shadow_receipt(self):
         upstream = ThreadingHTTPServer(("127.0.0.1", 0), _EchoUpstream)
-        threading.Thread(target=upstream.serve_forever, daemon=True).start()
-        ledger_path = Path(tempfile.mkdtemp()) / "ledger.jsonl"
+        upstream_thread = threading.Thread(target=upstream.serve_forever, daemon=True)
+        upstream_thread.start()
+        temporary_directory = tempfile.TemporaryDirectory()
+        ledger_path = Path(temporary_directory.name) / "ledger.jsonl"
         gateway = GatewayServer(
             f"http://127.0.0.1:{upstream.server_address[1]}",
             middlewares=(_TrimMiddleware(),),
@@ -77,7 +79,8 @@ class ShadowEndToEndTests(unittest.TestCase):
             port=0,
             shadow=ShadowJudge(rate=1.0, embed_fn=_embed),
         )
-        threading.Thread(target=gateway.serve_forever, daemon=True).start()
+        gateway_thread = threading.Thread(target=gateway.serve_forever, daemon=True)
+        gateway_thread.start()
         try:
             request = urllib.request.Request(
                 f"http://127.0.0.1:{gateway.server_address[1]}/v1/chat/completions",
@@ -120,7 +123,12 @@ class ShadowEndToEndTests(unittest.TestCase):
             self.assertEqual(len(summary["quality_parity_ci"]), 2)
         finally:
             gateway.shutdown()
+            gateway.server_close()
+            gateway_thread.join()
             upstream.shutdown()
+            upstream.server_close()
+            upstream_thread.join()
+            temporary_directory.cleanup()
 
     def test_report_aggregates_adaptive_routes_and_embedding_cache(self):
         with tempfile.TemporaryDirectory() as directory:

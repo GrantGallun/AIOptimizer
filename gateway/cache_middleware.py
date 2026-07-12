@@ -35,7 +35,7 @@ class ExactCacheMiddleware:
         temperature = body.get("temperature")
         if temperature is None:
             temperature = (body.get("options") or {}).get("temperature")
-        return bool(temperature)
+        return bool(temperature) or body.get("stream") is True
 
     def before_request(self, body):
         if self._is_sampled(body):
@@ -70,4 +70,5 @@ class ExactCacheMiddleware:
                 "max_entries": self.max_entries,
                 "ttl_seconds": self.ttl_seconds,
                 "sampled_requests_bypass": True,
+                "streaming_requests_bypass": True,
             }

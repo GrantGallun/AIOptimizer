@@ -137,6 +137,13 @@ if __name__ == "__main__":
 
 
 class SampledRequestBypassTests(unittest.TestCase):
+    def test_streaming_requests_are_never_cached(self):
+        cache = ExactCacheMiddleware()
+        body = {"messages": [], "stream": True}
+        cache.after_response(body, {"should": "not-store"})
+
+        self.assertIs(cache.before_request(body), body)
+
     def test_sampled_requests_are_never_cached(self):
         from gateway.cache_middleware import ExactCacheMiddleware
         from gateway.middleware import ShortCircuit

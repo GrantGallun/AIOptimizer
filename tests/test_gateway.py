@@ -10,15 +10,25 @@ from pathlib import Path
 from gateway.ledger import JsonlLedger
 from gateway.cache_middleware import ExactCacheMiddleware
 from gateway.server import GatewayServer
+from gateway.receipts import response_text
 
 
 class _StubHandler(BaseHTTPRequestHandler):
     requests = []
+    headers_seen = []
 
     def do_POST(self):
         length = int(self.headers["Content-Length"])
         body = json.loads(self.rfile.read(length))
         type(self).requests.append((self.path, body))
+        type(self).headers_seen.append(dict(self.headers.items()))
+        if body.get("stream"):
+            payload = b'data: {"delta":"one"}\n\ndata: [DONE]\n\n'
+            self.send_response(200)
+            self.send_header("Content-Type", "text/event-stream")
+            self.end_headers()
+            self.wfile.write(payload)
+            return
         response = {"id": "chatcmpl-test", "object": "chat.completion", "tag": body.get("tag")}
         payload = json.dumps(response).encode("utf-8")
         self.send_response(200)
@@ -53,6 +63,7 @@ class _ReceiptMiddleware(_TagMiddleware):
 class GatewayTests(unittest.TestCase):
     def setUp(self):
         _StubHandler.requests = []
+        _StubHandler.headers_seen = []
         self.upstream = ThreadingHTTPServer(("127.0.0.1", 0), _StubHandler)
         self.upstream_thread = threading.Thread(target=self.upstream.serve_forever, daemon=True)
         self.upstream_thread.start()
@@ -92,6 +103,69 @@ class GatewayTests(unittest.TestCase):
             {"id": "chatcmpl-test", "object": "chat.completion", "tag": None},
         )
         self.assertEqual(_StubHandler.requests[0][0], "/v1/chat/completions")
+
+    def test_anthropic_response_text_supports_multiple_text_blocks(self):
+        response = {
+            "content": [
+                {"type": "text", "text": "first"},
+                {"type": "tool_use", "id": "tool-1"},
+                {"type": "text", "text": "second"},
+            ]
+        }
+
+        self.assertEqual(response_text(response), "first\nsecond")
+
+    def test_query_string_and_provider_headers_are_forwarded(self):
+        url = self._start_gateway()
+        request = urllib.request.Request(
+            url + "/v1/messages?beta=true",
+            data=json.dumps({"model": "claude-test", "messages": []}).encode(),
+            headers={
+                "Content-Type": "application/json",
+                "Authorization": "Bearer test-token",
+                "X-Api-Key": "test-key",
+                "Anthropic-Version": "2023-06-01",
+            },
+            method="POST",
+        )
+
+        with urllib.request.urlopen(request) as response:
+            json.loads(response.read())
+
+        self.assertEqual(_StubHandler.requests[0][0], "/v1/messages?beta=true")
+        seen = {key.lower(): value for key, value in _StubHandler.headers_seen[0].items()}
+        self.assertEqual(seen["authorization"], "Bearer test-token")
+        self.assertEqual(seen["x-api-key"], "test-key")
+        self.assertEqual(seen["anthropic-version"], "2023-06-01")
+
+    def test_stream_is_relayed_and_recorded_without_cache(self):
+        with tempfile.TemporaryDirectory() as directory:
+            ledger_path = Path(directory) / "stream.jsonl"
+            url = self._start_gateway(
+                middlewares=(ExactCacheMiddleware(),), ledger=JsonlLedger(ledger_path)
+            )
+            body = {"model": "test", "messages": [], "stream": True}
+
+            responses = []
+            for _ in range(2):
+                request = urllib.request.Request(
+                    url + "/v1/chat/completions",
+                    data=json.dumps(body).encode(),
+                    headers={"Content-Type": "application/json"},
+                    method="POST",
+                )
+                with urllib.request.urlopen(request) as response:
+                    self.assertEqual(response.headers.get_content_type(), "text/event-stream")
+                    responses.append(response.read())
+
+            self.assertEqual(responses[0], b'data: {"delta":"one"}\n\ndata: [DONE]\n\n')
+            self.assertEqual(responses[0], responses[1])
+            self.assertEqual(len(_StubHandler.requests), 2)
+            entries = [json.loads(line) for line in ledger_path.read_text().splitlines()]
+            self.assertEqual(len(entries), 2)
+            self.assertTrue(all(entry["streamed"] for entry in entries))
+            self.assertTrue(all(entry["status"] == 200 for entry in entries))
+            self.assertTrue(all(entry["response_chars"] == len(responses[0]) for entry in entries))
 
     def test_middlewares_run_before_in_order_and_after_in_reverse(self):
         events = []
