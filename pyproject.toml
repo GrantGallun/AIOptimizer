@@ -1,0 +1,36 @@
+[build-system]
+requires = ["setuptools>=68"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "aioptimizer"
+version = "0.1.0"
+description = "A local LLM gateway with receipts: every optimization ships behind a pre-registered quality gate, and shadow-A/B reports prove the quality you kept, not just the cost you saved."
+readme = "README.md"
+requires-python = ">=3.10"
+license = { file = "LICENSE" }
+authors = [{ name = "Grant Gallun" }]
+keywords = ["llm", "gateway", "proxy", "ollama", "context", "optimization", "caching"]
+classifiers = [
+    "Development Status :: 4 - Beta",
+    "Intended Audience :: Developers",
+    "Programming Language :: Python :: 3",
+    "Topic :: Scientific/Engineering :: Artificial Intelligence",
+]
+# The core proxy, caching, receipts ledger, and requirement contracts are stdlib-only.
+dependencies = []
+
+[project.optional-dependencies]
+# Encoder-backed features: context compaction, attention organization, semantic cache,
+# shadow quality judging. Everything else works without these.
+encoder = ["torch", "transformers"]
+
+[project.scripts]
+aioptimizer = "aioptimizer.__main__:main"
+aioptimizer-report = "aioptimizer.report:main"
+
+[project.urls]
+Repository = "https://github.com/GrantGallun/AIOptimizer"
+
+[tool.setuptools.packages.find]
+include = ["aioptimizer*"]
