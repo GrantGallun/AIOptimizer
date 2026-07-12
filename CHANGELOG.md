@@ -1,6 +1,12 @@
 # Changelog
 
-## v0.1.1 — first installable release (pending)
+## v0.1.2 — packaging fix
+
+- Clean-install crash fixed: `ContextCompactor` moved into `aioptimizer.selection` (the last
+  product→research import, invisible in-repo, fatal in a clean venv); a packaging-isolation test
+  now forbids the whole class of bug.
+
+## v0.1.1 — first installable release
 
 - **Packaging**: `pip install aioptimizer` — stdlib-only core (proxy, exact cache, receipts
   ledger, requirement contracts); `aioptimizer[encoder]` extra enables the encoder-backed stages

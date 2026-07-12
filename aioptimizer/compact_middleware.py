@@ -16,7 +16,7 @@ from __future__ import annotations
 import json
 from typing import Any, Callable
 
-from agent_bus.context import ContextCompactor
+from aioptimizer.selection import ContextCompactor
 from .encoder import embed_texts
 
 DEFAULT_BUDGET_CHARS = 12_000

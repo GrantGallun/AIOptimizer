@@ -15,7 +15,7 @@ from collections import OrderedDict
 from dataclasses import dataclass
 from typing import Any, Callable, Iterable, Mapping, Sequence
 
-from agent_bus.context import ContextCompactor
+from aioptimizer.selection import ContextCompactor
 
 from .encoder import EmbedFn, as_vector, cosine, embed_texts
 

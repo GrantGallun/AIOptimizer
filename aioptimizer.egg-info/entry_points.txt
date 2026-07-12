@@ -1,0 +1,3 @@
+[console_scripts]
+aioptimizer = aioptimizer.__main__:main
+aioptimizer-report = aioptimizer.report:main
