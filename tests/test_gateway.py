@@ -23,13 +23,23 @@ class _StubHandler(BaseHTTPRequestHandler):
         type(self).requests.append((self.path, body))
         type(self).headers_seen.append(dict(self.headers.items()))
         if body.get("stream"):
-            payload = b'data: {"delta":"one"}\n\ndata: [DONE]\n\n'
+            payload = (
+                b'data: {"delta":"one"}\n\n'
+                b'data: {"usage":{"prompt_tokens":9,"completion_tokens":2,'
+                b'"total_tokens":11}}\n\ndata: [DONE]\n\n'
+            )
             self.send_response(200)
             self.send_header("Content-Type", "text/event-stream")
             self.end_headers()
             self.wfile.write(payload)
             return
         response = {"id": "chatcmpl-test", "object": "chat.completion", "tag": body.get("tag")}
+        if body.get("usage_test"):
+            response["usage"] = {
+                "prompt_tokens": 15,
+                "completion_tokens": 3,
+                "total_tokens": 18,
+            }
         payload = json.dumps(response).encode("utf-8")
         self.send_response(200)
         self.send_header("Content-Type", "application/json")
@@ -158,7 +168,8 @@ class GatewayTests(unittest.TestCase):
                     self.assertEqual(response.headers.get_content_type(), "text/event-stream")
                     responses.append(response.read())
 
-            self.assertEqual(responses[0], b'data: {"delta":"one"}\n\ndata: [DONE]\n\n')
+            self.assertIn(b'data: {"delta":"one"}', responses[0])
+            self.assertIn(b'data: [DONE]', responses[0])
             self.assertEqual(responses[0], responses[1])
             self.assertEqual(len(_StubHandler.requests), 2)
             entries = [json.loads(line) for line in ledger_path.read_text().splitlines()]
@@ -166,6 +177,29 @@ class GatewayTests(unittest.TestCase):
             self.assertTrue(all(entry["streamed"] for entry in entries))
             self.assertTrue(all(entry["status"] == 200 for entry in entries))
             self.assertTrue(all(entry["response_chars"] == len(responses[0]) for entry in entries))
+            self.assertTrue(all(entry["usage"] == {
+                "input_tokens": 9, "output_tokens": 2, "total_tokens": 11
+            } for entry in entries))
+
+    def test_json_usage_is_recorded_only_when_upstream_is_called(self):
+        with tempfile.TemporaryDirectory() as directory:
+            ledger_path = Path(directory) / "usage.jsonl"
+            url = self._start_gateway(
+                middlewares=(ExactCacheMiddleware(),), ledger=JsonlLedger(ledger_path)
+            )
+            body = {"model": "test", "messages": [], "usage_test": True}
+
+            self._post(url, body)
+            self._post(url, body)
+
+            entries = [json.loads(line) for line in ledger_path.read_text().splitlines()]
+            self.assertEqual(entries[0]["usage"], {
+                "input_tokens": 15, "output_tokens": 3, "total_tokens": 18
+            })
+            self.assertTrue(entries[0]["upstream_called"])
+            self.assertNotIn("usage", entries[1])
+            self.assertNotIn("upstream_called", entries[1])
+            self.assertTrue(entries[1]["cached"])
 
     def test_middlewares_run_before_in_order_and_after_in_reverse(self):
         events = []

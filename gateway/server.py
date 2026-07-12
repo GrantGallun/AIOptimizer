@@ -8,6 +8,7 @@ from http.server import BaseHTTPRequestHandler, ThreadingHTTPServer
 from urllib.parse import urlsplit
 
 from gateway.middleware import ShortCircuit
+from gateway.usage import StreamUsageAccumulator, extract_usage
 
 
 class GatewayServer(ThreadingHTTPServer):
@@ -108,11 +109,17 @@ class _GatewayHandler(BaseHTTPRequestHandler):
                 response = short_circuit.response
                 self._extra["cached"] = True
             else:
+                self._extra["upstream_called"] = True
                 if body.get("stream") is True:
-                    status, response_chars = self._stream_upstream(optimized_payload)
+                    status, response_chars, usage = self._stream_upstream(optimized_payload)
                     self._extra.update({"status": status, "streamed": True})
+                    if usage is not None:
+                        self._extra["usage"] = usage
                     return
                 status, response = self._upstream(optimized_payload)
+                usage = extract_usage(response)
+                if usage is not None:
+                    self._extra["usage"] = usage
 
                 # Receipts: judge a deterministic sample of optimized requests against the
                 # unoptimized original, so savings always ship with quality evidence.
@@ -121,6 +128,9 @@ class _GatewayHandler(BaseHTTPRequestHandler):
                     from gateway.receipts import response_text
 
                     _, raw_response = self._upstream(json.dumps(original_body, ensure_ascii=False))
+                    raw_usage = extract_usage(raw_response)
+                    if raw_usage is not None:
+                        self._extra["shadow_usage"] = raw_usage
                     self._extra["shadow"] = shadow.judge(
                         response_text(raw_response), response_text(response)
                     )
@@ -183,6 +193,7 @@ class _GatewayHandler(BaseHTTPRequestHandler):
             self.send_header("Cache-Control", "no-cache")
             self.end_headers()
             response_chars = 0
+            usage = StreamUsageAccumulator()
             while True:
                 chunk = upstream.read(64 * 1024)
                 if not chunk:
@@ -190,7 +201,8 @@ class _GatewayHandler(BaseHTTPRequestHandler):
                 self.wfile.write(chunk)
                 self.wfile.flush()
                 response_chars += len(chunk)
-            return upstream.status, response_chars
+                usage.feed(chunk)
+            return upstream.status, response_chars, usage.finish()
 
     def do_GET(self):
         if self.path in {"/health", "/status"}:

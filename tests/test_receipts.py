@@ -136,6 +136,9 @@ class ShadowEndToEndTests(unittest.TestCase):
             rows = [
                 {"request_chars": 10, "response_chars": 2, "latency_ms": 1,
                  "optimized": True, "request_chars_original": 20,
+                 "upstream_called": True,
+                 "usage": {"input_tokens": 10, "output_tokens": 2, "total_tokens": 12},
+                 "shadow_usage": {"input_tokens": 10, "output_tokens": 3, "total_tokens": 13},
                  "middleware_receipts": {"AttentionContextMiddleware": {
                      "route": "attention", "applied": True,
                      "embedding_cache_hits": 7, "embedding_cache_misses": 3}}},
@@ -152,6 +155,16 @@ class ShadowEndToEndTests(unittest.TestCase):
         self.assertEqual(summary["attention_applied_requests"], 1)
         self.assertEqual(summary["embedding_cache_hits"], 11)
         self.assertEqual(summary["embedding_cache_misses"], 4)
+        self.assertEqual(summary["upstream_requests"], 1)
+        self.assertEqual(summary["usage_receipts"], 1)
+        self.assertEqual(summary["usage_coverage_rate"], 1.0)
+        self.assertEqual(summary["input_tokens"], 10)
+        self.assertEqual(summary["output_tokens"], 2)
+        self.assertEqual(summary["total_tokens"], 12)
+        self.assertEqual(summary["shadow_total_tokens"], 13)
+        self.assertEqual(summary["provider_total_tokens_consumed"], 25)
+        self.assertEqual(summary["paired_usage_receipts"], 1)
+        self.assertEqual(summary["measured_input_token_savings"], 0)
 
 
 if __name__ == "__main__":

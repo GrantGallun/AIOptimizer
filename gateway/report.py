@@ -37,6 +37,16 @@ def summarize(ledger_path: str) -> dict[str, Any]:
         if "AttentionContextMiddleware" in e.get("middleware_receipts", {})
     ]
     latencies = sorted(float(e.get("latency_ms", 0.0)) for e in entries)
+    primary_usage = [e["usage"] for e in entries if isinstance(e.get("usage"), dict)]
+    shadow_usage = [e["shadow_usage"] for e in entries if isinstance(e.get("shadow_usage"), dict)]
+    paired_usage = [
+        (e["usage"], e["shadow_usage"])
+        for e in entries
+        if isinstance(e.get("usage"), dict) and isinstance(e.get("shadow_usage"), dict)
+    ]
+
+    def token_sum(rows: list[dict[str, Any]], field: str) -> int:
+        return sum(int(row.get(field, 0)) for row in rows)
 
     def percentile(fraction: float) -> float:
         if not latencies:
@@ -64,6 +74,27 @@ def summarize(ledger_path: str) -> dict[str, Any]:
         "requests_by_path": counts("path"),
         "requests_by_model": counts("model"),
         "responses_by_status": counts("status"),
+        "upstream_requests": sum(bool(e.get("upstream_called")) for e in entries),
+        "usage_receipts": len(primary_usage),
+        "usage_coverage_rate": (
+            len(primary_usage) / sum(bool(e.get("upstream_called")) for e in entries)
+            if any(e.get("upstream_called") for e in entries)
+            else None
+        ),
+        "input_tokens": token_sum(primary_usage, "input_tokens"),
+        "output_tokens": token_sum(primary_usage, "output_tokens"),
+        "total_tokens": token_sum(primary_usage, "total_tokens"),
+        "shadow_input_tokens": token_sum(shadow_usage, "input_tokens"),
+        "shadow_output_tokens": token_sum(shadow_usage, "output_tokens"),
+        "shadow_total_tokens": token_sum(shadow_usage, "total_tokens"),
+        "provider_total_tokens_consumed": (
+            token_sum(primary_usage, "total_tokens") + token_sum(shadow_usage, "total_tokens")
+        ),
+        "paired_usage_receipts": len(paired_usage),
+        "measured_input_token_savings": sum(
+            int(raw.get("input_tokens", 0)) - int(optimized.get("input_tokens", 0))
+            for optimized, raw in paired_usage
+        ),
         "attention_route_counts": dict(sorted(Counter(
             str(receipt.get("route") or "not_evaluated") for receipt in attention_receipts
         ).items())),

@@ -25,3 +25,12 @@ The proxy accepts OpenAI chat (`/v1/chat/completions`), Anthropic messages
 version headers are forwarded upstream. JSON and streamed responses are supported;
 streamed requests bypass the exact-response cache and are recorded with
 `"streamed": true` in the ledger.
+
+When the provider reports usage, receipts normalize OpenAI (`prompt_tokens` /
+`completion_tokens`), Anthropic (`input_tokens` / `output_tokens`), and Ollama
+(`prompt_eval_count` / `eval_count`) into input, output, and total token counts.
+The report shows token totals, shadow-evaluation overhead, and usage coverage;
+providers that omit usage remain visible as uncovered upstream requests. When
+both optimized and raw shadow arms report usage, it also reports directly
+measured input-token savings. `provider_total_tokens_consumed` includes shadow
+overhead so quality measurement is never presented as free.
