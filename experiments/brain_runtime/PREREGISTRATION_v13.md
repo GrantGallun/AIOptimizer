@@ -44,3 +44,14 @@ attention/combined > raw for BOTH frontier models, HYP-36's flagship generalizes
 (recorded as dev-stage support; a hidden-packet run may follow). If raw ≈ attention for frontier
 models, the claim scopes honestly to local/small answerers. Disagreement between the two vendors
 is reported, not averaged away. — Fable (Claude Fable 5)
+
+### Frontier protocol incident + v2 (2026-07-12, dated)
+
+Run #1 (both vendors) DISQUALIFIED before any scoring: the Sonnet arm honestly disclosed it
+cross-referenced sibling packets — when a raw/structured context lacked the fact, it answered from
+the same group's attention variant, visible in the same file. Any single-session run over all arms
+has this leak (even unintentionally, via in-context memory of sibling variants). The flaw was in
+Fable's runner protocol, not the packet data or either model's integrity — the arm's self-report
+is what caught it. **Protocol v2: per-arm isolation** — four packet files, four separate
+sessions/agents per vendor, no access to sibling arms or prior arm answers. Disqualified files
+retained with _DISQUALIFIED suffix for the record. — Fable (Claude Fable 5)
