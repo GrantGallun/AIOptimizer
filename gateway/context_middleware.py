@@ -23,11 +23,15 @@ class AttentionContextMiddleware:
         budget_chars: int = 12_000,
         compiler: ConversationCompiler | None = None,
         deny_patterns: Sequence[str] = DEFAULT_DENY_PATTERNS,
+        min_relevance: float = 0.5,
     ):
         if budget_chars <= 0:
             raise ValueError("budget_chars must be positive")
         self.budget_chars = budget_chars
         self.compiler = compiler or ConversationCompiler(deny_patterns=deny_patterns)
+        if not -1.0 <= min_relevance <= 1.0:
+            raise ValueError("min_relevance must be between -1 and 1")
+        self.min_relevance = min_relevance
         self._local = threading.local()
 
     def _set_receipt(self, **values: Any) -> None:
@@ -82,6 +86,24 @@ class AttentionContextMiddleware:
             self._set_receipt(original_chars=original_chars, integrity_ok=False)
             return body
         cache_before = self.compiler.embedding_cache_stats()
+        mode, relevance = self.compiler.choose_context_mode(
+            compiled, query=latest_user["content"], min_relevance=self.min_relevance
+        )
+        if mode == "raw":
+            cache_after = self.compiler.embedding_cache_stats()
+            self._local.receipt = {
+                "applied": False,
+                "route": "raw",
+                "route_reason": "low_relevance",
+                "relevance": relevance,
+                "original_chars": original_chars,
+                "compiler_fingerprint": integrity["fingerprint"],
+                "integrity_ok": True,
+                "active_request_preserved": True,
+                "embedding_cache_hits": cache_after["hits"] - cache_before["hits"],
+                "embedding_cache_misses": cache_after["misses"] - cache_before["misses"],
+            }
+            return body
         organized = self.compiler.organize(
             compiled,
             query=latest_user["content"],
@@ -111,6 +133,9 @@ class AttentionContextMiddleware:
         cache_after = self.compiler.embedding_cache_stats()
         self._local.receipt = {
             "applied": True,
+            "route": "attention",
+            "route_reason": "relevance_gate_passed",
+            "relevance": relevance,
             "original_chars": original_chars,
             "rewritten_chars": len(json.dumps(rewritten, ensure_ascii=False)),
             "compiler_fingerprint": integrity["fingerprint"],

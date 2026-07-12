@@ -225,6 +225,24 @@ class ConversationCompilerTests(unittest.TestCase):
         with self.assertRaisesRegex(ValueError, "non-negative"):
             ConversationCompiler(embed_cache_entries=-1)
 
+    def test_relevance_router_preserves_vague_requests_and_selects_addressable_ones(self):
+        compiler = ConversationCompiler(embed_fn=_embed)
+        compiled = compiler.compile(self.messages)
+
+        focused, focused_profile = compiler.choose_context_mode(
+            compiled, query="cache latency", min_relevance=0.5
+        )
+        vague, vague_profile = compiler.choose_context_mode(
+            compiled, query="what stands out?", min_relevance=0.5
+        )
+
+        self.assertEqual(focused, "attention")
+        self.assertGreaterEqual(focused_profile["peak"], 0.5)
+        self.assertEqual(vague, "raw")
+        self.assertLess(vague_profile["peak"], 0.5)
+        with self.assertRaisesRegex(ValueError, "between"):
+            compiler.choose_context_mode(compiled, query="x", min_relevance=2.0)
+
 
 if __name__ == "__main__":
     unittest.main()

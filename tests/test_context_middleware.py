@@ -39,6 +39,7 @@ class AttentionContextMiddlewareTests(unittest.TestCase):
         self.assertLess(len(json.dumps(out)), len(json.dumps(self.body)))
         receipt = self.middleware.receipt_metadata()
         self.assertTrue(receipt["applied"])
+        self.assertEqual(receipt["route"], "attention")
         self.assertTrue(receipt["integrity_ok"])
         self.assertTrue(receipt["active_request_preserved"])
         self.assertTrue(receipt["compiler_fingerprint"].startswith("sha256:"))
@@ -54,6 +55,18 @@ class AttentionContextMiddlewareTests(unittest.TestCase):
     def test_response_is_unchanged(self):
         response = {"choices": [{"message": {"content": "ok"}}]}
         self.assertIs(self.middleware.after_response({}, response), response)
+
+    def test_vague_request_bypasses_attention_and_records_reason(self):
+        body = json.loads(json.dumps(self.body))
+        body["messages"][-1]["content"] = "What stands out?"
+        out = self.middleware.before_request(body)
+
+        self.assertIs(out, body)
+        receipt = self.middleware.receipt_metadata()
+        self.assertFalse(receipt["applied"])
+        self.assertEqual(receipt["route"], "raw")
+        self.assertEqual(receipt["route_reason"], "low_relevance")
+        self.assertLess(receipt["relevance"]["peak"], 0.5)
 
     def test_budget_must_be_positive(self):
         with self.assertRaisesRegex(ValueError, "positive"):

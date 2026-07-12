@@ -106,6 +106,42 @@ class ConversationCompiler:
                 "capacity": self._embed_cache_entries,
             }
 
+    def relevance_profile(
+        self, compiled: CompiledConversation, *, query: str
+    ) -> dict[str, float | int]:
+        """Deterministic retrieval-confidence profile excluding pinned request/instructions."""
+        pinned_ids = {record["id"] for record in self.pinned_records(compiled)}
+        records = [
+            record for record in self._public_records(compiled) if record["id"] not in pinned_ids
+        ]
+        if not records:
+            return {"candidates": 0, "peak": 0.0, "margin": 0.0, "mean": 0.0}
+        vectors = [
+            _as_vector(value)
+            for value in self._selector._embed([query] + [record["text"] for record in records])
+        ]
+        if len(vectors) != len(records) + 1:
+            raise ValueError("embed_fn must return one vector per input text")
+        scores = sorted(
+            (_cosine(vectors[0], vector) for vector in vectors[1:]), reverse=True
+        )
+        return {
+            "candidates": len(records),
+            "peak": round(scores[0], 6),
+            "margin": round(scores[0] - scores[1], 6) if len(scores) > 1 else round(scores[0], 6),
+            "mean": round(sum(scores) / len(scores), 6),
+        }
+
+    def choose_context_mode(
+        self, compiled: CompiledConversation, *, query: str, min_relevance: float = 0.5
+    ) -> tuple[str, dict[str, float | int]]:
+        """Use attention only when history has a strong semantic address for the request."""
+        if not -1.0 <= min_relevance <= 1.0:
+            raise ValueError("min_relevance must be between -1 and 1")
+        profile = self.relevance_profile(compiled, query=query)
+        mode = "attention" if float(profile["peak"]) >= min_relevance else "raw"
+        return mode, profile
+
     def _is_denied(self, text: str) -> bool:
         # Treat Markdown-style double hyphens as the single dash allowed by the
         # fixed policy pattern, while preserving the original text everywhere else.

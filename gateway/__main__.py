@@ -40,6 +40,7 @@ def main() -> None:
         help="Enable experimental attention reorganization (default: OFF).",
     )
     parser.add_argument("--attention-budget-chars", type=int, default=12_000)
+    parser.add_argument("--attention-min-relevance", type=float, default=0.5)
     args = parser.parse_args()
 
     middlewares = []
@@ -48,7 +49,10 @@ def main() -> None:
     if not args.no_compact:
         middlewares.append(CompactContextMiddleware(budget_chars=args.budget_chars))
     if args.attention_context:
-        middlewares.append(AttentionContextMiddleware(budget_chars=args.attention_budget_chars))
+        middlewares.append(AttentionContextMiddleware(
+            budget_chars=args.attention_budget_chars,
+            min_relevance=args.attention_min_relevance,
+        ))
 
     Path(args.ledger).parent.mkdir(parents=True, exist_ok=True)
     server = GatewayServer(
