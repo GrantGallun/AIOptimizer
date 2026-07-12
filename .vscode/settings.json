@@ -1,0 +1,5 @@
+{
+  "terminal.integrated.env.windows": {
+    "AIOPT_GATEWAY": "http://127.0.0.1:8800"
+  }
+}

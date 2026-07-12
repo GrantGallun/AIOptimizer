@@ -1,6 +1,9 @@
 # Python
 __pycache__/
 *.pyc
+
+# Folder-local AIOptimizer dogfooding runtime (config is tracked at repo root)
+.aioptimizer/
 *.pyo
 
 # Temp / lock files

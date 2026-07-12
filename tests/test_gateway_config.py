@@ -62,7 +62,8 @@ class GatewayConfigTests(unittest.TestCase):
         self.assertEqual(args.ledger, "persistent.jsonl")
 
     def test_middleware_order_preserves_original_cache_boundary(self):
-        args = parse_args(["--attention-context"])
+        # Keep this order test independent of an auto-loaded folder profile.
+        args = parse_args(["--attention-context", "--compact"])
         names = [type(middleware).__name__ for middleware in build_middlewares(args)]
         self.assertEqual(names, [
             "ExactCacheMiddleware", "AttentionContextMiddleware", "CompactContextMiddleware",

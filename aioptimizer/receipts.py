@@ -30,6 +30,9 @@ def response_text(response: dict[str, Any]) -> str:
         return str(response["choices"][0]["message"]["content"])
     except (KeyError, IndexError, TypeError):
         pass
+    message = response.get("message")
+    if isinstance(message, dict) and isinstance(message.get("content"), str):
+        return message["content"]
     content = response.get("content")
     if isinstance(content, list):
         texts = [

@@ -1,0 +1,13 @@
+{
+  "attention_budget_chars": 12000,
+  "attention_context": true,
+  "attention_min_relevance": 0.5,
+  "budget_chars": 12000,
+  "ledger": ".aioptimizer/development_ledger.jsonl",
+  "no_cache": false,
+  "no_compact": true,
+  "port": 8800,
+  "shadow_rate": 0.1,
+  "upstream": "http://127.0.0.1:11434",
+  "upstream_timeout_seconds": 300.0
+}

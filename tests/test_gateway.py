@@ -149,6 +149,12 @@ class GatewayTests(unittest.TestCase):
 
         self.assertEqual(response_text(response), "first\nsecond")
 
+    def test_ollama_chat_response_text_uses_message_content(self):
+        self.assertEqual(
+            response_text({"message": {"role": "assistant", "content": "ready"}}),
+            "ready",
+        )
+
     def test_query_string_and_provider_headers_are_forwarded(self):
         url = self._start_gateway()
         request = urllib.request.Request(

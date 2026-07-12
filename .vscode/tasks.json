@@ -1,0 +1,61 @@
+{
+  "version": "2.0.0",
+  "tasks": [
+    {
+      "label": "AIOptimizer: Start local gateway",
+      "type": "process",
+      "command": "python",
+      "args": [
+        "-u",
+        "-m",
+        "aioptimizer",
+        "--config",
+        "${workspaceFolder}\\aioptimizer.json"
+      ],
+      "options": {
+        "cwd": "${workspaceFolder}"
+      },
+      "isBackground": true,
+      "problemMatcher": {
+        "owner": "aioptimizer",
+        "pattern": {
+          "regexp": "^(.*)$",
+          "message": 1
+        },
+        "background": {
+          "activeOnStart": true,
+          "beginsPattern": "^AIOptimizer Gateway on ",
+          "endsPattern": "^middlewares: "
+        }
+      },
+      "presentation": {
+        "reveal": "always",
+        "panel": "dedicated",
+        "clear": true
+      }
+    },
+    {
+      "label": "AIOptimizer: Check health/status",
+      "type": "shell",
+      "command": "Invoke-RestMethod http://127.0.0.1:8800/status | ConvertTo-Json -Depth 8",
+      "options": {
+        "cwd": "${workspaceFolder}"
+      },
+      "problemMatcher": []
+    },
+    {
+      "label": "AIOptimizer: Show development receipts",
+      "type": "process",
+      "command": "python",
+      "args": [
+        "-m",
+        "aioptimizer.report",
+        "${workspaceFolder}\\.aioptimizer\\development_ledger.jsonl"
+      ],
+      "options": {
+        "cwd": "${workspaceFolder}"
+      },
+      "problemMatcher": []
+    }
+  ]
+}
