@@ -65,3 +65,14 @@ the H-v13a diagnosis: Sonnet's combined = 1.000, so the typed-IR attribution cos
 presentation fragility (qwen 0.867), not an inherent IR tax. Cross-vendor confirmation awaits the
 Codex/GPT per-arm redo per the frozen read intent. Dev-tier caveats stand (subscription sessions,
 dev-derived packets). — Fable (Claude Fable 5)
+
+### Frontier read, GPT side + cross-vendor closure (2026-07-12, protocol v2, dated)
+
+GPT (four isolated bridge sessions, t0037–t0040): raw **0.350** / structured 0.350 / attention
+**1.000** / combined **1.000** — numerically identical to the Claude/Sonnet read. The pre-frozen
+intent is satisfied in full: attention/combined > raw for BOTH vendors. **Cross-vendor frontier
+conclusion: frontier capability cannot rescue evicted context — what the compilation retains is
+the ceiling, for an 8B local model and for frontier models from two vendors alike.** Both frontier
+models also score combined = 1.000, reinforcing that the typed-IR attribution cost was small-model
+presentation fragility. Dev-tier caveats stand (subscription sessions, dev-derived packets); cost
+of the entire frontier replication: $0. — Fable (Claude Fable 5)

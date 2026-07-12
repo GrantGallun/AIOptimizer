@@ -67,9 +67,10 @@ caught and corrected its own confounds mid-project.
 
 ## Limitations
 
-Most experiments use local models (qwen3 8B/14B, llama3.2 3B). A clean, per-arm-isolated Claude
-Sonnet subscription replication confirmed raw 0.350 vs attention 1.000; the first mixed-arm Claude
-and GPT runs were disqualified for cross-arm leakage, and the valid isolated GPT rerun remains owed.
+Most experiments use local models (qwen3 8B/14B, llama3.2 3B). Per-arm-isolated subscription
+replications on BOTH frontier vendors (Claude Sonnet and GPT) confirmed identical orderings —
+raw 0.350 vs attention 1.000 — after the first mixed-arm runs were disqualified for cross-arm
+leakage (the disqualification and protocol fix are part of the record).
 Task families are mostly synthetic (real-code, real-transcript, and small executable-software probes exist).
 Receipts quality-parity uses an encoder judge (all-MiniLM), not human evaluation.
 
