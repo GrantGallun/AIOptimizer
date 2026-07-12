@@ -165,6 +165,10 @@ class ShadowEndToEndTests(unittest.TestCase):
         self.assertEqual(summary["provider_total_tokens_consumed"], 25)
         self.assertEqual(summary["paired_usage_receipts"], 1)
         self.assertEqual(summary["measured_input_token_savings"], 0)
+        self.assertEqual(summary["streamed_requests"], 0)
+        self.assertEqual(summary["incomplete_streams"], 0)
+        self.assertEqual(summary["shadow_failures"], 0)
+        self.assertEqual(summary["shadow_failure_types"], {})
 
 
 if __name__ == "__main__":

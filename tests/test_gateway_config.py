@@ -24,18 +24,34 @@ class GatewayConfigTests(unittest.TestCase):
             validate_config({"shadow_rate": 2.0})
         with self.assertRaisesRegex(ValueError, "boolean"):
             validate_config({"attention_context": "yes"})
+        with self.assertRaisesRegex(ValueError, "positive"):
+            validate_config({"upstream_timeout_seconds": 0})
 
     def test_config_overrides_defaults_and_cli_overrides_config(self):
         with tempfile.TemporaryDirectory() as directory:
             path = Path(directory) / "config.json"
-            path.write_text(json.dumps({"port": 9900, "attention_context": True}), encoding="utf-8")
+            path.write_text(json.dumps({
+                "port": 9900, "attention_context": True, "upstream_timeout_seconds": 42
+            }), encoding="utf-8")
             args = parse_args(["--config", str(path)])
             overridden = parse_args(["--config", str(path), "--port", "9911"])
             disabled = parse_args(["--config", str(path), "--no-attention-context"])
         self.assertEqual(args.port, 9900)
         self.assertTrue(args.attention_context)
+        self.assertEqual(args.upstream_timeout_seconds, 42)
         self.assertEqual(overridden.port, 9911)
         self.assertFalse(disabled.attention_context)
+
+    def test_cli_timeout_overrides_persistent_timeout(self):
+        with tempfile.TemporaryDirectory() as directory:
+            path = Path(directory) / "config.json"
+            path.write_text(
+                json.dumps({"upstream_timeout_seconds": 42}), encoding="utf-8"
+            )
+            args = parse_args([
+                "--config", str(path), "--upstream-timeout-seconds", "2.5"
+            ])
+        self.assertEqual(args.upstream_timeout_seconds, 2.5)
 
     def test_environment_selects_config_without_recreating_variables(self):
         with tempfile.TemporaryDirectory() as directory:

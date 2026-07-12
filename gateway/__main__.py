@@ -38,6 +38,8 @@ def parse_args(argv=None):
     parser.add_argument("--config", default=default_config, help="Persistent gateway JSON config.")
     parser.add_argument("--port", type=int, default=8800)
     parser.add_argument("--upstream", default="http://127.0.0.1:11434", help="Ollama base URL.")
+    parser.add_argument("--upstream-timeout-seconds", type=float, default=300.0,
+                        help="Connect/read timeout for each upstream operation.")
     parser.add_argument("--ledger", default="results/gateway/ledger.jsonl")
     parser.add_argument("--budget-chars", type=int, default=12_000, help="Compaction threshold.")
     parser.add_argument("--shadow-rate", type=float, default=0.2,
@@ -87,6 +89,7 @@ def main() -> None:
         ledger=JsonlLedger(args.ledger),
         port=args.port,
         shadow=ShadowJudge(rate=args.shadow_rate),
+        upstream_timeout=args.upstream_timeout_seconds,
     )
     active = ", ".join(type(m).__name__ for m in middlewares) or "(passthrough)"
     print(f"AIOptimizer Gateway on http://127.0.0.1:{args.port}/v1 -> {args.upstream}")
@@ -94,7 +97,9 @@ def main() -> None:
     try:
         server.serve_forever()
     except KeyboardInterrupt:
-        server.shutdown()
+        pass
+    finally:
+        server.server_close()
 
 
 if __name__ == "__main__":

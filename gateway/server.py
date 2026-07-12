@@ -1,6 +1,7 @@
 """Stdlib OpenAI-compatible HTTP proxy for an Ollama upstream."""
 
 import json
+import socket
 import time
 import urllib.error
 import urllib.request
@@ -11,13 +12,18 @@ from gateway.middleware import ShortCircuit
 from gateway.usage import StreamUsageAccumulator, extract_usage
 
 
+class UpstreamProtocolError(RuntimeError):
+    """The provider replied, but its response violated the expected JSON protocol."""
+
+
 class GatewayServer(ThreadingHTTPServer):
     """Proxy OpenAI chat-completion requests through a middleware pipeline."""
 
     allow_reuse_address = True
     daemon_threads = True
 
-    def __init__(self, upstream_url, middlewares=(), ledger=None, port=8000, shadow=None):
+    def __init__(self, upstream_url, middlewares=(), ledger=None, port=8000, shadow=None,
+                 upstream_timeout=300.0):
         self.upstream_url = str(upstream_url).rstrip("/")
         self.middlewares = tuple(middlewares)
         self.ledger = ledger
@@ -25,6 +31,13 @@ class GatewayServer(ThreadingHTTPServer):
         # judge samples this request, the ORIGINAL body is also sent upstream and the two
         # responses are judged; the verdict lands in the ledger entry (the receipts).
         self.shadow = shadow
+        if (
+            not isinstance(upstream_timeout, (int, float))
+            or isinstance(upstream_timeout, bool)
+            or upstream_timeout <= 0
+        ):
+            raise ValueError("upstream_timeout must be a positive number")
+        self.upstream_timeout = float(upstream_timeout)
         super().__init__(("127.0.0.1", port), _GatewayHandler)
 
     def status_payload(self):
@@ -39,6 +52,7 @@ class GatewayServer(ThreadingHTTPServer):
             "receipts_enabled": self.ledger is not None,
             "shadow_enabled": self.shadow is not None and self.shadow.rate > 0.0,
             "shadow_rate": self.shadow.rate if self.shadow is not None else 0.0,
+            "upstream_timeout_seconds": self.upstream_timeout,
         }
 
 
@@ -111,8 +125,12 @@ class _GatewayHandler(BaseHTTPRequestHandler):
             else:
                 self._extra["upstream_called"] = True
                 if body.get("stream") is True:
-                    status, response_chars, usage = self._stream_upstream(optimized_payload)
-                    self._extra.update({"status": status, "streamed": True})
+                    status, response_chars, usage, complete = self._stream_upstream(
+                        optimized_payload
+                    )
+                    self._extra.update({
+                        "status": status, "streamed": True, "stream_complete": complete
+                    })
                     if usage is not None:
                         self._extra["usage"] = usage
                     return
@@ -127,13 +145,33 @@ class _GatewayHandler(BaseHTTPRequestHandler):
                 if optimized and shadow is not None and shadow.should_sample(original_body):
                     from gateway.receipts import response_text
 
-                    _, raw_response = self._upstream(json.dumps(original_body, ensure_ascii=False))
-                    raw_usage = extract_usage(raw_response)
-                    if raw_usage is not None:
-                        self._extra["shadow_usage"] = raw_usage
-                    self._extra["shadow"] = shadow.judge(
-                        response_text(raw_response), response_text(response)
-                    )
+                    try:
+                        _, raw_response = self._upstream(
+                            json.dumps(original_body, ensure_ascii=False)
+                        )
+                        raw_usage = extract_usage(raw_response)
+                        if raw_usage is not None:
+                            self._extra["shadow_usage"] = raw_usage
+                        self._extra["shadow"] = shadow.judge(
+                            response_text(raw_response), response_text(response)
+                        )
+                    except (
+                        TimeoutError,
+                        socket.timeout,
+                        urllib.error.URLError,
+                        UpstreamProtocolError,
+                    ) as error:
+                        reason = getattr(error, "reason", error)
+                        self._extra["shadow_error"] = {
+                            "type": "upstream_timeout"
+                            if isinstance(reason, (TimeoutError, socket.timeout))
+                            else (
+                                "upstream_invalid_response"
+                                if isinstance(error, UpstreamProtocolError)
+                                else "upstream_error"
+                            ),
+                            "message": str(reason),
+                        }
 
             for middleware, middleware_input in reversed(applied_middlewares):
                 response = middleware.after_response(middleware_input, response)
@@ -141,13 +179,31 @@ class _GatewayHandler(BaseHTTPRequestHandler):
             self._extra["status"] = status
             response_chars = len(response_bytes.decode("utf-8"))
         except (json.JSONDecodeError, UnicodeDecodeError, ValueError) as error:
+            self._extra["status"] = 400
             response_bytes = self._write_json(
                 400, {"error": {"message": str(error), "type": "invalid_request_error"}}
             )
             response_chars = len(response_bytes.decode("utf-8"))
-        except urllib.error.URLError as error:
+        except UpstreamProtocolError as error:
+            self._extra["status"] = 502
             response_bytes = self._write_json(
-                502, {"error": {"message": str(error.reason), "type": "upstream_error"}}
+                502,
+                {"error": {"message": str(error), "type": "upstream_invalid_response"}},
+            )
+            response_chars = len(response_bytes.decode("utf-8"))
+        except (TimeoutError, socket.timeout) as error:
+            self._extra["status"] = 504
+            response_bytes = self._write_json(
+                504, {"error": {"message": str(error), "type": "upstream_timeout"}}
+            )
+            response_chars = len(response_bytes.decode("utf-8"))
+        except urllib.error.URLError as error:
+            timed_out = isinstance(error.reason, (TimeoutError, socket.timeout))
+            status = 504 if timed_out else 502
+            error_type = "upstream_timeout" if timed_out else "upstream_error"
+            self._extra["status"] = status
+            response_bytes = self._write_json(
+                status, {"error": {"message": str(error.reason), "type": error_type}}
             )
             response_chars = len(response_bytes.decode("utf-8"))
         finally:
@@ -161,10 +217,19 @@ class _GatewayHandler(BaseHTTPRequestHandler):
             method="POST",
         )
         try:
-            with urllib.request.urlopen(upstream_request) as upstream_response:
-                return upstream_response.status, json.loads(upstream_response.read())
+            with urllib.request.urlopen(
+                upstream_request, timeout=self.server.upstream_timeout
+            ) as upstream_response:
+                return upstream_response.status, self._decode_upstream_json(upstream_response.read())
         except urllib.error.HTTPError as error:
-            return error.code, json.loads(error.read())
+            return error.code, self._decode_upstream_json(error.read())
+
+    @staticmethod
+    def _decode_upstream_json(payload):
+        try:
+            return json.loads(payload)
+        except (json.JSONDecodeError, UnicodeDecodeError) as error:
+            raise UpstreamProtocolError("upstream returned invalid JSON") from error
 
     def _upstream_headers(self):
         headers = {"Content-Type": "application/json"}
@@ -183,7 +248,9 @@ class _GatewayHandler(BaseHTTPRequestHandler):
             method="POST",
         )
         try:
-            upstream = urllib.request.urlopen(upstream_request)
+            upstream = urllib.request.urlopen(
+                upstream_request, timeout=self.server.upstream_timeout
+            )
         except urllib.error.HTTPError as error:
             upstream = error
         with upstream:
@@ -194,15 +261,25 @@ class _GatewayHandler(BaseHTTPRequestHandler):
             self.end_headers()
             response_chars = 0
             usage = StreamUsageAccumulator()
-            while True:
-                chunk = upstream.read(64 * 1024)
-                if not chunk:
-                    break
-                self.wfile.write(chunk)
-                self.wfile.flush()
-                response_chars += len(chunk)
-                usage.feed(chunk)
-            return upstream.status, response_chars, usage.finish()
+            complete = True
+            try:
+                while True:
+                    chunk = upstream.read(64 * 1024)
+                    if not chunk:
+                        break
+                    self.wfile.write(chunk)
+                    self.wfile.flush()
+                    response_chars += len(chunk)
+                    usage.feed(chunk)
+            except (
+                TimeoutError,
+                socket.timeout,
+                BrokenPipeError,
+                ConnectionResetError,
+                ConnectionAbortedError,
+            ):
+                complete = False
+            return upstream.status, response_chars, usage.finish(), complete
 
     def do_GET(self):
         if self.path in {"/health", "/status"}:
@@ -211,15 +288,22 @@ class _GatewayHandler(BaseHTTPRequestHandler):
             return
         # Transparent passthrough for Ollama utility endpoints (/api/tags, /api/ps, ...).
         try:
-            with urllib.request.urlopen(self.server.upstream_url + self.path) as upstream:
+            with urllib.request.urlopen(
+                self.server.upstream_url + self.path,
+                timeout=self.server.upstream_timeout,
+            ) as upstream:
                 payload = upstream.read()
                 self.send_response(upstream.status)
         except urllib.error.HTTPError as error:
             payload = error.read()
             self.send_response(error.code)
+        except (TimeoutError, socket.timeout):
+            payload = json.dumps({"error": {"message": "upstream timed out"}}).encode("utf-8")
+            self.send_response(504)
         except urllib.error.URLError as error:
+            timed_out = isinstance(error.reason, (TimeoutError, socket.timeout))
             payload = json.dumps({"error": {"message": str(error.reason)}}).encode("utf-8")
-            self.send_response(502)
+            self.send_response(504 if timed_out else 502)
         self.send_header("Content-Type", "application/json")
         self.send_header("Content-Length", str(len(payload)))
         self.end_headers()

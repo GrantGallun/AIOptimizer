@@ -1,6 +1,7 @@
 import json
 import tempfile
 import threading
+import time
 import unittest
 import urllib.error
 import urllib.request
@@ -10,7 +11,7 @@ from pathlib import Path
 from gateway.ledger import JsonlLedger
 from gateway.cache_middleware import ExactCacheMiddleware
 from gateway.server import GatewayServer
-from gateway.receipts import response_text
+from gateway.receipts import ShadowJudge, response_text
 
 
 class _StubHandler(BaseHTTPRequestHandler):
@@ -22,6 +23,16 @@ class _StubHandler(BaseHTTPRequestHandler):
         body = json.loads(self.rfile.read(length))
         type(self).requests.append((self.path, body))
         type(self).headers_seen.append(dict(self.headers.items()))
+        if body.get("slow"):
+            time.sleep(0.1)
+        if body.get("malformed_response"):
+            payload = b"not-json"
+            self.send_response(200)
+            self.send_header("Content-Type", "application/json")
+            self.send_header("Content-Length", str(len(payload)))
+            self.end_headers()
+            self.wfile.write(payload)
+            return
         if body.get("stream"):
             payload = (
                 b'data: {"delta":"one"}\n\n'
@@ -45,7 +56,10 @@ class _StubHandler(BaseHTTPRequestHandler):
         self.send_header("Content-Type", "application/json")
         self.send_header("Content-Length", str(len(payload)))
         self.end_headers()
-        self.wfile.write(payload)
+        try:
+            self.wfile.write(payload)
+        except (BrokenPipeError, ConnectionResetError, ConnectionAbortedError):
+            pass
 
     def log_message(self, format, *args):
         return
@@ -68,6 +82,14 @@ class _TagMiddleware:
 class _ReceiptMiddleware(_TagMiddleware):
     def receipt_metadata(self):
         return {"applied": True, "compiler_fingerprint": "sha256:test"}
+
+
+class _RemoveSlowMiddleware:
+    def before_request(self, body):
+        return {key: value for key, value in body.items() if key != "slow"}
+
+    def after_response(self, body, response):
+        return response
 
 
 class GatewayTests(unittest.TestCase):
@@ -175,6 +197,7 @@ class GatewayTests(unittest.TestCase):
             entries = [json.loads(line) for line in ledger_path.read_text().splitlines()]
             self.assertEqual(len(entries), 2)
             self.assertTrue(all(entry["streamed"] for entry in entries))
+            self.assertTrue(all(entry["stream_complete"] for entry in entries))
             self.assertTrue(all(entry["status"] == 200 for entry in entries))
             self.assertTrue(all(entry["response_chars"] == len(responses[0]) for entry in entries))
             self.assertTrue(all(entry["usage"] == {
@@ -200,6 +223,88 @@ class GatewayTests(unittest.TestCase):
             self.assertNotIn("usage", entries[1])
             self.assertNotIn("upstream_called", entries[1])
             self.assertTrue(entries[1]["cached"])
+
+    def test_upstream_timeout_returns_504_and_records_failure_status(self):
+        with tempfile.TemporaryDirectory() as directory:
+            ledger_path = Path(directory) / "timeout.jsonl"
+            url = self._start_gateway(
+                upstream_timeout=0.01, ledger=JsonlLedger(ledger_path)
+            )
+            request = urllib.request.Request(
+                url + "/v1/chat/completions",
+                data=json.dumps({"messages": [], "slow": True}).encode(),
+                headers={"Content-Type": "application/json"},
+                method="POST",
+            )
+
+            with self.assertRaises(urllib.error.HTTPError) as raised:
+                urllib.request.urlopen(request)
+            error = raised.exception
+            try:
+                self.assertEqual(error.code, 504)
+                self.assertEqual(json.loads(error.read())["error"]["type"], "upstream_timeout")
+            finally:
+                error.close()
+
+            for _ in range(100):
+                if ledger_path.exists() and ledger_path.read_text().strip():
+                    break
+                time.sleep(0.01)
+            entry = json.loads(ledger_path.read_text().splitlines()[0])
+            self.assertEqual(entry["status"], 504)
+            self.assertTrue(entry["upstream_called"])
+
+    def test_shadow_timeout_does_not_fail_primary_request(self):
+        with tempfile.TemporaryDirectory() as directory:
+            ledger_path = Path(directory) / "shadow-timeout.jsonl"
+            url = self._start_gateway(
+                upstream_timeout=0.01,
+                ledger=JsonlLedger(ledger_path),
+                middlewares=(_RemoveSlowMiddleware(),),
+                shadow=ShadowJudge(rate=1.0),
+            )
+
+            response = self._post(url, {"messages": [], "slow": True})
+
+            self.assertEqual(response["id"], "chatcmpl-test")
+            for _ in range(100):
+                if ledger_path.exists() and ledger_path.read_text().strip():
+                    break
+                time.sleep(0.01)
+            entry = json.loads(ledger_path.read_text().splitlines()[0])
+            self.assertEqual(entry["status"], 200)
+            self.assertEqual(entry["shadow_error"]["type"], "upstream_timeout")
+            self.assertNotIn("shadow", entry)
+
+    def test_invalid_upstream_json_returns_502_not_client_400(self):
+        with tempfile.TemporaryDirectory() as directory:
+            ledger_path = Path(directory) / "invalid-upstream.jsonl"
+            url = self._start_gateway(ledger=JsonlLedger(ledger_path))
+            request = urllib.request.Request(
+                url + "/v1/chat/completions",
+                data=json.dumps({"messages": [], "malformed_response": True}).encode(),
+                headers={"Content-Type": "application/json"},
+                method="POST",
+            )
+
+            with self.assertRaises(urllib.error.HTTPError) as raised:
+                urllib.request.urlopen(request)
+            error = raised.exception
+            try:
+                self.assertEqual(error.code, 502)
+                self.assertEqual(
+                    json.loads(error.read())["error"]["type"],
+                    "upstream_invalid_response",
+                )
+            finally:
+                error.close()
+            for _ in range(100):
+                if ledger_path.exists() and ledger_path.read_text().strip():
+                    break
+                time.sleep(0.01)
+            self.assertEqual(
+                json.loads(ledger_path.read_text().splitlines()[0])["status"], 502
+            )
 
     def test_middlewares_run_before_in_order_and_after_in_reverse(self):
         events = []
@@ -252,6 +357,7 @@ class GatewayTests(unittest.TestCase):
         self.assertEqual(status["status"], "ok")
         self.assertIn("_ReceiptMiddleware", status["middlewares"])
         self.assertFalse(status["receipts_enabled"])
+        self.assertEqual(status["upstream_timeout_seconds"], 300.0)
         self.assertEqual(_StubHandler.requests, [])
 
     def test_ledger_records_one_valid_line_per_request(self):

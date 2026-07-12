@@ -44,6 +44,7 @@ def summarize(ledger_path: str) -> dict[str, Any]:
         for e in entries
         if isinstance(e.get("usage"), dict) and isinstance(e.get("shadow_usage"), dict)
     ]
+    shadow_errors = [e["shadow_error"] for e in entries if isinstance(e.get("shadow_error"), dict)]
 
     def token_sum(rows: list[dict[str, Any]], field: str) -> int:
         return sum(int(row.get(field, 0)) for row in rows)
@@ -74,6 +75,10 @@ def summarize(ledger_path: str) -> dict[str, Any]:
         "requests_by_path": counts("path"),
         "requests_by_model": counts("model"),
         "responses_by_status": counts("status"),
+        "streamed_requests": sum(bool(e.get("streamed")) for e in entries),
+        "incomplete_streams": sum(
+            e.get("streamed") is True and e.get("stream_complete") is False for e in entries
+        ),
         "upstream_requests": sum(bool(e.get("upstream_called")) for e in entries),
         "usage_receipts": len(primary_usage),
         "usage_coverage_rate": (
@@ -102,6 +107,10 @@ def summarize(ledger_path: str) -> dict[str, Any]:
         "embedding_cache_hits": sum(int(receipt.get("embedding_cache_hits", 0)) for receipt in attention_receipts),
         "embedding_cache_misses": sum(int(receipt.get("embedding_cache_misses", 0)) for receipt in attention_receipts),
         "shadow_samples": len(shadows),
+        "shadow_failures": len(shadow_errors),
+        "shadow_failure_types": dict(sorted(Counter(
+            str(error.get("type") or "unknown") for error in shadow_errors
+        ).items())),
         "quality_parity_rate": (parity_hits / len(shadows)) if shadows else None,
         "quality_parity_ci": (
             [round(v, 4) for v in wilson_interval(parity_hits, len(shadows))] if shadows else None

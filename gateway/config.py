@@ -10,6 +10,7 @@ from typing import Any, Mapping
 DEFAULT_CONFIG: dict[str, Any] = {
     "port": 8800,
     "upstream": "http://127.0.0.1:11434",
+    "upstream_timeout_seconds": 300.0,
     "ledger": "results/gateway/ledger.jsonl",
     "budget_chars": 12_000,
     "shadow_rate": 0.2,
@@ -34,6 +35,13 @@ def validate_config(value: Mapping[str, Any]) -> dict[str, Any]:
     for key in ("shadow_rate", "attention_min_relevance"):
         if not isinstance(config[key], (int, float)) or not 0.0 <= float(config[key]) <= 1.0:
             raise ValueError(f"{key} must be between 0 and 1")
+    timeout = config["upstream_timeout_seconds"]
+    if (
+        not isinstance(timeout, (int, float))
+        or isinstance(timeout, bool)
+        or float(timeout) <= 0.0
+    ):
+        raise ValueError("upstream_timeout_seconds must be a positive number")
     for key in ("no_cache", "no_compact", "attention_context"):
         if not isinstance(config[key], bool):
             raise ValueError(f"{key} must be boolean")

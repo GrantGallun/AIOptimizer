@@ -34,3 +34,10 @@ providers that omit usage remain visible as uncovered upstream requests. When
 both optimized and raw shadow arms report usage, it also reports directly
 measured input-token savings. `provider_total_tokens_consumed` includes shadow
 overhead so quality measurement is never presented as free.
+
+Upstream connect/read operations default to a 300-second timeout. Set
+`upstream_timeout_seconds` in `aioptimizer.json` or pass
+`--upstream-timeout-seconds`; pre-response timeouts return HTTP 504 and are
+recorded as such. A stream that stalls after its response has begun is closed and
+receipted with `"stream_complete": false`. Shadow timeouts/errors never fail the
+primary request; reports count them separately as measurement failures.
