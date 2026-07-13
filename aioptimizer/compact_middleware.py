@@ -18,6 +18,7 @@ from typing import Any, Callable
 
 from aioptimizer.selection import ContextCompactor
 from .encoder import embed_texts
+from .messages import detect_shape, message_text, set_message_text
 
 DEFAULT_BUDGET_CHARS = 12_000
 MIN_CHUNKS_TO_COMPACT = 4
@@ -38,6 +39,8 @@ class CompactContextMiddleware:
         self._compactor = ContextCompactor(embed_fn or embed_texts)
 
     def before_request(self, body: dict[str, Any]) -> dict[str, Any]:
+        if detect_shape(body) == "unknown":
+            return body
         messages = body.get("messages")
         if not isinstance(messages, list) or not messages:
             return body
@@ -49,12 +52,13 @@ class CompactContextMiddleware:
         user_indexes = [
             i
             for i, m in enumerate(messages)
-            if isinstance(m, dict) and m.get("role") == "user" and isinstance(m.get("content"), str)
+            if isinstance(m, dict) and m.get("role") == "user" and message_text(m)
         ]
         if not user_indexes:
             return body
-        target = max(user_indexes, key=lambda i: len(messages[i]["content"]))
-        content = messages[target]["content"]
+        text_by_index = {index: message_text(messages[index]) for index in user_indexes}
+        target = max(user_indexes, key=lambda i: len(text_by_index[i]))
+        content = text_by_index[target]
         chunks = [
             {"id": i, "text": part.strip()}
             for i, part in enumerate(content.split("\n\n"))
@@ -64,7 +68,7 @@ class CompactContextMiddleware:
             return body  # nothing meaningful to select between
 
         # Relevance anchor: the LATEST user message (the actual question).
-        query = str(messages[user_indexes[-1]]["content"])[:300]
+        query = text_by_index[user_indexes[-1]][:300]
         excess = total_chars - self.budget_chars
         chunk_budget = max(500, len(content) - excess)
         kept = self._compactor.compact(query, chunks, chunk_budget)
@@ -74,7 +78,10 @@ class CompactContextMiddleware:
         kept_sorted = sorted(kept, key=lambda c: c["id"])
 
         compacted = json.loads(json.dumps(body))  # deep copy; never mutate the original
-        compacted["messages"][target]["content"] = "\n\n".join(c["text"] for c in kept_sorted)
+        compacted["messages"][target] = set_message_text(
+            compacted["messages"][target],
+            "\n\n".join(c["text"] for c in kept_sorted),
+        )
         return compacted
 
     def after_response(self, body: dict[str, Any], response: dict[str, Any]) -> dict[str, Any]:

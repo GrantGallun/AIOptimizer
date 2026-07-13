@@ -7,6 +7,7 @@ import threading
 from typing import Any, Sequence
 
 from .context_compiler import DEFAULT_DENY_PATTERNS, ConversationCompiler
+from .messages import detect_shape, message_text, set_message_text
 
 
 class AttentionContextMiddleware:
@@ -214,6 +215,9 @@ class AttentionContextMiddleware:
     def before_request(self, body: dict[str, Any]) -> dict[str, Any]:
         original_chars = len(json.dumps(body, ensure_ascii=False))
         self._set_receipt(original_chars=original_chars)
+        shape = detect_shape(body)
+        if shape == "unknown":
+            return body
         messages = body.get("messages")
         if not isinstance(messages, list) or len(messages) < 3:
             return body
@@ -225,28 +229,52 @@ class AttentionContextMiddleware:
                 for index in range(len(messages) - 1, -1, -1)
                 if isinstance(messages[index], dict)
                 and messages[index].get("role") == "user"
-                and isinstance(messages[index].get("content"), str)
             ),
             None,
         )
         if latest_user_index is None:
             return body
         latest_user = messages[latest_user_index]
+        latest_user_text = message_text(latest_user)
+        if not latest_user_text:
+            return body
         systems = [
             message
             for message in messages[:latest_user_index]
             if isinstance(message, dict)
             and message.get("role") == "system"
-            and isinstance(message.get("content"), str)
-            and not self.compiler._is_denied(message["content"])
+            and message_text(message)
+            and not self.compiler._is_denied(message_text(message))
         ]
-        history = [
+        passthrough = [
             message
             for message in messages[:latest_user_index]
-            if isinstance(message, dict)
-            and message.get("role") in {"user", "assistant", "tool"}
-            and isinstance(message.get("content"), str)
+            if shape == "anthropic"
+            and isinstance(message, dict)
+            and message.get("role") != "system"
+            and (
+                not message_text(message)
+                or (
+                    isinstance(message.get("content"), list)
+                    and any(
+                        not isinstance(block, dict) or block.get("type") != "text"
+                        for block in message["content"]
+                    )
+                )
+            )
         ]
+        history = []
+        for message in messages[:latest_user_index]:
+            if not isinstance(message, dict) or message.get("role") not in {
+                "user",
+                "assistant",
+                "tool",
+            }:
+                continue
+            text = message_text(message)
+            if not text or message in passthrough:
+                continue
+            history.append({**message, "content": text})
         if not history:
             return body
 
@@ -257,7 +285,7 @@ class AttentionContextMiddleware:
             return body
         cache_before = self.compiler.embedding_cache_stats()
         mode, relevance = self.compiler.choose_context_mode(
-            compiled, query=latest_user["content"], min_relevance=self.min_relevance
+            compiled, query=latest_user_text, min_relevance=self.min_relevance
         )
         if mode == "raw":
             cache_after = self.compiler.embedding_cache_stats()
@@ -276,7 +304,7 @@ class AttentionContextMiddleware:
             return body
         organized = self.compiler.organize(
             compiled,
-            query=latest_user["content"],
+            query=latest_user_text,
             max_records=len(compiled.records),
         )
         candidates = [
@@ -287,7 +315,11 @@ class AttentionContextMiddleware:
         # ``organize`` pins the last historical user turn.  It is still history,
         # so include it in attention order rather than treating it as the active query.
         candidates.extend(organized["pinned"])
-        fixed_chars = len(json.dumps({"messages": systems + [latest_user]}, ensure_ascii=False))
+        fixed_messages = systems + passthrough + [latest_user]
+        fixed_payload: dict[str, Any] = {"messages": fixed_messages}
+        if shape == "anthropic" and "system" in body:
+            fixed_payload["system"] = body["system"]
+        fixed_chars = len(json.dumps(fixed_payload, ensure_ascii=False))
         header = "Relevant prior conversation (source-grounded):\n"
         available = self.budget_chars - fixed_chars - len(header) - 64
         if available <= 0:
@@ -296,10 +328,17 @@ class AttentionContextMiddleware:
         if not rendered:
             return body
         rewritten = json.loads(json.dumps(body))
-        rewritten["messages"] = systems + [
-            {"role": "system", "content": header + rendered},
-            dict(latest_user),
-        ]
+        if shape == "openai":
+            rewritten["messages"] = systems + [
+                {"role": "system", "content": header + rendered},
+                dict(latest_user),
+            ]
+        else:
+            context_message = set_message_text(
+                {"role": "user", "content": [{"type": "text", "text": ""}]},
+                header + rendered,
+            )
+            rewritten["messages"] = passthrough + [context_message, dict(latest_user)]
         cache_after = self.compiler.embedding_cache_stats()
         self._local.receipt = {
             "applied": True,
