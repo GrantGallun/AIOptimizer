@@ -89,7 +89,10 @@ def score_arm(arm_dir: Path, tasks: list[Mapping[str, Any]]) -> dict[str, Any]:
         cons_eval = evaluate_requirements(text, _to_requirements(constraint_rows))
         ast_ok = all(_ast_check(text, c) for c in task.get("ast_checks", []))
         functional_ok = func_eval is None or func_eval["all_passed"]
-        passed = files_ok and functional_ok and ast_ok
+        # A hard-constraint violation fails the task (a build that ignores a stated constraint is
+        # a failed build); constraint-retention below is the finer-grained per-constraint signal.
+        constraints_ok = cons_eval is None or cons_eval["all_passed"]
+        passed = files_ok and functional_ok and ast_ok and constraints_ok
         rows.append({
             "task": task["id"],
             "files_present": files_ok,
