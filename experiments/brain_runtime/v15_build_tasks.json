@@ -1,0 +1,77 @@
+[
+  {
+    "id": "linkedin_scraper_ratelimit",
+    "domain": "talenttrader",
+    "prompts": [
+      "We are building a LinkedIn talent-flow reader. Constraint for this whole task: every network call MUST go through a function named rate_limited_get and MUST NOT use requests.get directly.",
+      "The output schema for a parsed profile is exactly: {name, headline, company, tenure_months}. No other keys.",
+      "Add a module scraper.py with rate_limited_get(url) that sleeps 2 seconds between calls using time.sleep.",
+      "Add parse_profile(html) that returns the schema dict from the four fields.",
+      "Add a fetch_profiles(urls) that uses rate_limited_get for each url and returns a list of parsed profiles.",
+      "Write it all into scraper.py. Do not print anything at import time.",
+      "Reminder: honor the two constraints from the start of this task.",
+      "Finalize scraper.py."
+    ],
+    "expected_files": ["scraper.py"],
+    "requirements": [
+      {"id": "uses_rate_limited_get", "must_include": ["rate_limited_get"], "is_constraint": true},
+      {"id": "no_direct_requests_get", "must_exclude": ["requests.get("], "is_constraint": true},
+      {"id": "schema_keys", "must_include": ["name", "headline", "company", "tenure_months"], "is_constraint": true},
+      {"id": "sleeps", "must_include": ["time.sleep"]}
+    ],
+    "ast_checks": [
+      {"kind": "defines", "name": "rate_limited_get"},
+      {"kind": "defines", "name": "parse_profile"},
+      {"kind": "defines", "name": "fetch_profiles"}
+    ]
+  },
+  {
+    "id": "csv_reader_no_pandas",
+    "domain": "cli_utility",
+    "prompts": [
+      "Build a CSV talent-list reader. Hard constraint: standard library only, NEVER import pandas.",
+      "The public entry point must be a function read_talent(path) returning a list of dicts.",
+      "Use csv.DictReader. Strip whitespace from every value.",
+      "Skip rows where the 'email' column is empty.",
+      "Put it in reader.py.",
+      "Reminder: no pandas, function is read_talent.",
+      "Add a guard so read_talent raises FileNotFoundError with a clear message if the path is missing.",
+      "Finalize reader.py."
+    ],
+    "expected_files": ["reader.py"],
+    "requirements": [
+      {"id": "no_pandas", "must_exclude": ["import pandas", "pandas"], "is_constraint": true},
+      {"id": "entry_point", "must_include": ["read_talent"], "is_constraint": true},
+      {"id": "dictreader", "must_include": ["DictReader"]}
+    ],
+    "ast_checks": [
+      {"kind": "defines", "name": "read_talent"},
+      {"kind": "imports", "name": "csv"}
+    ]
+  },
+  {
+    "id": "cli_no_approval_messages",
+    "domain": "cli_utility",
+    "prompts": [
+      "Build a small CLI that summarizes a talent CSV. Constraint: the program must NEVER emit approval or confirmation prompts; it runs fully non-interactively.",
+      "Entry point: a main() that argparse-parses --input and --top.",
+      "It prints the top --top companies by headcount from the input.",
+      "Write it to summarize.py.",
+      "No input() calls anywhere. No 'Are you sure' or 'Continue?' text.",
+      "Reminder: fully non-interactive, no approval messages.",
+      "Add a __main__ guard.",
+      "Finalize summarize.py."
+    ],
+    "expected_files": ["summarize.py"],
+    "requirements": [
+      {"id": "non_interactive_no_input", "must_exclude": ["input("], "is_constraint": true},
+      {"id": "no_approval_text", "must_exclude": ["Are you sure", "Continue?", "approve"], "is_constraint": true},
+      {"id": "argparse", "must_include": ["argparse"]},
+      {"id": "main_guard", "must_include": ["__main__"]}
+    ],
+    "ast_checks": [
+      {"kind": "defines", "name": "main"},
+      {"kind": "imports", "name": "argparse"}
+    ]
+  }
+]

@@ -27,3 +27,20 @@ strictly better; Null (equally reportable): the optimizer does not measurably ch
 quality at this n — receipts/token savings remain its case.
 
 — Fable (Claude Fable 5), 2026-07-12
+
+---
+
+## Harness frozen (2026-07-13) — scorer + fixtures live; runner-wiring delegated
+
+Fable froze the objective scorer (`score_v15.py`, arm-blind: identical deterministic checks per
+arm dir — file presence + requirement contracts via the shipped `aioptimizer.requirements` engine +
+light Python AST checks; task passes iff files present AND functional contracts pass AND AST checks
+pass; CONSTRAINT-tagged contracts feed a separate constraint-retention metric). Fixture schema +
+the first 3 tasks are frozen in `v15_build_tasks.json` (self-tested: passes a constraint-honoring
+artifact, fails a violating one, retention 0/3). Codex's paired workspaces (v15-ab-v4, plugin
+A-on/B-off, byte-identical seeds) are ready.
+
+Amendment: n starts at the 3 frozen tasks and grows to 12 by authoring MORE tasks to the same
+schema (Codex, t0048) — the schema/scorer/gate are frozen now; adding tasks that fit the schema is
+mechanical, not a research-design change. Gate unchanged (A−B pass ≥0.15 Wilson-significant AND
+constraint-retention strictly better; null equally reportable). — Fable (Claude Fable 5)
