@@ -1,0 +1,454 @@
+#!/usr/bin/env python3
+"""Run one paired, scripted v15 build replicate and invoke the frozen scorer.
+
+Each task/arm receives a fresh copy of its arm's byte-identical seed workspace and a
+fresh Codex thread. Prompts are replayed as separate turns in that thread. Produced
+files are copied into the exact ``<arm-dir>/<task-id>/<expected-file>`` layout that
+``score_v15.py`` consumes. The scorer receives only the task fixture path, two
+artifact directory paths, and its output path.
+"""
+
+from __future__ import annotations
+
+import argparse
+import json
+import os
+import shutil
+import subprocess
+import sys
+import time
+import uuid
+from datetime import datetime, timezone
+from pathlib import Path
+from typing import Any, Callable, Mapping, Sequence
+
+
+REPO_ROOT = Path(__file__).resolve().parents[2]
+DEFAULT_TASKS = Path(__file__).with_name("v15_build_tasks.json")
+DEFAULT_SCORER = Path(__file__).with_name("score_v15.py")
+DEFAULT_PAIR_ROOT = Path(r"C:\Code\TalentTrader\v15-ab-v4")
+DEFAULT_CONTROL_ROOT = Path.home() / ".codex" / "ab-v15-v4"
+DEFAULT_RESULTS_ROOT = REPO_ROOT / "results" / "brain_runtime"
+ALLOWED_AST_KINDS = {"defines", "imports", "forbid_bare_except"}
+
+AgentRunner = Callable[..., Mapping[str, Any]]
+
+
+def _safe_relative_path(raw: str) -> Path:
+    path = Path(raw)
+    if not raw or path.is_absolute() or ".." in path.parts:
+        raise ValueError(f"expected_files entry must be a safe relative path: {raw!r}")
+    return path
+
+
+def validate_tasks(tasks: Any, *, expected_count: int | None = 12) -> list[Mapping[str, Any]]:
+    """Validate the frozen v15 fixture shape without changing scoring semantics."""
+    if not isinstance(tasks, list):
+        raise ValueError("tasks must be a JSON list")
+    if expected_count is not None and len(tasks) != expected_count:
+        raise ValueError(f"expected exactly {expected_count} tasks, found {len(tasks)}")
+
+    required = {"id", "domain", "prompts", "expected_files", "requirements", "ast_checks"}
+    ids: set[str] = set()
+    for index, task in enumerate(tasks):
+        if not isinstance(task, Mapping) or not required <= set(task):
+            missing = sorted(required - set(task) if isinstance(task, Mapping) else required)
+            raise ValueError(f"task {index} is missing required keys: {missing}")
+        task_id = task["id"]
+        if not isinstance(task_id, str) or not task_id or task_id in ids:
+            raise ValueError(f"task id must be a unique non-empty string: {task_id!r}")
+        ids.add(task_id)
+        if not isinstance(task["domain"], str) or not task["domain"]:
+            raise ValueError(f"{task_id}: domain must be a non-empty string")
+
+        prompts = task["prompts"]
+        if not isinstance(prompts, list) or len(prompts) < 6 or not all(
+            isinstance(prompt, str) and prompt.strip() for prompt in prompts
+        ):
+            raise ValueError(f"{task_id}: prompts must contain at least six non-empty strings")
+
+        expected_files = task["expected_files"]
+        if not isinstance(expected_files, list) or not expected_files:
+            raise ValueError(f"{task_id}: expected_files must be a non-empty list")
+        for raw in expected_files:
+            if not isinstance(raw, str):
+                raise ValueError(f"{task_id}: expected_files entries must be strings")
+            _safe_relative_path(raw)
+
+        requirements = task["requirements"]
+        if not isinstance(requirements, list) or not requirements:
+            raise ValueError(f"{task_id}: requirements must be a non-empty list")
+        constraint_count = 0
+        requirement_ids: set[str] = set()
+        for row in requirements:
+            if not isinstance(row, Mapping) or not isinstance(row.get("id"), str):
+                raise ValueError(f"{task_id}: every requirement needs a string id")
+            if row["id"] in requirement_ids:
+                raise ValueError(f"{task_id}: duplicate requirement id {row['id']!r}")
+            requirement_ids.add(row["id"])
+            includes = row.get("must_include", [])
+            excludes = row.get("must_exclude", [])
+            if not isinstance(includes, list) or not all(isinstance(v, str) and v for v in includes):
+                raise ValueError(f"{task_id}/{row['id']}: must_include must be a string list")
+            if not isinstance(excludes, list) or not all(isinstance(v, str) and v for v in excludes):
+                raise ValueError(f"{task_id}/{row['id']}: must_exclude must be a string list")
+            if not includes and not excludes:
+                raise ValueError(f"{task_id}/{row['id']}: requirement has no objective check")
+            if "is_constraint" in row and not isinstance(row["is_constraint"], bool):
+                raise ValueError(f"{task_id}/{row['id']}: is_constraint must be boolean")
+            constraint_count += int(bool(row.get("is_constraint")))
+        if not constraint_count:
+            raise ValueError(f"{task_id}: at least one requirement must be a constraint")
+
+        ast_checks = task["ast_checks"]
+        if not isinstance(ast_checks, list) or not ast_checks:
+            raise ValueError(f"{task_id}: ast_checks must be a non-empty list")
+        for check in ast_checks:
+            if (
+                not isinstance(check, Mapping)
+                or check.get("kind") not in ALLOWED_AST_KINDS
+                or not isinstance(check.get("name"), str)
+                or not check["name"]
+            ):
+                raise ValueError(f"{task_id}: invalid AST check {check!r}")
+    return tasks
+
+
+def load_tasks(path: Path, *, expected_count: int | None = 12) -> list[Mapping[str, Any]]:
+    return validate_tasks(json.loads(path.read_text(encoding="utf-8")), expected_count=expected_count)
+
+
+def prepare_fresh_workspace(seed: Path, destination: Path, task: Mapping[str, Any]) -> Path:
+    """Copy an arm seed into a never-before-used, path-opaque task workspace."""
+    if not seed.is_dir():
+        raise FileNotFoundError(f"seed workspace not found: {seed}")
+    if destination.exists():
+        raise FileExistsError(f"refusing to reuse task workspace: {destination}")
+    for raw in task["expected_files"]:
+        if (seed / _safe_relative_path(raw)).exists():
+            raise ValueError(f"seed workspace already contains scored artifact {raw!r}")
+    destination.parent.mkdir(parents=True, exist_ok=True)
+    shutil.copytree(seed, destination)
+    return destination
+
+
+def collect_task_artifacts(
+    workspace: Path,
+    arm_dir: Path,
+    task: Mapping[str, Any],
+) -> dict[str, list[str]]:
+    """Copy expected files into the frozen scorer's task directory layout."""
+    task_dir = arm_dir / task["id"]
+    if task_dir.exists():
+        raise FileExistsError(f"refusing to overwrite collected artifacts: {task_dir}")
+    task_dir.mkdir(parents=True)
+    collected: list[str] = []
+    missing: list[str] = []
+    for raw in task["expected_files"]:
+        relative = _safe_relative_path(raw)
+        source = workspace / relative
+        if source.is_file():
+            destination = task_dir / relative
+            destination.parent.mkdir(parents=True, exist_ok=True)
+            shutil.copy2(source, destination)
+            collected.append(relative.as_posix())
+        else:
+            missing.append(relative.as_posix())
+    return {"collected": collected, "missing": missing}
+
+
+def _json_events(stdout: str) -> list[Mapping[str, Any]]:
+    events: list[Mapping[str, Any]] = []
+    for line in stdout.splitlines():
+        try:
+            event = json.loads(line)
+        except json.JSONDecodeError:
+            continue
+        if isinstance(event, Mapping):
+            events.append(event)
+    return events
+
+
+def _thread_id(events: Sequence[Mapping[str, Any]]) -> str | None:
+    for event in events:
+        direct = event.get("thread_id")
+        if isinstance(direct, str) and direct:
+            return direct
+        thread = event.get("thread")
+        if isinstance(thread, Mapping) and isinstance(thread.get("id"), str):
+            return thread["id"]
+    return None
+
+
+def _usage(events: Sequence[Mapping[str, Any]]) -> dict[str, int]:
+    totals = {"input_tokens": 0, "cached_input_tokens": 0, "output_tokens": 0}
+    for event in events:
+        if event.get("type") != "turn.completed" or not isinstance(event.get("usage"), Mapping):
+            continue
+        usage = event["usage"]
+        for key in totals:
+            value = usage.get(key, 0)
+            if isinstance(value, int) and not isinstance(value, bool):
+                totals[key] += value
+    return totals
+
+
+def _resolve_codex(explicit: str | None) -> str:
+    if explicit:
+        resolved = shutil.which(explicit)
+        if resolved:
+            return resolved
+        candidate = Path(explicit)
+        if candidate.is_file():
+            return str(candidate.resolve())
+        raise FileNotFoundError(f"Codex executable not found: {explicit}")
+    for name in ("codex.exe", "codex.cmd", "codex"):
+        resolved = shutil.which(name)
+        if resolved:
+            return resolved
+    raise FileNotFoundError("Codex executable not found on PATH")
+
+
+def run_codex_prompt_script(
+    *,
+    workspace: Path,
+    codex_home: Path,
+    prompts: Sequence[str],
+    model: str,
+    codex: str | None = None,
+    aioptimizer_home: Path = REPO_ROOT,
+    prompt_timeout_seconds: float = 1800.0,
+) -> Mapping[str, Any]:
+    """Replay prompts as turns in one fresh, isolated Codex thread."""
+    executable = _resolve_codex(codex)
+    if not codex_home.is_dir():
+        raise FileNotFoundError(f"isolated CODEX_HOME not found: {codex_home}")
+    environment = os.environ.copy()
+    environment["CODEX_HOME"] = str(codex_home.resolve())
+    environment["AIOPTIMIZER_HOME"] = str(aioptimizer_home.resolve())
+    base = [
+        executable,
+        "--sandbox", "workspace-write",
+        "--cd", str(workspace.resolve()),
+        "--model", model,
+    ]
+    session_id: str | None = None
+    elapsed = 0.0
+    totals = {"input_tokens": 0, "cached_input_tokens": 0, "output_tokens": 0}
+    for turn_index, prompt in enumerate(prompts):
+        if turn_index == 0:
+            command = [*base, "exec", "--skip-git-repo-check", "--json", "-"]
+        else:
+            if session_id is None:
+                raise RuntimeError("Codex did not report a thread id for the initial prompt")
+            command = [
+                *base,
+                "exec", "resume", "--skip-git-repo-check", "--json", session_id, "-",
+            ]
+        started = time.monotonic()
+        completed = subprocess.run(
+            command,
+            cwd=workspace,
+            env=environment,
+            input=prompt,
+            text=True,
+            encoding="utf-8",
+            errors="replace",
+            capture_output=True,
+            timeout=prompt_timeout_seconds,
+            check=False,
+        )
+        elapsed += time.monotonic() - started
+        events = _json_events(completed.stdout)
+        if turn_index == 0:
+            session_id = _thread_id(events)
+        usage = _usage(events)
+        for key in totals:
+            totals[key] += usage[key]
+        if completed.returncode:
+            detail = completed.stderr.strip() or completed.stdout.strip() or "no diagnostic output"
+            raise RuntimeError(f"Codex turn {turn_index + 1} exited {completed.returncode}: {detail}")
+    return {
+        "thread_id": session_id,
+        "turns": len(prompts),
+        "elapsed_seconds": round(elapsed, 3),
+        **totals,
+    }
+
+
+def _opaque_workspace(root: Path) -> Path:
+    return root / uuid.uuid4().hex / "workspace"
+
+
+def run_paired_tasks(
+    tasks: Sequence[Mapping[str, Any]],
+    *,
+    pair_root: Path,
+    control_root: Path,
+    run_root: Path,
+    agent_runner: AgentRunner = run_codex_prompt_script,
+    model: str = "gpt-5.6-sol",
+    codex: str | None = None,
+    aioptimizer_home: Path = REPO_ROOT,
+) -> tuple[Path, Path, dict[str, Any]]:
+    """Run both arms and return their artifact dirs plus content-free execution telemetry."""
+    if run_root.exists():
+        raise FileExistsError(f"refusing to reuse run directory: {run_root}")
+    run_root.mkdir(parents=True)
+    artifact_root = run_root / "artifacts"
+    workspace_root = run_root / "workspaces"
+    arm_specs = {
+        "A": (
+            pair_root / "arm-a-plugin-on" / "workspace",
+            control_root / "arm-a",
+            artifact_root / "A",
+        ),
+        "B": (
+            pair_root / "arm-b-plugin-off" / "workspace",
+            control_root / "arm-b",
+            artifact_root / "B",
+        ),
+    }
+    records: dict[str, Any] = {"A": {}, "B": {}}
+    for task in tasks:
+        for arm, (seed, codex_home, artifact_dir) in arm_specs.items():
+            workspace = prepare_fresh_workspace(seed, _opaque_workspace(workspace_root), task)
+            execution: dict[str, Any]
+            try:
+                execution = dict(agent_runner(
+                    workspace=workspace,
+                    codex_home=codex_home,
+                    prompts=tuple(task["prompts"]),
+                    model=model,
+                    codex=codex,
+                    aioptimizer_home=aioptimizer_home,
+                ))
+                error = None
+            except Exception as exc:  # keep the paired run scoreable; missing artifacts fail closed
+                execution = {}
+                error = f"{type(exc).__name__}: {exc}"
+            collection = collect_task_artifacts(workspace, artifact_dir, task)
+            records[arm][task["id"]] = {
+                "execution": execution,
+                "error": error,
+                **collection,
+            }
+    return arm_specs["A"][2], arm_specs["B"][2], records
+
+
+def run_frozen_scorer(
+    *,
+    scorer: Path,
+    tasks_path: Path,
+    arm_a: Path,
+    arm_b: Path,
+    out: Path,
+) -> tuple[dict[str, Any], str]:
+    """Invoke the frozen scorer with no arm metadata beyond its two directory paths."""
+    command = [
+        sys.executable,
+        str(scorer.resolve()),
+        "--tasks", str(tasks_path.resolve()),
+        "--arm-a", str(arm_a.resolve()),
+        "--arm-b", str(arm_b.resolve()),
+        "--out", str(out.resolve()),
+    ]
+    completed = subprocess.run(command, text=True, encoding="utf-8", errors="replace", capture_output=True)
+    if completed.returncode:
+        raise RuntimeError(completed.stderr.strip() or completed.stdout.strip() or "scorer failed")
+    return json.loads(out.read_text(encoding="utf-8")), completed.stdout.strip()
+
+
+def next_versioned_result(results_root: Path) -> Path:
+    for version in range(1, 10000):
+        candidate = results_root / f"v15_ab_result_v{version}.json"
+        if not candidate.exists():
+            return candidate
+    raise RuntimeError("no free v15 result version below 10000")
+
+
+def _write_new_json(path: Path, payload: Mapping[str, Any]) -> None:
+    path.parent.mkdir(parents=True, exist_ok=True)
+    data = json.dumps(payload, indent=2, sort_keys=True) + "\n"
+    try:
+        with path.open("x", encoding="utf-8", newline="\n") as handle:
+            handle.write(data)
+    except FileExistsError as exc:
+        raise FileExistsError(f"refusing to overwrite versioned result: {path}") from exc
+
+
+def _telemetry_totals(records: Mapping[str, Any]) -> dict[str, Any]:
+    totals: dict[str, Any] = {}
+    for arm in ("A", "B"):
+        rows = records[arm].values()
+        totals[arm] = {
+            "runs": len(records[arm]),
+            "errors": sum(row["error"] is not None for row in rows),
+            "elapsed_seconds": round(sum(row["execution"].get("elapsed_seconds", 0.0) for row in records[arm].values()), 3),
+            "input_tokens": sum(row["execution"].get("input_tokens", 0) for row in records[arm].values()),
+            "cached_input_tokens": sum(row["execution"].get("cached_input_tokens", 0) for row in records[arm].values()),
+            "output_tokens": sum(row["execution"].get("output_tokens", 0) for row in records[arm].values()),
+        }
+    return totals
+
+
+def main() -> None:
+    parser = argparse.ArgumentParser(description=__doc__)
+    parser.add_argument("--tasks", type=Path, default=DEFAULT_TASKS)
+    parser.add_argument("--scorer", type=Path, default=DEFAULT_SCORER)
+    parser.add_argument("--pair-root", type=Path, default=DEFAULT_PAIR_ROOT)
+    parser.add_argument("--control-root", type=Path, default=DEFAULT_CONTROL_ROOT)
+    parser.add_argument("--results-root", type=Path, default=DEFAULT_RESULTS_ROOT)
+    parser.add_argument("--run-root", type=Path)
+    parser.add_argument("--out", type=Path)
+    parser.add_argument("--model", default="gpt-5.6-sol")
+    parser.add_argument("--codex")
+    args = parser.parse_args()
+
+    tasks_path = args.tasks.resolve()
+    tasks = load_tasks(tasks_path)
+    stamp = datetime.now(timezone.utc).strftime("%Y%m%dT%H%M%SZ")
+    run_root = args.run_root or (args.results_root / "v15_ab_runs" / f"run_{stamp}_{uuid.uuid4().hex[:8]}")
+    out = args.out or next_versioned_result(args.results_root)
+    if out.exists():
+        raise FileExistsError(f"refusing to overwrite result: {out}")
+
+    arm_a, arm_b, records = run_paired_tasks(
+        tasks,
+        pair_root=args.pair_root.resolve(),
+        control_root=args.control_root.resolve(),
+        run_root=run_root.resolve(),
+        model=args.model,
+        codex=args.codex,
+    )
+    scorer_out = run_root / "frozen_score.json"
+    scored, scorer_summary = run_frozen_scorer(
+        scorer=args.scorer,
+        tasks_path=tasks_path,
+        arm_a=arm_a,
+        arm_b=arm_b,
+        out=scorer_out,
+    )
+    scored["runner"] = {
+        "created_at": datetime.now(timezone.utc).isoformat(),
+        "model": args.model,
+        "task_fixture": str(tasks_path),
+        "run_root": str(run_root.resolve()),
+        "telemetry": records,
+        "totals": _telemetry_totals(records),
+    }
+    _write_new_json(out.resolve(), scored)
+    if scorer_summary:
+        print(scorer_summary)
+    totals = scored["runner"]["totals"]
+    print(
+        f"telemetry A {totals['A']['input_tokens'] + totals['A']['output_tokens']} tokens/"
+        f"{totals['A']['elapsed_seconds']:.3f}s; B "
+        f"{totals['B']['input_tokens'] + totals['B']['output_tokens']} tokens/"
+        f"{totals['B']['elapsed_seconds']:.3f}s"
+    )
+    print(f"result {out.resolve()}")
+
+
+if __name__ == "__main__":
+    main()

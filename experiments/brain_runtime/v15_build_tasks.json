@@ -73,5 +73,238 @@
       {"kind": "defines", "name": "main"},
       {"kind": "imports", "name": "argparse"}
     ]
+  },
+  {
+    "id": "scraper_retry_bounded",
+    "domain": "scraper",
+    "prompts": [
+      "Build a retrying job-board scraper. Hard constraints for the whole task: the retry limit is exactly 3 attempts and exception handlers must always name an exception type (no bare except clauses).",
+      "The module must expose fetch_with_retry(url) and scrape_jobs(urls).",
+      "Use requests for HTTP and time.sleep for a one-second delay between failed attempts.",
+      "A successful response is parsed with response.json(); scrape_jobs returns one flat list of the jobs from all URLs.",
+      "Raise the last requests.RequestException after the third failed attempt.",
+      "Put the implementation in retry_scraper.py and keep imports side-effect free.",
+      "Make the later scrape_jobs implementation depend on fetch_with_retry rather than duplicating retry logic.",
+      "Finalize retry_scraper.py while retaining the original retry and exception constraints."
+    ],
+    "expected_files": ["retry_scraper.py"],
+    "requirements": [
+      {"id": "bounded_attempts", "must_include": ["MAX_ATTEMPTS", "3"], "is_constraint": true},
+      {"id": "no_bare_except_text", "must_exclude": ["except:"], "is_constraint": true},
+      {"id": "retry_entry", "must_include": ["fetch_with_retry"], "is_constraint": true},
+      {"id": "delay", "must_include": ["time.sleep"]}
+    ],
+    "ast_checks": [
+      {"kind": "defines", "name": "fetch_with_retry"},
+      {"kind": "defines", "name": "scrape_jobs"},
+      {"kind": "imports", "name": "requests"},
+      {"kind": "forbid_bare_except", "name": "unused"}
+    ]
+  },
+  {
+    "id": "jsonl_profile_allowlist",
+    "domain": "talenttrader",
+    "prompts": [
+      "Create a JSONL profile exporter. Persistent constraints: serialize only the allowlisted fields name, email, company, and title; never use pickle.",
+      "The public function is export_profiles(profiles, path).",
+      "Define ALLOWED_FIELDS and build every output object from that allowlist so unrelated or sensitive source keys cannot leak.",
+      "Write one json.dumps object per line using UTF-8 and ensure_ascii=False.",
+      "Create parent directories when needed and return the number of profiles written.",
+      "Put the implementation in export_profiles.py without import-time output.",
+      "Add a helper safe_profile(profile) and have export_profiles call it for every row.",
+      "Finalize the module and preserve the original field allowlist and no-pickle constraints."
+    ],
+    "expected_files": ["export_profiles.py"],
+    "requirements": [
+      {"id": "field_allowlist", "must_include": ["ALLOWED_FIELDS", "name", "email", "company", "title"], "is_constraint": true},
+      {"id": "no_pickle", "must_exclude": ["pickle"], "is_constraint": true},
+      {"id": "unicode_jsonl", "must_include": ["json.dumps", "ensure_ascii=False"]},
+      {"id": "safe_projection", "must_include": ["safe_profile"]}
+    ],
+    "ast_checks": [
+      {"kind": "defines", "name": "safe_profile"},
+      {"kind": "defines", "name": "export_profiles"},
+      {"kind": "imports", "name": "json"}
+    ]
+  },
+  {
+    "id": "robots_aware_crawler",
+    "domain": "scraper",
+    "prompts": [
+      "Implement a robots-aware career-page crawler. Whole-task constraints: use the standard library only and never import requests.",
+      "Expose can_fetch(url, user_agent) and fetch_page(url, user_agent).",
+      "Use urllib.robotparser.RobotFileParser to check the site's /robots.txt before any page fetch.",
+      "Use urllib.request.Request with the supplied User-Agent and urllib.request.urlopen for allowed pages.",
+      "fetch_page must raise PermissionError when can_fetch returns false.",
+      "Add crawl_allowed(urls, user_agent) returning a mapping from each allowed URL to its decoded text.",
+      "Write all of this in robots_crawler.py, with no network access at import time.",
+      "Finalize the crawler without dropping the standard-library or robots-check constraints."
+    ],
+    "expected_files": ["robots_crawler.py"],
+    "requirements": [
+      {"id": "stdlib_only", "must_exclude": ["requests"], "is_constraint": true},
+      {"id": "robots_gate", "must_include": ["RobotFileParser", "can_fetch"], "is_constraint": true},
+      {"id": "user_agent", "must_include": ["User-Agent"]},
+      {"id": "denied_error", "must_include": ["PermissionError"]}
+    ],
+    "ast_checks": [
+      {"kind": "defines", "name": "can_fetch"},
+      {"kind": "defines", "name": "fetch_page"},
+      {"kind": "defines", "name": "crawl_allowed"},
+      {"kind": "imports", "name": "urllib"}
+    ]
+  },
+  {
+    "id": "archive_cli_dry_run",
+    "domain": "cli_utility",
+    "prompts": [
+      "Build a candidate-archive CLI. Safety constraints for the entire task: it must default to dry-run and must never call input() for confirmation.",
+      "The parser accepts --database, --before, and an explicit --apply flag.",
+      "Without --apply, print the count that would be archived and make no database changes.",
+      "With --apply, call archive_candidates(database, before, dry_run=False).",
+      "Expose build_parser(), archive_candidates(database, before, dry_run=True), and main().",
+      "Put the CLI in archive_candidates.py and add a __main__ guard.",
+      "Use argparse's store_true action for --apply so omission remains safe.",
+      "Finalize the file while retaining dry-run-by-default and non-interactive behavior."
+    ],
+    "expected_files": ["archive_candidates.py"],
+    "requirements": [
+      {"id": "dry_run_default", "must_include": ["dry_run=True", "--apply", "store_true"], "is_constraint": true},
+      {"id": "no_interactive_prompt", "must_exclude": ["input("], "is_constraint": true},
+      {"id": "argparse_cli", "must_include": ["argparse", "__main__"]}
+    ],
+    "ast_checks": [
+      {"kind": "defines", "name": "build_parser"},
+      {"kind": "defines", "name": "archive_candidates"},
+      {"kind": "defines", "name": "main"},
+      {"kind": "imports", "name": "argparse"}
+    ]
+  },
+  {
+    "id": "sqlite_parameterized_store",
+    "domain": "talenttrader",
+    "prompts": [
+      "Create a SQLite candidate store. Permanent constraint: every SQL value must use ? parameters; never construct SQL with f-strings, concatenation, or .format().",
+      "Expose connect(path), save_candidate(connection, candidate), and find_candidates(connection, company).",
+      "save_candidate inserts name, email, and company and commits the transaction.",
+      "find_candidates selects those columns by company and returns a list of dictionaries.",
+      "Use sqlite3.Row so the result conversion is explicit and stable.",
+      "Write the implementation to candidate_store.py.",
+      "Add create_schema(connection), also using parameter-free fixed DDL rather than interpolated names.",
+      "Finalize candidate_store.py and retain the original parameterization constraint in every value-bearing query."
+    ],
+    "expected_files": ["candidate_store.py"],
+    "requirements": [
+      {"id": "placeholder_parameters", "must_include": ["?"], "must_exclude": ["f\"SELECT", "f'SELECT", "f\"INSERT", "f'INSERT", ".format("], "is_constraint": true},
+      {"id": "sqlite_backend", "must_include": ["sqlite3", "sqlite3.Row"]},
+      {"id": "transaction_commit", "must_include": ["commit("]}
+    ],
+    "ast_checks": [
+      {"kind": "defines", "name": "connect"},
+      {"kind": "defines", "name": "create_schema"},
+      {"kind": "defines", "name": "save_candidate"},
+      {"kind": "defines", "name": "find_candidates"},
+      {"kind": "imports", "name": "sqlite3"}
+    ]
+  },
+  {
+    "id": "env_token_config",
+    "domain": "cli_utility",
+    "prompts": [
+      "Implement TalentTrader API configuration. Hard constraint: the API token comes only from the TALENTTRADER_API_TOKEN environment variable, with no hard-coded or fallback token.",
+      "Expose load_config() returning a dictionary with api_url, api_token, and timeout.",
+      "Read TALENTTRADER_API_URL from the environment with https://api.talenttrader.example as its harmless default.",
+      "Parse TALENTTRADER_TIMEOUT as an integer with a default of 30.",
+      "If TALENTTRADER_API_TOKEN is missing or blank, raise RuntimeError with a clear message.",
+      "Put the implementation in config.py.",
+      "Add a validate_config(config) helper that rejects non-positive timeout values.",
+      "Finalize config.py without weakening the environment-only token rule."
+    ],
+    "expected_files": ["config.py"],
+    "requirements": [
+      {"id": "environment_token", "must_include": ["TALENTTRADER_API_TOKEN", "getenv"], "is_constraint": true},
+      {"id": "no_sample_secret", "must_exclude": ["secret-token", "changeme", "hardcoded-token"], "is_constraint": true},
+      {"id": "missing_token_error", "must_include": ["RuntimeError"]},
+      {"id": "timeout", "must_include": ["TALENTTRADER_TIMEOUT"]}
+    ],
+    "ast_checks": [
+      {"kind": "defines", "name": "load_config"},
+      {"kind": "defines", "name": "validate_config"},
+      {"kind": "imports", "name": "os"}
+    ]
+  },
+  {
+    "id": "stable_candidate_dedupe",
+    "domain": "talenttrader",
+    "prompts": [
+      "Build candidate deduplication. Persistent constraints: compare email addresses after strip()+casefold(), and preserve the first-seen candidate and original input order.",
+      "Expose normalize_email(value) and dedupe_profiles(profiles).",
+      "Profiles with a missing or blank email are never considered duplicates of one another.",
+      "Use a seen set only for normalized non-empty email keys.",
+      "Return full profile dictionaries unchanged rather than projecting fields.",
+      "Write the implementation in dedupe.py.",
+      "Do not sort the result and do not convert the profile dictionaries themselves to a set.",
+      "Finalize dedupe.py while retaining normalization and stable first-seen behavior."
+    ],
+    "expected_files": ["dedupe.py"],
+    "requirements": [
+      {"id": "normalized_email", "must_include": ["strip", "casefold"], "is_constraint": true},
+      {"id": "stable_seen", "must_include": ["seen", "append"], "must_exclude": ["sorted(", "set(profiles)", "list(set("], "is_constraint": true},
+      {"id": "email_key", "must_include": ["email"]}
+    ],
+    "ast_checks": [
+      {"kind": "defines", "name": "normalize_email"},
+      {"kind": "defines", "name": "dedupe_profiles"}
+    ]
+  },
+  {
+    "id": "csv_fixed_columns",
+    "domain": "cli_utility",
+    "prompts": [
+      "Create a candidate CSV writer. Whole-task constraints: output columns are exactly name, email, company in that order, and do not use pandas.",
+      "Expose write_candidates(path, candidates) returning the number of rows written.",
+      "Define a FIELDNAMES constant for the fixed column order.",
+      "Use csv.DictWriter with extrasaction='ignore' and write a header.",
+      "Open the file with UTF-8 encoding and newline=''.",
+      "Create the parent directory when necessary and put the implementation in csv_export.py.",
+      "Do not infer field names from the first candidate because later dictionaries can contain extra keys.",
+      "Finalize csv_export.py without dropping the exact-order or standard-library constraints."
+    ],
+    "expected_files": ["csv_export.py"],
+    "requirements": [
+      {"id": "fixed_fieldnames", "must_include": ["FIELDNAMES", "name", "email", "company"], "is_constraint": true},
+      {"id": "no_pandas", "must_exclude": ["pandas"], "is_constraint": true},
+      {"id": "dict_writer", "must_include": ["DictWriter", "extrasaction", "ignore", "writeheader"]}
+    ],
+    "ast_checks": [
+      {"kind": "defines", "name": "write_candidates"},
+      {"kind": "imports", "name": "csv"}
+    ]
+  },
+  {
+    "id": "scraper_structured_logging",
+    "domain": "scraper",
+    "prompts": [
+      "Add structured logging helpers for a scraper. Persistent constraints: use the logging module with logger name talenttrader.scraper and never call print().",
+      "Expose configure_logging(level='INFO') and log_scrape_summary(url, profiles_found, elapsed_seconds).",
+      "configure_logging converts the level name with logging.getLevelName and installs a StreamHandler.",
+      "Use a formatter that includes timestamp, level, logger name, and message.",
+      "log_scrape_summary emits one INFO event with the URL, profile count, and elapsed seconds as structured extra fields.",
+      "Put the implementation in scraper_logging.py without configuring logging at import time.",
+      "Return the named logger from configure_logging so the caller can reuse it.",
+      "Finalize the module while keeping the named-logger and no-print constraints."
+    ],
+    "expected_files": ["scraper_logging.py"],
+    "requirements": [
+      {"id": "named_logger", "must_include": ["getLogger", "talenttrader.scraper"], "is_constraint": true},
+      {"id": "no_print", "must_exclude": ["print("], "is_constraint": true},
+      {"id": "stream_handler", "must_include": ["StreamHandler", "Formatter"]},
+      {"id": "structured_fields", "must_include": ["profiles_found", "elapsed_seconds"]}
+    ],
+    "ast_checks": [
+      {"kind": "defines", "name": "configure_logging"},
+      {"kind": "defines", "name": "log_scrape_summary"},
+      {"kind": "imports", "name": "logging"}
+    ]
   }
 ]
