@@ -24,6 +24,7 @@ class AttentionContextMiddleware:
         compiler: ConversationCompiler | None = None,
         deny_patterns: Sequence[str] = DEFAULT_DENY_PATTERNS,
         min_relevance: float = 0.5,
+        min_relevant_age_records: int = 1,
     ):
         if budget_chars <= 0:
             raise ValueError("budget_chars must be positive")
@@ -31,7 +32,14 @@ class AttentionContextMiddleware:
         self.compiler = compiler or ConversationCompiler(deny_patterns=deny_patterns)
         if not -1.0 <= min_relevance <= 1.0:
             raise ValueError("min_relevance must be between -1 and 1")
+        if (
+            not isinstance(min_relevant_age_records, int)
+            or isinstance(min_relevant_age_records, bool)
+            or min_relevant_age_records < 1
+        ):
+            raise ValueError("min_relevant_age_records must be a positive integer")
         self.min_relevance = min_relevance
+        self.min_relevant_age_records = min_relevant_age_records
         self._local = threading.local()
 
     def _set_receipt(self, **values: Any) -> None:
@@ -45,6 +53,7 @@ class AttentionContextMiddleware:
         return {
             "budget_chars": self.budget_chars,
             "min_relevance": self.min_relevance,
+            "min_relevant_age_records": self.min_relevant_age_records,
             "embedding_cache": self.compiler.embedding_cache_stats(),
             "adaptive_routing": True,
         }
@@ -72,61 +81,135 @@ class AttentionContextMiddleware:
                 f"output_budget_chars must be between 1 and {self.budget_chars}"
             )
         history_chars = len(json.dumps(list(messages), ensure_ascii=False))
-        if history_chars <= self.budget_chars:
-            return {
-                "route": "below_threshold",
-                "context": "",
-                "history_chars": history_chars,
-                "output_chars": 0,
-            }
-        compiled = self.compiler.compile(messages)
-        integrity = self.compiler.audit_integrity(compiled)
-        if not integrity["ok"]:
-            return {
-                "route": "integrity_failure",
-                "context": "",
-                "history_chars": history_chars,
-                "output_chars": 0,
-                "integrity_ok": False,
-            }
         cache_before = self.compiler.embedding_cache_stats()
-        mode, relevance = self.compiler.choose_context_mode(
-            compiled, query=query, min_relevance=self.min_relevance
-        )
-        if mode == "raw":
+        try:
+            compiled = self.compiler.compile(messages)
+            integrity = self.compiler.audit_integrity(compiled)
+            if not integrity["ok"]:
+                return {
+                    "route": "raw",
+                    "route_reason": "integrity_failure",
+                    "context": "",
+                    "history_chars": history_chars,
+                    "output_chars": 0,
+                    "integrity_ok": False,
+                    "fail_open": True,
+                }
+
+            # Stage one is deliberately encoder-free.  It rejects degenerate repeated
+            # input and only pays semantic cost when real turn geometry can obscure a
+            # prior record. ``budget_chars`` is solely the hard output-cost ceiling.
+            load = self.compiler.load_profile(
+                compiled,
+                recent_budget_chars=output_budget_chars,
+            )
+            if load["repetitive"]:
+                return {
+                    "route": "raw",
+                    # Repetition is a stronger, encoder-free form of recent-tail
+                    # coverage: injecting another copy can never add information.
+                    "route_reason": "covered_by_recent_tail",
+                    "context": "",
+                    "history_chars": history_chars,
+                    "output_chars": 0,
+                    "load": load,
+                    "relevance": {
+                        "peak": 1.0,
+                        "recent_peak": 1.0,
+                        "best_in_recent_tail": True,
+                        "signal_source": "repetition_stage",
+                    },
+                    "integrity_ok": True,
+                    "compiler_fingerprint": integrity["fingerprint"],
+                    "embedding_cache_hits": 0,
+                    "embedding_cache_misses": 0,
+                }
+            if not load["load_pressure"]:
+                return {
+                    "route": "below_threshold" if history_chars <= output_budget_chars else "raw",
+                    "route_reason": (
+                        "history_fits_recent_budget"
+                        if history_chars <= output_budget_chars
+                        else "low_load_pressure"
+                    ),
+                    "context": "",
+                    "history_chars": history_chars,
+                    "output_chars": 0,
+                    "load": load,
+                    "integrity_ok": True,
+                    "compiler_fingerprint": integrity["fingerprint"],
+                    "embedding_cache_hits": 0,
+                    "embedding_cache_misses": 0,
+                }
+
+            # Stage two uses the persistent compiler cache and routes only when the
+            # best relevant record is genuinely buried and absent from the recent tail.
+            relevance = self.compiler.relevance_profile(
+                compiled,
+                query=query,
+                recent_budget_chars=output_budget_chars,
+            )
+            route_reason = None
+            if float(relevance["peak"]) < self.min_relevance:
+                route_reason = "low_relevance"
+            elif bool(relevance["best_in_recent_tail"]) or (
+                float(relevance["recent_peak"]) >= self.min_relevance
+            ):
+                route_reason = "covered_by_recent_tail"
+            elif int(relevance["best_record_age_records"]) < self.min_relevant_age_records:
+                route_reason = "relevant_record_too_recent"
+            if route_reason is not None:
+                cache_after = self.compiler.embedding_cache_stats()
+                return {
+                    "route": "raw",
+                    "route_reason": route_reason,
+                    "context": "",
+                    "history_chars": history_chars,
+                    "output_chars": 0,
+                    "load": load,
+                    "relevance": relevance,
+                    "integrity_ok": True,
+                    "compiler_fingerprint": integrity["fingerprint"],
+                    "embedding_cache_hits": cache_after["hits"] - cache_before["hits"],
+                    "embedding_cache_misses": cache_after["misses"] - cache_before["misses"],
+                }
+            organized = self.compiler.organize(
+                compiled,
+                query=query,
+                max_records=len(compiled.records),
+            )
+            rendered = self.compiler.render_organized(
+                organized, budget_chars=output_budget_chars
+            )
             cache_after = self.compiler.embedding_cache_stats()
             return {
-                "route": "raw",
-                "context": "",
+                "route": "attention" if rendered else "empty",
+                "route_reason": "buried_relevant_record",
+                "context": rendered,
                 "history_chars": history_chars,
-                "output_chars": 0,
+                "output_chars": len(rendered),
+                "load": load,
                 "relevance": relevance,
                 "integrity_ok": True,
                 "compiler_fingerprint": integrity["fingerprint"],
+                "source_records": len(compiled.records),
                 "embedding_cache_hits": cache_after["hits"] - cache_before["hits"],
                 "embedding_cache_misses": cache_after["misses"] - cache_before["misses"],
             }
-        organized = self.compiler.organize(
-            compiled,
-            query=query,
-            max_records=len(compiled.records),
-        )
-        rendered = self.compiler.render_organized(
-            organized, budget_chars=output_budget_chars
-        )
-        cache_after = self.compiler.embedding_cache_stats()
-        return {
-            "route": "attention" if rendered else "empty",
-            "context": rendered,
-            "history_chars": history_chars,
-            "output_chars": len(rendered),
-            "relevance": relevance,
-            "integrity_ok": True,
-            "compiler_fingerprint": integrity["fingerprint"],
-            "source_records": len(compiled.records),
-            "embedding_cache_hits": cache_after["hits"] - cache_before["hits"],
-            "embedding_cache_misses": cache_after["misses"] - cache_before["misses"],
-        }
+        except Exception:
+            # The transcript remains untouched at the caller.  Deliberately omit error
+            # text and content from this receipt so failure is both open and private.
+            cache_after = self.compiler.embedding_cache_stats()
+            return {
+                "route": "raw",
+                "route_reason": "compiler_failure",
+                "context": "",
+                "history_chars": history_chars,
+                "output_chars": 0,
+                "fail_open": True,
+                "embedding_cache_hits": cache_after["hits"] - cache_before["hits"],
+                "embedding_cache_misses": cache_after["misses"] - cache_before["misses"],
+            }
 
     def before_request(self, body: dict[str, Any]) -> dict[str, Any]:
         original_chars = len(json.dumps(body, ensure_ascii=False))

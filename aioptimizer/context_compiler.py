@@ -11,6 +11,7 @@ import hashlib
 import json
 import re
 import threading
+import zlib
 from collections import OrderedDict
 from dataclasses import dataclass
 from typing import Any, Callable, Iterable, Mapping, Sequence
@@ -42,6 +43,21 @@ KIND_ORDER = (
     "preference", "hypothesis", "open_question", "artifact", "note", "verbatim_turn",
 )
 AUTHORITIES = frozenset({"source", "derived", "inferred"})
+TOKEN_LIKE_RE = re.compile(r"\w+|[^\w\s]", re.UNICODE)
+DECISION_MARKERS = re.compile(
+    r"\b(decision|decided|conclusion|chosen|choose|switch(?:ed)?|replac(?:e|ed|es)|"
+    r"supersed(?:e|ed|es)|current plan|final plan|we will|we'll)\b",
+    re.IGNORECASE,
+)
+TOPIC_STOPWORDS = frozenset(
+    {
+        "about", "after", "again", "are", "before", "chosen", "conclusion",
+        "current", "decided", "decision", "final", "for", "from", "has", "have",
+        "into", "later", "new", "now", "old", "our", "plan", "previous", "replaced",
+        "replaces", "same", "should", "superseded", "supersedes", "switch", "switched",
+        "that", "the", "this", "use", "using", "was", "were", "will", "with",
+    }
+)
 
 
 @dataclass(frozen=True)
@@ -113,30 +129,103 @@ class ConversationCompiler:
             }
 
     def relevance_profile(
-        self, compiled: CompiledConversation, *, query: str
-    ) -> dict[str, float | int]:
-        """Deterministic retrieval-confidence profile excluding pinned request/instructions."""
+        self,
+        compiled: CompiledConversation,
+        *,
+        query: str,
+        recent_budget_chars: int | None = None,
+    ) -> dict[str, Any]:
+        """Deterministic retrieval-confidence and recent-tail coverage profile.
+
+        ``recent_budget_chars`` models the chronological tail already most salient to
+        the caller.  It is an actual rendering budget rather than a transcript-size
+        heuristic: attention is useful when relevant evidence exists globally but is
+        not represented in that tail.
+        """
+        if recent_budget_chars is not None and recent_budget_chars <= 0:
+            raise ValueError("recent_budget_chars must be positive")
         pinned_ids = {record["id"] for record in self.pinned_records(compiled)}
-        records = [
+        chronological = [
             record for record in self._public_records(compiled) if record["id"] not in pinned_ids
         ]
+        records = self._rankable_records(compiled, exclude_ids=pinned_ids)
         if not records:
-            return {"candidates": 0, "peak": 0.0, "margin": 0.0, "mean": 0.0}
+            profile: dict[str, Any] = {
+                "candidates": len(chronological),
+                "rankable_candidates": 0,
+                "peak": 0.0,
+                "margin": 0.0,
+                "mean": 0.0,
+                "best_record_id": "",
+                "best_record_age": 0,
+                "best_record_age_records": 0,
+                "best_in_recent_tail": False,
+            }
+            if recent_budget_chars is not None:
+                profile.update({"recent_candidates": 0, "recent_peak": 0.0})
+            return profile
         vectors = [
             _as_vector(value)
             for value in self._selector._embed([query] + [record["text"] for record in records])
         ]
         if len(vectors) != len(records) + 1:
             raise ValueError("embed_fn must return one vector per input text")
-        scores = sorted(
-            (_cosine(vectors[0], vector) for vector in vectors[1:]), reverse=True
+        record_scores = [_cosine(vectors[0], vector) for vector in vectors[1:]]
+        scores = sorted(record_scores, reverse=True)
+        best_index = max(range(len(records)), key=lambda index: (record_scores[index], index))
+        best_record = records[best_index]
+        chronological_index = next(
+            index for index, record in enumerate(chronological)
+            if record["id"] == best_record["id"]
         )
-        return {
-            "candidates": len(records),
+        best_age = len(chronological) - chronological_index - 1
+        profile = {
+            "candidates": len(chronological),
+            "rankable_candidates": len(records),
             "peak": round(scores[0], 6),
             "margin": round(scores[0] - scores[1], 6) if len(scores) > 1 else round(scores[0], 6),
             "mean": round(sum(scores) / len(scores), 6),
+            "best_record_id": str(best_record["id"]),
+            "best_record_age": best_age,
+            "best_record_age_records": best_age,
+            "best_in_recent_tail": False,
         }
+        if recent_budget_chars is not None:
+            recent_indexes = self._recent_tail_indexes(chronological, recent_budget_chars)
+            recent_ids = {chronological[index]["id"] for index in recent_indexes}
+            recent_scores = [
+                score for record, score in zip(records, record_scores)
+                if record["id"] in recent_ids
+            ]
+            profile.update({
+                "recent_candidates": len(recent_indexes),
+                "recent_peak": round(max(recent_scores), 6) if recent_scores else 0.0,
+                "best_in_recent_tail": best_record["id"] in recent_ids,
+            })
+        return profile
+
+    @classmethod
+    def _recent_tail_indexes(
+        cls, records: Sequence[Mapping[str, Any]], budget_chars: int
+    ) -> list[int]:
+        """Return the newest records fitting a real flat-rendering budget.
+
+        At least the newest record is represented even when that single record is
+        larger than the budget; this prevents a long recent paragraph from being
+        mistaken for buried evidence.
+        """
+        selected: list[int] = []
+        used = 0
+        for index in range(len(records) - 1, -1, -1):
+            block_chars = len(cls._render_record(records[index]))
+            separator = 2 if selected else 0
+            if selected and used + separator + block_chars > budget_chars:
+                break
+            selected.append(index)
+            used += separator + block_chars
+            if used >= budget_chars:
+                break
+        return selected
 
     def choose_context_mode(
         self, compiled: CompiledConversation, *, query: str, min_relevance: float = 0.5
@@ -159,6 +248,152 @@ class ConversationCompiler:
 
     def _public_records(self, compiled: CompiledConversation) -> list[Record]:
         return [record for record in compiled.records if not self._is_denied(record["text"])]
+
+    @staticmethod
+    def _is_traceback(text: str) -> bool:
+        """Identify raw stack-trace records without matching ordinary prose about errors."""
+        lowered = text.lower()
+        if "traceback (most recent call last)" in lowered or "stack trace:" in lowered:
+            return True
+        signals = (
+            re.search(r'(?m)^\s*File "[^"]+", line \d+', text) is not None,
+            re.search(r"(?m)^\s*[A-Za-z_][\w.]*(?:Error|Exception):\s*\S", text) is not None,
+            re.search(r"(?m)^\s+at\s+\S+\s*\([^\n]+:\d+(?::\d+)?\)", text) is not None,
+        )
+        return sum(signals) >= 2
+
+    @staticmethod
+    def _decision_topic(record: Mapping[str, Any]) -> frozenset[str]:
+        """Return a conservative lexical topic for declarative decision records."""
+        text = str(record["text"]).strip()
+        if text.endswith("?") or re.match(
+            r"(?i)^(what|which|who|when|where|why|how|did|do|does|is|are|can|could|would)\b",
+            text,
+        ):
+            return frozenset()
+        marker = DECISION_MARKERS.search(text)
+        if str(record.get("kind")) != "decision" and marker is None:
+            return frozenset()
+        head = re.split(r"[:\n\u2014-]", text, maxsplit=1)[0]
+        if not DECISION_MARKERS.search(head) and str(record.get("kind")) != "decision":
+            if marker is None or marker.start() > 120:
+                return frozenset()
+            head = text[: marker.end()]
+        tokens = {
+            token.lower()
+            for token in re.findall(r"[A-Za-z0-9_]+", head)
+            if len(token) >= 3 and token.lower() not in TOPIC_STOPWORDS
+        }
+        return frozenset(tokens)
+
+    @classmethod
+    def _superseded_record_ids(cls, records: Sequence[Mapping[str, Any]]) -> set[str]:
+        """Apply the frozen rule that the later record for the same topic wins."""
+        topics = [cls._decision_topic(record) for record in records]
+        superseded: set[str] = set()
+        for earlier, earlier_topic in enumerate(topics):
+            if not earlier_topic:
+                continue
+            for later in range(earlier + 1, len(records)):
+                later_topic = topics[later]
+                if not later_topic:
+                    continue
+                overlap = len(earlier_topic & later_topic)
+                same_topic = earlier_topic == later_topic or (
+                    overlap > 0
+                    and overlap / min(len(earlier_topic), len(later_topic)) >= 0.6
+                )
+                if same_topic:
+                    superseded.add(str(records[earlier]["id"]))
+                    break
+        return superseded
+
+    def _rankable_records(
+        self,
+        compiled: CompiledConversation,
+        *,
+        exclude_ids: set[str] | None = None,
+    ) -> list[Record]:
+        """Privacy-filter, remove tracebacks, then resolve same-topic supersession."""
+        public = [
+            record for record in self._public_records(compiled)
+            if record["id"] not in (exclude_ids or set())
+        ]
+        without_tracebacks = [
+            record for record in public if not self._is_traceback(str(record["text"]))
+        ]
+        superseded = self._superseded_record_ids(without_tracebacks)
+        return [record for record in without_tracebacks if record["id"] not in superseded]
+
+    def load_profile(
+        self,
+        compiled: CompiledConversation,
+        *,
+        recent_budget_chars: int,
+    ) -> dict[str, Any]:
+        """Cheap, encoder-free load/redundancy/turn-geometry signals for stage one."""
+        if recent_budget_chars <= 0:
+            raise ValueError("recent_budget_chars must be positive")
+        pinned_ids = {record["id"] for record in self.pinned_records(compiled)}
+        records = [
+            record for record in self._public_records(compiled) if record["id"] not in pinned_ids
+        ]
+        texts = [str(record["text"]) for record in records]
+        joined = "\n".join(texts)
+        tokens = [token.lower() for token in TOKEN_LIKE_RE.findall(joined)]
+        word_tokens = [token for token in tokens if re.search(r"\w", token)]
+
+        max_token_run = 0
+        current_token_run = 0
+        previous_token = None
+        for token in word_tokens:
+            current_token_run = current_token_run + 1 if token == previous_token else 1
+            max_token_run = max(max_token_run, current_token_run)
+            previous_token = token
+        max_char_run = max(
+            (len(match.group(0)) for match in re.finditer(r"(.)\1*", joined, re.DOTALL)),
+            default=0,
+        )
+        normalized_turns = [" ".join(TOKEN_LIKE_RE.findall(text.lower())) for text in texts]
+        duplicate_turn_ratio = (
+            (len(normalized_turns) - len(set(normalized_turns))) / len(normalized_turns)
+            if normalized_turns else 0.0
+        )
+        unique_token_ratio = len(set(word_tokens)) / len(word_tokens) if word_tokens else 0.0
+        repeated_run_ratio = max_token_run / len(word_tokens) if word_tokens else 0.0
+        encoded = joined.encode("utf-8")
+        compression_ratio = len(zlib.compress(encoded, level=1)) / len(encoded) if encoded else 1.0
+        recent_indexes = self._recent_tail_indexes(records, recent_budget_chars) if records else []
+        obscured_records = max(0, len(records) - len(recent_indexes))
+        repetitive = bool(
+            max_char_run >= 64
+            or max_token_run >= 24
+            or (len(records) >= 4 and duplicate_turn_ratio >= 0.75)
+            or (len(word_tokens) >= 64 and unique_token_ratio <= 0.08)
+            or (len(word_tokens) >= 64 and compression_ratio <= 0.18)
+        )
+        load_pressure = bool(
+            obscured_records >= 1
+            and (len(word_tokens) >= 32 or len(records) >= 5)
+            and not repetitive
+        )
+        return {
+            "history_chars": len(joined),
+            "token_like_count": len(tokens),
+            "word_token_count": len(word_tokens),
+            "unique_token_ratio": round(unique_token_ratio, 6),
+            "compression_ratio": round(compression_ratio, 6),
+            "duplicate_turn_ratio": round(duplicate_turn_ratio, 6),
+            "max_token_run": max_token_run,
+            "max_char_run": max_char_run,
+            "repeated_run_ratio": round(repeated_run_ratio, 6),
+            "turn_count": len(compiled.turns),
+            "candidate_count": len(records),
+            "recent_candidate_count": len(recent_indexes),
+            "obscured_record_count": obscured_records,
+            "repetitive": repetitive,
+            "load_pressure": load_pressure,
+        }
 
     def _index_entry(self, record: Mapping[str, Any], *, include_tags: bool) -> dict[str, Any]:
         if self._is_denied(str(record["text"])):
@@ -340,7 +575,7 @@ class ConversationCompiler:
         """Build a relevant working set while retaining a complete lookup index."""
         if max_records < 0:
             raise ValueError("max_records must be non-negative")
-        public_records = self._public_records(compiled)
+        public_records = self._rankable_records(compiled)
         chunks = [
             {"id": record["id"], "text": record["text"], "record": record}
             for record in public_records
@@ -395,7 +630,7 @@ class ConversationCompiler:
             raise ValueError("similarity_threshold must be between -1 and 1")
         if max_records < 0:
             raise ValueError("max_records must be non-negative")
-        records = self._public_records(compiled)
+        records = self._rankable_records(compiled)
         if not records:
             return {
                 "schema": "aioptimizer.attention-context.v1",
