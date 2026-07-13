@@ -9,6 +9,7 @@ __pycache__/
 # Temp / lock files
 *.tmp
 *.json.tmp
+debug.log
 
 # agent_bus runtime state (regenerated at runtime; not source of truth)
 agent_bus/cache.json
