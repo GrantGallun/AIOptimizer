@@ -14,22 +14,63 @@ sys.path.insert(0, str(PLUGIN_ROOT / "scripts"))
 from codex_hook_adapter import append_receipt, process_hook, request_context
 
 
+def handle_payload(payload, *, environ=None, sidecar_ensurer=None, context_request=request_context):
+    """Start the local compiler if needed, then handle one hook payload fail-open."""
+    environment = os.environ if environ is None else environ
+    endpoint = environment.get(
+        "AIOPTIMIZER_CONTEXT_URL", "http://127.0.0.1:8800/optimize/context"
+    )
+    health_url = environment.get(
+        "AIOPTIMIZER_HEALTH_URL", "http://127.0.0.1:8800/health"
+    )
+    workspace = payload.get("cwd")
+    if not isinstance(workspace, str):
+        workspace = os.getcwd()
+
+    try:
+        if sidecar_ensurer is None:
+            from aioptimizer.sidecar import ensure_sidecar
+
+            sidecar_ensurer = ensure_sidecar
+        sidecar = sidecar_ensurer(
+            workspace,
+            health_url=health_url,
+            port=int(environment.get("AIOPTIMIZER_SIDECAR_PORT", "8800")),
+            startup_timeout_seconds=float(
+                environment.get("AIOPTIMIZER_SIDECAR_STARTUP_SECONDS", "10")
+            ),
+        )
+        sidecar_receipt = sidecar.receipt()
+        if not sidecar.ready:
+            return None, {"route": "sidecar_error", "injected": False, **sidecar_receipt}
+        budget = int(environment.get("AIOPTIMIZER_CODEX_CONTEXT_CHARS", "6000"))
+        timeout = float(environment.get("AIOPTIMIZER_CODEX_TIMEOUT_SECONDS", "30"))
+
+        def optimizer(messages, query, output_budget_chars):
+            return context_request(
+                messages,
+                query,
+                output_budget_chars,
+                endpoint=endpoint,
+                timeout_seconds=timeout,
+            )
+
+        output, receipt = process_hook(payload, optimizer=optimizer, output_budget_chars=budget)
+        receipt.update(sidecar_receipt)
+        return output, receipt
+    except Exception as error:
+        return None, {
+            "route": "sidecar_error",
+            "injected": False,
+            "sidecar_ready": False,
+            "sidecar_state": "error",
+            "sidecar_error_type": type(error).__name__,
+        }
+
+
 def main() -> None:
     payload = json.load(sys.stdin)
-    endpoint = os.environ.get("AIOPTIMIZER_CONTEXT_URL", "http://127.0.0.1:8800/optimize/context")
-    budget = int(os.environ.get("AIOPTIMIZER_CODEX_CONTEXT_CHARS", "6000"))
-    timeout = float(os.environ.get("AIOPTIMIZER_CODEX_TIMEOUT_SECONDS", "30"))
-
-    def optimizer(messages, query, output_budget_chars):
-        return request_context(
-            messages,
-            query,
-            output_budget_chars,
-            endpoint=endpoint,
-            timeout_seconds=timeout,
-        )
-
-    output, receipt = process_hook(payload, optimizer=optimizer, output_budget_chars=budget)
+    output, receipt = handle_payload(payload)
     cwd = payload.get("cwd")
     if isinstance(cwd, str):
         try:

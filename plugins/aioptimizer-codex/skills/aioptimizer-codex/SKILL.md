@@ -10,14 +10,18 @@ visible user/assistant transcript tail supplied by Codex, sends it to the
 localhost AIOptimizer compiler, and injects additive context only when the
 deterministic relevance gate selects attention mode.
 
-Before relying on automatic context:
+Install AIOptimizer in the Python environment used by Codex, then rely on automatic context:
 
-1. Start AIOptimizer with adaptive attention enabled (`python -m aioptimizer`).
-2. Confirm `http://127.0.0.1:8800/status` lists `AttentionContextMiddleware`.
-3. Keep `.aioptimizer/` ignored in the target repository.
+1. Keep `.aioptimizer/` ignored in the target repository.
+2. Submit a prompt normally. The hook checks localhost and lazily starts one hidden,
+   attention-enabled AIOptimizer sidecar when needed.
+3. Inspect `.aioptimizer/sidecar.log` or the local `/status` endpoint only when diagnosing.
 
 Vague requests and short histories inject nothing. If the local service is not
-available, the hook fails open and Codex proceeds normally. Content-free hook
+available or does not become healthy before the bounded startup deadline, the hook
+fails open and Codex proceeds normally. Cross-process locking prevents concurrent
+hooks from starting duplicate sidecars. Runtime logs and PID state stay under
+`.aioptimizer/`. Content-free hook
 receipts are appended to `.aioptimizer/codex_hook_ledger.jsonl` in the active
 workspace. Local compiler requests allow 30 seconds for an encoder cold start;
 set `AIOPTIMIZER_CODEX_TIMEOUT_SECONDS` to a positive number to override it.

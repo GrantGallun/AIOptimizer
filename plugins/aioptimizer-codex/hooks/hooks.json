@@ -8,8 +8,8 @@
             "type": "command",
             "command": "python3 \"${PLUGIN_ROOT}/scripts/user_prompt_submit.py\"",
             "commandWindows": "python \"${PLUGIN_ROOT}\\scripts\\user_prompt_submit.py\"",
-            "timeout": 20,
-            "statusMessage": "AIOptimizer is selecting relevant visible context"
+            "timeout": 45,
+            "statusMessage": "AIOptimizer is preparing and selecting relevant visible context"
           }
         ]
       }
