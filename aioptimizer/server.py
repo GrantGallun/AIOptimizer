@@ -384,11 +384,18 @@ class _GatewayHandler(BaseHTTPRequestHandler):
 
     def _write_json(self, status, body):
         payload = json.dumps(body, ensure_ascii=False, separators=(",", ":")).encode("utf-8")
-        self.send_response(status)
-        self.send_header("Content-Type", "application/json")
-        self.send_header("Content-Length", str(len(payload)))
-        self.end_headers()
-        self.wfile.write(payload)
+        try:
+            self.send_response(status)
+            self.send_header("Content-Type", "application/json")
+            self.send_header("Content-Length", str(len(payload)))
+            self.end_headers()
+            self.wfile.write(payload)
+        except (BrokenPipeError, ConnectionResetError, ConnectionAbortedError):
+            # A local hook may fail open or time out while cold encoder work is
+            # completing.  The request thread should end quietly rather than emit
+            # a misleading server traceback for an already-closed client socket.
+            self._extra = {**getattr(self, "_extra", {}), "client_disconnected": True}
+            return b""
         return payload
 
     def log_message(self, format, *args):

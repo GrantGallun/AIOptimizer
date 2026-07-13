@@ -72,7 +72,7 @@ def request_context(
     output_budget_chars: int,
     *,
     endpoint: str = DEFAULT_CONTEXT_URL,
-    timeout_seconds: float = 15.0,
+    timeout_seconds: float = 30.0,
 ) -> dict[str, Any]:
     payload = json.dumps({
         "messages": messages,

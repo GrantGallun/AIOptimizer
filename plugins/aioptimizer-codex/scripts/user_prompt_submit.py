@@ -18,6 +18,7 @@ def main() -> None:
     payload = json.load(sys.stdin)
     endpoint = os.environ.get("AIOPTIMIZER_CONTEXT_URL", "http://127.0.0.1:8800/optimize/context")
     budget = int(os.environ.get("AIOPTIMIZER_CODEX_CONTEXT_CHARS", "6000"))
+    timeout = float(os.environ.get("AIOPTIMIZER_CODEX_TIMEOUT_SECONDS", "30"))
 
     def optimizer(messages, query, output_budget_chars):
         return request_context(
@@ -25,6 +26,7 @@ def main() -> None:
             query,
             output_budget_chars,
             endpoint=endpoint,
+            timeout_seconds=timeout,
         )
 
     output, receipt = process_hook(payload, optimizer=optimizer, output_budget_chars=budget)

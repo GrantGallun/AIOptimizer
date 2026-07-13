@@ -19,7 +19,8 @@ Before relying on automatic context:
 Vague requests and short histories inject nothing. If the local service is not
 available, the hook fails open and Codex proceeds normally. Content-free hook
 receipts are appended to `.aioptimizer/codex_hook_ledger.jsonl` in the active
-workspace.
+workspace. Local compiler requests allow 30 seconds for an encoder cold start;
+set `AIOPTIMIZER_CODEX_TIMEOUT_SECONDS` to a positive number to override it.
 
 This integration does not inspect server-side instructions, modify OAuth,
 replace Codex history, or proxy subscription traffic. It improves the visible

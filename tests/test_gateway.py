@@ -10,7 +10,7 @@ from pathlib import Path
 
 from aioptimizer.ledger import JsonlLedger
 from aioptimizer.cache_middleware import ExactCacheMiddleware
-from aioptimizer.server import GatewayServer
+from aioptimizer.server import GatewayServer, _GatewayHandler
 from aioptimizer.receipts import ShadowJudge, response_text
 
 
@@ -95,6 +95,22 @@ class _RemoveSlowMiddleware:
 
 
 class GatewayTests(unittest.TestCase):
+    def test_json_writer_quietly_handles_disconnected_local_client(self):
+        class _DisconnectedWriter:
+            def write(self, payload):
+                raise ConnectionAbortedError("client closed")
+
+        handler = object.__new__(_GatewayHandler)
+        handler.wfile = _DisconnectedWriter()
+        handler.send_response = lambda status: None
+        handler.send_header = lambda name, value: None
+        handler.end_headers = lambda: None
+
+        payload = handler._write_json(200, {"route": "attention"})
+
+        self.assertEqual(payload, b"")
+        self.assertTrue(handler._extra["client_disconnected"])
+
     def setUp(self):
         _StubHandler.requests = []
         _StubHandler.headers_seen = []

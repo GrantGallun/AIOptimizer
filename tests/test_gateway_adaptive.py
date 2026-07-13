@@ -81,10 +81,10 @@ class AdaptiveGatewayEndToEndTests(unittest.TestCase):
     def _body(query):
         return {"model": "test", "messages": [
             {"role": "system", "content": "Keep the request verbatim."},
-            {"role": "user", "content": "Weather background " * 16},
-            {"role": "assistant", "content": "Weather discussion " * 16},
             {"role": "user", "content": "Cache latency must stay below 20ms."},
             {"role": "assistant", "content": "Exact cache lowers cache latency."},
+            {"role": "user", "content": "Discuss unrelated weather."},
+            {"role": "assistant", "content": "Weather discussion " * 16},
             {"role": "user", "content": query},
         ]}
 

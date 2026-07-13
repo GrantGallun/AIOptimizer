@@ -72,24 +72,71 @@ class AttentionContextMiddlewareTests(unittest.TestCase):
         with self.assertRaisesRegex(ValueError, "positive"):
             AttentionContextMiddleware(budget_chars=0)
 
-    def test_additive_compiler_injects_only_for_large_focused_history(self):
-        history = self.body["messages"][1:-1]
-        focused = self.middleware.compile_additional_context(
+    def test_additive_compiler_uses_buried_relevance_not_gateway_size(self):
+        middleware = AttentionContextMiddleware(
+            budget_chars=1_000,
+            compiler=ConversationCompiler(embed_fn=_embed),
+        )
+        history = [
+            {"role": "user", "content": "Investigate cache latency."},
+            {"role": "assistant", "content": "Decision: exact cache keeps latency low."},
+            {"role": "assistant", "content": "Weather discussion " * 12},
+            {"role": "user", "content": "Continue with unrelated weather."},
+            {"role": "assistant", "content": "Forecast discussion " * 10},
+        ]
+        focused = middleware.compile_additional_context(
             history,
             query="What did we decide about cache latency?",
-            output_budget_chars=300,
+            output_budget_chars=250,
         )
-        vague = self.middleware.compile_additional_context(
+        vague = middleware.compile_additional_context(
             history,
             query="What stands out?",
+            output_budget_chars=250,
+        )
+
+        self.assertLess(focused["history_chars"], middleware.budget_chars)
+        self.assertEqual(focused["route"], "attention")
+        self.assertIn("cache", focused["context"].lower())
+        self.assertLessEqual(focused["output_chars"], 250)
+        self.assertEqual(vague["route"], "raw")
+        self.assertEqual(vague["route_reason"], "low_relevance")
+        self.assertEqual(vague["context"], "")
+
+    def test_additive_compiler_does_not_inject_repeated_recent_spam(self):
+        history = [
+            *(
+                {"role": "assistant", "content": "cache " * 100}
+                for _ in range(20)
+            ),
+            {"role": "user", "content": "Continue."},
+        ]
+
+        result = self.middleware.compile_additional_context(
+            history,
+            query="cache",
             output_budget_chars=300,
         )
 
-        self.assertEqual(focused["route"], "attention")
-        self.assertIn("cache", focused["context"].lower())
-        self.assertLessEqual(focused["output_chars"], 300)
-        self.assertEqual(vague["route"], "raw")
-        self.assertEqual(vague["context"], "")
+        self.assertEqual(result["route"], "raw")
+        self.assertEqual(result["route_reason"], "covered_by_recent_tail")
+        self.assertGreaterEqual(result["relevance"]["recent_peak"], 0.5)
+
+    def test_additive_compiler_does_not_duplicate_recent_relevant_fact(self):
+        history = [
+            {"role": "assistant", "content": "Weather history " * 30},
+            {"role": "user", "content": "Check cache latency."},
+            {"role": "assistant", "content": "The exact cache keeps latency low."},
+        ]
+
+        result = self.middleware.compile_additional_context(
+            history,
+            query="What was the cache latency decision?",
+            output_budget_chars=300,
+        )
+
+        self.assertEqual(result["route"], "raw")
+        self.assertEqual(result["route_reason"], "covered_by_recent_tail")
 
     def test_additive_compiler_skips_small_history(self):
         result = self.middleware.compile_additional_context(
@@ -98,6 +145,7 @@ class AttentionContextMiddlewareTests(unittest.TestCase):
             output_budget_chars=300,
         )
         self.assertEqual(result["route"], "below_threshold")
+        self.assertEqual(result["route_reason"], "history_fits_recent_budget")
         self.assertEqual(result["context"], "")
 
 

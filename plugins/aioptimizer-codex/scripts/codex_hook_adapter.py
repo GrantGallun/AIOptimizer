@@ -53,7 +53,7 @@ def extract_visible_messages(path: str | Path) -> list[dict[str, str]]:
     return messages[-MAX_MESSAGES:]
 
 
-def request_context(messages, query, output_budget_chars, *, endpoint, timeout_seconds=15.0):
+def request_context(messages, query, output_budget_chars, *, endpoint, timeout_seconds=30.0):
     body = json.dumps({
         "messages": messages,
         "query": query,

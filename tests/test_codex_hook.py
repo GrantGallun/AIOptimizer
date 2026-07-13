@@ -5,8 +5,9 @@ import subprocess
 import sys
 import tempfile
 import unittest
+from unittest import mock
 
-from aioptimizer.codex_hook import extract_visible_messages, process_hook
+from aioptimizer.codex_hook import extract_visible_messages, process_hook, request_context
 
 
 def _rollout_row(role, text):
@@ -21,6 +22,17 @@ def _rollout_row(role, text):
 
 
 class CodexHookTests(unittest.TestCase):
+    def test_local_context_request_allows_encoder_cold_start(self):
+        response = mock.MagicMock()
+        response.read.return_value = b'{"route":"raw"}'
+        context = mock.MagicMock()
+        context.__enter__.return_value = response
+        with mock.patch("urllib.request.urlopen", return_value=context) as urlopen:
+            result = request_context([], "query", 6000)
+
+        self.assertEqual(result, {"route": "raw"})
+        self.assertEqual(urlopen.call_args.kwargs["timeout"], 30.0)
+
     def test_hook_launcher_emits_unicode_as_utf8_under_legacy_windows_codepage(self):
         root = Path(__file__).resolve().parents[1]
         script = root / "plugins" / "aioptimizer-codex" / "scripts" / "user_prompt_submit.py"
