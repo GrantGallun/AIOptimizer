@@ -1,0 +1,16 @@
+{
+  "hooks": {
+    "UserPromptSubmit": [
+      {
+        "matcher": "",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "python \"C:\\Code\\AIOptimizer\\plugins\\aioptimizer-claude-code\\scripts\\user_prompt_submit.py\"",
+            "timeout": 45
+          }
+        ]
+      }
+    ]
+  }
+}

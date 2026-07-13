@@ -1,0 +1,8 @@
+{
+  "name": "aioptimizer-claude-code",
+  "version": "0.1.0",
+  "description": "Deterministic visible-context selection and content-free receipts for subscription-backed Claude Code.",
+  "author": {
+    "name": "Grant Gallun"
+  }
+}

@@ -1,0 +1,17 @@
+{
+  "description": "Inject deterministic attention-selected visible history into Claude Code subscription turns.",
+  "hooks": {
+    "UserPromptSubmit": [
+      {
+        "matcher": "",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "python \"${CLAUDE_PLUGIN_ROOT}/scripts/user_prompt_submit.py\"",
+            "timeout": 45
+          }
+        ]
+      }
+    ]
+  }
+}
