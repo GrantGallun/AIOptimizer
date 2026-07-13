@@ -1,4 +1,9 @@
+import re
+import shutil
+import subprocess
+import tempfile
 import unittest
+from pathlib import Path
 
 from experiments.brain_runtime.benchmark import run_benchmark
 from experiments.brain_runtime.multiworker_benchmark import run_benchmark as run_multiworker_benchmark
@@ -6,6 +11,68 @@ from experiments.brain_runtime.runtime import BrainRuntime
 
 
 class BrainRuntimeTests(unittest.TestCase):
+    def test_v15_ab_setup_enables_auto_review_symmetrically(self):
+        powershell = shutil.which("powershell.exe") or shutil.which("powershell")
+        if powershell is None:
+            self.skipTest("PowerShell is required for the Windows A/B setup scaffold")
+
+        repository = Path(__file__).resolve().parents[1]
+        script = repository / "experiments" / "brain_runtime" / "setup_talenttrader_v15_ab.ps1"
+        with tempfile.TemporaryDirectory() as directory:
+            temporary = Path(directory)
+            root = temporary / "v15-ab"
+            base_home = temporary / "base-codex"
+            control_root = temporary / "control-codex"
+            (base_home / "plugins").mkdir(parents=True)
+            (base_home / "auth.json").write_text("{}\n", encoding="utf-8")
+            (base_home / "config.toml").write_text(
+                'model = "test-model"\n\n'
+                '[plugins."aioptimizer-codex@personal"]\n'
+                "enabled = true\n",
+                encoding="utf-8",
+            )
+
+            command = [
+                powershell,
+                "-NoProfile",
+                "-ExecutionPolicy",
+                "Bypass",
+                "-File",
+                str(script),
+                "-Root",
+                str(root),
+                "-Model",
+                "test-model",
+                "-AIOptimizerHome",
+                str(repository),
+                "-BaseCodexHome",
+                str(base_home),
+                "-CodexControlRoot",
+                str(control_root),
+            ]
+            subprocess.run(command, check=True, capture_output=True, text=True)
+            subprocess.run(command, check=True, capture_output=True, text=True)
+
+            config_a = (control_root / "arm-a" / "config.toml").read_text(encoding="utf-8")
+            config_b = (control_root / "arm-b" / "config.toml").read_text(encoding="utf-8")
+            for setting in (
+                'approval_policy = "on-request"',
+                'approvals_reviewer = "auto_review"',
+                'sandbox_mode = "workspace-write"',
+            ):
+                self.assertEqual(config_a.count(setting), 1)
+                self.assertEqual(config_b.count(setting), 1)
+
+            treatment = re.compile(
+                r'(?m)(^\[plugins\."aioptimizer-codex@personal"\]\nenabled\s*=\s*)(?:true|false)$'
+            )
+            self.assertEqual(treatment.sub(r"\1TREATMENT", config_a), treatment.sub(r"\1TREATMENT", config_b))
+            self.assertIn("enabled = true", config_a)
+            self.assertIn("enabled = false", config_b)
+            seed_a = (root / "arm-a-plugin-on" / "workspace" / ".gitignore").read_bytes()
+            seed_b = (root / "arm-b-plugin-off" / "workspace" / ".gitignore").read_bytes()
+            self.assertEqual(seed_a, seed_b)
+
     def test_contradiction_prefers_newer_high_confidence_evidence(self):
         runtime = BrainRuntime(decay_half_life=4.0)
         runtime.remember("parser", "Delimiter is comma.", key="delimiter", value="comma", confidence=0.4)

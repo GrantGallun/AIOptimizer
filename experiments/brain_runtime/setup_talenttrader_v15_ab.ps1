@@ -1,9 +1,9 @@
 param(
-    [string]$Root = "C:\Code\TalentTrader\v15-ab-v3",
+    [string]$Root = "C:\Code\TalentTrader\v15-ab-v4",
     [string]$Model = "gpt-5.6-sol",
     [string]$AIOptimizerHome = "C:\Code\AIOptimizer",
     [string]$BaseCodexHome = (Join-Path $env:USERPROFILE ".codex"),
-    [string]$CodexControlRoot = (Join-Path $env:USERPROFILE ".codex\ab-v15-v3")
+    [string]$CodexControlRoot = (Join-Path $env:USERPROFILE ".codex\ab-v15-v4")
 )
 
 $ErrorActionPreference = "Stop"
@@ -75,6 +75,41 @@ function Set-AIOptimizerPluginState {
     )
 }
 
+function Set-TopLevelTomlString {
+    param(
+        [Parameter(Mandatory = $true)][string]$Config,
+        [Parameter(Mandatory = $true)][string]$Key,
+        [Parameter(Mandatory = $true)][string]$Value
+    )
+
+    $escapedKey = [System.Text.RegularExpressions.Regex]::Escape($Key)
+    $pattern = "(?m)^$escapedKey\s*=.*$"
+    $matches = [System.Text.RegularExpressions.Regex]::Matches($Config, $pattern)
+    if ($matches.Count -gt 1) {
+        throw "Expected at most one top-level $Key setting in the base config."
+    }
+
+    $setting = "$Key = `"$Value`""
+    if ($matches.Count -eq 1) {
+        return [System.Text.RegularExpressions.Regex]::Replace($Config, $pattern, $setting)
+    }
+
+    $newline = if ($Config.Contains("`r`n")) { "`r`n" } else { "`n" }
+    $firstTable = [System.Text.RegularExpressions.Regex]::Match($Config, '(?m)^\s*\[')
+    if ($firstTable.Success) {
+        return $Config.Insert($firstTable.Index, "$setting$newline$newline")
+    }
+    return "$Config$newline$setting$newline"
+}
+
+function Set-AutoReviewDefaults {
+    param([Parameter(Mandatory = $true)][string]$Config)
+
+    $updated = Set-TopLevelTomlString -Config $Config -Key "approval_policy" -Value "on-request"
+    $updated = Set-TopLevelTomlString -Config $updated -Key "approvals_reviewer" -Value "auto_review"
+    return Set-TopLevelTomlString -Config $updated -Key "sandbox_mode" -Value "workspace-write"
+}
+
 $resolvedRoot = [System.IO.Path]::GetFullPath($Root)
 $armA = Join-Path $resolvedRoot "arm-a-plugin-on\workspace"
 $armB = Join-Path $resolvedRoot "arm-b-plugin-off\workspace"
@@ -97,7 +132,7 @@ if (-not (Test-Path -LiteralPath $baseAuthPath)) {
 
 $codexHomeA = Join-Path $CodexControlRoot "arm-a"
 $codexHomeB = Join-Path $CodexControlRoot "arm-b"
-$baseConfig = [System.IO.File]::ReadAllText($baseConfigPath)
+$baseConfig = Set-AutoReviewDefaults -Config ([System.IO.File]::ReadAllText($baseConfigPath))
 $configA = Set-AIOptimizerPluginState -Config $baseConfig -Enabled $true
 $configB = Set-AIOptimizerPluginState -Config $baseConfig -Enabled $false
 Write-NewFile -Path (Join-Path $codexHomeA "config.toml") -Content $configA
@@ -140,6 +175,8 @@ These are clean, paired workspaces for the frozen AIOptimizer v15 dogfood A/B.
 - `arm-a-plugin-on/workspace`: launch with `start-arm-a.ps1`; AIOptimizer plugin forced on.
 - `arm-b-plugin-off/workspace`: launch with `start-arm-b.ps1`; AIOptimizer plugin forced off.
 - Both launchers pin model `{0}` and use `workspace-write` with on-request approvals.
+- Both frozen configs route eligible approval prompts to Codex auto-review, so the paired runs
+  do not require routine human approval while retaining the sandbox boundary.
 - Each arm uses a frozen isolated `CODEX_HOME`; the configs differ only in the AIOptimizer enabled bit.
 - Both isolated homes hardlink the same protected auth store and junction the same plugin binaries.
 - The model-visible seed files are byte-identical. Arm identity exists only in the parent control plane.
