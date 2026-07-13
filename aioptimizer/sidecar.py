@@ -98,6 +98,7 @@ def launch_sidecar(
     paths: SidecarPaths,
     *,
     port: int = DEFAULT_PORT,
+    source_root: str | Path | None = None,
     python_executable: str = sys.executable,
     platform_name: str | None = None,
     popen: Callable[..., subprocess.Popen] = subprocess.Popen,
@@ -117,8 +118,9 @@ def launch_sidecar(
         str(paths.ledger),
     ]
     environment = {**os.environ, "PYTHONUNBUFFERED": "1"}
+    launch_root = Path(source_root).resolve() if source_root is not None else paths.workspace
     kwargs: dict[str, object] = {
-        "cwd": str(paths.workspace),
+        "cwd": str(launch_root),
         "stdin": subprocess.DEVNULL,
         "stderr": subprocess.STDOUT,
         "env": environment,
@@ -139,6 +141,7 @@ def ensure_sidecar(
     *,
     health_url: str = DEFAULT_HEALTH_URL,
     port: int = DEFAULT_PORT,
+    source_root: str | Path | None = None,
     startup_timeout_seconds: float = DEFAULT_STARTUP_TIMEOUT_SECONDS,
     poll_interval_seconds: float = DEFAULT_POLL_INTERVAL_SECONDS,
     health_check: Callable[[], bool] | None = None,
@@ -150,7 +153,9 @@ def ensure_sidecar(
     """Ensure one local sidecar is healthy; return failure instead of raising."""
     started = monotonic()
     check = health_check or (lambda: health_ready(health_url))
-    start = launcher or (lambda paths: launch_sidecar(paths, port=port))
+    start = launcher or (
+        lambda paths: launch_sidecar(paths, port=port, source_root=source_root)
+    )
 
     def result(
         ready: bool,

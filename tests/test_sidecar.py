@@ -1,9 +1,13 @@
 import importlib.util
 import json
+import os
 from pathlib import Path
+import socket
 import subprocess
+import sys
 import tempfile
 import threading
+import time
 import unittest
 from unittest import mock
 
@@ -12,6 +16,7 @@ from aioptimizer.sidecar import (
     SidecarPaths,
     ensure_sidecar,
     launch_sidecar,
+    process_is_alive,
 )
 
 
@@ -30,6 +35,26 @@ def _hook_module():
 
 
 class SidecarTests(unittest.TestCase):
+    @staticmethod
+    def _free_port():
+        with socket.socket() as listener:
+            listener.bind(("127.0.0.1", 0))
+            return listener.getsockname()[1]
+
+    def test_hook_discovers_sibling_source_checkout(self):
+        module = _hook_module()
+        with tempfile.TemporaryDirectory() as directory:
+            parent = Path(directory)
+            workspace = parent / "TalentTrader"
+            source_root = parent / "AIOptimizer"
+            workspace.mkdir()
+            (source_root / "aioptimizer").mkdir(parents=True)
+            (source_root / "aioptimizer" / "__init__.py").write_text("", encoding="utf-8")
+
+            discovered = module.discover_aioptimizer_home(workspace, environ={})
+
+        self.assertEqual(discovered, source_root.resolve())
+
     def test_two_concurrent_starters_launch_one_process(self):
         with tempfile.TemporaryDirectory() as directory:
             ready = threading.Event()
@@ -143,6 +168,112 @@ class SidecarTests(unittest.TestCase):
             self.assertIn(str(paths.ledger), command)
             self.assertIn("--attention-context", command)
             self.assertEqual(kwargs["stderr"], subprocess.STDOUT)
+
+    def test_launch_uses_explicit_source_root_outside_workspace(self):
+        with tempfile.TemporaryDirectory() as directory:
+            workspace = Path(directory) / "TalentTrader"
+            source_root = Path(directory) / "AIOptimizer"
+            workspace.mkdir()
+            source_root.mkdir()
+            paths = SidecarPaths.for_workspace(workspace)
+            popen = mock.Mock(return_value=mock.Mock(pid=1234))
+
+            launch_sidecar(paths, source_root=source_root, popen=popen)
+
+        self.assertEqual(Path(popen.call_args.kwargs["cwd"]), source_root.resolve())
+
+    def test_real_hook_bootstraps_from_external_workspace(self):
+        root = Path(__file__).resolve().parents[1]
+        script = root / "plugins" / "aioptimizer-codex" / "scripts" / "user_prompt_submit.py"
+        port = self._free_port()
+        completed = None
+        rows = []
+        with tempfile.TemporaryDirectory(ignore_cleanup_errors=True) as directory:
+            parent = Path(directory)
+            workspace = parent / "TalentTrader"
+            source_root = parent / "AIOptimizer"
+            package = source_root / "aioptimizer"
+            workspace.mkdir()
+            package.mkdir(parents=True)
+            (package / "__init__.py").write_text("", encoding="utf-8")
+            (package / "sidecar.py").write_text(
+                (root / "aioptimizer" / "sidecar.py").read_text(encoding="utf-8"),
+                encoding="utf-8",
+            )
+            (package / "__main__.py").write_text(
+                "import argparse, json, threading\n"
+                "from http.server import BaseHTTPRequestHandler, ThreadingHTTPServer\n"
+                "parser = argparse.ArgumentParser(add_help=False)\n"
+                "parser.add_argument('--port', type=int, default=8800)\n"
+                "args, _ = parser.parse_known_args()\n"
+                "class Handler(BaseHTTPRequestHandler):\n"
+                "    def reply(self, body):\n"
+                "        payload = json.dumps(body).encode()\n"
+                "        self.send_response(200); self.send_header('Content-Type', 'application/json')\n"
+                "        self.send_header('Content-Length', str(len(payload))); self.end_headers()\n"
+                "        self.wfile.write(payload)\n"
+                "    def do_GET(self): self.reply({'status': 'ok'})\n"
+                "    def do_POST(self):\n"
+                "        self.rfile.read(int(self.headers.get('Content-Length', '0')))\n"
+                "        self.reply({'route':'below_threshold','context':'','output_chars':0})\n"
+                "        threading.Thread(target=self.server.shutdown, daemon=True).start()\n"
+                "    def log_message(self, format, *args): pass\n"
+                "server = ThreadingHTTPServer(('127.0.0.1', args.port), Handler)\n"
+                "timer = threading.Timer(5, server.shutdown); timer.daemon = True; timer.start()\n"
+                "server.serve_forever(); server.server_close()\n",
+                encoding="utf-8",
+            )
+            payload = {
+                "cwd": str(workspace),
+                "prompt": "What did we decide?",
+                "transcript_path": str(workspace / "missing.jsonl"),
+            }
+            environment = {
+                **os.environ,
+                "PYTHONPATH": "",
+                "AIOPTIMIZER_HOME": str(source_root),
+                "AIOPTIMIZER_SIDECAR_PORT": str(port),
+                "AIOPTIMIZER_HEALTH_URL": f"http://127.0.0.1:{port}/health",
+                "AIOPTIMIZER_CONTEXT_URL": f"http://127.0.0.1:{port}/optimize/context",
+                "AIOPTIMIZER_SIDECAR_STARTUP_SECONDS": "10",
+            }
+            completed = subprocess.run(
+                [sys.executable, str(script)],
+                input=json.dumps(payload),
+                text=True,
+                capture_output=True,
+                cwd=workspace,
+                env=environment,
+                timeout=20,
+            )
+            pid_path = workspace / ".aioptimizer" / "sidecar.pid"
+            pid = int(pid_path.read_text(encoding="ascii"))
+            ledger = workspace / ".aioptimizer" / "codex_hook_ledger.jsonl"
+            rows = [
+                json.loads(line)
+                for line in ledger.read_text(encoding="utf-8").splitlines()
+            ]
+            deadline = time.monotonic() + 6
+            log_path = workspace / ".aioptimizer" / "sidecar.log"
+            probe_path = workspace / ".aioptimizer" / "sidecar.closed"
+            log_released = False
+            while time.monotonic() < deadline:
+                try:
+                    log_path.replace(probe_path)
+                    probe_path.replace(log_path)
+                    log_released = True
+                    break
+                except PermissionError:
+                    time.sleep(0.05)
+            self.assertTrue(log_released, "self-terminating sidecar did not release its log")
+
+        self.assertIsNotNone(completed)
+        self.assertEqual(completed.returncode, 0, completed.stderr)
+        self.assertEqual(completed.stdout, "")
+        self.assertTrue(pid and pid > 0)
+        self.assertEqual(rows[-1]["route"], "below_threshold")
+        self.assertTrue(rows[-1]["sidecar_ready"])
+        self.assertEqual(rows[-1]["sidecar_state"], "started")
 
     def test_started_process_pid_and_log_live_under_dot_aioptimizer(self):
         with tempfile.TemporaryDirectory() as directory:

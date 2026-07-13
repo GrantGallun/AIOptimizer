@@ -179,7 +179,11 @@ class ClaudeCodeHookTests(unittest.TestCase):
         serialized = json.dumps(receipt)
         self.assertIn("query_sha256_16", receipt)
         self.assertEqual(receipt["messages"], 2)
-        self.assertEqual(receipt["history_chars"], 57)
+        expected_history_chars = sum(map(len, (
+            "Cache latency must stay below 20ms.",
+            "Use the exact cache.",
+        )))
+        self.assertEqual(receipt["history_chars"], expected_history_chars)
         self.assertNotIn(payload["prompt"], serialized)
         self.assertNotIn("Cache latency", serialized)
         self.assertNotIn(payload["session_id"], serialized)

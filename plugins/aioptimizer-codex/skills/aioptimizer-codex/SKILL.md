@@ -10,7 +10,9 @@ visible user/assistant transcript tail supplied by Codex, sends it to the
 localhost AIOptimizer compiler, and injects additive context only when the
 deterministic relevance gate selects attention mode.
 
-Install AIOptimizer in the Python environment used by Codex, then rely on automatic context:
+Keep the AIOptimizer source checkout installed, configured with `AIOPTIMIZER_HOME`,
+or alongside the active project (for example `C:\Code\AIOptimizer` next to
+`C:\Code\TalentTrader`), then rely on automatic context:
 
 1. Keep `.aioptimizer/` ignored in the target repository.
 2. Submit a prompt normally. The hook checks localhost and lazily starts one hidden,

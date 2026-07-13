@@ -14,6 +14,26 @@ sys.path.insert(0, str(PLUGIN_ROOT / "scripts"))
 from codex_hook_adapter import append_receipt, process_hook, request_context
 
 
+def discover_aioptimizer_home(workspace, *, environ=None):
+    """Find a source checkout without requiring a global package installation."""
+    environment = os.environ if environ is None else environ
+    candidates = []
+    configured = environment.get("AIOPTIMIZER_HOME")
+    if configured:
+        candidates.append(Path(configured))
+    root = Path(workspace).resolve()
+    candidates.extend((root, root.parent / "AIOptimizer", PLUGIN_ROOT.parents[1]))
+    seen = set()
+    for candidate in candidates:
+        resolved = candidate.resolve()
+        if resolved in seen:
+            continue
+        seen.add(resolved)
+        if (resolved / "aioptimizer" / "__init__.py").is_file():
+            return resolved
+    return None
+
+
 def handle_payload(payload, *, environ=None, sidecar_ensurer=None, context_request=request_context):
     """Start the local compiler if needed, then handle one hook payload fail-open."""
     environment = os.environ if environ is None else environ
@@ -28,6 +48,9 @@ def handle_payload(payload, *, environ=None, sidecar_ensurer=None, context_reque
         workspace = os.getcwd()
 
     try:
+        source_root = discover_aioptimizer_home(workspace, environ=environment)
+        if source_root is not None and str(source_root) not in sys.path:
+            sys.path.insert(0, str(source_root))
         if sidecar_ensurer is None:
             from aioptimizer.sidecar import ensure_sidecar
 
@@ -36,6 +59,7 @@ def handle_payload(payload, *, environ=None, sidecar_ensurer=None, context_reque
             workspace,
             health_url=health_url,
             port=int(environment.get("AIOPTIMIZER_SIDECAR_PORT", "8800")),
+            source_root=source_root,
             startup_timeout_seconds=float(
                 environment.get("AIOPTIMIZER_SIDECAR_STARTUP_SECONDS", "10")
             ),
