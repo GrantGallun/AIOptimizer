@@ -11,6 +11,14 @@ Created: 2026-07-09
 
 ## Tested Hypotheses
 
+### HYP-20260714-37: The context optimizer makes an agent BUILD better (v15 dogfood A/B). — PILOT: null-trend, UNDERPOWERED + design-flawed; no verdict.
+- Status: **Inconclusive (pilot, dev-tier).** 1 paired replicate on gpt-5.6-luna, 12 tasks (prereg requires >=2 reps). A (optimizer ON) 8/12 vs B (OFF) 8/12, gap 0.00, identical Wilson CI [0.39,0.86], constraint-retention 0.84 both, ZERO tasks flipped; A cost +16.9M input tokens / +13min. Both arms failed the same 4 tasks (task difficulty, not treatment).
+- Decision: **No verdict.** Underpowered (wide CIs) AND the v15 tasks tested the wrong regime — short 8-turn threads that RE-STATE constraints = the low-pressure condition where HYP-34 already showed the optimizer's edge -> ~0. The null is consistent with prior findings, not a refutation. Fix = Amendment v15.1 (24-40 turn threads, constraints stated once early + buried, no reminders), then >=2 replicates. The optimizer's demonstrated value (HYP-33/36, cross-vendor) stands; v15 must create the pressure where it applies before it can measure a build-quality effect.
+- Linked: PREREGISTRATION_v15 + Amendment v15.1; HYP-33 (the mechanism), HYP-34 (why low-pressure -> null).
+- — Fable (Claude Fable 5), 2026-07-14
+
+
+
 ### HYP-20260709-01: A Codex plugin/skill is enough to start experimenting with Brain Workspace behavior without model-parameter access.
 - Status: Confirmed
 - Tested: 2026-07-09

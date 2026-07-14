@@ -1,0 +1,266 @@
+{
+  "A": {
+    "rows": [
+      {
+        "ast_ok": true,
+        "constraints_passed": 3,
+        "constraints_total": 3,
+        "files_present": true,
+        "functional_ok": true,
+        "passed": true,
+        "task": "linkedin_scraper_ratelimit"
+      },
+      {
+        "ast_ok": true,
+        "constraints_passed": 2,
+        "constraints_total": 2,
+        "files_present": true,
+        "functional_ok": true,
+        "passed": true,
+        "task": "csv_reader_no_pandas"
+      },
+      {
+        "ast_ok": true,
+        "constraints_passed": 2,
+        "constraints_total": 2,
+        "files_present": true,
+        "functional_ok": true,
+        "passed": true,
+        "task": "cli_no_approval_messages"
+      },
+      {
+        "ast_ok": true,
+        "constraints_passed": 3,
+        "constraints_total": 3,
+        "files_present": true,
+        "functional_ok": true,
+        "passed": true,
+        "task": "scraper_retry_bounded"
+      },
+      {
+        "ast_ok": true,
+        "constraints_passed": 2,
+        "constraints_total": 2,
+        "files_present": true,
+        "functional_ok": true,
+        "passed": true,
+        "task": "jsonl_profile_allowlist"
+      },
+      {
+        "ast_ok": false,
+        "constraints_passed": 1,
+        "constraints_total": 2,
+        "files_present": true,
+        "functional_ok": false,
+        "passed": false,
+        "task": "robots_aware_crawler"
+      },
+      {
+        "ast_ok": false,
+        "constraints_passed": 1,
+        "constraints_total": 2,
+        "files_present": true,
+        "functional_ok": false,
+        "passed": false,
+        "task": "archive_cli_dry_run"
+      },
+      {
+        "ast_ok": true,
+        "constraints_passed": 1,
+        "constraints_total": 1,
+        "files_present": true,
+        "functional_ok": true,
+        "passed": true,
+        "task": "sqlite_parameterized_store"
+      },
+      {
+        "ast_ok": true,
+        "constraints_passed": 1,
+        "constraints_total": 2,
+        "files_present": true,
+        "functional_ok": true,
+        "passed": false,
+        "task": "env_token_config"
+      },
+      {
+        "ast_ok": true,
+        "constraints_passed": 2,
+        "constraints_total": 2,
+        "files_present": true,
+        "functional_ok": true,
+        "passed": true,
+        "task": "stable_candidate_dedupe"
+      },
+      {
+        "ast_ok": true,
+        "constraints_passed": 2,
+        "constraints_total": 2,
+        "files_present": true,
+        "functional_ok": true,
+        "passed": true,
+        "task": "csv_fixed_columns"
+      },
+      {
+        "ast_ok": false,
+        "constraints_passed": 1,
+        "constraints_total": 2,
+        "files_present": false,
+        "functional_ok": false,
+        "passed": false,
+        "task": "scraper_structured_logging"
+      }
+    ]
+  },
+  "B": {
+    "rows": [
+      {
+        "ast_ok": true,
+        "constraints_passed": 3,
+        "constraints_total": 3,
+        "files_present": true,
+        "functional_ok": true,
+        "passed": true,
+        "task": "linkedin_scraper_ratelimit"
+      },
+      {
+        "ast_ok": true,
+        "constraints_passed": 2,
+        "constraints_total": 2,
+        "files_present": true,
+        "functional_ok": true,
+        "passed": true,
+        "task": "csv_reader_no_pandas"
+      },
+      {
+        "ast_ok": true,
+        "constraints_passed": 2,
+        "constraints_total": 2,
+        "files_present": true,
+        "functional_ok": true,
+        "passed": true,
+        "task": "cli_no_approval_messages"
+      },
+      {
+        "ast_ok": true,
+        "constraints_passed": 3,
+        "constraints_total": 3,
+        "files_present": true,
+        "functional_ok": true,
+        "passed": true,
+        "task": "scraper_retry_bounded"
+      },
+      {
+        "ast_ok": true,
+        "constraints_passed": 2,
+        "constraints_total": 2,
+        "files_present": true,
+        "functional_ok": true,
+        "passed": true,
+        "task": "jsonl_profile_allowlist"
+      },
+      {
+        "ast_ok": true,
+        "constraints_passed": 1,
+        "constraints_total": 2,
+        "files_present": true,
+        "functional_ok": true,
+        "passed": false,
+        "task": "robots_aware_crawler"
+      },
+      {
+        "ast_ok": true,
+        "constraints_passed": 1,
+        "constraints_total": 2,
+        "files_present": true,
+        "functional_ok": true,
+        "passed": false,
+        "task": "archive_cli_dry_run"
+      },
+      {
+        "ast_ok": true,
+        "constraints_passed": 1,
+        "constraints_total": 1,
+        "files_present": true,
+        "functional_ok": true,
+        "passed": true,
+        "task": "sqlite_parameterized_store"
+      },
+      {
+        "ast_ok": true,
+        "constraints_passed": 1,
+        "constraints_total": 2,
+        "files_present": true,
+        "functional_ok": true,
+        "passed": false,
+        "task": "env_token_config"
+      },
+      {
+        "ast_ok": true,
+        "constraints_passed": 2,
+        "constraints_total": 2,
+        "files_present": true,
+        "functional_ok": true,
+        "passed": true,
+        "task": "stable_candidate_dedupe"
+      },
+      {
+        "ast_ok": true,
+        "constraints_passed": 2,
+        "constraints_total": 2,
+        "files_present": true,
+        "functional_ok": true,
+        "passed": true,
+        "task": "csv_fixed_columns"
+      },
+      {
+        "ast_ok": false,
+        "constraints_passed": 1,
+        "constraints_total": 2,
+        "files_present": false,
+        "functional_ok": false,
+        "passed": false,
+        "task": "scraper_structured_logging"
+      }
+    ]
+  },
+  "summary": {
+    "arms": {
+      "A": {
+        "constraint_retention": 0.84,
+        "pass_ci": [
+          0.3906,
+          0.8619
+        ],
+        "pass_rate": 0.6666666666666666,
+        "passed": 8,
+        "tasks": 12
+      },
+      "B": {
+        "constraint_retention": 0.84,
+        "pass_ci": [
+          0.3906,
+          0.8619
+        ],
+        "pass_rate": 0.6666666666666666,
+        "passed": 8,
+        "tasks": 12
+      }
+    },
+    "paired": {
+      "A_only": [],
+      "B_only": [],
+      "both": [
+        "cli_no_approval_messages",
+        "csv_fixed_columns",
+        "csv_reader_no_pandas",
+        "jsonl_profile_allowlist",
+        "linkedin_scraper_ratelimit",
+        "scraper_retry_bounded",
+        "sqlite_parameterized_store",
+        "stable_candidate_dedupe"
+      ]
+    },
+    "pass_gap_A_minus_B": 0.0
+  },
+  "tasks": 12
+}

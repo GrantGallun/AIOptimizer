@@ -1,0 +1,635 @@
+{
+  "A": {
+    "rows": [
+      {
+        "ast_ok": true,
+        "constraints_passed": 3,
+        "constraints_total": 3,
+        "files_present": true,
+        "functional_ok": true,
+        "passed": true,
+        "task": "linkedin_scraper_ratelimit"
+      },
+      {
+        "ast_ok": true,
+        "constraints_passed": 2,
+        "constraints_total": 2,
+        "files_present": true,
+        "functional_ok": true,
+        "passed": true,
+        "task": "csv_reader_no_pandas"
+      },
+      {
+        "ast_ok": true,
+        "constraints_passed": 2,
+        "constraints_total": 2,
+        "files_present": true,
+        "functional_ok": true,
+        "passed": true,
+        "task": "cli_no_approval_messages"
+      },
+      {
+        "ast_ok": true,
+        "constraints_passed": 3,
+        "constraints_total": 3,
+        "files_present": true,
+        "functional_ok": true,
+        "passed": true,
+        "task": "scraper_retry_bounded"
+      },
+      {
+        "ast_ok": true,
+        "constraints_passed": 2,
+        "constraints_total": 2,
+        "files_present": true,
+        "functional_ok": true,
+        "passed": true,
+        "task": "jsonl_profile_allowlist"
+      },
+      {
+        "ast_ok": false,
+        "constraints_passed": 1,
+        "constraints_total": 2,
+        "files_present": true,
+        "functional_ok": false,
+        "passed": false,
+        "task": "robots_aware_crawler"
+      },
+      {
+        "ast_ok": false,
+        "constraints_passed": 1,
+        "constraints_total": 2,
+        "files_present": true,
+        "functional_ok": false,
+        "passed": false,
+        "task": "archive_cli_dry_run"
+      },
+      {
+        "ast_ok": true,
+        "constraints_passed": 1,
+        "constraints_total": 1,
+        "files_present": true,
+        "functional_ok": true,
+        "passed": true,
+        "task": "sqlite_parameterized_store"
+      },
+      {
+        "ast_ok": true,
+        "constraints_passed": 1,
+        "constraints_total": 2,
+        "files_present": true,
+        "functional_ok": true,
+        "passed": false,
+        "task": "env_token_config"
+      },
+      {
+        "ast_ok": true,
+        "constraints_passed": 2,
+        "constraints_total": 2,
+        "files_present": true,
+        "functional_ok": true,
+        "passed": true,
+        "task": "stable_candidate_dedupe"
+      },
+      {
+        "ast_ok": true,
+        "constraints_passed": 2,
+        "constraints_total": 2,
+        "files_present": true,
+        "functional_ok": true,
+        "passed": true,
+        "task": "csv_fixed_columns"
+      },
+      {
+        "ast_ok": false,
+        "constraints_passed": 1,
+        "constraints_total": 2,
+        "files_present": false,
+        "functional_ok": false,
+        "passed": false,
+        "task": "scraper_structured_logging"
+      }
+    ]
+  },
+  "B": {
+    "rows": [
+      {
+        "ast_ok": true,
+        "constraints_passed": 3,
+        "constraints_total": 3,
+        "files_present": true,
+        "functional_ok": true,
+        "passed": true,
+        "task": "linkedin_scraper_ratelimit"
+      },
+      {
+        "ast_ok": true,
+        "constraints_passed": 2,
+        "constraints_total": 2,
+        "files_present": true,
+        "functional_ok": true,
+        "passed": true,
+        "task": "csv_reader_no_pandas"
+      },
+      {
+        "ast_ok": true,
+        "constraints_passed": 2,
+        "constraints_total": 2,
+        "files_present": true,
+        "functional_ok": true,
+        "passed": true,
+        "task": "cli_no_approval_messages"
+      },
+      {
+        "ast_ok": true,
+        "constraints_passed": 3,
+        "constraints_total": 3,
+        "files_present": true,
+        "functional_ok": true,
+        "passed": true,
+        "task": "scraper_retry_bounded"
+      },
+      {
+        "ast_ok": true,
+        "constraints_passed": 2,
+        "constraints_total": 2,
+        "files_present": true,
+        "functional_ok": true,
+        "passed": true,
+        "task": "jsonl_profile_allowlist"
+      },
+      {
+        "ast_ok": true,
+        "constraints_passed": 1,
+        "constraints_total": 2,
+        "files_present": true,
+        "functional_ok": true,
+        "passed": false,
+        "task": "robots_aware_crawler"
+      },
+      {
+        "ast_ok": true,
+        "constraints_passed": 1,
+        "constraints_total": 2,
+        "files_present": true,
+        "functional_ok": true,
+        "passed": false,
+        "task": "archive_cli_dry_run"
+      },
+      {
+        "ast_ok": true,
+        "constraints_passed": 1,
+        "constraints_total": 1,
+        "files_present": true,
+        "functional_ok": true,
+        "passed": true,
+        "task": "sqlite_parameterized_store"
+      },
+      {
+        "ast_ok": true,
+        "constraints_passed": 1,
+        "constraints_total": 2,
+        "files_present": true,
+        "functional_ok": true,
+        "passed": false,
+        "task": "env_token_config"
+      },
+      {
+        "ast_ok": true,
+        "constraints_passed": 2,
+        "constraints_total": 2,
+        "files_present": true,
+        "functional_ok": true,
+        "passed": true,
+        "task": "stable_candidate_dedupe"
+      },
+      {
+        "ast_ok": true,
+        "constraints_passed": 2,
+        "constraints_total": 2,
+        "files_present": true,
+        "functional_ok": true,
+        "passed": true,
+        "task": "csv_fixed_columns"
+      },
+      {
+        "ast_ok": false,
+        "constraints_passed": 1,
+        "constraints_total": 2,
+        "files_present": false,
+        "functional_ok": false,
+        "passed": false,
+        "task": "scraper_structured_logging"
+      }
+    ]
+  },
+  "runner": {
+    "created_at": "2026-07-14T17:32:11.497583+00:00",
+    "model": "gpt-5.6-luna",
+    "run_root": "C:\\Code\\TalentTrader\\v15-ab-runs\\pilot-luna-r1-v2",
+    "task_fixture": "C:\\Code\\AIOptimizer\\experiments\\brain_runtime\\v15_build_tasks.json",
+    "telemetry": {
+      "A": {
+        "archive_cli_dry_run": {
+          "collected": [
+            "archive_candidates.py"
+          ],
+          "error": null,
+          "execution": {
+            "cached_input_tokens": 15479296,
+            "elapsed_seconds": 910.209,
+            "input_tokens": 16452496,
+            "output_tokens": 252059,
+            "thread_id": "019f6031-1b5b-7081-ad25-c4371412184c",
+            "turns": 8
+          },
+          "missing": []
+        },
+        "cli_no_approval_messages": {
+          "collected": [
+            "summarize.py"
+          ],
+          "error": null,
+          "execution": {
+            "cached_input_tokens": 5574656,
+            "elapsed_seconds": 403.184,
+            "input_tokens": 6114135,
+            "output_tokens": 107925,
+            "thread_id": "019f5fed-b1a9-7883-b050-660be9bb3da6",
+            "turns": 8
+          },
+          "missing": []
+        },
+        "csv_fixed_columns": {
+          "collected": [
+            "csv_export.py"
+          ],
+          "error": null,
+          "execution": {
+            "cached_input_tokens": 2514688,
+            "elapsed_seconds": 229.554,
+            "input_tokens": 2880009,
+            "output_tokens": 49593,
+            "thread_id": "019f6199-610f-7250-b648-24a23f3c8552",
+            "turns": 8
+          },
+          "missing": []
+        },
+        "csv_reader_no_pandas": {
+          "collected": [
+            "reader.py"
+          ],
+          "error": null,
+          "execution": {},
+          "missing": [],
+          "recovered_without_telemetry": true
+        },
+        "env_token_config": {
+          "collected": [
+            "config.py"
+          ],
+          "error": null,
+          "execution": {
+            "cached_input_tokens": 9097984,
+            "elapsed_seconds": 558.317,
+            "input_tokens": 9756286,
+            "output_tokens": 136389,
+            "thread_id": "019f6185-5431-7a83-bb1b-0a716943bab4",
+            "turns": 8
+          },
+          "missing": []
+        },
+        "jsonl_profile_allowlist": {
+          "collected": [
+            "export_profiles.py"
+          ],
+          "error": null,
+          "execution": {
+            "cached_input_tokens": 5613568,
+            "elapsed_seconds": 441.675,
+            "input_tokens": 6052729,
+            "output_tokens": 95401,
+            "thread_id": "019f600f-1a59-7513-8f00-929592e192bf",
+            "turns": 8
+          },
+          "missing": []
+        },
+        "linkedin_scraper_ratelimit": {
+          "collected": [
+            "scraper.py"
+          ],
+          "error": null,
+          "execution": {},
+          "missing": [],
+          "recovered_without_telemetry": true
+        },
+        "robots_aware_crawler": {
+          "collected": [
+            "robots_crawler.py"
+          ],
+          "error": null,
+          "execution": {
+            "cached_input_tokens": 7756032,
+            "elapsed_seconds": 645.707,
+            "input_tokens": 8404685,
+            "output_tokens": 176275,
+            "thread_id": "019f601c-4418-7e02-b850-42f84c1d6252",
+            "turns": 8
+          },
+          "missing": []
+        },
+        "scraper_retry_bounded": {
+          "collected": [
+            "retry_scraper.py"
+          ],
+          "error": null,
+          "execution": {
+            "cached_input_tokens": 5986048,
+            "elapsed_seconds": 766.384,
+            "input_tokens": 6351528,
+            "output_tokens": 160783,
+            "thread_id": "019f5ffb-43c3-7c31-a38c-0bcafadc2225",
+            "turns": 8
+          },
+          "missing": []
+        },
+        "scraper_structured_logging": {
+          "collected": [],
+          "error": null,
+          "execution": {
+            "cached_input_tokens": 7104512,
+            "elapsed_seconds": 483.868,
+            "input_tokens": 7508835,
+            "output_tokens": 116714,
+            "thread_id": "019f61a1-0f14-76c1-aa11-e5edcfc99597",
+            "turns": 8
+          },
+          "missing": [
+            "scraper_logging.py"
+          ]
+        },
+        "sqlite_parameterized_store": {
+          "collected": [
+            "candidate_store.py"
+          ],
+          "error": null,
+          "execution": {
+            "cached_input_tokens": 9778176,
+            "elapsed_seconds": 593.429,
+            "input_tokens": 10515976,
+            "output_tokens": 152249,
+            "thread_id": "019f6173-9cfe-7153-acd6-941abdd3362c",
+            "turns": 8
+          },
+          "missing": []
+        },
+        "stable_candidate_dedupe": {
+          "collected": [
+            "dedupe.py"
+          ],
+          "error": null,
+          "execution": {
+            "cached_input_tokens": 5023232,
+            "elapsed_seconds": 322.169,
+            "input_tokens": 5458403,
+            "output_tokens": 71369,
+            "thread_id": "019f6190-e554-7341-a676-5c4f89b8e3a8",
+            "turns": 8
+          },
+          "missing": []
+        }
+      },
+      "B": {
+        "archive_cli_dry_run": {
+          "collected": [
+            "archive_candidates.py"
+          ],
+          "error": null,
+          "execution": {
+            "cached_input_tokens": 8947712,
+            "elapsed_seconds": 676.482,
+            "input_tokens": 10243393,
+            "output_tokens": 180816,
+            "thread_id": "019f6169-4af1-72a0-9d6a-f90edb230b4e",
+            "turns": 8
+          },
+          "missing": []
+        },
+        "cli_no_approval_messages": {
+          "collected": [
+            "summarize.py"
+          ],
+          "error": null,
+          "execution": {
+            "cached_input_tokens": 6533120,
+            "elapsed_seconds": 486.05,
+            "input_tokens": 7226753,
+            "output_tokens": 122124,
+            "thread_id": "019f5ff3-d8fb-7432-86e3-bfbc8bfffe87",
+            "turns": 8
+          },
+          "missing": []
+        },
+        "csv_fixed_columns": {
+          "collected": [
+            "csv_export.py"
+          ],
+          "error": null,
+          "execution": {
+            "cached_input_tokens": 2314496,
+            "elapsed_seconds": 273.707,
+            "input_tokens": 2652091,
+            "output_tokens": 54116,
+            "thread_id": "019f619c-e1ce-7de0-8a05-5c37a252513a",
+            "turns": 8
+          },
+          "missing": []
+        },
+        "csv_reader_no_pandas": {
+          "collected": [
+            "reader.py"
+          ],
+          "error": null,
+          "execution": {},
+          "missing": [],
+          "recovered_without_telemetry": true
+        },
+        "env_token_config": {
+          "collected": [
+            "config.py"
+          ],
+          "error": null,
+          "execution": {
+            "cached_input_tokens": 2926336,
+            "elapsed_seconds": 200.034,
+            "input_tokens": 3178610,
+            "output_tokens": 45985,
+            "thread_id": "019f618d-da12-77a2-bd32-ef67ddfead44",
+            "turns": 8
+          },
+          "missing": []
+        },
+        "jsonl_profile_allowlist": {
+          "collected": [
+            "export_profiles.py"
+          ],
+          "error": null,
+          "execution": {
+            "cached_input_tokens": 5357312,
+            "elapsed_seconds": 420.822,
+            "input_tokens": 5817405,
+            "output_tokens": 91634,
+            "thread_id": "019f6015-d86a-7ad3-b7cc-52a42cc7b0e4",
+            "turns": 8
+          },
+          "missing": []
+        },
+        "linkedin_scraper_ratelimit": {
+          "collected": [
+            "scraper.py"
+          ],
+          "error": null,
+          "execution": {},
+          "missing": [],
+          "recovered_without_telemetry": true
+        },
+        "robots_aware_crawler": {
+          "collected": [
+            "robots_crawler.py"
+          ],
+          "error": null,
+          "execution": {
+            "cached_input_tokens": 7271424,
+            "elapsed_seconds": 720.169,
+            "input_tokens": 8139791,
+            "output_tokens": 190944,
+            "thread_id": "019f6026-1ea4-7133-b88a-fc46b909b133",
+            "turns": 8
+          },
+          "missing": []
+        },
+        "scraper_retry_bounded": {
+          "collected": [
+            "retry_scraper.py"
+          ],
+          "error": null,
+          "execution": {
+            "cached_input_tokens": 5012480,
+            "elapsed_seconds": 533.749,
+            "input_tokens": 5560460,
+            "output_tokens": 141343,
+            "thread_id": "019f6006-f54e-7cc0-b3c0-f8db631bebf3",
+            "turns": 8
+          },
+          "missing": []
+        },
+        "scraper_structured_logging": {
+          "collected": [],
+          "error": null,
+          "execution": {
+            "cached_input_tokens": 5312512,
+            "elapsed_seconds": 474.572,
+            "input_tokens": 5827995,
+            "output_tokens": 118586,
+            "thread_id": "019f61a8-7297-76a0-b20b-a50eb64e4462",
+            "turns": 8
+          },
+          "missing": [
+            "scraper_logging.py"
+          ]
+        },
+        "sqlite_parameterized_store": {
+          "collected": [
+            "candidate_store.py"
+          ],
+          "error": null,
+          "execution": {
+            "cached_input_tokens": 8665856,
+            "elapsed_seconds": 567.692,
+            "input_tokens": 9426283,
+            "output_tokens": 173778,
+            "thread_id": "019f617c-aa5b-7eb3-8db1-65bd25056e73",
+            "turns": 8
+          },
+          "missing": []
+        },
+        "stable_candidate_dedupe": {
+          "collected": [
+            "dedupe.py"
+          ],
+          "error": null,
+          "execution": {
+            "cached_input_tokens": 4412416,
+            "elapsed_seconds": 233.75,
+            "input_tokens": 4689131,
+            "output_tokens": 61390,
+            "thread_id": "019f6195-d1d6-71f1-9ed2-7a72284e6eef",
+            "turns": 8
+          },
+          "missing": []
+        }
+      }
+    },
+    "totals": {
+      "A": {
+        "cached_input_tokens": 73928192,
+        "elapsed_seconds": 5354.496,
+        "errors": 0,
+        "input_tokens": 79495082,
+        "output_tokens": 1318757,
+        "recovered_without_telemetry": 2,
+        "runs": 12
+      },
+      "B": {
+        "cached_input_tokens": 56753664,
+        "elapsed_seconds": 4587.027,
+        "errors": 0,
+        "input_tokens": 62761912,
+        "output_tokens": 1180716,
+        "recovered_without_telemetry": 2,
+        "runs": 12
+      }
+    },
+    "windows_sandbox": "unelevated"
+  },
+  "summary": {
+    "arms": {
+      "A": {
+        "constraint_retention": 0.84,
+        "pass_ci": [
+          0.3906,
+          0.8619
+        ],
+        "pass_rate": 0.6666666666666666,
+        "passed": 8,
+        "tasks": 12
+      },
+      "B": {
+        "constraint_retention": 0.84,
+        "pass_ci": [
+          0.3906,
+          0.8619
+        ],
+        "pass_rate": 0.6666666666666666,
+        "passed": 8,
+        "tasks": 12
+      }
+    },
+    "paired": {
+      "A_only": [],
+      "B_only": [],
+      "both": [
+        "cli_no_approval_messages",
+        "csv_fixed_columns",
+        "csv_reader_no_pandas",
+        "jsonl_profile_allowlist",
+        "linkedin_scraper_ratelimit",
+        "scraper_retry_bounded",
+        "sqlite_parameterized_store",
+        "stable_candidate_dedupe"
+      ]
+    },
+    "pass_gap_A_minus_B": 0.0
+  },
+  "tasks": 12
+}
