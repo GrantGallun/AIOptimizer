@@ -100,6 +100,61 @@ class RunV15ABTests(unittest.TestCase):
             self.assertIsNone(records["A"]["stub_task"]["error"])
             self.assertIsNone(records["B"]["stub_task"]["error"])
 
+    def test_resume_reuses_legacy_collected_artifacts_without_rerunning(self):
+        with tempfile.TemporaryDirectory() as temporary:
+            root = Path(temporary)
+            pair_root = root / "pair"
+            control_root = root / "control"
+            run_root = root / "run"
+            for arm in ("arm-a-plugin-on", "arm-b-plugin-off"):
+                (pair_root / arm / "workspace").mkdir(parents=True)
+            for arm in ("arm-a", "arm-b"):
+                (control_root / arm).mkdir(parents=True)
+            for arm in ("A", "B"):
+                task_dir = run_root / "artifacts" / arm / "stub_task"
+                task_dir.mkdir(parents=True)
+                (task_dir / "built.py").write_text(f"ARM = {arm!r}\n", encoding="utf-8")
+
+            task = {
+                "id": "stub_task",
+                "prompts": [f"prompt {index}" for index in range(6)],
+                "expected_files": ["built.py"],
+            }
+
+            def fail_if_called(**kwargs):
+                self.fail(f"resumed artifact unexpectedly reran: {kwargs}")
+
+            arm_a, arm_b, records = run_paired_tasks(
+                [task],
+                pair_root=pair_root,
+                control_root=control_root,
+                run_root=run_root,
+                agent_runner=fail_if_called,
+                model="gpt-5.6-luna",
+                windows_sandbox="unelevated",
+                resume=True,
+            )
+
+            self.assertTrue((arm_a / "stub_task" / "built.py").is_file())
+            self.assertTrue((arm_b / "stub_task" / "built.py").is_file())
+            self.assertTrue(records["A"]["stub_task"]["recovered_without_telemetry"])
+            self.assertTrue(records["B"]["stub_task"]["recovered_without_telemetry"])
+            checkpoint = run_root / "runner_checkpoint.jsonl"
+            self.assertEqual(len(checkpoint.read_text(encoding="utf-8").splitlines()), 3)
+
+            _, _, resumed_again = run_paired_tasks(
+                [task],
+                pair_root=pair_root,
+                control_root=control_root,
+                run_root=run_root,
+                agent_runner=fail_if_called,
+                model="gpt-5.6-luna",
+                windows_sandbox="unelevated",
+                resume=True,
+            )
+            self.assertTrue(resumed_again["A"]["stub_task"]["recovered_without_telemetry"])
+            self.assertEqual(len(checkpoint.read_text(encoding="utf-8").splitlines()), 3)
+
     def test_versioned_result_skips_existing_file(self):
         with tempfile.TemporaryDirectory() as temporary:
             root = Path(temporary)

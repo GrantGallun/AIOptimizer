@@ -32,6 +32,7 @@ DEFAULT_RESULTS_ROOT = REPO_ROOT / "results" / "brain_runtime"
 ALLOWED_AST_KINDS = {"defines", "imports", "forbid_bare_except"}
 
 AgentRunner = Callable[..., Mapping[str, Any]]
+CHECKPOINT_NAME = "runner_checkpoint.jsonl"
 
 
 def _safe_relative_path(raw: str) -> Path:
@@ -155,6 +156,66 @@ def collect_task_artifacts(
         else:
             missing.append(relative.as_posix())
     return {"collected": collected, "missing": missing}
+
+
+def inspect_task_artifacts(
+    arm_dir: Path,
+    task: Mapping[str, Any],
+) -> dict[str, list[str]]:
+    """Describe an already-collected task directory without modifying it."""
+    task_dir = arm_dir / task["id"]
+    if not task_dir.is_dir():
+        raise FileNotFoundError(f"collected task directory not found: {task_dir}")
+    collected: list[str] = []
+    missing: list[str] = []
+    for raw in task["expected_files"]:
+        relative = _safe_relative_path(raw)
+        if (task_dir / relative).is_file():
+            collected.append(relative.as_posix())
+        else:
+            missing.append(relative.as_posix())
+    return {"collected": collected, "missing": missing}
+
+
+def _append_checkpoint(path: Path, event: Mapping[str, Any]) -> None:
+    path.parent.mkdir(parents=True, exist_ok=True)
+    with path.open("a", encoding="utf-8", newline="\n") as handle:
+        handle.write(json.dumps(event, sort_keys=True) + "\n")
+        handle.flush()
+        os.fsync(handle.fileno())
+
+
+def _load_checkpoint(path: Path) -> tuple[Mapping[str, Any] | None, dict[tuple[str, str], dict[str, Any]]]:
+    header: Mapping[str, Any] | None = None
+    records: dict[tuple[str, str], dict[str, Any]] = {}
+    if not path.exists():
+        return header, records
+    for line_number, line in enumerate(path.read_text(encoding="utf-8").splitlines(), 1):
+        if not line.strip():
+            continue
+        try:
+            event = json.loads(line)
+        except json.JSONDecodeError as exc:
+            raise ValueError(f"invalid checkpoint line {line_number}: {path}") from exc
+        if not isinstance(event, Mapping):
+            raise ValueError(f"checkpoint line {line_number} is not an object: {path}")
+        if event.get("type") == "header":
+            if header is not None:
+                raise ValueError(f"checkpoint contains multiple headers: {path}")
+            header = event
+        elif event.get("type") == "task_complete":
+            arm = event.get("arm")
+            task_id = event.get("task_id")
+            record = event.get("record")
+            if arm not in {"A", "B"} or not isinstance(task_id, str) or not isinstance(record, Mapping):
+                raise ValueError(f"invalid task checkpoint line {line_number}: {path}")
+            key = (arm, task_id)
+            if key in records:
+                raise ValueError(f"duplicate task checkpoint {arm}/{task_id}: {path}")
+            records[key] = dict(record)
+        else:
+            raise ValueError(f"unknown checkpoint event on line {line_number}: {path}")
+    return header, records
 
 
 def _json_events(stdout: str) -> list[Mapping[str, Any]]:
@@ -296,11 +357,14 @@ def run_paired_tasks(
     codex: str | None = None,
     aioptimizer_home: Path = REPO_ROOT,
     windows_sandbox: str | None = None,
+    resume: bool = False,
 ) -> tuple[Path, Path, dict[str, Any]]:
     """Run both arms and return their artifact dirs plus content-free execution telemetry."""
-    if run_root.exists():
+    if run_root.exists() and not resume:
         raise FileExistsError(f"refusing to reuse run directory: {run_root}")
-    run_root.mkdir(parents=True)
+    if resume and not run_root.is_dir():
+        raise FileNotFoundError(f"resume run directory not found: {run_root}")
+    run_root.mkdir(parents=True, exist_ok=resume)
     artifact_root = run_root / "artifacts"
     workspace_root = run_root / "workspaces"
     arm_specs = {
@@ -315,9 +379,51 @@ def run_paired_tasks(
             artifact_root / "B",
         ),
     }
+    checkpoint = run_root / CHECKPOINT_NAME
+    expected_header = {
+        "type": "header",
+        "schema_version": 1,
+        "model": model,
+        "windows_sandbox": windows_sandbox,
+        "task_ids": [task["id"] for task in tasks],
+        "pair_root": str(pair_root.resolve()),
+        "control_root": str(control_root.resolve()),
+    }
+    header, checkpoint_records = _load_checkpoint(checkpoint)
+    if header is None:
+        _append_checkpoint(checkpoint, expected_header)
+    elif dict(header) != expected_header:
+        raise ValueError("resume checkpoint does not match this runner configuration")
+
     records: dict[str, Any] = {"A": {}, "B": {}}
     for task in tasks:
         for arm, (seed, codex_home, artifact_dir) in arm_specs.items():
+            key = (arm, task["id"])
+            existing_task_dir = artifact_dir / task["id"]
+            if key in checkpoint_records:
+                if not existing_task_dir.is_dir():
+                    raise FileNotFoundError(
+                        f"checkpoint exists but collected artifacts are missing: {arm}/{task['id']}"
+                    )
+                records[arm][task["id"]] = checkpoint_records[key]
+                continue
+            if existing_task_dir.is_dir():
+                if not resume:
+                    raise FileExistsError(f"unexpected collected task directory: {existing_task_dir}")
+                recovered = {
+                    "execution": {},
+                    "error": None,
+                    "recovered_without_telemetry": True,
+                    **inspect_task_artifacts(artifact_dir, task),
+                }
+                records[arm][task["id"]] = recovered
+                _append_checkpoint(checkpoint, {
+                    "type": "task_complete",
+                    "arm": arm,
+                    "task_id": task["id"],
+                    "record": recovered,
+                })
+                continue
             workspace = prepare_fresh_workspace(seed, _opaque_workspace(workspace_root), task)
             execution: dict[str, Any]
             try:
@@ -335,11 +441,18 @@ def run_paired_tasks(
                 execution = {}
                 error = f"{type(exc).__name__}: {exc}"
             collection = collect_task_artifacts(workspace, artifact_dir, task)
-            records[arm][task["id"]] = {
+            record = {
                 "execution": execution,
                 "error": error,
                 **collection,
             }
+            records[arm][task["id"]] = record
+            _append_checkpoint(checkpoint, {
+                "type": "task_complete",
+                "arm": arm,
+                "task_id": task["id"],
+                "record": record,
+            })
     return arm_specs["A"][2], arm_specs["B"][2], records
 
 
@@ -391,6 +504,9 @@ def _telemetry_totals(records: Mapping[str, Any]) -> dict[str, Any]:
         totals[arm] = {
             "runs": len(records[arm]),
             "errors": sum(row["error"] is not None for row in rows),
+            "recovered_without_telemetry": sum(
+                bool(row.get("recovered_without_telemetry")) for row in records[arm].values()
+            ),
             "elapsed_seconds": round(sum(row["execution"].get("elapsed_seconds", 0.0) for row in records[arm].values()), 3),
             "input_tokens": sum(row["execution"].get("input_tokens", 0) for row in records[arm].values()),
             "cached_input_tokens": sum(row["execution"].get("cached_input_tokens", 0) for row in records[arm].values()),
@@ -411,6 +527,7 @@ def main() -> None:
     parser.add_argument("--model", default="gpt-5.6-sol")
     parser.add_argument("--codex")
     parser.add_argument("--windows-sandbox", choices=("elevated", "unelevated"))
+    parser.add_argument("--resume", action="store_true")
     args = parser.parse_args()
 
     tasks_path = args.tasks.resolve()
@@ -429,6 +546,7 @@ def main() -> None:
         model=args.model,
         codex=args.codex,
         windows_sandbox=args.windows_sandbox,
+        resume=args.resume,
     )
     scorer_out = run_root / "frozen_score.json"
     scored, scorer_summary = run_frozen_scorer(
