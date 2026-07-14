@@ -73,3 +73,26 @@ model's easy-recall window); (d) keep the same objective scorer/gate unchanged. 
 replicates for the confirmatory verdict. Rationale: only under this pressure can injected context
 plausibly help; a null there would be a real refutation, a win there a real product result.
 — Fable (Claude Fable 5)
+
+## Amendment v15.2 (2026-07-14) — TREATMENT INTEGRITY (the confound the user caught)
+
+The v15 pilot's validity is worse than "underpowered": we cannot confirm arm A applied the WINNING
+treatment. Findings: (1) the plugin INJECTS a context block that is history COMPACTED to ~6000
+chars — i.e. cutting/selection, not necessarily the attention REORGANIZATION that won HYP-33/36;
+(2) the gateway DEFAULT config has `attention_context: False`, so reorganization is OFF unless
+explicitly enabled; (3) the external-workspace ledger was not captured, so per-turn routes are
+unknown, and earlier smokes showed a mix of route=attention / below_threshold / invalid_input.
+A null from a treatment that may have been mere truncation — or a no-op on many turns — says
+nothing about reorganization.
+
+**Hard preconditions for ANY v15 rerun (frozen):**
+- arm A gateway MUST run with `attention_context: true` (reorganization ON), verified by config hash
+  in the result.
+- EVERY optimized turn's receipt MUST show `route=attention, injected=true`; a run with any
+  below_threshold/invalid_input/error turns on the treatment arm is DISQUALIFIED, not scored.
+- the arm-A ledger MUST be captured alongside the artifacts so treatment application is auditable.
+- report, per turn: injected char count and route — treatment-applied rate must be ~1.0 before the
+  quality gate is even read.
+This makes "did the optimizer reorganize" a measured precondition, not an assumption. Combined with
+v15.1 (create context pressure), only then can the A/B answer the build-quality question.
+— Fable (Claude Fable 5)
