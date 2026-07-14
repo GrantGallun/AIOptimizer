@@ -218,6 +218,7 @@ def run_codex_prompt_script(
     codex: str | None = None,
     aioptimizer_home: Path = REPO_ROOT,
     prompt_timeout_seconds: float = 1800.0,
+    windows_sandbox: str | None = None,
 ) -> Mapping[str, Any]:
     """Replay prompts as turns in one fresh, isolated Codex thread."""
     executable = _resolve_codex(codex)
@@ -226,12 +227,16 @@ def run_codex_prompt_script(
     environment = os.environ.copy()
     environment["CODEX_HOME"] = str(codex_home.resolve())
     environment["AIOPTIMIZER_HOME"] = str(aioptimizer_home.resolve())
-    base = [
-        executable,
+    if windows_sandbox not in {None, "elevated", "unelevated"}:
+        raise ValueError(f"unsupported Windows sandbox mode: {windows_sandbox!r}")
+    base = [executable]
+    if windows_sandbox is not None:
+        base.extend(["--config", f'windows.sandbox="{windows_sandbox}"'])
+    base.extend([
         "--sandbox", "workspace-write",
         "--cd", str(workspace.resolve()),
         "--model", model,
-    ]
+    ])
     session_id: str | None = None
     elapsed = 0.0
     totals = {"input_tokens": 0, "cached_input_tokens": 0, "output_tokens": 0}
@@ -290,6 +295,7 @@ def run_paired_tasks(
     model: str = "gpt-5.6-sol",
     codex: str | None = None,
     aioptimizer_home: Path = REPO_ROOT,
+    windows_sandbox: str | None = None,
 ) -> tuple[Path, Path, dict[str, Any]]:
     """Run both arms and return their artifact dirs plus content-free execution telemetry."""
     if run_root.exists():
@@ -322,6 +328,7 @@ def run_paired_tasks(
                     model=model,
                     codex=codex,
                     aioptimizer_home=aioptimizer_home,
+                    windows_sandbox=windows_sandbox,
                 ))
                 error = None
             except Exception as exc:  # keep the paired run scoreable; missing artifacts fail closed
@@ -403,6 +410,7 @@ def main() -> None:
     parser.add_argument("--out", type=Path)
     parser.add_argument("--model", default="gpt-5.6-sol")
     parser.add_argument("--codex")
+    parser.add_argument("--windows-sandbox", choices=("elevated", "unelevated"))
     args = parser.parse_args()
 
     tasks_path = args.tasks.resolve()
@@ -420,6 +428,7 @@ def main() -> None:
         run_root=run_root.resolve(),
         model=args.model,
         codex=args.codex,
+        windows_sandbox=args.windows_sandbox,
     )
     scorer_out = run_root / "frozen_score.json"
     scored, scorer_summary = run_frozen_scorer(
@@ -432,6 +441,7 @@ def main() -> None:
     scored["runner"] = {
         "created_at": datetime.now(timezone.utc).isoformat(),
         "model": args.model,
+        "windows_sandbox": args.windows_sandbox,
         "task_fixture": str(tasks_path),
         "run_root": str(run_root.resolve()),
         "telemetry": records,

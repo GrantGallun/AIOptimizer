@@ -86,10 +86,12 @@ class RunV15ABTests(unittest.TestCase):
                 control_root=control_root,
                 run_root=root / "run",
                 agent_runner=stub_agent,
+                windows_sandbox="unelevated",
             )
 
             self.assertEqual(len(calls), 2)
             self.assertTrue(all(call["prompts"] == tuple(task["prompts"]) for call in calls))
+            self.assertTrue(all(call["windows_sandbox"] == "unelevated" for call in calls))
             self.assertNotEqual(calls[0]["workspace"], calls[1]["workspace"])
             self.assertEqual(calls[0]["workspace"].name, "workspace")
             self.assertEqual(calls[1]["workspace"].name, "workspace")
