@@ -24,3 +24,5 @@ agent_bus/BOARD.md
 aioptimizer.egg-info/
 __pycache__/
 *.pyc
+results/brain_runtime/v15_ab_*/
+results/brain_runtime/v15_ab_pilot_*
