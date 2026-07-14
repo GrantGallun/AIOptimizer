@@ -155,6 +155,33 @@ class RunV15ABTests(unittest.TestCase):
             self.assertTrue(resumed_again["A"]["stub_task"]["recovered_without_telemetry"])
             self.assertEqual(len(checkpoint.read_text(encoding="utf-8").splitlines()), 3)
 
+    def test_resume_rejects_uncheckpointed_incomplete_artifact(self):
+        with tempfile.TemporaryDirectory() as temporary:
+            root = Path(temporary)
+            pair_root = root / "pair"
+            control_root = root / "control"
+            run_root = root / "run"
+            for arm in ("arm-a-plugin-on", "arm-b-plugin-off"):
+                (pair_root / arm / "workspace").mkdir(parents=True)
+            for arm in ("arm-a", "arm-b"):
+                (control_root / arm).mkdir(parents=True)
+            (run_root / "artifacts" / "A" / "stub_task").mkdir(parents=True)
+            task = {
+                "id": "stub_task",
+                "prompts": [f"prompt {index}" for index in range(6)],
+                "expected_files": ["built.py"],
+            }
+
+            with self.assertRaisesRegex(ValueError, "missing expected artifacts"):
+                run_paired_tasks(
+                    [task],
+                    pair_root=pair_root,
+                    control_root=control_root,
+                    run_root=run_root,
+                    agent_runner=lambda **kwargs: {},
+                    resume=True,
+                )
+
     def test_versioned_result_skips_existing_file(self):
         with tempfile.TemporaryDirectory() as temporary:
             root = Path(temporary)

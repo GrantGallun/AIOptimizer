@@ -410,11 +410,17 @@ def run_paired_tasks(
             if existing_task_dir.is_dir():
                 if not resume:
                     raise FileExistsError(f"unexpected collected task directory: {existing_task_dir}")
+                inspection = inspect_task_artifacts(artifact_dir, task)
+                if inspection["missing"]:
+                    raise ValueError(
+                        "cannot recover uncheckpointed task with missing expected artifacts: "
+                        f"{arm}/{task['id']}"
+                    )
                 recovered = {
                     "execution": {},
                     "error": None,
                     "recovered_without_telemetry": True,
-                    **inspect_task_artifacts(artifact_dir, task),
+                    **inspection,
                 }
                 records[arm][task["id"]] = recovered
                 _append_checkpoint(checkpoint, {
