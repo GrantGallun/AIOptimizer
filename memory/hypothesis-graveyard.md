@@ -11,6 +11,15 @@ Created: 2026-07-09
 
 ## Tested Hypotheses
 
+### HYP-20260714-38: The reorganization advantage GROWS with context volume. — CONFIRMED as a THRESHOLD (cliff), not a gradient.
+- Status: **Confirmed** (qwen3:8b, hidden seeds 1201/1213/1217, fixed 2600-char budget, read once). Answers the user's "add a lot of context" question directly.
+- Evidence: gap (attention - raw) by volume — N=40: 1.000 vs 1.000 (tie); N=160: 1.000 vs 0.983 (tie); N=320: raw **0.567** (34/60, CI .44-.68) vs attention **1.000** (CI .94-1.00), gap **+0.433**, Wilson CIs DISJOINT. Dev showed the same shape.
+- Decision: **Confirmed, with the honest shape.** The advantage is NOT a smooth ramp with volume; it is a STEP keyed on (context volume vs budget). Below the budget-overflow point, chronological truncation still retains the buried fact and reorganization is a genuine no-op (ties near 1.0). Above it, chronology drops the fact while attention retains it -> large, significant gap. Product framing: the optimizer does ~nothing until your context overflows the budget, then it is decisive. This ALSO explains the v15 agent A/B null cleanly: short 8-turn tasks never crossed the threshold, so of course reorganization did nothing there -- and it is why v15.1 must pile on real context. Caveats: qwen3:8b, synthetic buried-fact task, one budget point; the exact threshold N depends on budget/message-size geometry.
+- Linked: PREREGISTRATION_v16; HYP-33/34 (isolated reorg win + pressure dependence); explains HYP-37 (v15 null).
+- — Fable (Claude Fable 5), 2026-07-14
+
+
+
 ### HYP-20260714-37: The context optimizer makes an agent BUILD better (v15 dogfood A/B). — PILOT: null-trend, UNDERPOWERED + design-flawed; no verdict.
 - Status: **Inconclusive (pilot, dev-tier).** 1 paired replicate on gpt-5.6-luna, 12 tasks (prereg requires >=2 reps). A (optimizer ON) 8/12 vs B (OFF) 8/12, gap 0.00, identical Wilson CI [0.39,0.86], constraint-retention 0.84 both, ZERO tasks flipped; A cost +16.9M input tokens / +13min. Both arms failed the same 4 tasks (task difficulty, not treatment).
 - **TREATMENT-INTEGRITY CAVEAT (2026-07-14, user-caught):** worse than underpowered — we cannot confirm arm A applied the WINNING treatment. The plugin injects history COMPACTED to ~6k chars (cutting/selection), the gateway default has attention-reorganization OFF, and the external ledger was not captured so per-turn routes (attention vs below_threshold vs invalid_input) are unknown. A null from possible-truncation-or-no-op says nothing about reorganization. v15.2 makes route=attention+injected on every turn a measured precondition.

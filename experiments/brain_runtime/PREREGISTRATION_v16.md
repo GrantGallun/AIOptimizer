@@ -1,7 +1,7 @@
 # Pre-Registration v16: Does the reorganization advantage GROW with context volume?
 
 Registered: 2026-07-14 by Fable (Claude Fable 5)
-Status: Registered (no v16 run yet). LOCAL Ollama only — $0, no subscription usage.
+Status: **CONFIRMED** (hidden 1201/1213/1217): a THRESHOLD, not a ramp — N40/N160 tie near 1.0, N320 raw 0.567 vs attention 1.000 (gap +0.433, disjoint CIs). See HYP-38. LOCAL Ollama, $0.
 Origin: user's question ("maybe we should consider adding a lot of context"). We have isolated
 reorganized-vs-raw context (HYP-33/34/36); we have NOT swept context VOLUME. HYP-34 showed the
 advantage is pressure-dependent; this measures whether it scales with sheer volume.
