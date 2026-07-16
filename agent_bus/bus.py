@@ -16,6 +16,7 @@ Dependency-free (stdlib only). Both agents use the same three verbs:
 
 from __future__ import annotations
 
+import sys
 import argparse
 import json
 import time
@@ -214,6 +215,11 @@ def build_parser() -> argparse.ArgumentParser:
 
 
 def main() -> None:
+    # Messages routinely contain non-cp1252 chars (arrows, em-dashes); force UTF-8 so the
+    # printer never crashes on a Windows console (a real hole hit repeatedly while auditing).
+    for stream in (sys.stdout, sys.stderr):
+        if hasattr(stream, "reconfigure"):
+            stream.reconfigure(encoding="utf-8", errors="replace")
     args = build_parser().parse_args()
     bus = Bus(Path(args.root))
     args.func(bus, args)
