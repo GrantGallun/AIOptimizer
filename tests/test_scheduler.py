@@ -146,6 +146,64 @@ class SchedulerTests(unittest.TestCase):
             self.assertEqual(events["executed"], [first["id"], second["id"]])
             self.assertEqual(events["verified"], [first["id"], second["id"]])
 
+    def test_bounded_verification_retry_uses_feedback_then_retires(self):
+        class RecordingExecutor:
+            def __init__(self):
+                self.attempts = []
+
+            def execute(self, task):
+                self.attempts.append((task.get("attempt", 0), task.get("retry_feedback", "")))
+                return True, "producer completed", 0.1
+
+        class RejectOnceVerifier:
+            reviewer = "independent-review"
+
+            def __init__(self):
+                self.calls = 0
+
+            def verify(self, task, *, producer_ok, producer_result):
+                self.calls += 1
+                return self.calls > 1, "first review found missing test", 0.1
+
+        with TemporaryDirectory() as tmp:
+            root = Path(tmp)
+            task = Board(root).add(op="impl", title="repair", tier="sonnet")
+            executor = RecordingExecutor()
+            verifier = RejectOnceVerifier()
+            history = Scheduler(
+                root,
+                cores={"sonnet": 1},
+                executor=executor,
+                verifier=verifier,
+                max_verification_retries=1,
+                budget=10.0,
+            ).run()
+            final = Board(root).get(task["id"])
+            self.assertEqual(final["state"], "retired")
+            self.assertEqual(final["attempt"], 1)
+            self.assertEqual(len(final["attempt_history"]), 1)
+            self.assertEqual(executor.attempts[0], (0, ""))
+            self.assertIn("missing test", executor.attempts[1][1])
+            self.assertEqual(sum(len(event["retried"]) for event in history), 1)
+
+    def test_retries_are_disabled_by_default(self):
+        class RejectVerifier:
+            reviewer = "independent-review"
+
+            def verify(self, task, *, producer_ok, producer_result):
+                return False, "reject", 0.0
+
+        with TemporaryDirectory() as tmp:
+            root = Path(tmp)
+            task = Board(root).add(op="impl", title="no implicit retry", tier="sonnet")
+            Scheduler(
+                root,
+                executor=SimExecutor(),
+                verifier=RejectVerifier(),
+                budget=10.0,
+            ).run()
+            self.assertEqual(Board(root).get(task["id"])["state"], "failed")
+
     def test_speculation_commits_on_correct_prediction(self):
         with TemporaryDirectory() as tmp:
             board = Board(Path(tmp))

@@ -166,8 +166,15 @@ class Scheduler:
         workspace_root: Path | None = None,
         lease_ttl_seconds: float = 3600.0,
         dispatch_lease_seconds: float = 3600.0,
+        max_verification_retries: int = 0,
         scheduler_id: str | None = None,
     ) -> None:
+        if (
+            not isinstance(max_verification_retries, int)
+            or isinstance(max_verification_retries, bool)
+            or max_verification_retries < 0
+        ):
+            raise ValueError("max_verification_retries must be a non-negative integer")
         self.board = Board(root)
         self.cache = Cache(root)
         self.cores = cores or {"fable": 1, "codex": 1, "sonnet": 2, "qwen": 1}
@@ -181,6 +188,7 @@ class Scheduler:
         self.workspace_claims = WorkspaceClaims(workspace_root or root, state_root=root)
         self.lease_ttl_seconds = lease_ttl_seconds
         self.dispatch_lease_seconds = dispatch_lease_seconds
+        self.max_verification_retries = max_verification_retries
         self.scheduler_id = scheduler_id or f"{os.getpid()}-{uuid.uuid4().hex[:8]}"
 
     def _speculate_dependents(self, gate: dict[str, Any], events: dict[str, Any]) -> None:
@@ -217,7 +225,7 @@ class Scheduler:
                     break  # an earlier task hasn't retired yet; stop (in-order commit)
 
     def tick(self) -> dict[str, Any]:
-        events = {k: [] for k in ("dispatched", "executed", "verified", "retired", "squashed", "speculated", "committed", "awaiting", "awaiting_review", "deferred")}
+        events = {k: [] for k in ("dispatched", "executed", "verified", "retried", "retired", "squashed", "speculated", "committed", "awaiting", "awaiting_review", "deferred")}
         events["tripped"] = False
         self.board.watchdog()
         if self.governor.tripped():
@@ -326,6 +334,14 @@ class Scheduler:
                 )
                 if checked["state"] == "verified":
                     events["verified"].append(task["id"])
+                elif int(checked.get("attempt", 0)) < self.max_verification_retries:
+                    self.board.retry(
+                        task["id"],
+                        by=f"scheduler-{self.scheduler_id}",
+                        feedback=note,
+                    )
+                    events["retried"].append(task["id"])
+                    continue
                 if task["op"] in GATE_OPS:
                     self._speculate_dependents(task, events)
                     self._resolve_speculation(task, review_ok, events)
@@ -350,7 +366,7 @@ class Scheduler:
 
 def _summarize(history: list[dict[str, Any]]) -> dict[str, Any]:
     agg: dict[str, Any] = {"ticks": len(history)}
-    for key in ("dispatched", "executed", "verified", "retired", "squashed", "speculated", "committed", "awaiting", "awaiting_review", "deferred"):
+    for key in ("dispatched", "executed", "verified", "retried", "retired", "squashed", "speculated", "committed", "awaiting", "awaiting_review", "deferred"):
         agg[key] = sum(len(ev[key]) for ev in history)
     agg["tripped"] = any(ev["tripped"] for ev in history)
     return agg

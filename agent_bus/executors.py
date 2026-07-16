@@ -157,6 +157,15 @@ class CodexExecutor:
 
     def execute(self, task: dict[str, Any]) -> tuple[bool, str, float]:
         prompt = task.get("spec") or task.get("title") or ""
+        retry_feedback = task.get("retry_feedback")
+        if isinstance(retry_feedback, str) and retry_feedback:
+            prompt = (
+                f"{prompt}\n\n"
+                f"Bounded repair attempt {int(task.get('attempt', 0))}. "
+                "Inspect the existing workspace and correct the prior attempt against "
+                "the original acceptance criteria. Independent review feedback:\n"
+                f"{retry_feedback}"
+            )
         cmd = [self.codex, "exec", *self.extra_args, prompt]
         started = self.clock()
         try:

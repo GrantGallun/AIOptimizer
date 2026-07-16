@@ -67,6 +67,35 @@ class ScoreboardTests(unittest.TestCase):
                 b.review(t["id"], reviewer="sonnet-a", ok=True)   # self-review blocked
             self.assertEqual(b.review(t["id"], reviewer="codex", ok=True)["state"], "verified")
 
+    def test_rejected_task_can_retry_without_losing_attempt_evidence(self):
+        with TemporaryDirectory() as tmp:
+            b = Board(Path(tmp))
+            task = b.add(op="impl", title="repairable", tier="codex")
+            dispatched = b.dispatch(tier="codex", worker="codex-a")
+            b.submit(task["id"], worker=dispatched["owner"], result="producer output")
+            rejected = b.review(task["id"], reviewer="shell-review", ok=False,
+                                note="acceptance failed")
+            self.assertEqual(rejected["state"], "failed")
+
+            retry = b.retry(task["id"], by="scheduler", feedback="fix test_x")
+            self.assertEqual(retry["state"], "ready")
+            self.assertEqual(retry["attempt"], 1)
+            self.assertEqual(retry["retry_feedback"], "fix test_x")
+            self.assertIsNone(retry["owner"])
+            self.assertIsNone(retry["reviewer"])
+            self.assertEqual(len(retry["attempt_history"]), 1)
+            self.assertIn("acceptance failed", retry["attempt_history"][0]["result"])
+            self.assertEqual(
+                b.dispatch(tier="codex", worker="codex-b")["id"], task["id"]
+            )
+
+    def test_retry_rejects_nonfailed_task(self):
+        with TemporaryDirectory() as tmp:
+            b = Board(Path(tmp))
+            task = b.add(op="impl", title="not rejected", tier="codex")
+            with self.assertRaises(BoardConflict):
+                b.retry(task["id"], by="scheduler")
+
     def test_retirement_is_in_order_and_fable_only(self):
         with TemporaryDirectory() as tmp:
             b = Board(Path(tmp))

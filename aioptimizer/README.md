@@ -3,7 +3,7 @@
 Start the OpenAI-compatible gateway:
 
 ```powershell
-python -m gateway --port 8800
+python -m aioptimizer --port 8800
 ```
 
 Route default-constructed research clients through it without changing call sites:
@@ -15,7 +15,7 @@ $env:AIOPT_GATEWAY = "http://127.0.0.1:8800"
 Read the request receipts:
 
 ```powershell
-python -m gateway.report results/gateway/ledger.jsonl
+python -m aioptimizer.report results/gateway/ledger.jsonl
 ```
 
 Sampled requests bypass the cache so self-consistency samples remain independent. The attention-context stage is default-OFF pending t0031.
@@ -35,10 +35,17 @@ both optimized and raw shadow arms report usage, it also reports directly
 measured input-token savings. `provider_total_tokens_consumed` includes shadow
 overhead so quality measurement is never presented as free.
 
-Anthropic cache creation/read tokens and OpenAI cached prompt-token details are
-normalized separately. Reports expose cache-observation coverage, hit rate,
-cache creation/read totals, and effective input totals; cached-token counts are
-never treated as ordinary gateway exact-cache hits.
+Anthropic cache creation/read tokens and OpenAI cached/cache-write prompt-token
+details are normalized separately. Reports expose cache-observation coverage,
+hit rate, cache creation/read/write totals, reasoning and prediction-token
+details, and effective input totals; cached-token counts are never treated as
+ordinary gateway exact-cache hits.
+
+The final provider-visible request is also fingerprinted for stable-prefix
+reuse opportunities. This diagnostic is content-free and never changes the
+request; `prompt_prefix_candidate_reuse_rate` is an engineering signal, not a
+claim that the upstream provider actually served a cache hit. Provider-reported
+cache reads/writes remain the authoritative outcome receipts.
 
 ## Research evidence audit
 

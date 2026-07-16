@@ -7,6 +7,9 @@ ShellExecutor runs `test`/`run` acceptance commands locally, CodexExecutor (opt-
 
 Safe defaults: Codex and legacy shell execution are OFF, typed commands require an explicit
 argv-prefix policy, and a `--budget` cost ceiling caps spend.
+Independent-review failures stay terminal by default. Set
+`--verification-retries N` to allow at most N evidence-preserving repair attempts;
+the rejection note is supplied to the next Codex execution.
 
     # local-only loop (no Codex): runs command tasks, parks impl/verdict
     python agent_bus/run_loop.py --budget 5 --allow-command-prefix '["python","-m","unittest"]'
@@ -38,6 +41,8 @@ def main() -> None:
     p.add_argument("--repo", default=str(_REPO_ROOT), help="Working dir for executors (repo root).")
     p.add_argument("--budget", type=float, default=5.0, help="Cost ceiling (maskable interrupt).")
     p.add_argument("--max-ticks", type=int, default=50)
+    p.add_argument("--verification-retries", type=int, default=0,
+                   help="Bounded repair attempts after independent review rejects a task.")
     p.add_argument("--codex", action="store_true", help="Enable Codex as a real core (needs codex on PATH).")
     p.add_argument("--codex-bin", default="codex")
     p.add_argument("--codex-args", default="", help="Extra args passed to `codex exec` (e.g. --full-auto).")
@@ -60,6 +65,7 @@ def main() -> None:
         budget=args.budget,
         on_retire=on_retire,
         workspace_root=Path(args.repo),
+        max_verification_retries=args.verification_retries,
     )
 
     history = sched.run(max_ticks=args.max_ticks)

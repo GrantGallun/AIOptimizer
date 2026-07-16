@@ -12,8 +12,10 @@ def extract_usage(payload: Any) -> dict[str, int] | None:
     ``input_tokens`` preserves the provider's native input count. Anthropic
     reports cache creation/read tokens alongside (rather than inside) that
     count, so ``effective_input_tokens`` adds those fields. OpenAI's
-    ``prompt_tokens_details.cached_tokens`` is already a subset of
-    ``prompt_tokens`` and is therefore observed without adding it again.
+    cached/write counts are already subsets or accounting annotations
+    for ``prompt_tokens``/``input_tokens`` and are therefore observed without
+    adding them again. Reasoning and predicted-token details are also reported
+    separately without changing the provider's output-token total.
     """
     if not isinstance(payload, dict):
         return None
@@ -35,6 +37,26 @@ def extract_usage(payload: Any) -> dict[str, int] | None:
             details = usage.get("prompt_tokens_details")
             if isinstance(details, dict):
                 _take(normalized, "cached_input_tokens", details.get("cached_tokens"))
+                _take(normalized, "cache_write_input_tokens", details.get("cache_write_tokens"))
+            input_details = usage.get("input_tokens_details")
+            if isinstance(input_details, dict):
+                _take(normalized, "cached_input_tokens", input_details.get("cached_tokens"))
+                _take(normalized, "cache_write_input_tokens", input_details.get("cache_write_tokens"))
+            for key in ("completion_tokens_details", "output_tokens_details"):
+                output_details = usage.get(key)
+                if not isinstance(output_details, dict):
+                    continue
+                _take(normalized, "reasoning_output_tokens", output_details.get("reasoning_tokens"))
+                _take(
+                    normalized,
+                    "accepted_prediction_output_tokens",
+                    output_details.get("accepted_prediction_tokens"),
+                )
+                _take(
+                    normalized,
+                    "rejected_prediction_output_tokens",
+                    output_details.get("rejected_prediction_tokens"),
+                )
     _take(normalized, "input_tokens", payload.get("prompt_eval_count"))
     _take(normalized, "output_tokens", payload.get("eval_count"))
     if "cache_read_input_tokens" in normalized:

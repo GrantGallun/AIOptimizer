@@ -116,6 +116,23 @@ class CodexExecutorCostTests(unittest.TestCase):
         self.assertEqual(run.call_args_list[1].args[0], command)
         self.assertNotIn("shell", run.call_args_list[1].kwargs)
 
+    def test_retry_feedback_is_added_to_repair_prompt(self):
+        ticks = iter([20.0, 21.0])
+        ex = CodexExecutor(cwd=".", clock=lambda: next(ticks))
+        completed = SimpleNamespace(returncode=0, stdout="ok\n", stderr="")
+        task = {
+            "spec": "implement the original contract",
+            "attempt": 1,
+            "retry_feedback": "independent test found a missing edge case",
+        }
+        with patch("agent_bus.executors.subprocess.run", return_value=completed) as run:
+            ok, _, _ = ex.execute(task)
+        self.assertTrue(ok)
+        prompt = run.call_args.args[0][-1]
+        self.assertIn("implement the original contract", prompt)
+        self.assertIn("Bounded repair attempt 1", prompt)
+        self.assertIn("missing edge case", prompt)
+
 
 class CommandPolicyTests(unittest.TestCase):
     def test_executable_match_uses_basename_case_insensitively(self):

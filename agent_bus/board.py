@@ -102,6 +102,9 @@ class Board:
                 "owner": None,
                 "reviewer": None,
                 "result": None,
+                "attempt": 0,
+                "retry_feedback": "",
+                "attempt_history": [],
                 "speculative": speculative,
                 "branch": branch,
                 "ts": _now(),
@@ -195,6 +198,43 @@ class Board:
             task["state"] = "verified" if ok else "failed"
             task["result"] = f"{task['result']} | review({reviewer}): {'OK' if ok else 'REJECT'} {note}".strip()
             task["ts"] = _now()
+            self._save(state)
+            return task
+
+    def retry(
+        self,
+        task_id: str,
+        *,
+        by: str,
+        feedback: str = "",
+    ) -> dict[str, Any]:
+        """Return a rejected task to ready while preserving attempt evidence."""
+        if not isinstance(by, str) or not by.strip():
+            raise ValueError("retry actor must be non-empty")
+        with self._lock():
+            state = self._load()
+            task = self._require(state, task_id)
+            if task["state"] != "failed":
+                raise BoardConflict(
+                    f"{task_id} is {task['state']}, not failed; only rejected work can retry."
+                )
+            history = list(task.get("attempt_history", []))
+            history.append({
+                "attempt": int(task.get("attempt", 0)),
+                "owner": task.get("owner"),
+                "reviewer": task.get("reviewer"),
+                "result": task.get("result"),
+                "ts": task.get("ts"),
+            })
+            task["attempt_history"] = history
+            task["attempt"] = int(task.get("attempt", 0)) + 1
+            task["retry_feedback"] = feedback or str(task.get("result") or "")
+            task["state"] = "ready"
+            task["owner"] = None
+            task["reviewer"] = None
+            task["result"] = f"retry {task['attempt']} scheduled by {by}"
+            task["ts"] = _now()
+            task["lease_expires_at"] = None
             self._save(state)
             return task
 
@@ -320,6 +360,10 @@ def build_parser() -> argparse.ArgumentParser:
     r.add_argument("id"); r.add_argument("--reviewer", required=True)
     r.add_argument("--ok", action="store_true"); r.add_argument("--note", default="")
     r.set_defaults(func=lambda b, ns: print(f"reviewed -> {b.review(ns.id, reviewer=ns.reviewer, ok=ns.ok, note=ns.note)['state']}"))
+
+    rr = sub.add_parser("retry", help="Return independently rejected work to ready.")
+    rr.add_argument("id"); rr.add_argument("--by", required=True); rr.add_argument("--feedback", default="")
+    rr.set_defaults(func=lambda b, ns: print(f"retry -> {b.retry(ns.id, by=ns.by, feedback=ns.feedback)['state']}"))
 
     rt = sub.add_parser("retire", help="Commit in-order (Fable only).")
     rt.add_argument("id"); rt.add_argument("--by", required=True)

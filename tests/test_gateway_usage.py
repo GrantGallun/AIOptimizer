@@ -41,13 +41,49 @@ class UsageExtractionTests(unittest.TestCase):
             extract_usage({"usage": {
                 "prompt_tokens": 10,
                 "completion_tokens": 2,
-                "prompt_tokens_details": {"cached_tokens": 6},
+                "prompt_tokens_details": {
+                    "cached_tokens": 6,
+                    "cache_write_tokens": 3,
+                },
+                "completion_tokens_details": {
+                    "reasoning_tokens": 1,
+                    "accepted_prediction_tokens": 4,
+                    "rejected_prediction_tokens": 2,
+                },
             }}),
             {
                 "input_tokens": 10,
                 "output_tokens": 2,
                 "cached_input_tokens": 6,
+                "cache_write_input_tokens": 3,
+                "reasoning_output_tokens": 1,
+                "accepted_prediction_output_tokens": 4,
+                "rejected_prediction_output_tokens": 2,
                 "total_tokens": 12,
+            },
+        )
+
+    def test_extracts_openai_responses_usage_details(self):
+        self.assertEqual(
+            extract_usage({"usage": {
+                "input_tokens": 20,
+                "output_tokens": 8,
+                "total_tokens": 28,
+                "input_tokens_details": {
+                    "cached_tokens": 12,
+                    "cache_write_tokens": 5,
+                },
+                "output_tokens_details": {
+                    "reasoning_tokens": 6,
+                },
+            }}),
+            {
+                "input_tokens": 20,
+                "output_tokens": 8,
+                "total_tokens": 28,
+                "cached_input_tokens": 12,
+                "cache_write_input_tokens": 5,
+                "reasoning_output_tokens": 6,
             },
         )
 

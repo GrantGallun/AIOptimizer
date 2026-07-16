@@ -69,6 +69,21 @@ class EvidenceAuditTests(unittest.TestCase):
         with self.assertRaisesRegex(ValueError, "models"):
             _card(models="qwen")
 
+    def test_direct_constructor_cannot_bypass_schema_validation(self):
+        valid = _card().to_mapping()
+        values = {
+            **valid,
+            "task_families": tuple(valid["task_families"]),
+            "models": tuple(valid["models"]),
+            "seeds": tuple(valid["seeds"]),
+        }
+        with self.assertRaisesRegex(ValueError, "experiment_id"):
+            EvidenceCard(**{**values, "experiment_id": ""})
+        with self.assertRaisesRegex(ValueError, "models"):
+            EvidenceCard(**{**values, "models": ["qwen"]})
+        with self.assertRaisesRegex(ValueError, "preregistered"):
+            EvidenceCard(**{**values, "preregistered": 1})
+
 
 if __name__ == "__main__":
     unittest.main()

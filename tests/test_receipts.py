@@ -139,21 +139,33 @@ class ShadowEndToEndTests(unittest.TestCase):
                  "upstream_called": True,
                  "usage": {"input_tokens": 2, "effective_input_tokens": 10,
                            "cache_creation_input_tokens": 3, "cache_read_input_tokens": 5,
-                           "cached_input_tokens": 5, "output_tokens": 2, "total_tokens": 12},
+                           "cache_write_input_tokens": 4, "cached_input_tokens": 5,
+                           "reasoning_output_tokens": 1,
+                           "accepted_prediction_output_tokens": 2,
+                           "rejected_prediction_output_tokens": 1,
+                           "output_tokens": 2, "total_tokens": 12},
                  "shadow_usage": {"input_tokens": 10, "effective_input_tokens": 10,
+                                  "cache_write_input_tokens": 1,
                                   "cached_input_tokens": 0,
+                                  "reasoning_output_tokens": 2,
                                   "output_tokens": 3, "total_tokens": 13},
                  "requirement_contracts": 2,
                  "requirements": {"requirements": 2, "passed": 1, "all_passed": False},
                  "shadow_requirements": {"requirements": 2, "passed": 2, "all_passed": True},
                  "middleware_receipts": {"AttentionContextMiddleware": {
                      "route": "attention", "applied": True,
-                     "embedding_cache_hits": 7, "embedding_cache_misses": 3}}},
+                     "embedding_cache_hits": 7, "embedding_cache_misses": 3},
+                     "PromptCacheTelemetryMiddleware": {
+                         "observed": True, "candidate_reuse": False,
+                         "prefix_chars": 40, "prefix_fingerprint": "a"}}},
                 {"request_chars": 10, "response_chars": 2, "latency_ms": 2,
                  "optimized": False,
                  "middleware_receipts": {"AttentionContextMiddleware": {
                      "route": "raw", "applied": False,
-                     "embedding_cache_hits": 4, "embedding_cache_misses": 1}}},
+                     "embedding_cache_hits": 4, "embedding_cache_misses": 1},
+                     "PromptCacheTelemetryMiddleware": {
+                         "observed": True, "candidate_reuse": True,
+                         "prefix_chars": 40, "prefix_fingerprint": "a"}}},
             ]
             path.write_text("".join(json.dumps(row) + "\n" for row in rows), encoding="utf-8")
             summary = summarize(str(path))
@@ -162,6 +174,11 @@ class ShadowEndToEndTests(unittest.TestCase):
         self.assertEqual(summary["attention_applied_requests"], 1)
         self.assertEqual(summary["embedding_cache_hits"], 11)
         self.assertEqual(summary["embedding_cache_misses"], 4)
+        self.assertEqual(summary["prompt_prefix_observed_requests"], 2)
+        self.assertEqual(summary["prompt_prefix_candidate_reuse_requests"], 1)
+        self.assertEqual(summary["prompt_prefix_candidate_reuse_rate"], 0.5)
+        self.assertEqual(summary["prompt_prefix_unique_fingerprints"], 1)
+        self.assertEqual(summary["prompt_prefix_chars_observed"], 80)
         self.assertEqual(summary["upstream_requests"], 1)
         self.assertEqual(summary["usage_receipts"], 1)
         self.assertEqual(summary["usage_coverage_rate"], 1.0)
@@ -179,8 +196,14 @@ class ShadowEndToEndTests(unittest.TestCase):
         self.assertEqual(summary["prompt_cache_hit_rate"], 1.0)
         self.assertEqual(summary["cache_creation_input_tokens"], 3)
         self.assertEqual(summary["cache_read_input_tokens"], 5)
+        self.assertEqual(summary["cache_write_input_tokens"], 4)
         self.assertEqual(summary["cached_input_tokens"], 5)
+        self.assertEqual(summary["reasoning_output_tokens"], 1)
+        self.assertEqual(summary["accepted_prediction_output_tokens"], 2)
+        self.assertEqual(summary["rejected_prediction_output_tokens"], 1)
         self.assertEqual(summary["shadow_prompt_cache_observed_requests"], 1)
+        self.assertEqual(summary["shadow_cache_write_input_tokens"], 1)
+        self.assertEqual(summary["shadow_reasoning_output_tokens"], 2)
         self.assertEqual(summary["streamed_requests"], 0)
         self.assertEqual(summary["incomplete_streams"], 0)
         self.assertEqual(summary["shadow_failures"], 0)

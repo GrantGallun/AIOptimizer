@@ -32,11 +32,17 @@ def summarize(ledger_path: str) -> dict[str, Any]:
         for e in entries
         if "AttentionContextMiddleware" in e.get("middleware_receipts", {})
     ]
+    prompt_prefix_receipts = [
+        e.get("middleware_receipts", {}).get("PromptCacheTelemetryMiddleware", {})
+        for e in entries
+        if "PromptCacheTelemetryMiddleware" in e.get("middleware_receipts", {})
+    ]
     latencies = sorted(float(e.get("latency_ms", 0.0)) for e in entries)
     primary_usage = [e["usage"] for e in entries if isinstance(e.get("usage"), dict)]
     shadow_usage = [e["shadow_usage"] for e in entries if isinstance(e.get("shadow_usage"), dict)]
     cache_fields = {
-        "cache_creation_input_tokens", "cache_read_input_tokens", "cached_input_tokens"
+        "cache_creation_input_tokens", "cache_read_input_tokens",
+        "cache_write_input_tokens", "cached_input_tokens",
     }
     primary_cache_usage = [u for u in primary_usage if cache_fields.intersection(u)]
     shadow_cache_usage = [u for u in shadow_usage if cache_fields.intersection(u)]
@@ -158,7 +164,15 @@ def summarize(ledger_path: str) -> dict[str, Any]:
         ),
         "cache_creation_input_tokens": token_sum(primary_usage, "cache_creation_input_tokens"),
         "cache_read_input_tokens": token_sum(primary_usage, "cache_read_input_tokens"),
+        "cache_write_input_tokens": token_sum(primary_usage, "cache_write_input_tokens"),
         "cached_input_tokens": token_sum(primary_usage, "cached_input_tokens"),
+        "reasoning_output_tokens": token_sum(primary_usage, "reasoning_output_tokens"),
+        "accepted_prediction_output_tokens": token_sum(
+            primary_usage, "accepted_prediction_output_tokens"
+        ),
+        "rejected_prediction_output_tokens": token_sum(
+            primary_usage, "rejected_prediction_output_tokens"
+        ),
         "shadow_input_tokens": token_sum(shadow_usage, "input_tokens"),
         "shadow_effective_input_tokens": effective_input_sum(shadow_usage),
         "shadow_output_tokens": token_sum(shadow_usage, "output_tokens"),
@@ -166,7 +180,15 @@ def summarize(ledger_path: str) -> dict[str, Any]:
         "shadow_prompt_cache_observed_requests": len(shadow_cache_usage),
         "shadow_cache_creation_input_tokens": token_sum(shadow_usage, "cache_creation_input_tokens"),
         "shadow_cache_read_input_tokens": token_sum(shadow_usage, "cache_read_input_tokens"),
+        "shadow_cache_write_input_tokens": token_sum(shadow_usage, "cache_write_input_tokens"),
         "shadow_cached_input_tokens": token_sum(shadow_usage, "cached_input_tokens"),
+        "shadow_reasoning_output_tokens": token_sum(shadow_usage, "reasoning_output_tokens"),
+        "shadow_accepted_prediction_output_tokens": token_sum(
+            shadow_usage, "accepted_prediction_output_tokens"
+        ),
+        "shadow_rejected_prediction_output_tokens": token_sum(
+            shadow_usage, "rejected_prediction_output_tokens"
+        ),
         "provider_total_tokens_consumed": (
             token_sum(primary_usage, "total_tokens") + token_sum(shadow_usage, "total_tokens")
         ),
@@ -186,6 +208,26 @@ def summarize(ledger_path: str) -> dict[str, Any]:
         "attention_applied_requests": sum(bool(receipt.get("applied")) for receipt in attention_receipts),
         "embedding_cache_hits": sum(int(receipt.get("embedding_cache_hits", 0)) for receipt in attention_receipts),
         "embedding_cache_misses": sum(int(receipt.get("embedding_cache_misses", 0)) for receipt in attention_receipts),
+        "prompt_prefix_observed_requests": sum(
+            bool(receipt.get("observed")) for receipt in prompt_prefix_receipts
+        ),
+        "prompt_prefix_candidate_reuse_requests": sum(
+            bool(receipt.get("candidate_reuse")) for receipt in prompt_prefix_receipts
+        ),
+        "prompt_prefix_candidate_reuse_rate": (
+            sum(bool(receipt.get("candidate_reuse")) for receipt in prompt_prefix_receipts)
+            / sum(bool(receipt.get("observed")) for receipt in prompt_prefix_receipts)
+            if any(receipt.get("observed") for receipt in prompt_prefix_receipts)
+            else None
+        ),
+        "prompt_prefix_unique_fingerprints": len({
+            receipt["prefix_fingerprint"]
+            for receipt in prompt_prefix_receipts
+            if isinstance(receipt.get("prefix_fingerprint"), str)
+        }),
+        "prompt_prefix_chars_observed": sum(
+            int(receipt.get("prefix_chars", 0)) for receipt in prompt_prefix_receipts
+        ),
         "shadow_samples": len(shadows),
         "shadow_failures": len(shadow_errors),
         "shadow_failure_types": dict(sorted(Counter(

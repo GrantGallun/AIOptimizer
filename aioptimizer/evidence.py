@@ -43,6 +43,38 @@ class EvidenceCard:
     versioned_artifact: bool
     judge: str
 
+    def __post_init__(self) -> None:
+        """Enforce the schema even when callers bypass ``from_mapping``."""
+        if not isinstance(self.experiment_id, str) or not self.experiment_id:
+            raise ValueError("experiment_id must be a non-empty string")
+        if (
+            isinstance(self.sample_size, bool)
+            or not isinstance(self.sample_size, int)
+            or self.sample_size < 0
+        ):
+            raise ValueError("sample_size must be a non-negative integer")
+        for field in ("task_families", "models", "seeds"):
+            value = getattr(self, field)
+            if not isinstance(value, tuple) or not all(
+                isinstance(item, str) and item for item in value
+            ):
+                raise ValueError(f"{field} must be a tuple of non-empty strings")
+        for field in (
+            "preregistered",
+            "hidden_split",
+            "negative_controls",
+            "independent_review",
+            "external_data",
+            "confidence_interval",
+            "versioned_artifact",
+        ):
+            if not isinstance(getattr(self, field), bool):
+                raise ValueError(f"{field} must be boolean")
+        if self.judge not in DIRECT_JUDGES | PROXY_JUDGES:
+            raise ValueError(
+                "judge must be deterministic, human, encoder, heuristic, model, or unknown"
+            )
+
     @classmethod
     def from_mapping(cls, value: dict[str, Any]) -> "EvidenceCard":
         if not isinstance(value, dict):

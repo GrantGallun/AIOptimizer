@@ -67,4 +67,5 @@ class GatewayConfigTests(unittest.TestCase):
         names = [type(middleware).__name__ for middleware in build_middlewares(args)]
         self.assertEqual(names, [
             "ExactCacheMiddleware", "AttentionContextMiddleware", "CompactContextMiddleware",
+            "PromptCacheTelemetryMiddleware",
         ])

@@ -18,6 +18,7 @@ from .config import load_config
 from .compact_middleware import CompactContextMiddleware
 from .context_middleware import AttentionContextMiddleware
 from .ledger import JsonlLedger
+from .prompt_cache import PromptCacheTelemetryMiddleware
 from .receipts import ShadowJudge
 from .server import GatewayServer
 
@@ -71,6 +72,9 @@ def build_middlewares(args):
         ))
     if not args.no_compact:
         middlewares.append(CompactContextMiddleware(budget_chars=args.budget_chars))
+    # Last in the request path: inspect the final provider-visible prompt after
+    # any context transformation. This middleware is observational only.
+    middlewares.append(PromptCacheTelemetryMiddleware())
     return middlewares
 
 
