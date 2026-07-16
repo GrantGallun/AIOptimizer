@@ -6,9 +6,10 @@ import urllib.request
 from http.server import BaseHTTPRequestHandler, ThreadingHTTPServer
 from pathlib import Path
 
+from aioptimizer.episodes import make_event
 from aioptimizer.ledger import JsonlLedger
 from aioptimizer.receipts import ShadowJudge, response_text
-from aioptimizer.report import summarize
+from aioptimizer.report import PRODUCT_REPORT_SCHEMA, summarize, summarize_product
 from aioptimizer.server import GatewayServer
 
 
@@ -220,6 +221,46 @@ class ShadowEndToEndTests(unittest.TestCase):
         self.assertEqual(summary["shadow_requirements_passed"], 2)
         self.assertEqual(summary["paired_requirement_receipts"], 1)
         self.assertEqual(summary["measured_requirement_pass_delta"], -1)
+
+    def test_product_report_separates_request_rows_and_joins_episode_coverage(self):
+        with tempfile.TemporaryDirectory() as directory:
+            root = Path(directory)
+            gateway_path = root / "results" / "gateway" / "ledger.jsonl"
+            hook_path = root / ".aioptimizer" / "codex_hook_ledger.jsonl"
+            gateway_path.parent.mkdir(parents=True)
+            hook_path.parent.mkdir(parents=True)
+            episode_id = "episode-report-0001"
+            hook_event = make_event(
+                source="codex_hook", event_type="context_route",
+                episode_id=episode_id, turn_id="turn-report-000001",
+                route="attention", latency_ms=2.0,
+            )
+            provider_event = make_event(
+                source="gateway", event_type="provider_response",
+                episode_id=episode_id, turn_id="turn-report-000001",
+                status=200, input_tokens=40, output_tokens=5,
+            )
+            request_row = {
+                "request_chars": 50, "response_chars": 5, "latency_ms": 4,
+                "optimized": True, "request_chars_original": 80,
+                "upstream_called": True, "path": "/v1/chat/completions", "status": 200,
+            }
+            hook_path.write_text(json.dumps(hook_event) + "\n", encoding="utf-8")
+            gateway_path.write_text(
+                json.dumps(request_row) + "\n" + json.dumps(provider_event) + "\n",
+                encoding="utf-8",
+            )
+            report = summarize_product(str(gateway_path), root)
+
+        self.assertEqual(report["schema"], PRODUCT_REPORT_SCHEMA)
+        self.assertEqual(report["gateway"]["requests"], 1)
+        self.assertEqual(report["gateway"]["episode_event_rows"], 1)
+        self.assertEqual(report["episodes"]["event_count"], 2)
+        self.assertEqual(report["episodes"]["episode_count"], 1)
+        self.assertEqual(
+            report["episodes"]["coverage"]["cross_source_join"]["rate"], 1.0
+        )
+        self.assertNotIn(episode_id, json.dumps(report))
 
 
 if __name__ == "__main__":

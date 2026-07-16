@@ -66,10 +66,9 @@ retry, and terminal-outcome events to `agent_bus/episode_events.jsonl`.
 Freeze a replay dataset and a development hard-case view with versioned output names:
 
 ```powershell
+python -m aioptimizer.episodes inspect --workspace .
 python -m aioptimizer.episodes build `
-  --events .aioptimizer/codex_hook_ledger.jsonl `
-  --events .aioptimizer/gateway_ledger.jsonl `
-  --events agent_bus/episode_events.jsonl `
+  --workspace . `
   --split-salt frozen-v1 `
   --out results/episodes/episode_dataset_v1.json
 python -m aioptimizer.episodes hard-cases `
@@ -79,6 +78,25 @@ python -m aioptimizer.episodes hard-cases `
 python -m aioptimizer.episodes replay `
   --dataset results/episodes/episode_dataset_v1.json --split dev --hard-only
 ```
+
+`inspect` discovers the hook, sidecar gateway, main gateway, and agent-bus ledgers
+that exist under the workspace. It reports only aggregate source/event counts and
+per-episode coverage for context routing, provider usage, latency, acceptance tests,
+verification, retries, requirements, terminal outcomes, and cross-source joins. It
+never prints episode IDs or content. `build --workspace` uses the same discovery;
+explicit `--events` paths remain available for frozen or external streams.
+
+The normal gateway report can combine both views in one operational snapshot:
+
+```powershell
+python -m aioptimizer.report results/gateway/ledger.jsonl `
+  --episodes-workspace .
+```
+
+Episode-event rows share the append-only gateway ledger but are excluded from
+request totals, optimization rates, and latency statistics. The combined report
+places those request metrics under `gateway` and join/outcome coverage under
+`episodes`, preventing telemetry rows from inflating product traffic counts.
 
 Dataset and hard-case writers use exclusive creation and refuse to overwrite an
 existing artifact. Split membership is a frozen SHA-256 threshold assignment. These

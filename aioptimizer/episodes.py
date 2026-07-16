@@ -7,6 +7,7 @@ never stores prompt, response, acceptance-command, or producer-result text.
 
     python -m aioptimizer.episodes build --events hook.jsonl --events bus.jsonl \
         --out results/episodes/episode_dataset_v1.json --split-salt frozen-v1
+    python -m aioptimizer.episodes inspect --workspace .
     python -m aioptimizer.episodes hard-cases --dataset ... --out ...
     python -m aioptimizer.episodes replay --dataset ... --split dev
 """
@@ -29,6 +30,14 @@ import uuid
 EVENT_SCHEMA = "aioptimizer.episode-event.v1"
 DATASET_SCHEMA = "aioptimizer.episode-dataset.v1"
 HARD_CASE_SCHEMA = "aioptimizer.hard-cases.v1"
+HEALTH_SCHEMA = "aioptimizer.episode-health.v1"
+STANDARD_EVENT_RELATIVE_PATHS = (
+    Path(".aioptimizer/codex_hook_ledger.jsonl"),
+    Path(".aioptimizer/hook_ledger.jsonl"),
+    Path(".aioptimizer/gateway_ledger.jsonl"),
+    Path("agent_bus/episode_events.jsonl"),
+    Path("results/gateway/ledger.jsonl"),
+)
 _ID_RE = re.compile(r"^[A-Za-z0-9][A-Za-z0-9_.:-]{7,79}$")
 _CATEGORY_RE = re.compile(r"^[A-Za-z0-9][A-Za-z0-9_.:/-]{0,79}$")
 
@@ -220,6 +229,128 @@ def read_events(paths: Iterable[str | Path]) -> list[dict[str, Any]]:
     return sorted(events, key=lambda item: (item["ts"], item["event_id"]))
 
 
+def discover_event_paths(
+    workspace: str | Path = ".",
+    *,
+    extra_paths: Iterable[str | Path] = (),
+) -> tuple[Path, ...]:
+    """Find existing standard event streams without creating runtime files.
+
+    Relative extra paths are resolved against ``workspace``.  Paths are
+    returned in a stable order and de-duplicated, which makes the same command
+    usable from an AIOptimizer checkout or an unrelated plugin workspace.
+    """
+    root = Path(workspace)
+    candidates = [root / relative for relative in STANDARD_EVENT_RELATIVE_PATHS]
+    candidates.extend(
+        path if path.is_absolute() else root / path
+        for path in (Path(value) for value in extra_paths)
+    )
+    discovered: list[Path] = []
+    seen: set[str] = set()
+    for candidate in candidates:
+        key = os.path.normcase(str(candidate.resolve(strict=False)))
+        if key in seen or not candidate.is_file():
+            continue
+        seen.add(key)
+        discovered.append(candidate)
+    return tuple(discovered)
+
+
+def inspect_event_stream(event_paths: Iterable[str | Path]) -> dict[str, Any]:
+    """Summarize join and outcome coverage without returning episode IDs or text."""
+    paths = [Path(path) for path in event_paths]
+    events = read_events(paths)
+    grouped: dict[str, list[dict[str, Any]]] = {}
+    for event in events:
+        grouped.setdefault(event["episode_id"], []).append(event)
+
+    def episode_count(predicate) -> int:
+        return sum(bool(predicate(rows)) for rows in grouped.values())
+
+    def has_any(rows: list[dict[str, Any]], *keys: str) -> bool:
+        return any(any(key in event for key in keys) for event in rows)
+
+    episode_total = len(grouped)
+    coverage_counts = {
+        "context_route": episode_count(
+            lambda rows: any(
+                event["event_type"] in {"context_route", "context_compiled"}
+                for event in rows
+            )
+        ),
+        "provider_response": episode_count(
+            lambda rows: any(event["event_type"] == "provider_response" for event in rows)
+        ),
+        "provider_usage": episode_count(
+            lambda rows: has_any(
+                rows, "input_tokens", "output_tokens", "total_tokens",
+                "cached_input_tokens", "cache_read_input_tokens",
+            )
+        ),
+        "latency": episode_count(lambda rows: has_any(rows, "latency_ms", "cost_seconds")),
+        "acceptance_test": episode_count(lambda rows: has_any(rows, "test_executed", "test_ok")),
+        "verification": episode_count(lambda rows: has_any(rows, "verification_ok")),
+        "retry": episode_count(lambda rows: has_any(rows, "retry_scheduled")),
+        "requirements": episode_count(lambda rows: has_any(rows, "requirements_all_passed")),
+        "eventual_outcome": episode_count(lambda rows: has_any(rows, "eventual_success")),
+        "cross_source_join": episode_count(
+            lambda rows: len({event["source"] for event in rows}) > 1
+        ),
+    }
+    eventual_values = [
+        _last_value(rows, "eventual_success") for rows in grouped.values()
+        if has_any(rows, "eventual_success")
+    ]
+    warnings: list[str] = []
+    if not paths:
+        warnings.append("no_event_files")
+    elif not events:
+        warnings.append("no_schema_events")
+    if episode_total and coverage_counts["cross_source_join"] == 0:
+        warnings.append("no_cross_source_joins")
+    if episode_total and coverage_counts["eventual_outcome"] == 0:
+        warnings.append("no_outcome_labels")
+    if episode_total and coverage_counts["provider_usage"] == 0:
+        warnings.append("no_provider_usage")
+
+    def coverage_row(count: int) -> dict[str, Any]:
+        return {
+            "episodes": count,
+            "rate": round(count / episode_total, 6) if episode_total else None,
+        }
+
+    return {
+        "schema": HEALTH_SCHEMA,
+        "event_file_count": len(paths),
+        "event_count": len(events),
+        "episode_count": episode_total,
+        "turn_count": len({event["turn_id"] for event in events if "turn_id" in event}),
+        "hard_episode_count": episode_count(lambda rows: bool(_hard_reason_codes(rows))),
+        "eventual_success_episodes": sum(value is True for value in eventual_values),
+        "eventual_failure_episodes": sum(value is False for value in eventual_values),
+        "sources": dict(sorted(Counter(event["source"] for event in events).items())),
+        "event_types": dict(sorted(Counter(event["event_type"] for event in events).items())),
+        "routes": dict(sorted(Counter(
+            str(event["route"]) for event in events if "route" in event
+        ).items())),
+        "coverage": {
+            name: coverage_row(count) for name, count in coverage_counts.items()
+        },
+        "warnings": warnings,
+        "note": "Coverage diagnostics only; no controller or research verdict is produced.",
+    }
+
+
+def inspect_workspace(
+    workspace: str | Path = ".",
+    *,
+    extra_paths: Iterable[str | Path] = (),
+) -> dict[str, Any]:
+    """Discover and inspect all standard content-free streams in one workspace."""
+    return inspect_event_stream(discover_event_paths(workspace, extra_paths=extra_paths))
+
+
 def _validated_existing_event(raw: Any) -> dict[str, Any]:
     if not isinstance(raw, dict) or raw.get("schema") != EVENT_SCHEMA:
         raise ValueError(f"schema must be {EVENT_SCHEMA}")
@@ -295,6 +426,26 @@ def _summarize_episode(
     split_salt: str,
     hidden_fraction: float,
 ) -> dict[str, Any]:
+    hard_reasons = _hard_reason_codes(events)
+
+    threshold = int(hidden_fraction * (2**64))
+    bucket = int.from_bytes(
+        hashlib.sha256(f"{split_salt}\0{episode_id}".encode("utf-8")).digest()[:8],
+        "big",
+    )
+    turns = {event["turn_id"] for event in events if "turn_id" in event}
+    return {
+        "episode_id": episode_id,
+        "split": "hidden" if bucket < threshold else "dev",
+        "event_count": len(events),
+        "turn_count": len(turns),
+        "hard_reason_codes": sorted(hard_reasons),
+        "eventual_success": _last_value(events, "eventual_success"),
+        "events": events,
+    }
+
+
+def _hard_reason_codes(events: list[dict[str, Any]]) -> set[str]:
     hard_reasons: set[str] = set()
     for event in events:
         route = event.get("route")
@@ -313,22 +464,7 @@ def _summarize_episode(
             hard_reasons.add("requirement_failure")
         if event.get("eventual_success") is False:
             hard_reasons.add("terminal_failure")
-
-    threshold = int(hidden_fraction * (2**64))
-    bucket = int.from_bytes(
-        hashlib.sha256(f"{split_salt}\0{episode_id}".encode("utf-8")).digest()[:8],
-        "big",
-    )
-    turns = {event["turn_id"] for event in events if "turn_id" in event}
-    return {
-        "episode_id": episode_id,
-        "split": "hidden" if bucket < threshold else "dev",
-        "event_count": len(events),
-        "turn_count": len(turns),
-        "hard_reason_codes": sorted(hard_reasons),
-        "eventual_success": _last_value(events, "eventual_success"),
-        "events": events,
-    }
+    return hard_reasons
 
 
 def _last_value(events: list[dict[str, Any]], key: str) -> Any:
@@ -412,7 +548,11 @@ def main() -> None:
     parser = argparse.ArgumentParser(description=__doc__)
     subparsers = parser.add_subparsers(dest="command", required=True)
     build = subparsers.add_parser("build")
-    build.add_argument("--events", action="append", required=True)
+    build.add_argument("--events", action="append")
+    build.add_argument(
+        "--workspace",
+        help="Discover standard ledgers under this root; defaults to cwd when --events is omitted.",
+    )
     build.add_argument("--out", required=True)
     build.add_argument("--split-salt", required=True)
     build.add_argument("--hidden-fraction", type=float, default=0.2)
@@ -424,10 +564,24 @@ def main() -> None:
     replay.add_argument("--dataset", required=True)
     replay.add_argument("--split", choices=("dev", "hidden"), required=True)
     replay.add_argument("--hard-only", action="store_true")
+    inspect = subparsers.add_parser("inspect")
+    inspect.add_argument("--workspace", default=".")
+    inspect.add_argument(
+        "--events", action="append", default=[],
+        help="Additional event path, relative to --workspace unless absolute.",
+    )
     args = parser.parse_args()
     if args.command == "build":
+        if args.workspace is not None or not args.events:
+            event_paths = discover_event_paths(
+                args.workspace or ".", extra_paths=args.events or (),
+            )
+        else:
+            event_paths = tuple(Path(path) for path in args.events)
+        if not event_paths:
+            parser.error("no episode event files found; pass --events or --workspace")
         result = build_dataset(
-            args.events, args.out, split_salt=args.split_salt,
+            event_paths, args.out, split_salt=args.split_salt,
             hidden_fraction=args.hidden_fraction,
         )
         print(json.dumps({key: result[key] for key in (
@@ -436,9 +590,14 @@ def main() -> None:
     elif args.command == "hard-cases":
         result = build_hard_cases(args.dataset, args.out, split=args.split)
         print(json.dumps({"schema": result["schema"], "episode_count": result["episode_count"]}, indent=2))
-    else:
+    elif args.command == "replay":
         for row in replay_rows(args.dataset, split=args.split, hard_only=args.hard_only):
             print(json.dumps(row, ensure_ascii=False, separators=(",", ":")))
+    else:
+        print(json.dumps(
+            inspect_workspace(args.workspace, extra_paths=args.events),
+            indent=2, sort_keys=True,
+        ))
 
 
 if __name__ == "__main__":

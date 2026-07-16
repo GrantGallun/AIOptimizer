@@ -18,6 +18,11 @@ or alongside the active project (for example `C:\Code\AIOptimizer` next to
 2. Submit a prompt normally. The hook checks localhost and lazily starts one hidden,
    attention-enabled AIOptimizer sidecar when needed.
 3. Inspect `.aioptimizer/sidecar.log` or the local `/status` endpoint only when diagnosing.
+4. From the AIOptimizer checkout, run
+   `python -m aioptimizer.episodes inspect --workspace <active-project>` to verify
+   that hook, gateway, usage, verification, retry, and terminal-outcome receipts
+   are actually joining. The command reports aggregate coverage only and never
+   prints prompt text or opaque episode identifiers.
 
 Vague requests and short histories inject nothing. If the local service is not
 available or does not become healthy before the bounded startup deadline, the hook

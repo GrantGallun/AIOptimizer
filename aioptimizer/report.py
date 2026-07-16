@@ -11,15 +11,24 @@ import json
 from pathlib import Path
 from typing import Any
 
+from .episodes import EVENT_SCHEMA, inspect_workspace
 from .stats import wilson_interval
+
+
+PRODUCT_REPORT_SCHEMA = "aioptimizer.product-report.v1"
 
 
 def summarize(ledger_path: str) -> dict[str, Any]:
     entries = []
+    episode_event_rows = 0
     for line in Path(ledger_path).read_text(encoding="utf-8").splitlines():
         line = line.strip()
         if line:
-            entries.append(json.loads(line))
+            row = json.loads(line)
+            if isinstance(row, dict) and row.get("schema") == EVENT_SCHEMA:
+                episode_event_rows += 1
+                continue
+            entries.append(row)
     optimized = [e for e in entries if e.get("optimized")]
     shadows = [e for e in entries if isinstance(e.get("shadow"), dict)]
     chars_saved = sum(
@@ -97,6 +106,7 @@ def summarize(ledger_path: str) -> dict[str, Any]:
 
     summary: dict[str, Any] = {
         "requests": len(entries),
+        "episode_event_rows": episode_event_rows,
         "optimized_requests": len(optimized),
         "cached_requests": sum(bool(e.get("cached")) for e in entries),
         "passthrough_requests": sum(not e.get("optimized") and not e.get("cached") for e in entries),
@@ -246,19 +256,38 @@ def summarize(ledger_path: str) -> dict[str, Any]:
     return summary
 
 
+def summarize_product(ledger_path: str, episode_workspace: str | Path) -> dict[str, Any]:
+    """Combine request optimization metrics with content-free outcome coverage."""
+    ledger = Path(ledger_path).resolve(strict=False)
+    return {
+        "schema": PRODUCT_REPORT_SCHEMA,
+        "gateway": summarize(str(ledger)),
+        "episodes": inspect_workspace(episode_workspace, extra_paths=(ledger,)),
+        "note": "Operational evidence only; no research verdict or controller decision is produced.",
+    }
+
+
 def main() -> None:
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("ledger", help="Path to the gateway JSONL ledger.")
+    parser.add_argument(
+        "--episodes-workspace",
+        help="Also discover episode streams under this workspace and print one product report.",
+    )
     args = parser.parse_args()
-    summary = summarize(args.ledger)
-    print(json.dumps(summary, indent=2, sort_keys=True))
-    if summary["shadow_samples"]:
-        low, high = summary["quality_parity_ci"]
+    output = (
+        summarize_product(args.ledger, args.episodes_workspace)
+        if args.episodes_workspace else summarize(args.ledger)
+    )
+    print(json.dumps(output, indent=2, sort_keys=True))
+    gateway = output["gateway"] if args.episodes_workspace else output
+    if gateway["shadow_samples"]:
+        low, high = gateway["quality_parity_ci"]
         print(
-            f"\nreceipts: {summary['optimized_requests']}/{summary['requests']} requests optimized, "
-            f"{summary['request_chars_saved']} request chars saved; quality parity "
-            f"{summary['quality_parity_rate']:.1%} (95% CI {low:.1%}-{high:.1%}, "
-            f"n={summary['shadow_samples']} shadow samples)"
+            f"\nreceipts: {gateway['optimized_requests']}/{gateway['requests']} requests optimized, "
+            f"{gateway['request_chars_saved']} request chars saved; quality parity "
+            f"{gateway['quality_parity_rate']:.1%} (95% CI {low:.1%}-{high:.1%}, "
+            f"n={gateway['shadow_samples']} shadow samples)"
         )
 
 

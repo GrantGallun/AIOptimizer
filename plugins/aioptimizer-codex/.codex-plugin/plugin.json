@@ -1,6 +1,6 @@
 {
   "name": "aioptimizer-codex",
-  "version": "0.1.0+codex.20260716200404",
+  "version": "0.1.0+codex.20260716215941",
   "description": "Deterministic visible-context selection and receipts for subscription-backed Codex.",
   "author": {
     "name": "Grant Gallun"

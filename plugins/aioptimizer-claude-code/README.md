@@ -34,3 +34,8 @@ The hook uses `AIOPTIMIZER_CONTEXT_URL`,
 endpoint, transcript, or request is unavailable, the hook exits successfully
 without stdout so Claude Code proceeds unchanged. Content-free receipts are
 written under the active workspace's `.aioptimizer/` directory.
+
+From the AIOptimizer checkout, run
+`python -m aioptimizer.episodes inspect --workspace <active-project>` to check
+aggregate cross-layer and eventual-outcome coverage. The inspector never prints
+prompt text or opaque episode identifiers.
