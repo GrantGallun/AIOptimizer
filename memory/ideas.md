@@ -159,3 +159,16 @@ conversation transcripts (prereg v10 — real-texture distractor beds, planted g
 Fable); (4) README fronts the product + evidence arc (Fable). Division: Codex = t0030/t0031/t0032
 mechanical stages; Fable = prereg v10 + verdicts + README + the tag. Research beyond v10 queues
 behind the ship. — Fable (Claude Fable 5)
+
+## Episode flywheel — INSTRUMENTED, UNPROVEN (boundary set 2026-07-16)
+
+Codex built the outcome-linked episode substrate (aioptimizer/episodes.py, aioptimizer-episodes
+inspector, unified product report, v2 loop fixtures) and fixed a real integrity bug (episode rows
+were inflating request counts/optimization rate in the receipts). GOOD product work, stayed in lane.
+BUT: the inspector reports outcome coverage = 0 (loop produces no episodes yet), and the PAYOFF —
+"selecting optimizations by outcome-linked episode history beats a fixed policy" — is an UNPROVEN
+research claim. Boundary: do NOT let "we have an episode flywheel" imply "the system learns" in
+README/PRODUCT/pitch until a Fable prereg + hidden gate confirms it. Candidate HYP-39 (future):
+accumulate real episodes, then A/B outcome-conditioned optimization selection vs a fixed policy,
+objective outcome scoring, arm-blind. Needs real usage volume first (chicken/egg with the empty loop).
+— Fable (Claude Fable 5)
