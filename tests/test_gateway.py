@@ -12,6 +12,7 @@ from aioptimizer.ledger import JsonlLedger
 from aioptimizer.cache_middleware import ExactCacheMiddleware
 from aioptimizer.server import GatewayServer, _GatewayHandler
 from aioptimizer.receipts import ShadowJudge, response_text
+from aioptimizer.episodes import EVENT_SCHEMA, read_events
 
 
 class _StubHandler(BaseHTTPRequestHandler):
@@ -94,6 +95,21 @@ class _RemoveSlowMiddleware:
         return response
 
 
+class _ContextOptimizer:
+    def compile_additional_context(self, messages, *, query, output_budget_chars):
+        return {
+            "route": "attention",
+            "route_reason": "buried_relevant_record",
+            "context": "selected context",
+            "history_chars": 9000,
+            "output_chars": 16,
+            "load": {"load_pressure": True, "obscured_record_count": 3},
+            "relevance": {"peak": 0.9, "best_record_age_records": 4},
+            "embedding_cache_hits": 2,
+            "embedding_cache_misses": 1,
+        }
+
+
 class GatewayTests(unittest.TestCase):
     def test_json_writer_quietly_handles_disconnected_local_client(self):
         class _DisconnectedWriter:
@@ -142,6 +158,14 @@ class GatewayTests(unittest.TestCase):
         )
         with urllib.request.urlopen(request) as response:
             return json.loads(response.read())
+
+    @staticmethod
+    def _wait_for_ledger(path, minimum_lines):
+        for _ in range(100):
+            if path.exists() and len(path.read_text(encoding="utf-8").splitlines()) >= minimum_lines:
+                return
+            time.sleep(0.01)
+        raise AssertionError(f"ledger did not reach {minimum_lines} rows: {path}")
 
     def test_passthrough_returns_upstream_json(self):
         url = self._start_gateway()
@@ -193,6 +217,70 @@ class GatewayTests(unittest.TestCase):
         self.assertEqual(seen["authorization"], "Bearer test-token")
         self.assertEqual(seen["x-api-key"], "test-key")
         self.assertEqual(seen["anthropic-version"], "2023-06-01")
+
+    def test_episode_headers_link_provider_outcome_without_forwarding_local_ids(self):
+        with tempfile.TemporaryDirectory() as directory:
+            ledger_path = Path(directory) / "gateway.jsonl"
+            url = self._start_gateway(ledger=JsonlLedger(ledger_path))
+            request = urllib.request.Request(
+                url + "/v1/chat/completions",
+                data=json.dumps({"model": "test", "messages": [], "usage_test": True}).encode(),
+                headers={
+                    "Content-Type": "application/json",
+                    "X-AIOptimizer-Episode-ID": "episode-provider-0001",
+                    "X-AIOptimizer-Turn-ID": "turn-provider-000001",
+                },
+                method="POST",
+            )
+            with urllib.request.urlopen(request) as response:
+                json.loads(response.read())
+
+            self._wait_for_ledger(ledger_path, 2)
+            entries = [json.loads(line) for line in ledger_path.read_text().splitlines()]
+            event = read_events([ledger_path])[0]
+
+        self.assertEqual(len(entries), 2)
+        self.assertEqual(event["schema"], EVENT_SCHEMA)
+        self.assertEqual(event["event_type"], "provider_response")
+        self.assertEqual(event["episode_id"], "episode-provider-0001")
+        self.assertEqual(event["input_tokens"], 15)
+        upstream_headers = {key.lower() for key in _StubHandler.headers_seen[-1]}
+        self.assertNotIn("x-aioptimizer-episode-id", upstream_headers)
+        self.assertNotIn("x-aioptimizer-turn-id", upstream_headers)
+
+    def test_context_endpoint_echoes_ids_and_records_pressure_features(self):
+        with tempfile.TemporaryDirectory() as directory:
+            ledger_path = Path(directory) / "context.jsonl"
+            url = self._start_gateway(
+                middlewares=(_ContextOptimizer(),), ledger=JsonlLedger(ledger_path)
+            )
+            body = {
+                "messages": [{"role": "user", "content": "visible"}],
+                "query": "find it",
+                "output_budget_chars": 6000,
+                "episode_id": "episode-context-0001",
+                "turn_id": "turn-context-000001",
+            }
+            request = urllib.request.Request(
+                url + "/optimize/context",
+                data=json.dumps(body).encode(),
+                headers={
+                    "Content-Type": "application/json",
+                    "X-AIOptimizer-Episode-ID": body["episode_id"],
+                    "X-AIOptimizer-Turn-ID": body["turn_id"],
+                },
+                method="POST",
+            )
+            with urllib.request.urlopen(request) as response:
+                result = json.loads(response.read())
+            self._wait_for_ledger(ledger_path, 1)
+            event = read_events([ledger_path])[0]
+
+        self.assertEqual(result["episode_id"], body["episode_id"])
+        self.assertEqual(result["turn_id"], body["turn_id"])
+        self.assertEqual(event["event_type"], "context_compiled")
+        self.assertTrue(event["load_load_pressure"])
+        self.assertEqual(event["relevance_best_record_age_records"], 4)
 
     def test_stream_is_relayed_and_recorded_without_cache(self):
         with tempfile.TemporaryDirectory() as directory:

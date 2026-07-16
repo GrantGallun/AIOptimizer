@@ -18,7 +18,9 @@ Read the request receipts:
 python -m aioptimizer.report results/gateway/ledger.jsonl
 ```
 
-Sampled requests bypass the cache so self-consistency samples remain independent. The attention-context stage is default-OFF pending t0031.
+Sampled requests bypass the cache so self-consistency samples remain independent. The
+tracked development profile enables privacy-filtered adaptive attention; a bare CLI
+invocation remains conservative unless `--attention-context` or a config enables it.
 
 The proxy accepts OpenAI chat (`/v1/chat/completions`), Anthropic messages
 (`/v1/messages`), and Ollama chat/generate endpoints. Provider authentication and
@@ -46,6 +48,42 @@ reuse opportunities. This diagnostic is content-free and never changes the
 request; `prompt_prefix_candidate_reuse_rate` is an engineering signal, not a
 claim that the upstream provider actually served a cache hit. Provider-reported
 cache reads/writes remain the authoritative outcome receipts.
+
+## Outcome-linked episode receipts
+
+Codex and Claude Code hooks now generate a stable opaque `episode_id` plus a unique
+`turn_id`. Those identifiers travel to the local context endpoint and, when supplied
+as `X-AIOptimizer-Episode-ID` / `X-AIOptimizer-Turn-ID`, through provider gateway
+receipts without being forwarded upstream. Hook, gateway, and agent-bus event rows use
+`aioptimizer.episode-event.v1`; the schema rejects prompt, response, command,
+acceptance, transcript, and producer-result text.
+
+Agent-bus tasks receive a content-free episode id automatically. To join a task to an
+external hook episode, issue it with `board.py add --episode-id <opaque-id> ...`.
+The live loop appends dispatch, execution cost, producer pass/fail, independent-review,
+retry, and terminal-outcome events to `agent_bus/episode_events.jsonl`.
+
+Freeze a replay dataset and a development hard-case view with versioned output names:
+
+```powershell
+python -m aioptimizer.episodes build `
+  --events .aioptimizer/codex_hook_ledger.jsonl `
+  --events .aioptimizer/gateway_ledger.jsonl `
+  --events agent_bus/episode_events.jsonl `
+  --split-salt frozen-v1 `
+  --out results/episodes/episode_dataset_v1.json
+python -m aioptimizer.episodes hard-cases `
+  --dataset results/episodes/episode_dataset_v1.json `
+  --split dev `
+  --out results/episodes/hard_cases_dev_v1.json
+python -m aioptimizer.episodes replay `
+  --dataset results/episodes/episode_dataset_v1.json --split dev --hard-only
+```
+
+Dataset and hard-case writers use exclusive creation and refuse to overwrite an
+existing artifact. Split membership is a frozen SHA-256 threshold assignment. These
+artifacts are measurement plumbing, not research verdicts, and no adaptive controller
+is enabled by this pipeline. Semantic response caching also remains unwired/off.
 
 ## Research evidence audit
 

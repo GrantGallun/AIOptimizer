@@ -36,6 +36,7 @@ from agent_bus.board import Board, BoardConflict
 from agent_bus.cache import Cache
 from agent_bus.executors import NeedsHuman
 from agent_bus.workspace import WorkspaceClaims, WorkspaceConflict
+from aioptimizer.episodes import EpisodeEventLedger
 
 # Estimated elapsed seconds used only for pre-admission and deterministic simulation.
 # Real executors return measured elapsed seconds, which the governor charges below.
@@ -167,6 +168,7 @@ class Scheduler:
         lease_ttl_seconds: float = 3600.0,
         dispatch_lease_seconds: float = 3600.0,
         max_verification_retries: int = 0,
+        episode_ledger: EpisodeEventLedger | None = None,
         scheduler_id: str | None = None,
     ) -> None:
         if (
@@ -189,7 +191,30 @@ class Scheduler:
         self.lease_ttl_seconds = lease_ttl_seconds
         self.dispatch_lease_seconds = dispatch_lease_seconds
         self.max_verification_retries = max_verification_retries
+        self.episode_ledger = episode_ledger
         self.scheduler_id = scheduler_id or f"{os.getpid()}-{uuid.uuid4().hex[:8]}"
+
+    def _record_episode(
+        self,
+        task: dict[str, Any],
+        event_type: str,
+        **measurements: Any,
+    ) -> None:
+        """Emit best-effort content-free telemetry without affecting scheduling."""
+        if self.episode_ledger is None:
+            return
+        episode_id = task.get("episode_id") or f"bus-{task['id']}"
+        try:
+            self.episode_ledger.record(
+                event_type,
+                episode_id=episode_id,
+                operation=str(task.get("op") or "unknown"),
+                tier=str(task.get("tier") or "unknown"),
+                attempt=int(task.get("attempt", 0)),
+                **measurements,
+            )
+        except (OSError, TypeError, ValueError):
+            return
 
     def _speculate_dependents(self, gate: dict[str, Any], events: dict[str, Any]) -> None:
         if not self.predictor.predict(gate):
@@ -217,8 +242,12 @@ class Scheduler:
         for t in self.board.all():
             if t["state"] == "verified" and not t.get("speculative"):
                 try:
-                    self.board.retire(t["id"], by="fable")
+                    retired = self.board.retire(t["id"], by="fable")
                     events["retired"].append(t["id"])
+                    self._record_episode(
+                        retired, "task_terminal", eventual_success=True,
+                        verification_ok=True,
+                    )
                     if self.on_retire is not None:
                         self.on_retire(t)  # durable commit on the in-order retirement
                 except BoardConflict:
@@ -260,8 +289,12 @@ class Scheduler:
                     except WorkspaceConflict as exc:
                         self.board.defer(task["id"], worker=task["owner"], reason=str(exc))
                         events["deferred"].append(task["id"])
+                        self._record_episode(
+                            task, "task_deferred", workspace_state="deferred"
+                        )
                         continue
                 events["dispatched"].append(task["id"])
+                self._record_episode(task, "task_dispatched")
                 batch.append((task, lease_owner))
                 reserved += estimated
 
@@ -286,6 +319,9 @@ class Scheduler:
             if kind == "human":
                 self.board.park(task["id"], reason="needs Fable/human")
                 events["awaiting"].append(task["id"])
+                self._record_episode(
+                    task, "task_awaiting", workspace_state="human"
+                )
                 if task.get("writes"):
                     self.workspace_claims.release(task["writes"], owner=lease_owner)
                 continue
@@ -294,6 +330,16 @@ class Scheduler:
             self.governor.charge(cost)
             self.board.submit(task["id"], worker=task["owner"], result=result)
             events["executed"].append(task["id"])
+            test_executed = bool(task.get("command") or task.get("acceptance"))
+            self._record_episode(
+                task,
+                "task_executed",
+                producer_ok=bool(ok),
+                cost_seconds=float(cost),
+                test_contract_present=test_executed,
+                test_executed=test_executed,
+                test_ok=bool(ok) if test_executed else None,
+            )
             if self.verifier is None:
                 events["awaiting_review"].append(task["id"])
                 if task.get("writes"):
@@ -332,16 +378,31 @@ class Scheduler:
                 checked = self.board.review(
                     task["id"], reviewer=self.verifier.reviewer, ok=review_ok, note=note
                 )
+                self._record_episode(
+                    checked,
+                    "task_verified",
+                    verification_ok=bool(review_ok),
+                    review_cost_seconds=float(review_cost),
+                    verifier=str(self.verifier.reviewer),
+                )
                 if checked["state"] == "verified":
                     events["verified"].append(task["id"])
                 elif int(checked.get("attempt", 0)) < self.max_verification_retries:
-                    self.board.retry(
+                    retried = self.board.retry(
                         task["id"],
                         by=f"scheduler-{self.scheduler_id}",
                         feedback=note,
                     )
                     events["retried"].append(task["id"])
+                    self._record_episode(
+                        retried, "task_retry", retry_scheduled=True
+                    )
                     continue
+                else:
+                    self._record_episode(
+                        checked, "task_terminal", eventual_success=False,
+                        verification_ok=False,
+                    )
                 if task["op"] in GATE_OPS:
                     self._speculate_dependents(task, events)
                     self._resolve_speculation(task, review_ok, events)
@@ -377,10 +438,18 @@ def main() -> None:
     parser.add_argument("--root", default=str(Path(__file__).resolve().parent))
     parser.add_argument("--budget", type=float, default=10.0)
     parser.add_argument("--max-ticks", type=int, default=50)
+    parser.add_argument("--episode-ledger", default=None)
     parser.add_argument("--fail", default="", help="Comma-separated task ids whose gate should mispredict (dry-run demo).")
     args = parser.parse_args()
     executor = SimExecutor(fail={x for x in args.fail.split(",") if x})
-    sched = Scheduler(Path(args.root), executor=executor, budget=args.budget)
+    episode_ledger = (
+        EpisodeEventLedger(args.episode_ledger, source="agent_bus")
+        if args.episode_ledger else None
+    )
+    sched = Scheduler(
+        Path(args.root), executor=executor, budget=args.budget,
+        episode_ledger=episode_ledger,
+    )
     history = sched.run(max_ticks=args.max_ticks)
     print(json.dumps({"per_tick": history, "summary": _summarize(history)}, indent=2, ensure_ascii=False))
 

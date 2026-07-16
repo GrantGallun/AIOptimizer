@@ -15,13 +15,16 @@ class _GatewayHandler(BaseHTTPRequestHandler):
 
     def do_POST(self):
         size = int(self.headers.get("Content-Length", "0"))
-        self.__class__.requests.append(json.loads(self.rfile.read(size)))
+        body = json.loads(self.rfile.read(size))
+        self.__class__.requests.append(body)
         payload = json.dumps({
             "route": "attention",
             "context": "[R0001|constraint|source:T0001]\nCache latency below 20ms.",
             "output_chars": 61,
             "embedding_cache_hits": 2,
             "embedding_cache_misses": 1,
+            "episode_id": body.get("episode_id"),
+            "turn_id": body.get("turn_id"),
         }).encode("utf-8")
         self.send_response(200)
         self.send_header("Content-Type", "application/json")
@@ -140,6 +143,8 @@ class ClaudeCodeHookTests(unittest.TestCase):
             {"role": "assistant", "content": "Use the exact cache."},
         ])
         self.assertTrue(receipts[-1]["injected"])
+        self.assertEqual(receipts[-1]["episode_id"], request["episode_id"])
+        self.assertEqual(receipts[-1]["turn_id"], request["turn_id"])
 
     def test_missing_gateway_fails_open_with_empty_stdout(self):
         with tempfile.TemporaryDirectory() as directory:
@@ -177,7 +182,9 @@ class ClaudeCodeHookTests(unittest.TestCase):
 
         self.assertEqual(completed.returncode, 0, completed.stderr)
         serialized = json.dumps(receipt)
-        self.assertIn("query_sha256_16", receipt)
+        self.assertEqual(receipt["schema"], "aioptimizer.episode-event.v1")
+        self.assertTrue(receipt["episode_id"].startswith("ep-"))
+        self.assertTrue(receipt["turn_id"].startswith("turn-"))
         self.assertEqual(receipt["messages"], 2)
         expected_history_chars = sum(map(len, (
             "Cache latency must stay below 20ms.",

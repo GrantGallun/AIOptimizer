@@ -1,0 +1,179 @@
+{
+  "created_at": 1784231815.0260835,
+  "episode_count": 2,
+  "episodes": [
+    {
+      "episode_id": "episode-plumbing-0001",
+      "event_count": 7,
+      "events": [
+        {
+          "episode_id": "episode-plumbing-0001",
+          "event_id": "evt-plumbing-hook-000000000001",
+          "event_type": "context_route",
+          "history_chars": 18000,
+          "injected": true,
+          "latency_ms": 45.0,
+          "load_load_pressure": true,
+          "load_obscured_record_count": 12,
+          "messages": 40,
+          "output_chars": 5500,
+          "relevance_best_record_age_records": 20,
+          "relevance_peak": 0.91,
+          "route": "attention",
+          "route_reason": "buried_relevant_record",
+          "schema": "aioptimizer.episode-event.v1",
+          "source": "codex_hook",
+          "ts": 1.0,
+          "turn_id": "turn-plumbing-000001"
+        },
+        {
+          "embedding_cache_hits": 40,
+          "embedding_cache_misses": 2,
+          "episode_id": "episode-plumbing-0001",
+          "event_id": "evt-plumbing-gateway-00000001",
+          "event_type": "context_compiled",
+          "history_chars": 18000,
+          "latency_ms": 40.0,
+          "output_chars": 5500,
+          "route": "attention",
+          "route_reason": "buried_relevant_record",
+          "schema": "aioptimizer.episode-event.v1",
+          "source": "gateway",
+          "ts": 2.0,
+          "turn_id": "turn-plumbing-000001"
+        },
+        {
+          "attempt": 0,
+          "episode_id": "episode-plumbing-0001",
+          "event_id": "evt-plumbing-bus-dispatch-0001",
+          "event_type": "task_dispatched",
+          "operation": "impl",
+          "schema": "aioptimizer.episode-event.v1",
+          "source": "agent_bus",
+          "tier": "codex",
+          "ts": 3.0
+        },
+        {
+          "attempt": 0,
+          "cost_seconds": 2.5,
+          "episode_id": "episode-plumbing-0001",
+          "event_id": "evt-plumbing-bus-execute-00001",
+          "event_type": "task_executed",
+          "operation": "impl",
+          "producer_ok": true,
+          "schema": "aioptimizer.episode-event.v1",
+          "source": "agent_bus",
+          "test_contract_present": true,
+          "tier": "codex",
+          "ts": 4.0
+        },
+        {
+          "attempt": 0,
+          "episode_id": "episode-plumbing-0001",
+          "event_id": "evt-plumbing-bus-verify-000001",
+          "event_type": "task_verified",
+          "operation": "impl",
+          "review_cost_seconds": 0.5,
+          "schema": "aioptimizer.episode-event.v1",
+          "source": "agent_bus",
+          "tier": "codex",
+          "ts": 5.0,
+          "verification_ok": false,
+          "verifier": "shell-verifier"
+        },
+        {
+          "attempt": 1,
+          "episode_id": "episode-plumbing-0001",
+          "event_id": "evt-plumbing-bus-retry-0000001",
+          "event_type": "task_retry",
+          "operation": "impl",
+          "retry_scheduled": true,
+          "schema": "aioptimizer.episode-event.v1",
+          "source": "agent_bus",
+          "tier": "codex",
+          "ts": 6.0
+        },
+        {
+          "attempt": 1,
+          "episode_id": "episode-plumbing-0001",
+          "event_id": "evt-plumbing-bus-terminal-0001",
+          "event_type": "task_terminal",
+          "eventual_success": true,
+          "operation": "impl",
+          "schema": "aioptimizer.episode-event.v1",
+          "source": "agent_bus",
+          "tier": "codex",
+          "ts": 7.0,
+          "verification_ok": true
+        }
+      ],
+      "eventual_success": true,
+      "hard_reason_codes": [
+        "retry_required",
+        "verification_failure"
+      ],
+      "split": "dev",
+      "turn_count": 1
+    },
+    {
+      "episode_id": "episode-plumbing-0002",
+      "event_count": 2,
+      "events": [
+        {
+          "episode_id": "episode-plumbing-0002",
+          "event_id": "evt-plumbing-hook-000000000002",
+          "event_type": "context_route",
+          "history_chars": 800,
+          "injected": false,
+          "latency_ms": 2.0,
+          "load_load_pressure": false,
+          "messages": 3,
+          "output_chars": 0,
+          "route": "raw",
+          "route_reason": "history_fits_recent_budget",
+          "schema": "aioptimizer.episode-event.v1",
+          "source": "claude_hook",
+          "ts": 8.0,
+          "turn_id": "turn-plumbing-000002"
+        },
+        {
+          "attempt": 0,
+          "episode_id": "episode-plumbing-0002",
+          "event_id": "evt-plumbing-bus-terminal-0002",
+          "event_type": "task_terminal",
+          "eventual_success": true,
+          "operation": "test",
+          "schema": "aioptimizer.episode-event.v1",
+          "source": "agent_bus",
+          "tier": "qwen",
+          "ts": 9.0,
+          "verification_ok": true
+        }
+      ],
+      "eventual_success": true,
+      "hard_reason_codes": [],
+      "split": "hidden",
+      "turn_count": 1
+    }
+  ],
+  "event_count": 9,
+  "event_stream_sha256": "46efc3a2d0703c9706be48f6f96b40be19627cb864b2b075aafeac7f1c345a38",
+  "hard_episode_count": 1,
+  "note": "Plumbing artifact only; labels and split membership are not a research verdict.",
+  "schema": "aioptimizer.episode-dataset.v1",
+  "source_manifest": [
+    {
+      "name": "plumbing_events_v1.jsonl",
+      "sha256": "2ef8ee5599d3ac64360a5afacce2df67aa265f56f75738c829922a6ee0ec1f07"
+    }
+  ],
+  "split": {
+    "hidden_fraction": 0.5,
+    "method": "sha256-threshold-v1",
+    "salt_sha256": "360df60a69504fb903b3acfe499b3ce50decbbb341daeb234e371614a49151c8"
+  },
+  "split_counts": {
+    "dev": 1,
+    "hidden": 1
+  }
+}

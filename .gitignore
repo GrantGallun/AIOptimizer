@@ -21,6 +21,7 @@ agent_bus/.board.lock
 agent_bus/SHARED.md
 agent_bus/CHANNEL.md
 agent_bus/BOARD.md
+agent_bus/episode_events.jsonl
 aioptimizer.egg-info/
 __pycache__/
 *.pyc

@@ -8,6 +8,7 @@ from agent_bus.board import Board
 from agent_bus.scheduler import COST_UNIT, BranchPredictor, GitCommitter, Governor, Scheduler, SimExecutor
 from agent_bus.cache import Cache
 from agent_bus.workspace import WorkspaceClaims
+from aioptimizer.episodes import EpisodeEventLedger, read_events
 
 
 class GovernorTests(unittest.TestCase):
@@ -170,12 +171,14 @@ class SchedulerTests(unittest.TestCase):
             task = Board(root).add(op="impl", title="repair", tier="sonnet")
             executor = RecordingExecutor()
             verifier = RejectOnceVerifier()
+            episode_path = root / "episode_events.jsonl"
             history = Scheduler(
                 root,
                 cores={"sonnet": 1},
                 executor=executor,
                 verifier=verifier,
                 max_verification_retries=1,
+                episode_ledger=EpisodeEventLedger(episode_path, source="agent_bus"),
                 budget=10.0,
             ).run()
             final = Board(root).get(task["id"])
@@ -185,6 +188,18 @@ class SchedulerTests(unittest.TestCase):
             self.assertEqual(executor.attempts[0], (0, ""))
             self.assertIn("missing test", executor.attempts[1][1])
             self.assertEqual(sum(len(event["retried"]) for event in history), 1)
+            receipts = read_events([episode_path])
+            self.assertEqual(
+                [row["event_type"] for row in receipts],
+                [
+                    "task_dispatched", "task_executed", "task_verified", "task_retry",
+                    "task_dispatched", "task_executed", "task_verified", "task_terminal",
+                ],
+            )
+            self.assertFalse(receipts[2]["verification_ok"])
+            self.assertTrue(receipts[-1]["eventual_success"])
+            self.assertFalse(receipts[1]["test_executed"])
+            self.assertNotIn("missing test", episode_path.read_text(encoding="utf-8"))
 
     def test_retries_are_disabled_by_default(self):
         class RejectVerifier:
@@ -203,6 +218,29 @@ class SchedulerTests(unittest.TestCase):
                 budget=10.0,
             ).run()
             self.assertEqual(Board(root).get(task["id"])["state"], "failed")
+
+    def test_episode_receipt_marks_acceptance_test_outcome(self):
+        with TemporaryDirectory() as tmp:
+            root = Path(tmp)
+            episode_path = root / "episode_events.jsonl"
+            task = Board(root).add(
+                op="test", title="acceptance", tier="qwen",
+                command=["python", "-m", "unittest"],
+            )
+            Scheduler(
+                root,
+                executor=SimExecutor(),
+                verifier=self.PassVerifier(),
+                episode_ledger=EpisodeEventLedger(episode_path, source="agent_bus"),
+                budget=10.0,
+            ).run()
+            executed = next(
+                row for row in read_events([episode_path])
+                if row["event_type"] == "task_executed"
+            )
+            self.assertEqual(executed["episode_id"], task["episode_id"])
+            self.assertTrue(executed["test_executed"])
+            self.assertTrue(executed["test_ok"])
 
     def test_speculation_commits_on_correct_prediction(self):
         with TemporaryDirectory() as tmp:

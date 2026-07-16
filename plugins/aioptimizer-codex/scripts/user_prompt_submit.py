@@ -11,7 +11,10 @@ if hasattr(sys.stdout, "reconfigure"):
 PLUGIN_ROOT = Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(PLUGIN_ROOT / "scripts"))
 
-from codex_hook_adapter import append_receipt, process_hook, request_context
+from codex_hook_adapter import (
+    append_receipt, episode_id_from_payload, make_event, new_turn_id,
+    process_hook, request_context,
+)
 
 
 def discover_aioptimizer_home(workspace, *, environ=None):
@@ -46,6 +49,8 @@ def handle_payload(payload, *, environ=None, sidecar_ensurer=None, context_reque
     workspace = payload.get("cwd")
     if not isinstance(workspace, str):
         workspace = os.getcwd()
+    episode_id = episode_id_from_payload(payload)
+    turn_id = new_turn_id()
 
     try:
         source_root = discover_aioptimizer_home(workspace, environ=environment)
@@ -66,7 +71,10 @@ def handle_payload(payload, *, environ=None, sidecar_ensurer=None, context_reque
         )
         sidecar_receipt = sidecar.receipt()
         if not sidecar.ready:
-            return None, {"route": "sidecar_error", "injected": False, **sidecar_receipt}
+            return None, make_event(
+                source="codex_hook", episode_id=episode_id, turn_id=turn_id,
+                route="sidecar_error", injected=False, **sidecar_receipt,
+            )
         budget = int(environment.get("AIOPTIMIZER_CODEX_CONTEXT_CHARS", "6000"))
         timeout = float(environment.get("AIOPTIMIZER_CODEX_TIMEOUT_SECONDS", "30"))
 
@@ -77,19 +85,22 @@ def handle_payload(payload, *, environ=None, sidecar_ensurer=None, context_reque
                 output_budget_chars,
                 endpoint=endpoint,
                 timeout_seconds=timeout,
+                episode_id=episode_id,
+                turn_id=turn_id,
             )
 
-        output, receipt = process_hook(payload, optimizer=optimizer, output_budget_chars=budget)
+        output, receipt = process_hook(
+            payload, optimizer=optimizer, output_budget_chars=budget,
+            episode_id=episode_id, turn_id=turn_id,
+        )
         receipt.update(sidecar_receipt)
         return output, receipt
     except Exception as error:
-        return None, {
-            "route": "sidecar_error",
-            "injected": False,
-            "sidecar_ready": False,
-            "sidecar_state": "error",
-            "sidecar_error_type": type(error).__name__,
-        }
+        return None, make_event(
+            source="codex_hook", episode_id=episode_id, turn_id=turn_id,
+            route="sidecar_error", injected=False, sidecar_ready=False,
+            workspace_state="error", error_type=type(error).__name__,
+        )
 
 
 def main() -> None:

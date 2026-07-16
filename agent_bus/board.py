@@ -24,6 +24,7 @@ from __future__ import annotations
 import argparse
 import json
 import os
+import re
 import sys
 import time
 from pathlib import Path
@@ -80,13 +81,21 @@ class Board:
                     task["state"] = "ready"
 
     # -- issue ---------------------------------------------------------------
-    def add(self, *, op: str, title: str, tier: str, spec: str = "", acceptance: str = "", command: list[str] | None = None, deps: list[str] | None = None, writes: list[str] | None = None, speculative: bool = False, branch: str | None = None) -> dict[str, Any]:
+    def add(self, *, op: str, title: str, tier: str, spec: str = "", acceptance: str = "", command: list[str] | None = None, deps: list[str] | None = None, writes: list[str] | None = None, speculative: bool = False, branch: str | None = None, episode_id: str | None = None) -> dict[str, Any]:
         if command is not None and (not isinstance(command, list) or not command or not all(isinstance(value, str) and value for value in command)):
             raise ValueError("command must be a non-empty list of non-empty strings")
         with self._lock():
             state = self._load()
             state["seq"] += 1
             task_id = f"t{state['seq']:04d}"
+            resolved_episode_id = episode_id or f"bus-{task_id}"
+            if (
+                not isinstance(resolved_episode_id, str)
+                or len(resolved_episode_id) < 8
+                or len(resolved_episode_id) > 80
+                or re.fullmatch(r"[A-Za-z0-9][A-Za-z0-9_.:-]{7,79}", resolved_episode_id) is None
+            ):
+                raise ValueError("episode_id must be an opaque 8-80 character identifier")
             task = {
                 "id": task_id,
                 "seq": state["seq"],
@@ -102,6 +111,7 @@ class Board:
                 "owner": None,
                 "reviewer": None,
                 "result": None,
+                "episode_id": resolved_episode_id,
                 "attempt": 0,
                 "retry_feedback": "",
                 "attempt_history": [],
@@ -345,7 +355,8 @@ def build_parser() -> argparse.ArgumentParser:
     a.add_argument("--command-json", default="", help="Typed argv as a JSON string array.")
     a.add_argument("--deps", default="", help="Comma-separated task ids this depends on.")
     a.add_argument("--writes", default="", help="Comma-separated workspace paths this task may edit.")
-    a.set_defaults(func=lambda b, ns: print(f"issued {b.add(op=ns.op, title=ns.title, tier=ns.tier, spec=ns.spec, acceptance=ns.acceptance, command=json.loads(ns.command_json) if ns.command_json else None, deps=[d for d in ns.deps.split(',') if d], writes=[p for p in ns.writes.split(',') if p])['id']}"))
+    a.add_argument("--episode-id", default=None, help="Opaque external episode id for outcome joins.")
+    a.set_defaults(func=lambda b, ns: print(f"issued {b.add(op=ns.op, title=ns.title, tier=ns.tier, spec=ns.spec, acceptance=ns.acceptance, command=json.loads(ns.command_json) if ns.command_json else None, deps=[d for d in ns.deps.split(',') if d], writes=[p for p in ns.writes.split(',') if p], episode_id=ns.episode_id)['id']}"))
 
     d = sub.add_parser("next", help="Dispatch the oldest ready task for a tier (a worker claims it).")
     d.add_argument("--tier", required=True, choices=TIERS)

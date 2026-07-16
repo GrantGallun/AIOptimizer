@@ -17,7 +17,10 @@ configured_home = os.environ.get("AIOPTIMIZER_HOME")
 if configured_home and (Path(configured_home) / "aioptimizer" / "__init__.py").is_file():
     sys.path.insert(0, str(Path(configured_home).resolve()))
 
-from claude_code_hook_adapter import append_receipt, process_hook, request_context
+from claude_code_hook_adapter import (
+    append_receipt, episode_id_from_payload, make_event, new_turn_id,
+    process_hook, request_context,
+)
 
 
 def handle_payload(payload, *, environ=None, context_request=request_context):
@@ -26,6 +29,8 @@ def handle_payload(payload, *, environ=None, context_request=request_context):
     endpoint = environment.get(
         "AIOPTIMIZER_CONTEXT_URL", "http://127.0.0.1:8800/optimize/context"
     )
+    episode_id = episode_id_from_payload(payload)
+    turn_id = new_turn_id()
     try:
         budget = int(environment.get("AIOPTIMIZER_CODEX_CONTEXT_CHARS", "6000"))
         timeout = float(environment.get("AIOPTIMIZER_CODEX_TIMEOUT_SECONDS", "30"))
@@ -37,16 +42,20 @@ def handle_payload(payload, *, environ=None, context_request=request_context):
                 output_budget_chars,
                 endpoint=endpoint,
                 timeout_seconds=timeout,
+                episode_id=episode_id,
+                turn_id=turn_id,
             )
 
-        return process_hook(payload, optimizer=optimizer, output_budget_chars=budget)
+        return process_hook(
+            payload, optimizer=optimizer, output_budget_chars=budget,
+            episode_id=episode_id, turn_id=turn_id,
+        )
     except Exception as error:
-        return None, {
-            "route": "error",
-            "error_type": type(error).__name__,
-            "injected": False,
-            "latency_ms": 0.0,
-        }
+        return None, make_event(
+            source="claude_hook", episode_id=episode_id, turn_id=turn_id,
+            route="error", error_type=type(error).__name__, injected=False,
+            latency_ms=0.0,
+        )
 
 
 def main() -> None:

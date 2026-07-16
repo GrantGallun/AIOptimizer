@@ -96,6 +96,19 @@ class ScoreboardTests(unittest.TestCase):
             with self.assertRaises(BoardConflict):
                 b.retry(task["id"], by="scheduler")
 
+    def test_task_gets_content_free_episode_id_and_accepts_external_join_id(self):
+        with TemporaryDirectory() as tmp:
+            board = Board(Path(tmp))
+            generated = board.add(op="impl", title="generated", tier="codex")
+            linked = board.add(
+                op="test", title="linked", tier="qwen",
+                episode_id="ep-external-0001",
+            )
+            self.assertEqual(generated["episode_id"], f"bus-{generated['id']}")
+            self.assertEqual(linked["episode_id"], "ep-external-0001")
+            with self.assertRaisesRegex(ValueError, "opaque"):
+                board.add(op="impl", title="bad", tier="codex", episode_id="private path")
+
     def test_retirement_is_in_order_and_fable_only(self):
         with TemporaryDirectory() as tmp:
             b = Board(Path(tmp))

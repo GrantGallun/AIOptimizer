@@ -33,6 +33,7 @@ if str(_REPO_ROOT) not in sys.path:
 from agent_bus.board import Board
 from agent_bus.executors import CodexExecutor, CommandPolicy, ExecutorVerifier, RoutingExecutor, ShellExecutor
 from agent_bus.scheduler import GitCommitter, Scheduler, _summarize
+from aioptimizer.episodes import EpisodeEventLedger
 
 
 def main() -> None:
@@ -43,6 +44,10 @@ def main() -> None:
     p.add_argument("--max-ticks", type=int, default=50)
     p.add_argument("--verification-retries", type=int, default=0,
                    help="Bounded repair attempts after independent review rejects a task.")
+    p.add_argument(
+        "--episode-ledger", default=None,
+        help="Content-free outcome event ledger (default: <root>/episode_events.jsonl).",
+    )
     p.add_argument("--codex", action="store_true", help="Enable Codex as a real core (needs codex on PATH).")
     p.add_argument("--codex-bin", default="codex")
     p.add_argument("--codex-args", default="", help="Extra args passed to `codex exec` (e.g. --full-auto).")
@@ -58,6 +63,7 @@ def main() -> None:
     router = RoutingExecutor(shell=shell, codex=codex)
     verifier = ExecutorVerifier(shell, reviewer="shell-verifier")
     on_retire = GitCommitter(args.repo) if args.commit else None
+    episode_path = Path(args.episode_ledger) if args.episode_ledger else Path(args.root) / "episode_events.jsonl"
     sched = Scheduler(
         Path(args.root),
         executor=router,
@@ -66,6 +72,7 @@ def main() -> None:
         on_retire=on_retire,
         workspace_root=Path(args.repo),
         max_verification_retries=args.verification_retries,
+        episode_ledger=EpisodeEventLedger(episode_path, source="agent_bus"),
     )
 
     history = sched.run(max_ticks=args.max_ticks)

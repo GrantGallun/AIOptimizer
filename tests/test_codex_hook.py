@@ -33,6 +33,22 @@ class CodexHookTests(unittest.TestCase):
         self.assertEqual(result, {"route": "raw"})
         self.assertEqual(urlopen.call_args.kwargs["timeout"], 30.0)
 
+    def test_context_request_propagates_opaque_episode_and_turn_ids(self):
+        response = mock.MagicMock()
+        response.read.return_value = b'{"route":"raw"}'
+        context = mock.MagicMock()
+        context.__enter__.return_value = response
+        with mock.patch("urllib.request.urlopen", return_value=context) as urlopen:
+            request_context(
+                [], "query", 6000,
+                episode_id="episode-codex-0001", turn_id="turn-codex-000001",
+            )
+        request = urlopen.call_args.args[0]
+        body = json.loads(request.data)
+        self.assertEqual(body["episode_id"], "episode-codex-0001")
+        self.assertEqual(body["turn_id"], "turn-codex-000001")
+        self.assertEqual(request.headers["X-aioptimizer-episode-id"], "episode-codex-0001")
+
     def test_hook_launcher_emits_unicode_as_utf8_under_legacy_windows_codepage(self):
         root = Path(__file__).resolve().parents[1]
         script = root / "plugins" / "aioptimizer-codex" / "scripts" / "user_prompt_submit.py"
@@ -96,6 +112,9 @@ class CodexHookTests(unittest.TestCase):
         self.assertIn("Cache latency below 20ms", context)
         self.assertTrue(receipt["injected"])
         self.assertEqual(receipt["route"], "attention")
+        self.assertEqual(receipt["schema"], "aioptimizer.episode-event.v1")
+        self.assertTrue(receipt["episode_id"].startswith("ep-"))
+        self.assertTrue(receipt["turn_id"].startswith("turn-"))
         self.assertNotIn("latency requirement", json.dumps(receipt).lower())
 
     def test_raw_and_service_error_fail_open(self):

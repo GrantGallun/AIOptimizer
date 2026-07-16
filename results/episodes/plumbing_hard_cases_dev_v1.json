@@ -1,0 +1,124 @@
+{
+  "created_at": 1784231815.106229,
+  "dataset_name": "plumbing_dataset_v1.json",
+  "dataset_sha256": "1706530c87a19f98abf723fb301dc1ab66e6596ed731bdad7d12269d63cae8d3",
+  "episode_count": 1,
+  "episodes": [
+    {
+      "episode_id": "episode-plumbing-0001",
+      "event_count": 7,
+      "events": [
+        {
+          "episode_id": "episode-plumbing-0001",
+          "event_id": "evt-plumbing-hook-000000000001",
+          "event_type": "context_route",
+          "history_chars": 18000,
+          "injected": true,
+          "latency_ms": 45.0,
+          "load_load_pressure": true,
+          "load_obscured_record_count": 12,
+          "messages": 40,
+          "output_chars": 5500,
+          "relevance_best_record_age_records": 20,
+          "relevance_peak": 0.91,
+          "route": "attention",
+          "route_reason": "buried_relevant_record",
+          "schema": "aioptimizer.episode-event.v1",
+          "source": "codex_hook",
+          "ts": 1.0,
+          "turn_id": "turn-plumbing-000001"
+        },
+        {
+          "embedding_cache_hits": 40,
+          "embedding_cache_misses": 2,
+          "episode_id": "episode-plumbing-0001",
+          "event_id": "evt-plumbing-gateway-00000001",
+          "event_type": "context_compiled",
+          "history_chars": 18000,
+          "latency_ms": 40.0,
+          "output_chars": 5500,
+          "route": "attention",
+          "route_reason": "buried_relevant_record",
+          "schema": "aioptimizer.episode-event.v1",
+          "source": "gateway",
+          "ts": 2.0,
+          "turn_id": "turn-plumbing-000001"
+        },
+        {
+          "attempt": 0,
+          "episode_id": "episode-plumbing-0001",
+          "event_id": "evt-plumbing-bus-dispatch-0001",
+          "event_type": "task_dispatched",
+          "operation": "impl",
+          "schema": "aioptimizer.episode-event.v1",
+          "source": "agent_bus",
+          "tier": "codex",
+          "ts": 3.0
+        },
+        {
+          "attempt": 0,
+          "cost_seconds": 2.5,
+          "episode_id": "episode-plumbing-0001",
+          "event_id": "evt-plumbing-bus-execute-00001",
+          "event_type": "task_executed",
+          "operation": "impl",
+          "producer_ok": true,
+          "schema": "aioptimizer.episode-event.v1",
+          "source": "agent_bus",
+          "test_contract_present": true,
+          "tier": "codex",
+          "ts": 4.0
+        },
+        {
+          "attempt": 0,
+          "episode_id": "episode-plumbing-0001",
+          "event_id": "evt-plumbing-bus-verify-000001",
+          "event_type": "task_verified",
+          "operation": "impl",
+          "review_cost_seconds": 0.5,
+          "schema": "aioptimizer.episode-event.v1",
+          "source": "agent_bus",
+          "tier": "codex",
+          "ts": 5.0,
+          "verification_ok": false,
+          "verifier": "shell-verifier"
+        },
+        {
+          "attempt": 1,
+          "episode_id": "episode-plumbing-0001",
+          "event_id": "evt-plumbing-bus-retry-0000001",
+          "event_type": "task_retry",
+          "operation": "impl",
+          "retry_scheduled": true,
+          "schema": "aioptimizer.episode-event.v1",
+          "source": "agent_bus",
+          "tier": "codex",
+          "ts": 6.0
+        },
+        {
+          "attempt": 1,
+          "episode_id": "episode-plumbing-0001",
+          "event_id": "evt-plumbing-bus-terminal-0001",
+          "event_type": "task_terminal",
+          "eventual_success": true,
+          "operation": "impl",
+          "schema": "aioptimizer.episode-event.v1",
+          "source": "agent_bus",
+          "tier": "codex",
+          "ts": 7.0,
+          "verification_ok": true
+        }
+      ],
+      "eventual_success": true,
+      "hard_reason_codes": [
+        "retry_required",
+        "verification_failure"
+      ],
+      "split": "dev",
+      "turn_count": 1
+    }
+  ],
+  "note": "Hard-case selection is mechanical and carries no research verdict.",
+  "schema": "aioptimizer.hard-cases.v1",
+  "split": "dev"
+}

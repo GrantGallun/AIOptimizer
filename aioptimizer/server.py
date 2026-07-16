@@ -8,6 +8,13 @@ import urllib.request
 from http.server import BaseHTTPRequestHandler, ThreadingHTTPServer
 from urllib.parse import urlsplit
 
+from .episodes import (
+    context_result_measurements,
+    episode_id_from_payload,
+    make_event,
+    new_turn_id,
+    validate_event_id,
+)
 from .middleware import ShortCircuit
 from .receipts import response_text
 from .requirements import evaluate_requirements, extract_requirements
@@ -79,7 +86,7 @@ class _GatewayHandler(BaseHTTPRequestHandler):
     def do_POST(self):
         started = time.perf_counter()
         if urlsplit(self.path).path == self.CONTEXT_OPTIMIZE_PATH:
-            self._optimize_context()
+            self._optimize_context(started)
             return
         if urlsplit(self.path).path not in self.PROXIED_PATHS:
             response_bytes = self._write_json(
@@ -92,6 +99,12 @@ class _GatewayHandler(BaseHTTPRequestHandler):
         response_chars = 0
         self._extra = {"path": self.path}
         try:
+            episode_id = self.headers.get("X-AIOptimizer-Episode-ID")
+            turn_id = self.headers.get("X-AIOptimizer-Turn-ID")
+            if episode_id is not None:
+                self._extra["episode_id"] = validate_event_id(episode_id, "episode_id")
+            if turn_id is not None:
+                self._extra["turn_id"] = validate_event_id(turn_id, "turn_id")
             content_length = int(self.headers.get("Content-Length", "0"))
             raw_request = self.rfile.read(content_length)
             original_chars = len(raw_request.decode("utf-8"))
@@ -226,7 +239,7 @@ class _GatewayHandler(BaseHTTPRequestHandler):
         finally:
             self._record(request_chars, response_chars, started)
 
-    def _optimize_context(self):
+    def _optimize_context(self, started: float):
         """Serve the local Codex-hook compiler API; no provider request is made."""
         try:
             content_length = int(self.headers.get("Content-Length", "0"))
@@ -240,6 +253,22 @@ class _GatewayHandler(BaseHTTPRequestHandler):
             messages = body.get("messages")
             query = body.get("query")
             output_budget_chars = body.get("output_budget_chars", 6_000)
+            episode_id = body.get("episode_id") or self.headers.get(
+                "X-AIOptimizer-Episode-ID"
+            )
+            turn_id = body.get("turn_id") or self.headers.get("X-AIOptimizer-Turn-ID")
+            if episode_id is None:
+                episode_id = episode_id_from_payload({})
+            if turn_id is None:
+                turn_id = new_turn_id()
+            episode_id = validate_event_id(episode_id, "episode_id")
+            turn_id = validate_event_id(turn_id, "turn_id")
+            header_episode = self.headers.get("X-AIOptimizer-Episode-ID")
+            header_turn = self.headers.get("X-AIOptimizer-Turn-ID")
+            if header_episode is not None and header_episode != episode_id:
+                raise ValueError("episode id header/body mismatch")
+            if header_turn is not None and header_turn != turn_id:
+                raise ValueError("turn id header/body mismatch")
             if not isinstance(messages, list):
                 raise ValueError("messages must be a list")
             optimizer = next(
@@ -261,7 +290,17 @@ class _GatewayHandler(BaseHTTPRequestHandler):
                 query=query,
                 output_budget_chars=output_budget_chars,
             )
+            result = {**result, "episode_id": episode_id, "turn_id": turn_id}
             self._write_json(200, result)
+            if self.server.ledger is not None:
+                self.server.ledger.record(make_event(
+                    source="gateway",
+                    event_type="context_compiled",
+                    episode_id=episode_id,
+                    turn_id=turn_id,
+                    latency_ms=(time.perf_counter() - started) * 1000,
+                    **context_result_measurements(result),
+                ))
         except (json.JSONDecodeError, UnicodeDecodeError, ValueError) as error:
             self._write_json(
                 400,
@@ -371,16 +410,58 @@ class _GatewayHandler(BaseHTTPRequestHandler):
 
     def _record(self, request_chars, response_chars, started):
         if self.server.ledger is not None:
+            latency_ms = (time.perf_counter() - started) * 1000
             entry = {
                 "request_chars": request_chars,
                 "response_chars": response_chars,
-                "latency_ms": (time.perf_counter() - started) * 1000,
+                "latency_ms": latency_ms,
                 "middlewares": [
                     type(middleware).__name__ for middleware in self.server.middlewares
                 ],
             }
             entry.update(getattr(self, "_extra", {}))
             self.server.ledger.record(entry)
+            episode_id = entry.get("episode_id")
+            if isinstance(episode_id, str):
+                measurements: dict[str, object] = {
+                    key: entry[key]
+                    for key in (
+                        "request_chars", "response_chars", "latency_ms", "status",
+                        "optimized", "cached", "streamed", "stream_complete",
+                        "requirement_contracts",
+                    )
+                    if key in entry
+                }
+                usage = entry.get("usage")
+                if isinstance(usage, dict):
+                    measurements.update({
+                        key: value for key, value in usage.items()
+                        if isinstance(value, (int, float)) and not isinstance(value, bool)
+                    })
+                requirements = entry.get("requirements")
+                if isinstance(requirements, dict):
+                    for source_key, target_key in (
+                        ("requirements", "requirements_checked"),
+                        ("passed", "requirements_passed"),
+                        ("all_passed", "requirements_all_passed"),
+                    ):
+                        if source_key in requirements:
+                            measurements[target_key] = requirements[source_key]
+                middleware_receipts = entry.get("middleware_receipts")
+                if isinstance(middleware_receipts, dict):
+                    attention = middleware_receipts.get("AttentionContextMiddleware")
+                    if isinstance(attention, dict):
+                        measurements.update(context_result_measurements(attention))
+                try:
+                    self.server.ledger.record(make_event(
+                        source="gateway",
+                        event_type="provider_response",
+                        episode_id=episode_id,
+                        turn_id=entry.get("turn_id"),
+                        **measurements,
+                    ))
+                except (OSError, TypeError, ValueError):
+                    pass
 
     def _write_json(self, status, body):
         payload = json.dumps(body, ensure_ascii=False, separators=(",", ":")).encode("utf-8")
