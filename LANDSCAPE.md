@@ -131,3 +131,34 @@ compaction (v12, running) — local, cheap, receipts-gated, and shippable today 
 middlewares. The approaches compose: engineered context is also better TRACE data if you later
 train. Honest scope note: our measurements are 8B models at 10^3-10^4-char contexts; the 256k->1M
 frontier regime is extrapolation, not our data.
+
+## Technique-transfer map (user-supplied, 2026-07-16) — my synthesis vs our evidence
+
+The map's two highest-value rows (Sparse-MoE -> pick ONE context expert; adaptive test-time compute
+-> effort controller) are ONE thing for us: a difficulty/risk-gated ROUTER that ALLOCATES instead of
+STACKS. That is exactly what our own results demand:
+- HYP-38 (volume threshold): stacking transforms is a no-op below the pressure cliff and cost
+  +16.9M tokens in the v15 pilot for zero gain -> route ONE transform by the pressure signal.
+- HYP-32 (voting REFUTED; disagreement salvage): do NOT add samples/voting (errors are systematic,
+  voting inherits them). The right escalation trigger is sample DISAGREEMENT -> escalate MODEL TIER
+  + verification, not vote. So the map's "samples" advice is corrected by our graveyard.
+- Prover-verifier + constitutional rows are already banked as requirement contracts + the evidence
+  auditor + independent DMR review ("compile checks, don't ask the model" = our thesis).
+- Cache-aware row is a real cheap gap: attention REORDERING context every turn BREAKS provider
+  prompt-cache prefixes -- a measurable tension; needs cache-write telemetry + a stable-prefix mode.
+- Synthetic-data flywheel = the episode hard-case corpus Codex just instrumented (unproven; boundary set).
+
+**The one synthesis experiment (candidate HYP-39):** an evidence-grounded effort/effort-router that
+(1) picks a context transform by the HYP-38 pressure signal, (2) escalates model tier on the HYP-32
+disagreement signal, (3) preserves stable prefixes for provider cache. Unifies rows 2/3/4/6.
+
+## Open-weight frontier models (Kimi v3, 2026-07) — the proxy-path unlock
+
+Our architecture is a LOCAL gateway; subscription auth blocks the full PROXY path (response cache +
+shadow receipts + token accounting), leaving only the hook/input path. A frontier-quality OPEN-WEIGHT
+model reachable via an OpenAI-compatible endpoint (API key, or self-host) restores the FULL receipts
+loop ON a capable model at marginal cost -- the exact wall we kept hitting. It also removes the
+cost constraint that under-powered v15 (unlimited hidden-gate runs). Honest caveat: Kimi-class MoE
+is large; "open weights" != "runs on this box" without serious/quantized hardware -- near-term path
+is API-key proxying; self-host is a later option. Test target: point the gateway at a Kimi endpoint
+and run the HYP-39 effort-router with real receipts.
