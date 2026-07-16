@@ -137,8 +137,12 @@ class ShadowEndToEndTests(unittest.TestCase):
                 {"request_chars": 10, "response_chars": 2, "latency_ms": 1,
                  "optimized": True, "request_chars_original": 20,
                  "upstream_called": True,
-                 "usage": {"input_tokens": 10, "output_tokens": 2, "total_tokens": 12},
-                 "shadow_usage": {"input_tokens": 10, "output_tokens": 3, "total_tokens": 13},
+                 "usage": {"input_tokens": 2, "effective_input_tokens": 10,
+                           "cache_creation_input_tokens": 3, "cache_read_input_tokens": 5,
+                           "cached_input_tokens": 5, "output_tokens": 2, "total_tokens": 12},
+                 "shadow_usage": {"input_tokens": 10, "effective_input_tokens": 10,
+                                  "cached_input_tokens": 0,
+                                  "output_tokens": 3, "total_tokens": 13},
                  "requirement_contracts": 2,
                  "requirements": {"requirements": 2, "passed": 1, "all_passed": False},
                  "shadow_requirements": {"requirements": 2, "passed": 2, "all_passed": True},
@@ -161,13 +165,22 @@ class ShadowEndToEndTests(unittest.TestCase):
         self.assertEqual(summary["upstream_requests"], 1)
         self.assertEqual(summary["usage_receipts"], 1)
         self.assertEqual(summary["usage_coverage_rate"], 1.0)
-        self.assertEqual(summary["input_tokens"], 10)
+        self.assertEqual(summary["input_tokens"], 2)
+        self.assertEqual(summary["effective_input_tokens"], 10)
         self.assertEqual(summary["output_tokens"], 2)
         self.assertEqual(summary["total_tokens"], 12)
         self.assertEqual(summary["shadow_total_tokens"], 13)
         self.assertEqual(summary["provider_total_tokens_consumed"], 25)
         self.assertEqual(summary["paired_usage_receipts"], 1)
-        self.assertEqual(summary["measured_input_token_savings"], 0)
+        self.assertEqual(summary["measured_input_token_savings"], 8)
+        self.assertEqual(summary["measured_effective_input_token_savings"], 0)
+        self.assertEqual(summary["prompt_cache_observed_requests"], 1)
+        self.assertEqual(summary["prompt_cache_hit_requests"], 1)
+        self.assertEqual(summary["prompt_cache_hit_rate"], 1.0)
+        self.assertEqual(summary["cache_creation_input_tokens"], 3)
+        self.assertEqual(summary["cache_read_input_tokens"], 5)
+        self.assertEqual(summary["cached_input_tokens"], 5)
+        self.assertEqual(summary["shadow_prompt_cache_observed_requests"], 1)
         self.assertEqual(summary["streamed_requests"], 0)
         self.assertEqual(summary["incomplete_streams"], 0)
         self.assertEqual(summary["shadow_failures"], 0)

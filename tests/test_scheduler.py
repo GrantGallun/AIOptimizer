@@ -1,4 +1,5 @@
 import subprocess
+import threading
 import unittest
 from pathlib import Path
 from tempfile import TemporaryDirectory
@@ -27,6 +28,12 @@ class GovernorTests(unittest.TestCase):
 
 
 class SchedulerTests(unittest.TestCase):
+    class PassVerifier:
+        reviewer = "independent-review"
+
+        def verify(self, task, *, producer_ok, producer_result):
+            return producer_ok, "independently checked", 0.0
+
     def _chain(self, board: Board) -> list[str]:
         t1 = board.add(op="impl", title="build", tier="sonnet")
         t2 = board.add(op="test", title="gate", tier="qwen", deps=[t1["id"]])
@@ -76,7 +83,13 @@ class SchedulerTests(unittest.TestCase):
             external = WorkspaceClaims(root, state_root=root)
             external.claim(["src/a.py"], owner="other-driver")
             executor = RecordingExecutor()
-            sched = Scheduler(root, executor=executor, budget=10.0, scheduler_id="test")
+            sched = Scheduler(
+                root,
+                executor=executor,
+                verifier=self.PassVerifier(),
+                budget=10.0,
+                scheduler_id="test",
+            )
 
             events = sched.tick()
             self.assertEqual(events["deferred"], [task["id"]])
@@ -88,6 +101,50 @@ class SchedulerTests(unittest.TestCase):
             self.assertEqual(executor.calls, [task["id"]])
             self.assertEqual(board.get(task["id"])["state"], "retired")
             self.assertEqual(external.list()["claims"], {})
+
+    def test_real_executor_without_verifier_stays_executed(self):
+        class PassingExecutor:
+            def execute(self, task):
+                return True, "producer pass", 0.1
+
+        with TemporaryDirectory() as tmp:
+            task = Board(Path(tmp)).add(op="test", title="needs review", tier="qwen")
+            events = Scheduler(Path(tmp), executor=PassingExecutor(), budget=10.0).tick()
+            self.assertEqual(events["awaiting_review"], [task["id"]])
+            self.assertEqual(Board(Path(tmp)).get(task["id"])["state"], "executed")
+
+    def test_capacity_executes_independent_tasks_concurrently(self):
+        class ConcurrentExecutor:
+            def __init__(self):
+                self.lock = threading.Lock()
+                self.barrier = threading.Barrier(2)
+                self.active = 0
+                self.max_active = 0
+
+            def execute(self, task):
+                with self.lock:
+                    self.active += 1
+                    self.max_active = max(self.max_active, self.active)
+                self.barrier.wait(timeout=2.0)
+                with self.lock:
+                    self.active -= 1
+                return True, "done", 0.1
+
+        with TemporaryDirectory() as tmp:
+            board = Board(Path(tmp))
+            first = board.add(op="impl", title="a", tier="sonnet")
+            second = board.add(op="impl", title="b", tier="sonnet")
+            executor = ConcurrentExecutor()
+            events = Scheduler(
+                Path(tmp),
+                cores={"sonnet": 2},
+                executor=executor,
+                verifier=self.PassVerifier(),
+                budget=10.0,
+            ).tick()
+            self.assertEqual(executor.max_active, 2)
+            self.assertEqual(events["executed"], [first["id"], second["id"]])
+            self.assertEqual(events["verified"], [first["id"], second["id"]])
 
     def test_speculation_commits_on_correct_prediction(self):
         with TemporaryDirectory() as tmp:

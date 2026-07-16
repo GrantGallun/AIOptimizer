@@ -19,6 +19,38 @@ class UsageExtractionTests(unittest.TestCase):
             {"input_tokens": 7, "output_tokens": 2, "total_tokens": 9},
         )
 
+    def test_extracts_anthropic_and_openai_prompt_cache_usage(self):
+        self.assertEqual(
+            extract_usage({"usage": {
+                "input_tokens": 2,
+                "output_tokens": 3,
+                "cache_creation_input_tokens": 5,
+                "cache_read_input_tokens": 7,
+            }}),
+            {
+                "input_tokens": 2,
+                "output_tokens": 3,
+                "cache_creation_input_tokens": 5,
+                "cache_read_input_tokens": 7,
+                "cached_input_tokens": 7,
+                "effective_input_tokens": 14,
+                "total_tokens": 17,
+            },
+        )
+        self.assertEqual(
+            extract_usage({"usage": {
+                "prompt_tokens": 10,
+                "completion_tokens": 2,
+                "prompt_tokens_details": {"cached_tokens": 6},
+            }}),
+            {
+                "input_tokens": 10,
+                "output_tokens": 2,
+                "cached_input_tokens": 6,
+                "total_tokens": 12,
+            },
+        )
+
     def test_extracts_nested_anthropic_message_start_usage(self):
         payload = {"type": "message_start", "message": {
             "usage": {"input_tokens": 12, "output_tokens": 1}}}

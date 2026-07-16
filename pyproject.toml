@@ -28,6 +28,7 @@ encoder = ["torch", "transformers"]
 [project.scripts]
 aioptimizer = "aioptimizer.__main__:main"
 aioptimizer-report = "aioptimizer.report:main"
+aioptimizer-evidence-audit = "aioptimizer.evidence:main"
 
 [project.urls]
 Repository = "https://github.com/GrantGallun/AIOptimizer"

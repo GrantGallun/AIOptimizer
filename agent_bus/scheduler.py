@@ -19,6 +19,7 @@ tasks deterministically for dry runs (no model calls); real executors (a Sonnet 
 from __future__ import annotations
 
 import argparse
+from concurrent.futures import ThreadPoolExecutor, as_completed
 import json
 import os
 import subprocess
@@ -40,8 +41,6 @@ from agent_bus.workspace import WorkspaceClaims, WorkspaceConflict
 # Real executors return measured elapsed seconds, which the governor charges below.
 TIER_COST = {"fable": 1.0, "codex": 0.4, "sonnet": 0.1, "qwen": 0.01}
 COST_UNIT = "seconds"
-# Cross-check routing: reviewer is a *different* core class (ideally a different model family).
-REVIEWER = {"sonnet": "codex", "codex": "fable", "qwen": "codex", "fable": "codex"}
 GATE_OPS = ("test", "run", "verdict")
 
 
@@ -128,6 +127,21 @@ class SimExecutor:
         return ok, f"[sim] {task['op']} '{task['title']}' -> {verdict}", cost
 
 
+class SimVerifier:
+    """Explicit zero-cost verifier for dry runs only; never used for real executors."""
+
+    reviewer = "sim-review"
+
+    def verify(
+        self,
+        task: dict[str, Any],
+        *,
+        producer_ok: bool,
+        producer_result: str,
+    ) -> tuple[bool, str, float]:
+        return producer_ok, f"[sim review] reproduced {task['id']}", 0.0
+
+
 class BranchPredictor:
     """Predict a gate's outcome so dependents can run ahead. Default: predict pass (taken)."""
 
@@ -145,6 +159,7 @@ class Scheduler:
         *,
         cores: dict[str, int] | None = None,
         executor: Any | None = None,
+        verifier: Any | None = None,
         budget: float = 10.0,
         predictor: BranchPredictor | None = None,
         on_retire: Callable[[dict[str, Any]], Any] | None = None,
@@ -157,6 +172,9 @@ class Scheduler:
         self.cache = Cache(root)
         self.cores = cores or {"fable": 1, "codex": 1, "sonnet": 2, "qwen": 1}
         self.executor = executor or SimExecutor()
+        self.verifier = verifier
+        if self.verifier is None and isinstance(self.executor, SimExecutor):
+            self.verifier = SimVerifier()
         self.governor = Governor(self.cache, budget)
         self.predictor = predictor or BranchPredictor()
         self.on_retire = on_retire  # e.g. GitCommitter: durable commit per retired task
@@ -164,9 +182,6 @@ class Scheduler:
         self.lease_ttl_seconds = lease_ttl_seconds
         self.dispatch_lease_seconds = dispatch_lease_seconds
         self.scheduler_id = scheduler_id or f"{os.getpid()}-{uuid.uuid4().hex[:8]}"
-
-    def _reviewer_for(self, task: dict[str, Any]) -> str:
-        return f"{REVIEWER.get(task['tier'], 'codex')}-review"
 
     def _speculate_dependents(self, gate: dict[str, Any], events: dict[str, Any]) -> None:
         if not self.predictor.predict(gate):
@@ -202,16 +217,19 @@ class Scheduler:
                     break  # an earlier task hasn't retired yet; stop (in-order commit)
 
     def tick(self) -> dict[str, Any]:
-        events = {k: [] for k in ("dispatched", "executed", "verified", "retired", "squashed", "speculated", "committed", "awaiting", "deferred")}
+        events = {k: [] for k in ("dispatched", "executed", "verified", "retired", "squashed", "speculated", "committed", "awaiting", "awaiting_review", "deferred")}
         events["tripped"] = False
         self.board.watchdog()
         if self.governor.tripped():
             events["tripped"] = True
             return events
+
+        batch: list[tuple[dict[str, Any], str]] = []
+        reserved = 0.0
         for tier, capacity in self.cores.items():
             estimated = TIER_COST.get(tier, 0.5)
             for slot in range(capacity):
-                if self.governor.would_exceed(estimated):
+                if self.governor.spent + reserved + estimated > self.governor.budget:
                     events["tripped"] = True  # power/cost budget: won't admit this core's work
                     break
                 worker = f"{tier}-{self.scheduler_id}-{slot}"
@@ -235,27 +253,85 @@ class Scheduler:
                         self.board.defer(task["id"], worker=task["owner"], reason=str(exc))
                         events["deferred"].append(task["id"])
                         continue
-                try:
-                    try:
-                        ok, result, cost = self.executor.execute(task)
-                    except NeedsHuman:
-                        self.board.park(task["id"], reason="needs Fable/human")
-                        events["awaiting"].append(task["id"])  # human interrupt: judgment handed back
-                        continue
-                finally:
-                    if writes:
-                        self.workspace_claims.release(writes, owner=lease_owner)
-                if task["op"] in GATE_OPS:
-                    self._speculate_dependents(task, events)
-                self.governor.charge(cost)
                 events["dispatched"].append(task["id"])
-                self.board.submit(task["id"], worker=task["owner"], result=result)
-                events["executed"].append(task["id"])
-                verified = self.board.review(task["id"], reviewer=self._reviewer_for(task), ok=ok)
-                if verified["state"] == "verified":
+                batch.append((task, lease_owner))
+                reserved += estimated
+
+        def execute(task: dict[str, Any]) -> tuple[str, tuple[bool, str, float] | None]:
+            try:
+                return "completed", self.executor.execute(task)
+            except NeedsHuman:
+                return "human", None
+            except Exception as exc:  # keep one crashed core from killing the driver
+                return "completed", (False, f"executor exception: {type(exc).__name__}: {exc}", 0.0)
+
+        outcomes: dict[str, tuple[str, tuple[bool, str, float] | None]] = {}
+        if batch:
+            with ThreadPoolExecutor(max_workers=len(batch), thread_name_prefix="agent-core") as pool:
+                futures = {pool.submit(execute, task): task["id"] for task, _owner in batch}
+                for future in as_completed(futures):
+                    outcomes[futures[future]] = future.result()
+
+        pending_review: list[tuple[dict[str, Any], str, bool, str]] = []
+        for task, lease_owner in sorted(batch, key=lambda item: item[0]["seq"]):
+            kind, outcome = outcomes[task["id"]]
+            if kind == "human":
+                self.board.park(task["id"], reason="needs Fable/human")
+                events["awaiting"].append(task["id"])
+                if task.get("writes"):
+                    self.workspace_claims.release(task["writes"], owner=lease_owner)
+                continue
+            assert outcome is not None
+            ok, result, cost = outcome
+            self.governor.charge(cost)
+            self.board.submit(task["id"], worker=task["owner"], result=result)
+            events["executed"].append(task["id"])
+            if self.verifier is None:
+                events["awaiting_review"].append(task["id"])
+                if task.get("writes"):
+                    self.workspace_claims.release(task["writes"], owner=lease_owner)
+                continue
+            pending_review.append((task, lease_owner, ok, result))
+
+        def verify(item: tuple[dict[str, Any], str, bool, str]) -> tuple[str, tuple[bool, str, float] | None]:
+            task, _lease_owner, ok, result = item
+            try:
+                return "completed", self.verifier.verify(
+                    task, producer_ok=ok, producer_result=result
+                )
+            except NeedsHuman:
+                return "human", None
+            except Exception:
+                return "unavailable", None
+
+        reviews: dict[str, tuple[str, tuple[bool, str, float] | None]] = {}
+        if pending_review:
+            with ThreadPoolExecutor(max_workers=len(pending_review), thread_name_prefix="agent-review") as pool:
+                futures = {pool.submit(verify, item): item[0]["id"] for item in pending_review}
+                for future in as_completed(futures):
+                    reviews[futures[future]] = future.result()
+
+        for task, lease_owner, _producer_ok, _producer_result in sorted(
+            pending_review, key=lambda item: item[0]["seq"]
+        ):
+            kind, review = reviews[task["id"]]
+            try:
+                if kind != "completed" or review is None:
+                    events["awaiting_review"].append(task["id"])
+                    continue
+                review_ok, note, review_cost = review
+                self.governor.charge(review_cost)
+                checked = self.board.review(
+                    task["id"], reviewer=self.verifier.reviewer, ok=review_ok, note=note
+                )
+                if checked["state"] == "verified":
                     events["verified"].append(task["id"])
                 if task["op"] in GATE_OPS:
-                    self._resolve_speculation(task, ok, events)
+                    self._speculate_dependents(task, events)
+                    self._resolve_speculation(task, review_ok, events)
+            finally:
+                if task.get("writes"):
+                    self.workspace_claims.release(task["writes"], owner=lease_owner)
         self._retire_in_order(events)
         return events
 
@@ -274,7 +350,7 @@ class Scheduler:
 
 def _summarize(history: list[dict[str, Any]]) -> dict[str, Any]:
     agg: dict[str, Any] = {"ticks": len(history)}
-    for key in ("dispatched", "executed", "verified", "retired", "squashed", "speculated", "committed", "awaiting", "deferred"):
+    for key in ("dispatched", "executed", "verified", "retired", "squashed", "speculated", "committed", "awaiting", "awaiting_review", "deferred"):
         agg[key] = sum(len(ev[key]) for ev in history)
     agg["tripped"] = any(ev["tripped"] for ev in history)
     return agg

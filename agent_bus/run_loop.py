@@ -28,7 +28,7 @@ if str(_REPO_ROOT) not in sys.path:
     sys.path.insert(0, str(_REPO_ROOT))
 
 from agent_bus.board import Board
-from agent_bus.executors import CodexExecutor, CommandPolicy, RoutingExecutor, ShellExecutor
+from agent_bus.executors import CodexExecutor, CommandPolicy, ExecutorVerifier, RoutingExecutor, ShellExecutor
 from agent_bus.scheduler import GitCommitter, Scheduler, _summarize
 
 
@@ -51,10 +51,12 @@ def main() -> None:
     shell = ShellExecutor(cwd=args.repo, command_policy=policy, allow_legacy_shell=args.allow_legacy_shell)
     codex = CodexExecutor(args.repo, codex=args.codex_bin, extra_args=shlex.split(args.codex_args), command_policy=policy, allow_legacy_shell=args.allow_legacy_shell) if args.codex else None
     router = RoutingExecutor(shell=shell, codex=codex)
+    verifier = ExecutorVerifier(shell, reviewer="shell-verifier")
     on_retire = GitCommitter(args.repo) if args.commit else None
     sched = Scheduler(
         Path(args.root),
         executor=router,
+        verifier=verifier,
         budget=args.budget,
         on_retire=on_retire,
         workspace_root=Path(args.repo),

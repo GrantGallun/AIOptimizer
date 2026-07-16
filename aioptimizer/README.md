@@ -35,6 +35,26 @@ both optimized and raw shadow arms report usage, it also reports directly
 measured input-token savings. `provider_total_tokens_consumed` includes shadow
 overhead so quality measurement is never presented as free.
 
+Anthropic cache creation/read tokens and OpenAI cached prompt-token details are
+normalized separately. Reports expose cache-observation coverage, hit rate,
+cache creation/read totals, and effective input totals; cached-token counts are
+never treated as ordinary gateway exact-cache hits.
+
+## Research evidence audit
+
+Future experiment artifacts can carry a machine-readable evidence card and be
+checked without producing a research verdict:
+
+```powershell
+python -m aioptimizer.evidence path\to\evidence-card.json
+```
+
+The audit flags small samples, too few seeds, absent preregistration/hidden
+splits/negative controls, single-model or single-task evidence, author-built-only
+data, proxy judges, missing independent review, and unversioned artifacts. A
+passing metadata audit means the controls were recorded; it does not mean the
+hypothesis was confirmed.
+
 Upstream connect/read operations default to a 300-second timeout. Set
 `upstream_timeout_seconds` in `aioptimizer.json` or pass
 `--upstream-timeout-seconds`; pre-response timeouts return HTTP 504 and are

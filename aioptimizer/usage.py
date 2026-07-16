@@ -7,7 +7,14 @@ from typing import Any
 
 
 def extract_usage(payload: Any) -> dict[str, int] | None:
-    """Return normalized token counts from OpenAI, Anthropic, or Ollama JSON."""
+    """Return normalized token and provider prompt-cache counts.
+
+    ``input_tokens`` preserves the provider's native input count. Anthropic
+    reports cache creation/read tokens alongside (rather than inside) that
+    count, so ``effective_input_tokens`` adds those fields. OpenAI's
+    ``prompt_tokens_details.cached_tokens`` is already a subset of
+    ``prompt_tokens`` and is therefore observed without adding it again.
+    """
     if not isinstance(payload, dict):
         return None
     candidates = [payload]
@@ -23,12 +30,28 @@ def extract_usage(payload: Any) -> dict[str, int] | None:
             _take(normalized, "input_tokens", usage.get("input_tokens"))
             _take(normalized, "output_tokens", usage.get("output_tokens"))
             _take(normalized, "total_tokens", usage.get("total_tokens"))
+            _take(normalized, "cache_creation_input_tokens", usage.get("cache_creation_input_tokens"))
+            _take(normalized, "cache_read_input_tokens", usage.get("cache_read_input_tokens"))
+            details = usage.get("prompt_tokens_details")
+            if isinstance(details, dict):
+                _take(normalized, "cached_input_tokens", details.get("cached_tokens"))
     _take(normalized, "input_tokens", payload.get("prompt_eval_count"))
     _take(normalized, "output_tokens", payload.get("eval_count"))
-    if "total_tokens" not in normalized and {
-        "input_tokens", "output_tokens"
-    } <= normalized.keys():
-        normalized["total_tokens"] = normalized["input_tokens"] + normalized["output_tokens"]
+    if "cache_read_input_tokens" in normalized:
+        normalized["cached_input_tokens"] = normalized["cache_read_input_tokens"]
+    additive_cache_usage = (
+        "cache_creation_input_tokens" in normalized
+        or "cache_read_input_tokens" in normalized
+    )
+    if "input_tokens" in normalized and additive_cache_usage:
+        normalized["effective_input_tokens"] = (
+            normalized["input_tokens"]
+            + normalized.get("cache_creation_input_tokens", 0)
+            + normalized.get("cache_read_input_tokens", 0)
+        )
+    total_input = normalized.get("effective_input_tokens", normalized.get("input_tokens"))
+    if "total_tokens" not in normalized and total_input is not None and "output_tokens" in normalized:
+        normalized["total_tokens"] = total_input + normalized["output_tokens"]
     return normalized or None
 
 
@@ -56,10 +79,21 @@ class StreamUsageAccumulator:
         if self._buffer:
             self._consume_line(self._buffer)
             self._buffer = b""
-        if {"input_tokens", "output_tokens"} <= self._usage.keys():
-            self._usage["total_tokens"] = (
-                self._usage["input_tokens"] + self._usage["output_tokens"]
+        additive_cache_usage = (
+            "cache_creation_input_tokens" in self._usage
+            or "cache_read_input_tokens" in self._usage
+        )
+        if "input_tokens" in self._usage and additive_cache_usage:
+            self._usage["effective_input_tokens"] = (
+                self._usage["input_tokens"]
+                + self._usage.get("cache_creation_input_tokens", 0)
+                + self._usage.get("cache_read_input_tokens", 0)
             )
+        if "cache_read_input_tokens" in self._usage:
+            self._usage["cached_input_tokens"] = self._usage["cache_read_input_tokens"]
+        total_input = self._usage.get("effective_input_tokens", self._usage.get("input_tokens"))
+        if total_input is not None and "output_tokens" in self._usage:
+            self._usage["total_tokens"] = total_input + self._usage["output_tokens"]
         return dict(self._usage) or None
 
     def text(self) -> str:

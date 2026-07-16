@@ -35,6 +35,11 @@ def summarize(ledger_path: str) -> dict[str, Any]:
     latencies = sorted(float(e.get("latency_ms", 0.0)) for e in entries)
     primary_usage = [e["usage"] for e in entries if isinstance(e.get("usage"), dict)]
     shadow_usage = [e["shadow_usage"] for e in entries if isinstance(e.get("shadow_usage"), dict)]
+    cache_fields = {
+        "cache_creation_input_tokens", "cache_read_input_tokens", "cached_input_tokens"
+    }
+    primary_cache_usage = [u for u in primary_usage if cache_fields.intersection(u)]
+    shadow_cache_usage = [u for u in shadow_usage if cache_fields.intersection(u)]
     paired_usage = [
         (e["usage"], e["shadow_usage"])
         for e in entries
@@ -67,6 +72,12 @@ def summarize(ledger_path: str) -> dict[str, Any]:
 
     def token_sum(rows: list[dict[str, Any]], field: str) -> int:
         return sum(int(row.get(field, 0)) for row in rows)
+
+    def effective_input_sum(rows: list[dict[str, Any]]) -> int:
+        return sum(
+            int(row.get("effective_input_tokens", row.get("input_tokens", 0)))
+            for row in rows
+        )
 
     def percentile(fraction: float) -> float:
         if not latencies:
@@ -133,17 +144,40 @@ def summarize(ledger_path: str) -> dict[str, Any]:
             else None
         ),
         "input_tokens": token_sum(primary_usage, "input_tokens"),
+        "effective_input_tokens": effective_input_sum(primary_usage),
         "output_tokens": token_sum(primary_usage, "output_tokens"),
         "total_tokens": token_sum(primary_usage, "total_tokens"),
+        "prompt_cache_observed_requests": len(primary_cache_usage),
+        "prompt_cache_hit_requests": sum(
+            int(usage.get("cached_input_tokens", 0)) > 0 for usage in primary_cache_usage
+        ),
+        "prompt_cache_hit_rate": (
+            sum(int(usage.get("cached_input_tokens", 0)) > 0 for usage in primary_cache_usage)
+            / len(primary_cache_usage)
+            if primary_cache_usage else None
+        ),
+        "cache_creation_input_tokens": token_sum(primary_usage, "cache_creation_input_tokens"),
+        "cache_read_input_tokens": token_sum(primary_usage, "cache_read_input_tokens"),
+        "cached_input_tokens": token_sum(primary_usage, "cached_input_tokens"),
         "shadow_input_tokens": token_sum(shadow_usage, "input_tokens"),
+        "shadow_effective_input_tokens": effective_input_sum(shadow_usage),
         "shadow_output_tokens": token_sum(shadow_usage, "output_tokens"),
         "shadow_total_tokens": token_sum(shadow_usage, "total_tokens"),
+        "shadow_prompt_cache_observed_requests": len(shadow_cache_usage),
+        "shadow_cache_creation_input_tokens": token_sum(shadow_usage, "cache_creation_input_tokens"),
+        "shadow_cache_read_input_tokens": token_sum(shadow_usage, "cache_read_input_tokens"),
+        "shadow_cached_input_tokens": token_sum(shadow_usage, "cached_input_tokens"),
         "provider_total_tokens_consumed": (
             token_sum(primary_usage, "total_tokens") + token_sum(shadow_usage, "total_tokens")
         ),
         "paired_usage_receipts": len(paired_usage),
         "measured_input_token_savings": sum(
             int(raw.get("input_tokens", 0)) - int(optimized.get("input_tokens", 0))
+            for optimized, raw in paired_usage
+        ),
+        "measured_effective_input_token_savings": sum(
+            int(raw.get("effective_input_tokens", raw.get("input_tokens", 0)))
+            - int(optimized.get("effective_input_tokens", optimized.get("input_tokens", 0)))
             for optimized, raw in paired_usage
         ),
         "attention_route_counts": dict(sorted(Counter(

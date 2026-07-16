@@ -6,7 +6,7 @@ from types import SimpleNamespace
 from unittest.mock import patch
 
 from agent_bus.board import Board
-from agent_bus.executors import CommandPolicy, CommandRejected, CodexExecutor, NeedsHuman, RoutingExecutor, ShellExecutor
+from agent_bus.executors import CommandPolicy, CommandRejected, CodexExecutor, ExecutorVerifier, NeedsHuman, RoutingExecutor, ShellExecutor
 from agent_bus.scheduler import Scheduler
 
 
@@ -153,6 +153,44 @@ class RoutingTests(unittest.TestCase):
         self.assertTrue(ok)
 
 
+class ExecutorVerifierTests(unittest.TestCase):
+    def test_verifier_reexecutes_acceptance_and_does_not_reuse_producer_result(self):
+        completed = SimpleNamespace(returncode=0, stdout="verified\n", stderr="")
+        shell = ShellExecutor(
+            cwd=".",
+            command_policy=CommandPolicy([[sys.executable, "-c"]]),
+            allow_legacy_shell=False,
+        )
+        verifier = ExecutorVerifier(shell, reviewer="independent-shell")
+        task = {
+            "id": "t1",
+            "title": "check",
+            "command": [sys.executable, "-c", "print('verified')"],
+        }
+        with patch("agent_bus.executors.subprocess.run", return_value=completed) as run:
+            ok, note, _cost = verifier.verify(
+                task, producer_ok=True, producer_result="producer claimed success"
+            )
+        self.assertTrue(ok, note)
+        self.assertEqual(run.call_count, 1)
+        self.assertIn("independent verification OK", note)
+
+    def test_verifier_cannot_turn_a_producer_failure_into_success(self):
+        class PassingExecutor:
+            def execute(self, task):
+                return True, "fresh check passed", 0.25
+
+        verifier = ExecutorVerifier(PassingExecutor(), reviewer="independent")
+        ok, note, cost = verifier.verify(
+            {"id": "t1", "title": "check"},
+            producer_ok=False,
+            producer_result="producer failed",
+        )
+        self.assertFalse(ok)
+        self.assertIn("producer FAIL", note)
+        self.assertEqual(cost, 0.25)
+
+
 class SchedulerParksVerdictTests(unittest.TestCase):
     def test_verdict_task_is_parked_not_run(self):
         with TemporaryDirectory() as tmp:
@@ -165,7 +203,12 @@ class SchedulerParksVerdictTests(unittest.TestCase):
                 command_policy=CommandPolicy([[sys.executable, "-c"]]),
                 allow_legacy_shell=False,
             )
-            sched = Scheduler(Path(tmp), executor=RoutingExecutor(shell=shell, codex=None), budget=100.0)
+            sched = Scheduler(
+                Path(tmp),
+                executor=RoutingExecutor(shell=shell, codex=None),
+                verifier=ExecutorVerifier(shell, reviewer="independent-shell"),
+                budget=100.0,
+            )
             sched.run()
             states = {t["id"]: t["state"] for t in board.all()}
             self.assertEqual(states[work["id"]], "retired")     # real shell work completed + committed

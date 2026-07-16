@@ -214,3 +214,44 @@ class RoutingExecutor:
                 raise NeedsHuman(task["id"])             # no Codex core reachable here
             return self.codex.execute(task)
         return self.shell.execute(task)                  # test/run/impl on shell-runnable cores
+
+
+class ExecutorVerifier:
+    """Independently re-execute a task's acceptance path before board review.
+
+    The verifier is intentionally a separate object with an explicit reviewer
+    identity. It may wrap a shell executor for deterministic tests or a
+    different model-family executor for semantic review. The producer's result
+    is evidence only; it is never reused as the review outcome.
+    """
+
+    def __init__(self, executor: Any, *, reviewer: str) -> None:
+        if not reviewer:
+            raise ValueError("reviewer must be non-empty")
+        self.executor = executor
+        self.reviewer = reviewer
+
+    def verify(
+        self,
+        task: dict[str, Any],
+        *,
+        producer_ok: bool,
+        producer_result: str,
+    ) -> tuple[bool, str, float]:
+        review_task = dict(task)
+        review_task["op"] = "review"
+        review_task["title"] = f"Independent review: {task.get('title', task.get('id', 'task'))}"
+        review_task["producer_result"] = producer_result
+        review_task["spec"] = (
+            "Independently verify the task against its acceptance criteria. "
+            "Do not trust the producer result; reproduce the check.\n\n"
+            f"Original specification:\n{task.get('spec', '')}\n\n"
+            f"Producer report (untrusted evidence):\n{producer_result}"
+        )
+        review_ok, review_result, cost = self.executor.execute(review_task)
+        ok = bool(producer_ok and review_ok)
+        note = (
+            f"producer {'OK' if producer_ok else 'FAIL'}; "
+            f"independent verification {'OK' if review_ok else 'FAIL'}: {review_result}"
+        )
+        return ok, note, cost
