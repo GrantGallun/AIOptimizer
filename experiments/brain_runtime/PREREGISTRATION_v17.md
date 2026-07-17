@@ -9,6 +9,19 @@ first (raw 0.575 / attention 0.975). Full verdict + caveats: HYP-20260717-39 in 
 Honest shape: attention is FLAT at ~1.0 across a 4x budget range, i.e. this task is easy for it
 (single-fact retrieval) — the result bounds retrieval-shaped work, not agent builds.
 
+**Amendment 2026-07-17 (post-verdict audit — three corrections, verdict stands but narrower):**
+(1) The gate's `AND cheaper` conjunct was true by construction (half the chars cannot cost more
+tokens); only the Wilson conjunct was informative. A prereg gate arm that cannot fail is not a gate
+arm. (2) Conditioning the frozen rows on `context_expected_present` shows the scorer is clean
+(raw succeeded 0/167 times across v16+v17 when the fact was absent) but the raw arm is NOT
+transcript truncation: both arms render compiler records with identical pinning through a greedy
+first-fit packer, and raw fact-retention *rises* as budget shrinks (0.542 → 0.608 → 0.675;
+29/120 same-case flips present@650/absent@2600 — impossible under tail truncation; the small fact
+record is crowded out by larger records at bigger budgets). The result is a clean *ordering* A/B;
+it does not measure "vs. no product." (3) Follow-up registered as the obvious v18: add true
+untreated arms (plain transcript; transcript tail) before any external "vs. baseline" claim.
+— Fable (Fable 5)
+
 ## Origin — a question our own results cannot currently answer
 
 The user asked the right blunt question: does the product help, hurt, do nothing, reduce cost,
