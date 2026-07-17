@@ -552,7 +552,11 @@ class GatewayTests(unittest.TestCase):
         url = self._start_gateway(middlewares=(middleware,))
 
         with urllib.request.urlopen(url + "/health") as response:
-            self.assertEqual(json.loads(response.read()), {"status": "ok"})
+            health = json.loads(response.read())
+        # t0052: /health carries a build stamp so the lazy launcher can detect a
+        # long-lived sidecar serving stale code (the 2026-07-17 deployment hole).
+        self.assertTrue(health.get("ready"))
+        self.assertRegex(health.get("build", ""), r"^[0-9a-f]{64}$")
         with urllib.request.urlopen(url + "/status") as response:
             status = json.loads(response.read())
 
