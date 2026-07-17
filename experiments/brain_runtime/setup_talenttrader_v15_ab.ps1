@@ -3,10 +3,19 @@ param(
     [string]$Model = "gpt-5.6-sol",
     [string]$AIOptimizerHome = "C:\Code\AIOptimizer",
     [string]$BaseCodexHome = (Join-Path $env:USERPROFILE ".codex"),
-    [string]$CodexControlRoot = (Join-Path $env:USERPROFILE ".codex\ab-v15-v4")
+    [string]$CodexControlRoot
 )
 
 $ErrorActionPreference = "Stop"
+
+# The bridge runs Codex in workspace-write mode.  Codex intentionally protects the
+# personal .codex tree, so a nested Codex process cannot create tmp/session/cache state
+# in an isolated home placed there.  Default the A/B control homes to ignored runtime
+# state inside the AIOptimizer workspace, which the bridge can write without widening
+# the sandbox or exposing unrelated user directories.
+if ([string]::IsNullOrWhiteSpace($CodexControlRoot)) {
+    $CodexControlRoot = Join-Path $AIOptimizerHome ".aioptimizer\codex-controls\ab-v15-v4"
+}
 
 function Write-NewFile {
     param(

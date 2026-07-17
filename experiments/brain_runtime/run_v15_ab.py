@@ -32,7 +32,12 @@ REPO_ROOT = Path(__file__).resolve().parents[2]
 DEFAULT_TASKS = Path(__file__).with_name("v15_build_tasks.json")
 DEFAULT_SCORER = Path(__file__).with_name("score_v15.py")
 DEFAULT_PAIR_ROOT = Path(r"C:\Code\TalentTrader\v15-ab-v4")
-DEFAULT_CONTROL_ROOT = Path.home() / ".codex" / "ab-v15-v4"
+# Nested Codex processes are launched by a bridge Codex that is itself sandboxed to
+# this repository.  A control home under the user's protected ``.codex`` directory is
+# readable but not writable from that outer workspace-write sandbox, so child startup
+# fails before the first turn while creating ``tmp/arg0``.  Keep the isolated homes in
+# ignored workspace runtime state instead.
+DEFAULT_CONTROL_ROOT = REPO_ROOT / ".aioptimizer" / "codex-controls" / "ab-v15-v4"
 DEFAULT_RESULTS_ROOT = REPO_ROOT / "results" / "brain_runtime"
 ALLOWED_AST_KINDS = {"defines", "imports", "forbid_bare_except"}
 

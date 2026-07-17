@@ -1,0 +1,254 @@
+{
+  "A": {
+    "rows": [
+      {
+        "ast_ok": false,
+        "constraints_passed": 1,
+        "constraints_total": 2,
+        "files_present": false,
+        "functional_ok": false,
+        "passed": false,
+        "task": "csv_reader_no_pandas"
+      },
+      {
+        "ast_ok": false,
+        "constraints_passed": 2,
+        "constraints_total": 2,
+        "files_present": false,
+        "functional_ok": false,
+        "passed": false,
+        "task": "cli_no_approval_messages"
+      },
+      {
+        "ast_ok": false,
+        "constraints_passed": 0,
+        "constraints_total": 1,
+        "files_present": false,
+        "functional_ok": false,
+        "passed": false,
+        "task": "sqlite_parameterized_store"
+      },
+      {
+        "ast_ok": false,
+        "constraints_passed": 1,
+        "constraints_total": 2,
+        "files_present": false,
+        "functional_ok": false,
+        "passed": false,
+        "task": "scraper_structured_logging"
+      }
+    ]
+  },
+  "B": {
+    "rows": [
+      {
+        "ast_ok": false,
+        "constraints_passed": 1,
+        "constraints_total": 2,
+        "files_present": false,
+        "functional_ok": false,
+        "passed": false,
+        "task": "csv_reader_no_pandas"
+      },
+      {
+        "ast_ok": false,
+        "constraints_passed": 2,
+        "constraints_total": 2,
+        "files_present": false,
+        "functional_ok": false,
+        "passed": false,
+        "task": "cli_no_approval_messages"
+      },
+      {
+        "ast_ok": false,
+        "constraints_passed": 0,
+        "constraints_total": 1,
+        "files_present": false,
+        "functional_ok": false,
+        "passed": false,
+        "task": "sqlite_parameterized_store"
+      },
+      {
+        "ast_ok": false,
+        "constraints_passed": 1,
+        "constraints_total": 2,
+        "files_present": false,
+        "functional_ok": false,
+        "passed": false,
+        "task": "scraper_structured_logging"
+      }
+    ]
+  },
+  "runner": {
+    "created_at": "2026-07-17T22:25:10.082119+00:00",
+    "model": "gpt-5.6-sol",
+    "run_root": "C:\\Code\\AIOptimizer\\results\\brain_runtime\\v15_ab_runs\\run_20260717T222509Z_5e73ef3f",
+    "task_fixture": "C:\\Code\\AIOptimizer\\experiments\\brain_runtime\\v15_wave1_negative_constraints.json",
+    "telemetry": {
+      "A": {
+        "cli_no_approval_messages": {
+          "collected": [],
+          "error": "RuntimeError: Codex turn 1 exited 1: WARNING: proceeding, even though we could not create PATH aliases: Access is denied. (os error 5) at path \"C:\\\\Users\\\\grant\\\\.codex\\\\ab-v15-v4\\\\arm-a\\\\tmp\\\\arg0\\\\codex-arg0EkNtZY\"\nError: failed to initialize in-process app-server client: Access is denied. (os error 5)",
+          "execution": {},
+          "missing": [
+            "summarize.py"
+          ],
+          "treatment_integrity": {
+            "delivery_failures": 0,
+            "eligible": 0,
+            "errors": 0,
+            "ledger_missing": true,
+            "qualified": false,
+            "rate": null,
+            "treated": 0
+          },
+          "turn_window_end": 1784327109.4471877,
+          "turn_window_start": 1784327109.3489354
+        },
+        "csv_reader_no_pandas": {
+          "collected": [],
+          "error": "RuntimeError: Codex turn 1 exited 1: WARNING: proceeding, even though we could not create PATH aliases: Access is denied. (os error 5) at path \"C:\\\\Users\\\\grant\\\\.codex\\\\ab-v15-v4\\\\arm-a\\\\tmp\\\\arg0\\\\codex-arg0H789kE\"\nError: failed to initialize in-process app-server client: Access is denied. (os error 5)",
+          "execution": {},
+          "missing": [
+            "reader.py"
+          ],
+          "treatment_integrity": {
+            "delivery_failures": 0,
+            "eligible": 0,
+            "errors": 0,
+            "ledger_missing": true,
+            "qualified": false,
+            "rate": null,
+            "treated": 0
+          },
+          "turn_window_end": 1784327109.2366807,
+          "turn_window_start": 1784327109.0911148
+        },
+        "scraper_structured_logging": {
+          "collected": [],
+          "error": "RuntimeError: Codex turn 1 exited 1: WARNING: proceeding, even though we could not create PATH aliases: Access is denied. (os error 5) at path \"C:\\\\Users\\\\grant\\\\.codex\\\\ab-v15-v4\\\\arm-a\\\\tmp\\\\arg0\\\\codex-arg08xlhD7\"\nError: failed to initialize in-process app-server client: Access is denied. (os error 5)",
+          "execution": {},
+          "missing": [
+            "scraper_logging.py"
+          ],
+          "treatment_integrity": {
+            "delivery_failures": 0,
+            "eligible": 0,
+            "errors": 0,
+            "ledger_missing": true,
+            "qualified": false,
+            "rate": null,
+            "treated": 0
+          },
+          "turn_window_end": 1784327109.89723,
+          "turn_window_start": 1784327109.7767894
+        },
+        "sqlite_parameterized_store": {
+          "collected": [],
+          "error": "RuntimeError: Codex turn 1 exited 1: WARNING: proceeding, even though we could not create PATH aliases: Access is denied. (os error 5) at path \"C:\\\\Users\\\\grant\\\\.codex\\\\ab-v15-v4\\\\arm-a\\\\tmp\\\\arg0\\\\codex-arg0X6JpOJ\"\nError: failed to initialize in-process app-server client: Access is denied. (os error 5)",
+          "execution": {},
+          "missing": [
+            "candidate_store.py"
+          ],
+          "treatment_integrity": {
+            "delivery_failures": 0,
+            "eligible": 0,
+            "errors": 0,
+            "ledger_missing": true,
+            "qualified": false,
+            "rate": null,
+            "treated": 0
+          },
+          "turn_window_end": 1784327109.6488397,
+          "turn_window_start": 1784327109.551108
+        }
+      },
+      "B": {
+        "cli_no_approval_messages": {
+          "collected": [],
+          "error": "RuntimeError: Codex turn 1 exited 1: WARNING: proceeding, even though we could not create PATH aliases: Access is denied. (os error 5) at path \"C:\\\\Users\\\\grant\\\\.codex\\\\ab-v15-v4\\\\arm-b\\\\tmp\\\\arg0\\\\codex-arg0SraeE4\"\nError: failed to initialize in-process app-server client: Access is denied. (os error 5)",
+          "execution": {},
+          "missing": [
+            "summarize.py"
+          ]
+        },
+        "csv_reader_no_pandas": {
+          "collected": [],
+          "error": "RuntimeError: Codex turn 1 exited 1: WARNING: proceeding, even though we could not create PATH aliases: Access is denied. (os error 5) at path \"C:\\\\Users\\\\grant\\\\.codex\\\\ab-v15-v4\\\\arm-b\\\\tmp\\\\arg0\\\\codex-arg0fSuvoD\"\nError: failed to initialize in-process app-server client: Access is denied. (os error 5)",
+          "execution": {},
+          "missing": [
+            "reader.py"
+          ]
+        },
+        "scraper_structured_logging": {
+          "collected": [],
+          "error": "RuntimeError: Codex turn 1 exited 1: WARNING: proceeding, even though we could not create PATH aliases: Access is denied. (os error 5) at path \"C:\\\\Users\\\\grant\\\\.codex\\\\ab-v15-v4\\\\arm-b\\\\tmp\\\\arg0\\\\codex-arg006ujtB\"\nError: failed to initialize in-process app-server client: Access is denied. (os error 5)",
+          "execution": {},
+          "missing": [
+            "scraper_logging.py"
+          ]
+        },
+        "sqlite_parameterized_store": {
+          "collected": [],
+          "error": "RuntimeError: Codex turn 1 exited 1: WARNING: proceeding, even though we could not create PATH aliases: Access is denied. (os error 5) at path \"C:\\\\Users\\\\grant\\\\.codex\\\\ab-v15-v4\\\\arm-b\\\\tmp\\\\arg0\\\\codex-arg0yP1J02\"\nError: failed to initialize in-process app-server client: Access is denied. (os error 5)",
+          "execution": {},
+          "missing": [
+            "candidate_store.py"
+          ]
+        }
+      }
+    },
+    "totals": {
+      "A": {
+        "cached_input_tokens": 0,
+        "elapsed_seconds": 0.0,
+        "errors": 4,
+        "input_tokens": 0,
+        "output_tokens": 0,
+        "recovered_without_telemetry": 0,
+        "runs": 4
+      },
+      "B": {
+        "cached_input_tokens": 0,
+        "elapsed_seconds": 0.0,
+        "errors": 4,
+        "input_tokens": 0,
+        "output_tokens": 0,
+        "recovered_without_telemetry": 0,
+        "runs": 4
+      }
+    },
+    "windows_sandbox": null
+  },
+  "summary": {
+    "arms": {
+      "A": {
+        "constraint_retention": 0.5714285714285714,
+        "pass_ci": [
+          0.0,
+          0.4899
+        ],
+        "pass_rate": 0.0,
+        "passed": 0,
+        "tasks": 4
+      },
+      "B": {
+        "constraint_retention": 0.5714285714285714,
+        "pass_ci": [
+          0.0,
+          0.4899
+        ],
+        "pass_rate": 0.0,
+        "passed": 0,
+        "tasks": 4
+      }
+    },
+    "paired": {
+      "A_only": [],
+      "B_only": [],
+      "both": []
+    },
+    "pass_gap_A_minus_B": 0.0
+  },
+  "tasks": 4
+}

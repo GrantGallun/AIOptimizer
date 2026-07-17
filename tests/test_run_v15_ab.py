@@ -5,6 +5,8 @@ import unittest
 from pathlib import Path
 
 from experiments.brain_runtime.run_v15_ab import (
+    DEFAULT_CONTROL_ROOT,
+    REPO_ROOT,
     check_treatment_integrity,
     collect_task_artifacts,
     load_tasks,
@@ -18,6 +20,13 @@ TASKS_PATH = Path("experiments/brain_runtime/v15_build_tasks.json")
 
 
 class RunV15ABTests(unittest.TestCase):
+    def test_default_control_home_is_in_ignored_writable_runtime_state(self):
+        self.assertEqual(
+            DEFAULT_CONTROL_ROOT,
+            REPO_ROOT / ".aioptimizer" / "codex-controls" / "ab-v15-v4",
+        )
+        self.assertNotIn(".codex", {part.casefold() for part in DEFAULT_CONTROL_ROOT.parts})
+
     def test_all_twelve_tasks_pass_frozen_schema_validation(self):
         tasks = load_tasks(TASKS_PATH)
         self.assertEqual(len(tasks), 12)
