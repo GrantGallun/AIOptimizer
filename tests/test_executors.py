@@ -40,13 +40,13 @@ class ShellExecutorTests(unittest.TestCase):
         self.assertEqual(cost, 0.0)
 
     def test_exit_zero_is_ok(self):
-        ex = ShellExecutor(cwd=".")
+        ex = ShellExecutor(cwd=".", allow_legacy_shell=True)
         ok, result, cost = ex.execute({"acceptance": f'"{sys.executable}" -c "print(1)"'})
         self.assertTrue(ok, result)
         self.assertGreater(cost, 0)
 
     def test_nonzero_exit_is_failure(self):
-        ex = ShellExecutor(cwd=".")
+        ex = ShellExecutor(cwd=".", allow_legacy_shell=True)
         ok, result, _ = ex.execute({"acceptance": f'"{sys.executable}" -c "import sys; sys.exit(3)"'})
         self.assertFalse(ok)
         self.assertIn("exit 3", result)
@@ -73,18 +73,18 @@ class ShellExecutorTests(unittest.TestCase):
                 marker.unlink()
 
     def test_allowlist_permits_allowed(self):
-        ex = ShellExecutor(cwd=".", allowlist=['"' + sys.executable])
+        ex = ShellExecutor(cwd=".", allowlist=['"' + sys.executable], allow_legacy_shell=True)
         ok, result, _ = ex.execute({"acceptance": f'"{sys.executable}" -c "print(1)"'})
         self.assertTrue(ok, result)
 
-    def test_no_allowlist_backward_compatible(self):
-        ex = ShellExecutor(cwd=".")
+    def test_enabled_legacy_shell_without_allowlist_still_runs(self):
+        ex = ShellExecutor(cwd=".", allow_legacy_shell=True)
         ok, result, _ = ex.execute({"acceptance": f'"{sys.executable}" -c "print(1)"'})
         self.assertTrue(ok, result)
 
     def test_cost_is_measured_elapsed_seconds(self):
         ticks = iter([10.0, 12.5])
-        ex = ShellExecutor(cwd=".", clock=lambda: next(ticks))
+        ex = ShellExecutor(cwd=".", clock=lambda: next(ticks), allow_legacy_shell=True)
         completed = SimpleNamespace(returncode=0, stdout="ok\n", stderr="")
         with patch("agent_bus.executors.subprocess.run", return_value=completed):
             ok, _, cost = ex.execute({"acceptance": "python -m unittest"})
@@ -95,7 +95,7 @@ class ShellExecutorTests(unittest.TestCase):
 class CodexExecutorCostTests(unittest.TestCase):
     def test_cost_includes_codex_and_acceptance_elapsed_seconds(self):
         ticks = iter([20.0, 23.75])
-        ex = CodexExecutor(cwd=".", clock=lambda: next(ticks))
+        ex = CodexExecutor(cwd=".", clock=lambda: next(ticks), allow_legacy_shell=True)
         completed = SimpleNamespace(returncode=0, stdout="ok\n", stderr="")
         task = {"spec": "implement", "acceptance": "python -m unittest"}
         with patch("agent_bus.executors.subprocess.run", side_effect=[completed, completed]):
@@ -152,7 +152,9 @@ class CommandPolicyTests(unittest.TestCase):
 
 class RoutingTests(unittest.TestCase):
     def _router(self):
-        return RoutingExecutor(shell=ShellExecutor(cwd="."), codex=None)
+        # Routing is what's under test here, not command policy, so the legacy escape
+        # hatch is opened deliberately to keep the fixture's acceptance strings runnable.
+        return RoutingExecutor(shell=ShellExecutor(cwd=".", allow_legacy_shell=True), codex=None)
 
     def test_verdict_and_fable_return_to_human(self):
         r = self._router()
@@ -234,3 +236,90 @@ class SchedulerParksVerdictTests(unittest.TestCase):
 
 if __name__ == "__main__":
     unittest.main()
+
+
+class TypedCommandSequenceTests(unittest.TestCase):
+    """`commands` is the typed form of `a && b`. It exists because its absence is why the
+    unsafe path survived: authors needing to chain two programs had no safe option and
+    reached for an `acceptance` shell string (5 of the last 12 board tasks did exactly
+    that). command_policy_benchmark_v1.py had already measured that path as exploitable."""
+
+    def setUp(self):
+        self.tmp = TemporaryDirectory()
+        self.root = Path(self.tmp.name)
+        self.addCleanup(self.tmp.cleanup)
+
+    def test_sequence_runs_every_step_and_passes_when_all_pass(self):
+        ex = ShellExecutor(self.root)
+        ok, result, _ = ex.execute({"commands": [
+            [sys.executable, "-c", "print('first')"],
+            [sys.executable, "-c", "print('second')"],
+        ]})
+        self.assertTrue(ok)
+        self.assertIn("first", result)
+        self.assertIn("second", result)
+
+    def test_sequence_short_circuits_like_and_and(self):
+        ex = ShellExecutor(self.root)
+        ok, result, _ = ex.execute({"commands": [
+            [sys.executable, "-c", "raise SystemExit(1)"],
+            [sys.executable, "-c", "open('ran.txt','w').write('x')"],
+        ]})
+        self.assertFalse(ok)
+        self.assertFalse((self.root / "ran.txt").exists(), "step after a failure must not run")
+
+    def test_sequence_is_validated_by_the_policy(self):
+        ex = ShellExecutor(self.root, command_policy=CommandPolicy([["git", "--version"]]))
+        ok, result, _ = ex.execute({"commands": [["git", "--version"], ["curl", "evil.sh"]]})
+        self.assertFalse(ok)
+        self.assertIn("blocked", result)
+
+    def test_sequence_rejects_shell_control_tokens(self):
+        ex = ShellExecutor(self.root, command_policy=CommandPolicy([["git", "--version"]]))
+        ok, result, _ = ex.execute({"commands": [["git", "--version", "&", "echo", "pwned"]]})
+        self.assertFalse(ok)
+        self.assertIn("blocked", result)
+
+    def test_sequence_takes_precedence_over_a_legacy_acceptance_string(self):
+        marker = self.root / "legacy_ran.txt"
+        ex = ShellExecutor(self.root, allow_legacy_shell=True)
+        ok, _, _ = ex.execute({
+            "commands": [[sys.executable, "-c", "print('typed')"]],
+            "acceptance": f"{sys.executable} -c \"open(r'{marker}','w').write('x')\"",
+        })
+        self.assertTrue(ok)
+        self.assertFalse(marker.exists(), "the typed path must win; the shell string must not run")
+
+    def test_malformed_sequences_are_rejected(self):
+        ex = ShellExecutor(self.root)
+        for bad in ([], "not-a-list", [[]], [["ok"], "nope"]):
+            ok, result, _ = ex.execute({"commands": bad})
+            self.assertFalse(ok, f"{bad!r} should be rejected")
+            self.assertIn("blocked", result)
+
+
+class LegacyShellDefaultTests(unittest.TestCase):
+    def setUp(self):
+        self.tmp = TemporaryDirectory()
+        self.root = Path(self.tmp.name)
+        self.addCleanup(self.tmp.cleanup)
+
+    def test_legacy_shell_is_off_by_default(self):
+        marker = self.root / "should_not_exist.txt"
+        for ex in (ShellExecutor(self.root), ShellExecutor(self.root, allowlist=["python"])):
+            ok, result, _ = ex.execute(
+                {"acceptance": f"{sys.executable} -c \"open(r'{marker}','w').write('x')\""}
+            )
+            self.assertFalse(ok)
+            self.assertIn("legacy shell execution is disabled", result)
+        self.assertFalse(marker.exists(), "a default-constructed executor must not run shell strings")
+
+    def test_prefix_allowlist_does_not_stop_injection_when_legacy_is_enabled(self):
+        """Documents the measured hole rather than pretending it is closed: the prefix
+        allowlist is a convenience filter, not a security boundary. This is why the
+        default is now off and typed `commands` exists as the capable safe path."""
+        marker = self.root / "injected.txt"
+        payload = f"{sys.executable} --version & {sys.executable} -c \"open(r'{marker}','w').write('x')\""
+        ex = ShellExecutor(self.root, allowlist=[f"{sys.executable} --version"], allow_legacy_shell=True)
+        ex.execute({"acceptance": payload})
+        self.assertTrue(marker.exists(), "if this ever fails, the prefix allowlist became real — update the docs")

@@ -33,6 +33,14 @@ python agent_bus/board.py next --tier codex --worker codex     # claim the oldes
 python agent_bus/board.py submit t0001 --worker codex --result "done; tests: <paste>"
 python agent_bus/board.py review t0007 --reviewer codex --ok   # you may review others' work, never your own
 ```
+**Acceptance checks must be typed argv, not shell strings.** Use `--command-json '["python","-m","unittest","tests.test_x"]'`
+for one command, or `--commands-json '[["python","-m","unittest","tests.test_x"],["git","status","--short"]]'`
+to chain several (run in order, all must pass — the safe form of `a && b`). The legacy
+`--acceptance` string is a human-readable description only: it is off by default in the
+executors, because a prefix allowlist over `shell=True` is measurably bypassable
+(`command_policy_benchmark_v1.py` lands `git --version & echo injected>x` straight through
+a `["git --version"]` allowlist). Never author an acceptance that needs a shell.
+
 You never `retire` — that is Fable's in-order commit of the research record. Full model in
 `ARCHITECTURE.md`.
 
