@@ -1,7 +1,11 @@
 # Pre-Registration v18: Does the product beat NO product? (untreated baselines)
 
 Registered: 2026-07-17 by Fable (Fable 5) — **before any v18 run, dev or hidden.**
-Status: REGISTERED — not yet run.
+Status: **H-v18a CONFIRMED; H-v18b = PARITY branch** (hidden 1409/1423/1427, read once,
+n=120/arm, endpoint `answer_correct` per Amendment v18.1). attention 1.000 [.969,1.000] @933 tok;
+untreated_full 1.000 [.969,1.000] @6431 tok; untreated_tail **0.000** [.000,.031] @686 tok;
+raw_compiler 0.617 [.527,.699] @917 tok. All three committed predictions (P1/P2/P3) held.
+Verdict + product-claim consequences: HYP-20260717-42 in the graveyard.
 
 ## Origin — the external-validity hole the 2026-07-17 audit exposed
 

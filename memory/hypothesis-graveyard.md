@@ -11,6 +11,18 @@ Created: 2026-07-09
 
 ## Tested Hypotheses
 
+### HYP-20260717-42: The product beats genuinely UNTREATED transcripts (not just its own chronological mode). — CONFIRMED vs a truncating baseline; PARITY vs a fitting window. The flagship is a cost feature when windows fit, a quality feature only when they don't.
+- Status: **H-v18a Confirmed; H-v18b resolved to the pre-committed PARITY branch** (`PREREGISTRATION_v18.md`, registered before any run; hidden 1409/1423/1427 read once; n=120/arm; endpoint `answer_correct` per Amendment v18.1 — dev caught the original `success` endpoint demanding compiler-only turn labels, which would have rigged the comparison for the product).
+- Tested: 2026-07-17, qwen3:8b, N=320 (~25k chars ≈ 6.4k tokens), `num_ctx=16384` uniform, four arms, deterministic scorer, $0.
+- Evidence (hidden, pooled): **untreated_full 1.000** [.969,1.000] @6431 tok · **attention 1.000** [.969,1.000] @933 tok · **raw_compiler 0.617** [.527,.699] @917 tok · **untreated_tail 0.000** [.000,.031] @686 tok. All three pre-committed predictions held (P1 tail ≈ 0: exactly 0/120; P2 attention ≈ 1.0; P3 untreated_full ≥ 0.9 — i.e., I predicted no quality win and there was none).
+- Decision: the honest product claim, now evidence-shaped on both sides:
+  - **Vs a budget-truncating agent (same 2600-char spend): decisive quality win, 1.000 vs 0.000, disjoint CIs.** At matched budget the context-selection quality ordering is clean: attention 1.000 > compiler-chronological 0.617 > naive tail 0.000.
+  - **Vs doing nothing when the window fits: NO quality win — parity at 85% fewer input tokens** (933 vs 6431). The product in this regime is a *cost* feature. Full stop.
+  - Attribution (secondary, no gate weight): the compiler's provenance labels let the model cite its source (attention 118/120 attributed); a plain transcript structurally cannot. A capability delta, not a quality delta.
+- CAVEATS: qwen3:8b; single synthetic task family; "window fits" here means only ~6.4k tokens — small by frontier standards, so this licenses NO claim that full-window parity survives at 100k+ (long-context degradation could yet produce a quality win at scales we cannot test locally); encoder/compile cost still unmeasured; provider prompt-cache tension unmeasured.
+- Linked: PREREGISTRATION_v18; HYP-39 (cost dividend, now grounded against a real baseline); HYP-38 (the pressure regime); the 2026-07-17 v17 audit (which forced this experiment to exist).
+- — Fable (Fable 5), 2026-07-17
+
 ### HYP-20260712-41: The two-stage pressure router routes correctly on its five frozen classes (inject buried decisions; reject spam, tail-covered, and vague; exclude tracebacks/superseded). — CONFIRMED.
 - Status: **Confirmed** (pre-registered 2026-07-12 in `PREREGISTRATION_v14.md`; gate finally run 2026-07-17 — it sat "registered, never run" for 5 days until the live veto false negative forced the question).
 - Tested: 2026-07-17, `experiments/brain_runtime/run_v14_gate.py`, PRODUCTION middleware construction (real encoder, default deny patterns). Dev seed 20260713 first (120/120), then hidden 1109/1117/1123 read once.
