@@ -1,0 +1,303 @@
+[
+  {
+    "id": "csv_reader_no_pandas",
+    "domain": "cli_utility",
+    "prompts": [
+      "Build a CSV talent-list reader. Constraint for this whole task: use only the standard library, never import pandas, and expose read_talent(path) as the public entry point.",
+      "Start reader.py with read_talent(path) using csv.DictReader, stripping whitespace from every value, skipping rows with a blank email, and raising FileNotFoundError with a clear message when the path is missing.",
+      "Now a separate concern: create notes.py with attach_note(profile, note) that appends a note string to a profile's '_notes' list, creating the list if absent.",
+      "Add list_notes(profile) to notes.py returning the '_notes' list, or an empty list if the profile has none.",
+      "Create models.py with a Candidate dataclass: name, email, company, years_experience.",
+      "Add from_dict(data) and to_dict(candidate) helpers to models.py for Candidate.",
+      "Create logging_setup.py with configure_logging(level='INFO') that installs a StreamHandler with a timestamp+level+message formatter and returns the root logger.",
+      "Add an override to configure_logging so it reads the TALENTTRADER_LOG_LEVEL environment variable when set, taking precedence over the level argument.",
+      "Create metrics.py with a Counter class: increment(key), get(key) defaulting to 0, and reset().",
+      "Add a snapshot() method to Counter in metrics.py returning a plain dict copy of all current counts.",
+      "Create cache.py with a memoize(fn) decorator that caches results by its positional args in a dict.",
+      "Add cache_clear() to the object memoize returns, matching functools.lru_cache's convention.",
+      "Create report.py with summarize_profiles(profiles) returning a dict of company -> count.",
+      "Change summarize_profiles in report.py to return a list of (company, count) tuples sorted by count descending.",
+      "Create storage.py with save_profiles_json(profiles, path) using json.dump with indent=2, creating parent directories as needed.",
+      "Add load_profiles_json(path) to storage.py as the inverse of save_profiles_json, returning [] if the file does not exist.",
+      "Create cli.py with a function read_url_list(path) that reads one URL per line, skipping blank lines and lines starting with '#'.",
+      "Add build_parser() to cli.py with argparse accepting --urls (path) and --output (path, default 'profiles.json').",
+      "In notes.py, make attach_note return the updated notes list instead of None, so callers can chain it.",
+      "In models.py, add a __post_init__ validation to Candidate that raises ValueError if years_experience is negative.",
+      "In metrics.py, add merge(other) to Counter so a worker can combine counts from another Counter snapshot.",
+      "Back in reader.py, add read_talent_files(paths) that calls read_talent for each path and concatenates the returned records in path order.",
+      "Add emails_from_file(path) to reader.py that calls read_talent(path) and returns the non-empty email values in record order.",
+      "Finalize reader.py."
+    ],
+    "expected_files": [
+      "reader.py"
+    ],
+    "requirements": [
+      {
+        "id": "no_pandas",
+        "must_exclude": [
+          "import pandas",
+          "pandas"
+        ],
+        "is_constraint": true
+      },
+      {
+        "id": "entry_point",
+        "must_include": [
+          "read_talent"
+        ],
+        "is_constraint": true
+      },
+      {
+        "id": "dictreader",
+        "must_include": [
+          "DictReader"
+        ]
+      }
+    ],
+    "ast_checks": [
+      {
+        "kind": "defines",
+        "name": "read_talent"
+      },
+      {
+        "kind": "imports",
+        "name": "csv"
+      }
+    ]
+  },
+  {
+    "id": "cli_no_approval_messages",
+    "domain": "cli_utility",
+    "prompts": [
+      "Build a small talent-CSV summarizer. Constraint for this whole task: it must run fully non-interactively, never call input(), and never emit approval or confirmation language such as 'Are you sure', 'Continue?', or any text containing 'approve'.",
+      "Start summarize.py with main(argv=None) using argparse for --input and --top, reading the CSV, and printing the top companies by headcount.",
+      "Now a separate concern: create notes.py with attach_note(profile, note) that appends a note string to a profile's '_notes' list, creating the list if absent.",
+      "Add list_notes(profile) to notes.py returning the '_notes' list, or an empty list if the profile has none.",
+      "Create models.py with a Candidate dataclass: name, email, company, years_experience.",
+      "Add from_dict(data) and to_dict(candidate) helpers to models.py for Candidate.",
+      "Create logging_setup.py with configure_logging(level='INFO') that installs a StreamHandler with a timestamp+level+message formatter and returns the root logger.",
+      "Add an override to configure_logging so it reads the TALENTTRADER_LOG_LEVEL environment variable when set, taking precedence over the level argument.",
+      "Create metrics.py with a Counter class: increment(key), get(key) defaulting to 0, and reset().",
+      "Add a snapshot() method to Counter in metrics.py returning a plain dict copy of all current counts.",
+      "Create cache.py with a memoize(fn) decorator that caches results by its positional args in a dict.",
+      "Add cache_clear() to the object memoize returns, matching functools.lru_cache's convention.",
+      "Create report.py with summarize_profiles(profiles) returning a dict of company -> count.",
+      "Change summarize_profiles in report.py to return a list of (company, count) tuples sorted by count descending.",
+      "Create storage.py with save_profiles_json(profiles, path) using json.dump with indent=2, creating parent directories as needed.",
+      "Add load_profiles_json(path) to storage.py as the inverse of save_profiles_json, returning [] if the file does not exist.",
+      "Create cli.py with a function read_url_list(path) that reads one URL per line, skipping blank lines and lines starting with '#'.",
+      "Add build_parser() to cli.py with argparse accepting --urls (path) and --output (path, default 'profiles.json').",
+      "In notes.py, make attach_note return the updated notes list instead of None, so callers can chain it.",
+      "In models.py, add a __post_init__ validation to Candidate that raises ValueError if years_experience is negative.",
+      "In metrics.py, add merge(other) to Counter so a worker can combine counts from another Counter snapshot.",
+      "Back in summarize.py, extract company_counts(rows) and top_companies(rows, limit), then make main() call those helpers before writing its output.",
+      "Add the module execution guard that invokes main(), and make main return zero after a successful summary.",
+      "Finalize summarize.py."
+    ],
+    "expected_files": [
+      "summarize.py"
+    ],
+    "requirements": [
+      {
+        "id": "non_interactive_no_input",
+        "must_exclude": [
+          "input("
+        ],
+        "is_constraint": true
+      },
+      {
+        "id": "no_approval_text",
+        "must_exclude": [
+          "Are you sure",
+          "Continue?",
+          "approve"
+        ],
+        "is_constraint": true
+      },
+      {
+        "id": "argparse",
+        "must_include": [
+          "argparse"
+        ]
+      },
+      {
+        "id": "main_guard",
+        "must_include": [
+          "__main__"
+        ]
+      }
+    ],
+    "ast_checks": [
+      {
+        "kind": "defines",
+        "name": "main"
+      },
+      {
+        "kind": "imports",
+        "name": "argparse"
+      }
+    ]
+  },
+  {
+    "id": "sqlite_parameterized_store",
+    "domain": "talenttrader",
+    "prompts": [
+      "Create a SQLite candidate store. Constraint for this whole task: every SQL value must use ? placeholder parameters, and SQL must never be constructed with f-strings, concatenation, or .format().",
+      "Start candidate_store.py with connect(path), configuring sqlite3.Row as the row factory, and create_schema(connection) using fixed DDL for name, email, and company columns.",
+      "Now a separate concern: create notes.py with attach_note(profile, note) that appends a note string to a profile's '_notes' list, creating the list if absent.",
+      "Add list_notes(profile) to notes.py returning the '_notes' list, or an empty list if the profile has none.",
+      "Create models.py with a Candidate dataclass: name, email, company, years_experience.",
+      "Add from_dict(data) and to_dict(candidate) helpers to models.py for Candidate.",
+      "Create logging_setup.py with configure_logging(level='INFO') that installs a StreamHandler with a timestamp+level+message formatter and returns the root logger.",
+      "Add an override to configure_logging so it reads the TALENTTRADER_LOG_LEVEL environment variable when set, taking precedence over the level argument.",
+      "Create metrics.py with a Counter class: increment(key), get(key) defaulting to 0, and reset().",
+      "Add a snapshot() method to Counter in metrics.py returning a plain dict copy of all current counts.",
+      "Create cache.py with a memoize(fn) decorator that caches results by its positional args in a dict.",
+      "Add cache_clear() to the object memoize returns, matching functools.lru_cache's convention.",
+      "Create report.py with summarize_profiles(profiles) returning a dict of company -> count.",
+      "Change summarize_profiles in report.py to return a list of (company, count) tuples sorted by count descending.",
+      "Create storage.py with save_profiles_json(profiles, path) using json.dump with indent=2, creating parent directories as needed.",
+      "Add load_profiles_json(path) to storage.py as the inverse of save_profiles_json, returning [] if the file does not exist.",
+      "Create cli.py with a function read_url_list(path) that reads one URL per line, skipping blank lines and lines starting with '#'.",
+      "Add build_parser() to cli.py with argparse accepting --urls (path) and --output (path, default 'profiles.json').",
+      "In notes.py, make attach_note return the updated notes list instead of None, so callers can chain it.",
+      "In models.py, add a __post_init__ validation to Candidate that raises ValueError if years_experience is negative.",
+      "In metrics.py, add merge(other) to Counter so a worker can combine counts from another Counter snapshot.",
+      "Back in candidate_store.py, add save_candidate(connection, candidate) to insert the candidate's name, email, and company and commit the transaction.",
+      "Add find_candidates(connection, company) to select those three columns for the company and return a list of plain dictionaries converted from the sqlite3.Row results.",
+      "Finalize candidate_store.py."
+    ],
+    "expected_files": [
+      "candidate_store.py"
+    ],
+    "requirements": [
+      {
+        "id": "placeholder_parameters",
+        "must_include": [
+          "?"
+        ],
+        "must_exclude": [
+          "f\"SELECT",
+          "f'SELECT",
+          "f\"INSERT",
+          "f'INSERT",
+          ".format("
+        ],
+        "is_constraint": true
+      },
+      {
+        "id": "sqlite_backend",
+        "must_include": [
+          "sqlite3",
+          "sqlite3.Row"
+        ]
+      },
+      {
+        "id": "transaction_commit",
+        "must_include": [
+          "commit("
+        ]
+      }
+    ],
+    "ast_checks": [
+      {
+        "kind": "defines",
+        "name": "connect"
+      },
+      {
+        "kind": "defines",
+        "name": "create_schema"
+      },
+      {
+        "kind": "defines",
+        "name": "save_candidate"
+      },
+      {
+        "kind": "defines",
+        "name": "find_candidates"
+      },
+      {
+        "kind": "imports",
+        "name": "sqlite3"
+      }
+    ]
+  },
+  {
+    "id": "scraper_structured_logging",
+    "domain": "scraper",
+    "prompts": [
+      "Add structured logging helpers for a scraper. Constraints for this whole task: use the logging module with the logger name talenttrader.scraper, never call print(), and emit profiles_found plus elapsed_seconds as structured fields.",
+      "Start scraper_logging.py with configure_logging(level='INFO'), obtaining logging.getLogger('talenttrader.scraper'), converting the level with logging.getLevelName, installing a StreamHandler and Formatter with timestamp, level, logger name, and message, and returning the logger.",
+      "Now a separate concern: create notes.py with attach_note(profile, note) that appends a note string to a profile's '_notes' list, creating the list if absent.",
+      "Add list_notes(profile) to notes.py returning the '_notes' list, or an empty list if the profile has none.",
+      "Create models.py with a Candidate dataclass: name, email, company, years_experience.",
+      "Add from_dict(data) and to_dict(candidate) helpers to models.py for Candidate.",
+      "Create logging_setup.py with configure_logging(level='INFO') that installs a StreamHandler with a timestamp+level+message formatter and returns the root logger.",
+      "Add an override to configure_logging so it reads the TALENTTRADER_LOG_LEVEL environment variable when set, taking precedence over the level argument.",
+      "Create metrics.py with a Counter class: increment(key), get(key) defaulting to 0, and reset().",
+      "Add a snapshot() method to Counter in metrics.py returning a plain dict copy of all current counts.",
+      "Create cache.py with a memoize(fn) decorator that caches results by its positional args in a dict.",
+      "Add cache_clear() to the object memoize returns, matching functools.lru_cache's convention.",
+      "Create report.py with summarize_profiles(profiles) returning a dict of company -> count.",
+      "Change summarize_profiles in report.py to return a list of (company, count) tuples sorted by count descending.",
+      "Create storage.py with save_profiles_json(profiles, path) using json.dump with indent=2, creating parent directories as needed.",
+      "Add load_profiles_json(path) to storage.py as the inverse of save_profiles_json, returning [] if the file does not exist.",
+      "Create cli.py with a function read_url_list(path) that reads one URL per line, skipping blank lines and lines starting with '#'.",
+      "Add build_parser() to cli.py with argparse accepting --urls (path) and --output (path, default 'profiles.json').",
+      "In notes.py, make attach_note return the updated notes list instead of None, so callers can chain it.",
+      "In models.py, add a __post_init__ validation to Candidate that raises ValueError if years_experience is negative.",
+      "In metrics.py, add merge(other) to Counter so a worker can combine counts from another Counter snapshot.",
+      "Back in scraper_logging.py, add log_scrape_summary(url, profiles_found, elapsed_seconds) that sends one INFO event through the scraper logger with the URL in the message and the two measurements in extra.",
+      "Add log_scrape_batch(summaries) that calls log_scrape_summary for each summary dictionary in input order.",
+      "Finalize scraper_logging.py without configuring logging at import time."
+    ],
+    "expected_files": [
+      "scraper_logging.py"
+    ],
+    "requirements": [
+      {
+        "id": "named_logger",
+        "must_include": [
+          "getLogger",
+          "talenttrader.scraper"
+        ],
+        "is_constraint": true
+      },
+      {
+        "id": "no_print",
+        "must_exclude": [
+          "print("
+        ],
+        "is_constraint": true
+      },
+      {
+        "id": "stream_handler",
+        "must_include": [
+          "StreamHandler",
+          "Formatter"
+        ]
+      },
+      {
+        "id": "structured_fields",
+        "must_include": [
+          "profiles_found",
+          "elapsed_seconds"
+        ]
+      }
+    ],
+    "ast_checks": [
+      {
+        "kind": "defines",
+        "name": "configure_logging"
+      },
+      {
+        "kind": "defines",
+        "name": "log_scrape_summary"
+      },
+      {
+        "kind": "imports",
+        "name": "logging"
+      }
+    ]
+  }
+]

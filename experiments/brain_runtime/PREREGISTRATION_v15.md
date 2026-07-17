@@ -274,3 +274,40 @@ arms); Fable read arm A's `scraper.py` in full — `fetch_profiles` correctly ca
 green-lit per Amendments v15.1-v15.3/v15.5, pending only the agent_bus governor's budget ceiling
 (hit mid-pilot; bridge halted; separate operational blocker, not a v15 readiness question — see
 session handoff). — Fable (Fable 5), 2026-07-17
+
+## Amendment v15.6 (2026-07-17) — reduced first wave, EXPLORATORY, pre-registered before any run
+
+Corrected cost accounting made the true scope of the full confirmatory run visible: 12 tasks x
+>=2 replicates x 2 arms x ~26 turns/arm-run ~= 1,248 real Codex turns, roughly 10x what the two
+pilots together spent. Given that scale and genuine uncertainty about whether the effect
+transfers from the synthetic retrieval benchmarks (HYP-38/39/42) to real tool-using agent work,
+the user asked for a smaller, cheaper slice first rather than committing the full spend blind.
+
+**Why these 4 tasks, pre-committed reasoning (not post-hoc):** real coding agents have file-read
+tools the synthetic no-tool retrieval benchmarks never had. A *positive* buried constraint
+("call `rate_limited_get`") leaves a discoverable trace once satisfied — an agent that re-reads
+its own file before extending it can recover the rule from the code itself, without needing the
+context-injection product at all. A *negative* constraint ("never import pandas", "never print()",
+"no bare except", "never emit approval prompts") leaves no artifact to discover; there is nothing
+in the file that reveals what NOT to do. If the product's advantage transfers to real agent work
+at all, it should be most visible on negative constraints, least visible on positive ones. Four
+of the twelve tasks are negative-constraint-shaped: `csv_reader_no_pandas`, `cli_no_approval_messages`,
+`sqlite_parameterized_store`, `scraper_structured_logging` — frozen as
+`experiments/brain_runtime/v15_wave1_negative_constraints.json`, byte-identical entries from the
+canonical 12-task file.
+
+**Design**: the 4 tasks above, 1 replicate, both arms (~208 real turns, ~4x one pilot). Run via:
+    python experiments/brain_runtime/run_v15_ab.py --tasks experiments/brain_runtime/v15_wave1_negative_constraints.json --expected-count 4
+
+**Explicitly NOT the confirmatory gate.** n=4 tasks x 1 replicate is far below the pre-registered
+"n=12 x >=2 replicates" design and cannot produce a Confirmed/Refuted verdict — no Wilson
+significance claim, no pass/fail gate. This wave answers a narrower, honest question: **is there
+directional signal on the tasks most likely to show one**, cheaply, before deciding whether the
+full spend is warranted. Reporting is descriptive only: per-task pass (A vs B), constraint-
+retention (A vs B), and the treatment-integrity summary (now using the v15.5-corrected gate).
+4/4 A-wins-or-ties with real constraint-retention gaps would be an honest reason to fund the
+full run; 0/4 or a mixed picture with no clear pattern is an honest reason to stop here and
+report v15 Inconclusive rather than spend the other ~1,000 turns chasing it — that is a legitimate,
+reportable outcome per the original prereg's own framing ("Null (equally reportable): the
+optimizer does not measurably change real build quality at this n").
+— Fable (Fable 5), 2026-07-17
