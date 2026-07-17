@@ -6,8 +6,27 @@ from tempfile import TemporaryDirectory
 from unittest.mock import patch
 
 from agent_bus.board import Board
-from agent_bus.codex_bridge import PROMPT_TEMPLATE, build_codex_command, commit_completed_task, publish_presence, resolve_codex
+from agent_bus.codex_bridge import (
+    PROMPT_TEMPLATE,
+    BridgeGovernor,
+    DispatchGuard,
+    build_codex_command,
+    commit_completed_task,
+    publish_presence,
+    resolve_codex,
+)
 from agent_bus.cache import Cache
+
+
+class FakeClock:
+    def __init__(self):
+        self.now = 0.0
+
+    def __call__(self):
+        return self.now
+
+    def advance(self, seconds):
+        self.now += seconds
 
 
 class CodexBridgeResolutionTests(unittest.TestCase):
@@ -123,6 +142,97 @@ class CodexBridgePresenceTests(unittest.TestCase):
             row = cache.get("status.codex")
             self.assertEqual(row["value"], "bridge online/idle; no ready Codex tasks")
             self.assertEqual(row["writer"], "codex")
+
+
+class DispatchGuardTests(unittest.TestCase):
+    """The 2026-07-17 hot loop: a corrupt ~/.codex/rules file made every `codex exec`
+    exit 1 at startup, and the bridge re-dispatched the same ready task every poll."""
+
+    def test_a_failing_task_is_not_immediately_redispatched(self):
+        clock = FakeClock()
+        guard = DispatchGuard(clock=clock)
+        self.assertIsNone(guard.blocked_reason("t0050"))
+        guard.record_failure("t0050")
+        # This is the regression: before the guard, the next poll dispatched it again.
+        self.assertIn("backing off", guard.blocked_reason("t0050"))
+
+    def test_backoff_expires_and_grows_exponentially(self):
+        clock = FakeClock()
+        guard = DispatchGuard(max_task_failures=5, backoff_base=30.0, clock=clock)
+        guard.record_failure("t1")
+        clock.advance(30.0)
+        self.assertIsNone(guard.blocked_reason("t1"))
+        guard.record_failure("t1")
+        clock.advance(30.0)
+        self.assertIsNotNone(guard.blocked_reason("t1"))  # second wait is 60s, not 30s
+        clock.advance(30.0)
+        self.assertIsNone(guard.blocked_reason("t1"))
+
+    def test_backoff_is_capped(self):
+        clock = FakeClock()
+        guard = DispatchGuard(max_task_failures=99, backoff_base=30.0, backoff_cap=100.0, clock=clock)
+        for _ in range(10):
+            guard.record_failure("t1")
+        clock.advance(100.0)
+        self.assertIsNone(guard.blocked_reason("t1"))
+
+    def test_task_is_quarantined_after_repeated_failures(self):
+        clock = FakeClock()
+        guard = DispatchGuard(max_task_failures=3, clock=clock)
+        for _ in range(3):
+            guard.record_failure("t0050")
+        self.assertTrue(guard.is_quarantined("t0050"))
+        clock.advance(10_000.0)
+        # Quarantine outlasts any backoff: the task never costs another process.
+        self.assertIn("quarantined", guard.blocked_reason("t0050"))
+
+    def test_success_clears_failure_state(self):
+        guard = DispatchGuard(clock=FakeClock())
+        guard.record_failure("t1")
+        guard.record_success("t1")
+        self.assertIsNone(guard.blocked_reason("t1"))
+        self.assertEqual(guard.consecutive_failures, 0)
+
+    def test_global_failures_across_distinct_tasks_flag_a_broken_harness(self):
+        guard = DispatchGuard(max_global_failures=3, clock=FakeClock())
+        for task_id in ("t1", "t2"):
+            guard.record_failure(task_id)
+        self.assertFalse(guard.harness_suspect())
+        guard.record_failure("t3")
+        # Nothing has ever succeeded -> the fault is the harness, not any one task.
+        self.assertTrue(guard.harness_suspect())
+
+    def test_any_success_resets_the_harness_suspicion(self):
+        guard = DispatchGuard(max_global_failures=3, clock=FakeClock())
+        guard.record_failure("t1")
+        guard.record_failure("t2")
+        guard.record_success("t3")
+        guard.record_failure("t4")
+        self.assertFalse(guard.harness_suspect())
+
+    def test_invalid_limits_are_rejected(self):
+        with self.assertRaises(ValueError):
+            DispatchGuard(max_task_failures=0)
+        with self.assertRaises(ValueError):
+            DispatchGuard(backoff_base=0.0)
+        with self.assertRaises(ValueError):
+            DispatchGuard(backoff_base=100.0, backoff_cap=10.0)
+
+
+class BridgeGovernorTests(unittest.TestCase):
+    def test_budget_is_published_on_bridge_owned_keys(self):
+        with TemporaryDirectory() as tmp:
+            cache = Cache(Path(tmp))
+            governor = BridgeGovernor(cache, 100.0)
+            self.assertEqual(cache.get("governor.bridge.budget")["value"], "100.00")
+            self.assertEqual(cache.get("governor.bridge.spent")["value"], "0.00")
+            # The scheduler's own lines must not be clobbered by a second driver.
+            self.assertIsNone(cache.get("governor.budget"))
+            governor.charge(40.0)
+            self.assertEqual(cache.get("governor.bridge.spent")["value"], "40.00")
+            self.assertFalse(governor.tripped())
+            governor.charge(60.0)
+            self.assertTrue(governor.tripped())
 
 
 if __name__ == "__main__":

