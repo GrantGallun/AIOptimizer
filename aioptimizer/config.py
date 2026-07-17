@@ -11,6 +11,7 @@ DEFAULT_CONFIG: dict[str, Any] = {
     "port": 8800,
     "upstream": "http://127.0.0.1:11434",
     "upstream_timeout_seconds": 300.0,
+    "upstream_sampling_default": 0.8,
     "ledger": "results/gateway/ledger.jsonl",
     "budget_chars": 12_000,
     "shadow_rate": 0.2,
@@ -42,6 +43,13 @@ def validate_config(value: Mapping[str, Any]) -> dict[str, Any]:
         or float(timeout) <= 0.0
     ):
         raise ValueError("upstream_timeout_seconds must be a positive number")
+    sampling_default = config["upstream_sampling_default"]
+    if (
+        not isinstance(sampling_default, (int, float))
+        or isinstance(sampling_default, bool)
+        or float(sampling_default) < 0.0
+    ):
+        raise ValueError("upstream_sampling_default must be a non-negative number")
     for key in ("no_cache", "no_compact", "attention_context"):
         if not isinstance(config[key], bool):
             raise ValueError(f"{key} must be boolean")

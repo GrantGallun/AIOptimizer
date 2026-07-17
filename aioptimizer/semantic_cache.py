@@ -8,7 +8,7 @@ import time
 from collections import OrderedDict
 from typing import Any, Callable
 
-from .cache_middleware import ExactCacheMiddleware
+from .cache_middleware import ExactCacheMiddleware, _validated_sampling_default
 from .encoder import as_vector, cosine, embed_texts
 from .middleware import ShortCircuit
 
@@ -45,6 +45,7 @@ class SemanticCacheMiddleware:
         embed_fn=None,
         clock=time.time,
         ttl_seconds=None,
+        upstream_sampling_default=0.8,
     ):
         if max_entries < 1:
             raise ValueError("max_entries must be at least 1")
@@ -53,6 +54,9 @@ class SemanticCacheMiddleware:
         self._embed_fn: EmbedFn | None = embed_fn
         self.clock = clock
         self.ttl_seconds = ttl_seconds
+        self.upstream_sampling_default = _validated_sampling_default(
+            upstream_sampling_default
+        )
         self._entries = OrderedDict()
         self._lock = threading.Lock()
 
@@ -62,7 +66,7 @@ class SemanticCacheMiddleware:
         return as_vector(values[0])
 
     def before_request(self, body):
-        if ExactCacheMiddleware._is_sampled(body):
+        if ExactCacheMiddleware._is_sampled(body, self.upstream_sampling_default):
             return body
         text = _request_text(body)
         if text is None:
@@ -93,7 +97,7 @@ class SemanticCacheMiddleware:
             return ShortCircuit(copy.deepcopy(response))
 
     def after_response(self, body, response):
-        if ExactCacheMiddleware._is_sampled(body):
+        if ExactCacheMiddleware._is_sampled(body, self.upstream_sampling_default):
             return response
         text = _request_text(body)
         if text is None:

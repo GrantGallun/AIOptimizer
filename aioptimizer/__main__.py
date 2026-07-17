@@ -37,6 +37,12 @@ def parse_args(argv=None):
     parser.add_argument("--upstream", default="http://127.0.0.1:11434", help="Ollama base URL.")
     parser.add_argument("--upstream-timeout-seconds", type=float, default=300.0,
                         help="Connect/read timeout for each upstream operation.")
+    parser.add_argument(
+        "--upstream-sampling-default",
+        type=float,
+        default=0.8,
+        help="Upstream temperature when requests omit it (0 declares deterministic).",
+    )
     parser.add_argument("--ledger", default="results/gateway/ledger.jsonl")
     parser.add_argument("--budget-chars", type=int, default=12_000, help="Compaction threshold.")
     parser.add_argument("--shadow-rate", type=float, default=0.2,
@@ -64,7 +70,9 @@ def parse_args(argv=None):
 def build_middlewares(args):
     middlewares = []
     if not args.no_cache:
-        middlewares.append(ExactCacheMiddleware())
+        middlewares.append(ExactCacheMiddleware(
+            upstream_sampling_default=args.upstream_sampling_default
+        ))
     if args.attention_context:
         middlewares.append(AttentionContextMiddleware(
             budget_chars=args.attention_budget_chars,

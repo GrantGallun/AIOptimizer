@@ -18,9 +18,14 @@ Read the request receipts:
 python -m aioptimizer.report results/gateway/ledger.jsonl
 ```
 
-Sampled requests bypass the cache so self-consistency samples remain independent. The
-tracked development profile enables privacy-filtered adaptive attention; a bare CLI
-invocation remains conservative unless `--attention-context` or a config enables it.
+Caching requires an explicitly deterministic request (`temperature: 0`) or an
+operator-declared deterministic upstream (`upstream_sampling_default: 0` in the
+config, or `--upstream-sampling-default 0`). When temperature is omitted, the
+gateway defaults to the upstream's sampled behavior and bypasses caching. This
+intentionally reduces the default cache hit rate: replaying a sampled response is a
+correctness bug, not a cache feature. The tracked development profile enables
+privacy-filtered adaptive attention; a bare CLI invocation remains conservative
+unless `--attention-context` or a config enables it.
 
 The proxy accepts OpenAI chat (`/v1/chat/completions`), Anthropic messages
 (`/v1/messages`), and Ollama chat/generate endpoints. Provider authentication and

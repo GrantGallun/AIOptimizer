@@ -10,6 +10,7 @@ from pathlib import Path
 from aioptimizer.cache_middleware import ExactCacheMiddleware
 from aioptimizer.ledger import JsonlLedger
 from aioptimizer.middleware import ShortCircuit
+from aioptimizer.semantic_cache import SemanticCacheMiddleware
 from aioptimizer.server import GatewayServer
 
 
@@ -23,7 +24,7 @@ class _FakeClock:
 
 class ExactCacheMiddlewareTests(unittest.TestCase):
     def test_miss_then_hit_returns_independent_cached_response(self):
-        cache = ExactCacheMiddleware()
+        cache = ExactCacheMiddleware(upstream_sampling_default=0)
         body = {"messages": [], "model": "qwen3:8b"}
         self.assertIs(cache.before_request(body), body)
 
@@ -42,7 +43,9 @@ class ExactCacheMiddlewareTests(unittest.TestCase):
 
     def test_ttl_expiry_uses_injected_clock(self):
         clock = _FakeClock()
-        cache = ExactCacheMiddleware(ttl_seconds=10, clock=clock)
+        cache = ExactCacheMiddleware(
+            ttl_seconds=10, clock=clock, upstream_sampling_default=0
+        )
         body = {"messages": []}
         cache.after_response(body, {"answer": 1})
         clock.now = 10
@@ -51,7 +54,7 @@ class ExactCacheMiddlewareTests(unittest.TestCase):
         self.assertIs(cache.before_request(body), body)
 
     def test_evicts_oldest_entry(self):
-        cache = ExactCacheMiddleware(max_entries=2)
+        cache = ExactCacheMiddleware(max_entries=2, upstream_sampling_default=0)
         bodies = [{"request": number} for number in range(3)]
         for number, body in enumerate(bodies):
             cache.after_response(body, {"answer": number})
@@ -88,7 +91,7 @@ class CacheEndToEndTests(unittest.TestCase):
             ledger_path = Path(directory) / "ledger.jsonl"
             gateway = GatewayServer(
                 "http://127.0.0.1:%d" % upstream.server_port,
-                middlewares=(ExactCacheMiddleware(),),
+                middlewares=(ExactCacheMiddleware(upstream_sampling_default=0),),
                 ledger=JsonlLedger(ledger_path),
                 port=0,
             )
@@ -137,9 +140,43 @@ if __name__ == "__main__":
 
 
 class SampledRequestBypassTests(unittest.TestCase):
+    def test_omitted_temperature_bypasses_with_sampled_upstream_default(self):
+        cache = ExactCacheMiddleware()
+        body = {"prompt": "x"}
+
+        self.assertIs(cache.before_request(body), body)
+        cache.after_response(body, {"response": "a"})
+
+        self.assertEqual(cache.status_metadata()["entries"], 0)
+        self.assertIs(cache.before_request(body), body)
+
+    def test_omitted_temperature_caches_when_upstream_default_is_deterministic(self):
+        cache = ExactCacheMiddleware(upstream_sampling_default=0)
+        body = {"prompt": "x"}
+
+        cache.after_response(body, {"response": "a"})
+
+        self.assertIsInstance(cache.before_request(body), ShortCircuit)
+
+    def test_explicit_temperature_zero_caches_regardless_of_upstream_default(self):
+        cache = ExactCacheMiddleware(upstream_sampling_default=0.8)
+        body = {"prompt": "x", "temperature": 0}
+
+        cache.after_response(body, {"response": "a"})
+
+        self.assertIsInstance(cache.before_request(body), ShortCircuit)
+
+    def test_explicit_sampled_temperature_is_never_cached(self):
+        cache = ExactCacheMiddleware()
+        body = {"prompt": "x", "temperature": 0.7}
+
+        cache.after_response(body, {"response": "a"})
+
+        self.assertIs(cache.before_request(body), body)
+
     def test_streaming_requests_are_never_cached(self):
         cache = ExactCacheMiddleware()
-        body = {"messages": [], "stream": True}
+        body = {"messages": [], "stream": True, "temperature": 0}
         cache.after_response(body, {"should": "not-store"})
 
         self.assertIs(cache.before_request(body), body)
@@ -162,3 +199,15 @@ class SampledRequestBypassTests(unittest.TestCase):
         body = {"prompt": "x", "options": {"temperature": 0.0}}
         cache.after_response(body, {"response": "a"})
         self.assertIsInstance(cache.before_request(body), ShortCircuit)
+
+    def test_semantic_cache_omitted_temperature_bypasses_by_default(self):
+        def fail_if_called(_texts):
+            self.fail("sampled request must bypass semantic embedding")
+
+        cache = SemanticCacheMiddleware(embed_fn=fail_if_called)
+        body = {"prompt": "x"}
+        response = {"response": "a"}
+
+        self.assertIs(cache.before_request(body), body)
+        self.assertIs(cache.after_response(body, response), response)
+        self.assertIs(cache.before_request(body), body)
