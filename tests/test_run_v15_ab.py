@@ -117,7 +117,8 @@ class RunV15ABTests(unittest.TestCase):
             self.assertIsNone(records["B"]["stub_task"]["error"])
             self.assertEqual(
                 records["A"]["stub_task"]["treatment_integrity"],
-                {"eligible": 1, "treated": 1, "errors": 0, "rate": 1.0, "qualified": True},
+                {"eligible": 1, "treated": 1, "errors": 0, "rate": 1.0,
+                 "delivery_failures": 0, "qualified": True},
             )
             self.assertIn("turn_window_start", records["A"]["stub_task"])
             self.assertIn("turn_window_end", records["A"]["stub_task"])
@@ -145,24 +146,44 @@ class RunV15ABTests(unittest.TestCase):
 
         self.assertEqual(
             result,
-            {"eligible": 2, "treated": 2, "errors": 0, "rate": 1.0, "qualified": True},
+            {"eligible": 2, "treated": 2, "errors": 0, "rate": 1.0,
+             "delivery_failures": 0, "qualified": True},
         )
 
-    def test_treatment_integrity_below_minimum_rate_is_disqualified(self):
+    def test_treatment_integrity_low_rate_from_legitimate_declines_still_qualifies(self):
+        # Amendment v15.5: the 2026-07-17 replay found ~11.5% treated is the HEALTHY baseline
+        # (most eligible turns are correctly declined by the router's own relevance/tail-
+        # coverage judgment) -- a low rate must not disqualify on its own.
         result = self._check_integrity([
             {"ts": 120.0, "history_chars": 7000, "route": "attention", "injected": True},
-            {"ts": 130.0, "history_chars": 7000, "route": "raw", "injected": False},
+            {"ts": 130.0, "history_chars": 7000, "route": "raw", "route_reason": "covered_by_recent_tail", "injected": False},
+            {"ts": 140.0, "history_chars": 7000, "route": "raw", "route_reason": "low_relevance", "injected": False},
         ])
 
-        self.assertEqual(result["eligible"], 2)
+        self.assertEqual(result["eligible"], 3)
         self.assertEqual(result["treated"], 1)
-        self.assertEqual(result["rate"], 0.5)
+        self.assertAlmostEqual(result["rate"], 1 / 3)
+        self.assertEqual(result["delivery_failures"], 0)
+        self.assertTrue(result["qualified"])
+
+    def test_treatment_integrity_attention_without_injection_is_a_delivery_failure(self):
+        # The router decided to treat (route=attention) but the injection did not happen --
+        # a real pipeline bug, unlike a legitimate raw decline.
+        result = self._check_integrity([
+            {"ts": 120.0, "history_chars": 7000, "route": "attention", "injected": False},
+        ])
+
+        self.assertEqual(result["eligible"], 1)
+        self.assertEqual(result["treated"], 0)
+        self.assertEqual(result["delivery_failures"], 1)
         self.assertFalse(result["qualified"])
 
-    def test_treatment_integrity_error_overrides_perfect_rate(self):
+    def test_treatment_integrity_unrecognized_route_disqualifies(self):
+        # Matches the real 2026-07-17 pilot #1 failure mode: an orphaned/stale sidecar makes
+        # every hook call fail open with route="sidecar_error", not the literal "error".
         result = self._check_integrity([
             {"ts": 120.0, "history_chars": 7000, "route": "attention", "injected": True},
-            {"ts": 130.0, "history_chars": 100, "route": "error", "injected": False},
+            {"ts": 130.0, "history_chars": 100, "route": "sidecar_error", "injected": False},
         ])
 
         self.assertEqual(result["rate"], 1.0)
@@ -177,19 +198,21 @@ class RunV15ABTests(unittest.TestCase):
 
         self.assertEqual(result["eligible"], 0)
         self.assertIsNone(result["rate"])
+        self.assertEqual(result["delivery_failures"], 0)
         self.assertTrue(result["qualified"])
 
     def test_treatment_integrity_excludes_rows_outside_inclusive_window(self):
         result = self._check_integrity([
-            {"ts": 99.9, "history_chars": 7000, "route": "error", "injected": False},
+            {"ts": 99.9, "history_chars": 7000, "route": "sidecar_error", "injected": False},
             {"ts": 150.0, "history_chars": 7000, "route": "attention", "injected": True},
             {"ts": 200.1, "history_chars": 7000, "route": "raw", "injected": False},
-            {"ts": "150", "history_chars": 7000, "route": "error", "injected": False},
+            {"ts": "150", "history_chars": 7000, "route": "sidecar_error", "injected": False},
         ])
 
         self.assertEqual(
             result,
-            {"eligible": 1, "treated": 1, "errors": 0, "rate": 1.0, "qualified": True},
+            {"eligible": 1, "treated": 1, "errors": 0, "rate": 1.0,
+             "delivery_failures": 0, "qualified": True},
         )
 
     def test_resume_reuses_legacy_collected_artifacts_without_rerunning(self):

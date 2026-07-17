@@ -1,0 +1,133 @@
+{
+  "A": {
+    "rows": [
+      {
+        "ast_ok": true,
+        "constraints_passed": 3,
+        "constraints_total": 3,
+        "files_present": true,
+        "functional_ok": true,
+        "passed": true,
+        "task": "linkedin_scraper_ratelimit"
+      }
+    ]
+  },
+  "B": {
+    "rows": [
+      {
+        "ast_ok": true,
+        "constraints_passed": 3,
+        "constraints_total": 3,
+        "files_present": true,
+        "functional_ok": true,
+        "passed": true,
+        "task": "linkedin_scraper_ratelimit"
+      }
+    ]
+  },
+  "runner": {
+    "created_at": "2026-07-17T20:53:08.372395+00:00",
+    "model": "gpt-5.6-sol",
+    "run_root": "C:\\Code\\AIOptimizer\\results\\brain_runtime\\v15_ab_runs\\run_20260717T203046Z_fb339bc7",
+    "task_fixture": "C:\\Code\\AIOptimizer\\experiments\\brain_runtime\\v15_pilot_task.json",
+    "telemetry": {
+      "A": {
+        "linkedin_scraper_ratelimit": {
+          "collected": [
+            "scraper.py"
+          ],
+          "error": null,
+          "execution": {
+            "cached_input_tokens": 46042368,
+            "elapsed_seconds": 669.55,
+            "input_tokens": 47794233,
+            "output_tokens": 332436,
+            "thread_id": "019f71c6-4604-7c61-bc87-50d94497bdf4",
+            "turns": 28
+          },
+          "missing": [],
+          "treatment_integrity": {
+            "eligible": 19,
+            "errors": 0,
+            "qualified": false,
+            "rate": 0.10526315789473684,
+            "treated": 2
+          },
+          "turn_window_end": 1784320916.4542732,
+          "turn_window_start": 1784320246.8872046
+        }
+      },
+      "B": {
+        "linkedin_scraper_ratelimit": {
+          "collected": [
+            "scraper.py"
+          ],
+          "error": null,
+          "execution": {
+            "cached_input_tokens": 36270080,
+            "elapsed_seconds": 671.797,
+            "input_tokens": 38378734,
+            "output_tokens": 342882,
+            "thread_id": "019f71d0-7dd2-7613-b519-b637ae62fa5a",
+            "turns": 28
+          },
+          "missing": []
+        }
+      }
+    },
+    "totals": {
+      "A": {
+        "cached_input_tokens": 46042368,
+        "elapsed_seconds": 669.55,
+        "errors": 0,
+        "input_tokens": 47794233,
+        "output_tokens": 332436,
+        "recovered_without_telemetry": 0,
+        "runs": 1
+      },
+      "B": {
+        "cached_input_tokens": 36270080,
+        "elapsed_seconds": 671.797,
+        "errors": 0,
+        "input_tokens": 38378734,
+        "output_tokens": 342882,
+        "recovered_without_telemetry": 0,
+        "runs": 1
+      }
+    },
+    "windows_sandbox": null
+  },
+  "summary": {
+    "arms": {
+      "A": {
+        "constraint_retention": 1.0,
+        "pass_ci": [
+          0.2065,
+          1.0
+        ],
+        "pass_rate": 1.0,
+        "passed": 1,
+        "tasks": 1
+      },
+      "B": {
+        "constraint_retention": 1.0,
+        "pass_ci": [
+          0.2065,
+          1.0
+        ],
+        "pass_rate": 1.0,
+        "passed": 1,
+        "tasks": 1
+      }
+    },
+    "paired": {
+      "A_only": [],
+      "B_only": [],
+      "both": [
+        "linkedin_scraper_ratelimit"
+      ]
+    },
+    "pass_gap_A_minus_B": 0.0
+  },
+  "tasks": 1
+}

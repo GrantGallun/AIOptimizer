@@ -41,15 +41,32 @@ CHECKPOINT_NAME = "runner_checkpoint.jsonl"
 CODEX_HOOK_LEDGER_RELATIVE = Path(".aioptimizer/codex_hook_ledger.jsonl")
 
 
+#  The router's legitimate content-based decisions (HYP-38/HYP-41's five frozen classes plus
+# the low-pressure no-op). Any other route string (sidecar_error, invalid_input, an unrecognized
+# value) is a DELIVERY failure, not a judgment call, and disqualifies unconditionally.
+KNOWN_ROUTES = {"raw", "attention", "below_threshold"}
+
+
 def check_treatment_integrity(
     ledger_path: Path,
     *,
     window_start: float,
     window_end: float,
     budget_chars: int = 6000,
-    min_treated_rate: float = 0.95,
 ) -> dict[str, Any]:
-    """Evaluate one arm-A task window per Amendment v15.3."""
+    """Evaluate one arm-A task window per Amendment v15.5.
+
+    Amendment v15.3's original `treated/eligible >= 0.95` gate is WRONG: the 2026-07-17
+    real-session replay (commit 125c80e) found ~11.5% treated is what HEALTHY production
+    traffic looks like (most size-eligible turns are correctly declined by the router's own
+    relevance/tail-coverage judgment -- HYP-38/HYP-41's job, not this gate's). Requiring near-
+    100% treated conflated "the router is conservative" with "the pipeline is broken". This
+    checks DELIVERY instead: did every turn the router decided to treat actually get injected,
+    and did the pipeline avoid delivery-layer failures (sidecar errors, unrecognized routes)?
+    How OFTEN the router chooses to treat is a routing-correctness question already covered by
+    PREREGISTRATION_v14 and the replay work, not something a v15 treatment-integrity gate
+    should re-litigate.
+    """
     windowed: list[dict[str, Any]] = []
     for row in read_rows(ledger_path):
         timestamp = row.get("ts")
@@ -60,17 +77,16 @@ def check_treatment_integrity(
         ):
             windowed.append(row)
 
-    errors = sum(row.get("route") == "error" for row in windowed)
+    errors = sum(row.get("route") not in KNOWN_ROUTES for row in windowed)
     eligible_rows = [
         row
         for row in windowed
         if isinstance(row.get("history_chars"), int)
         and row["history_chars"] > budget_chars
     ]
-    treated = sum(
-        row.get("route") == "attention" and row.get("injected") is True
-        for row in eligible_rows
-    )
+    attention_rows = [row for row in windowed if row.get("route") == "attention"]
+    treated = sum(row.get("injected") is True for row in attention_rows)
+    delivery_failures = len(attention_rows) - treated
     eligible = len(eligible_rows)
     rate = treated / eligible if eligible else None
     return {
@@ -78,7 +94,8 @@ def check_treatment_integrity(
         "treated": treated,
         "errors": errors,
         "rate": rate,
-        "qualified": errors == 0 and (rate is None or rate >= min_treated_rate),
+        "delivery_failures": delivery_failures,
+        "qualified": errors == 0 and delivery_failures == 0,
     }
 
 
@@ -619,6 +636,7 @@ def print_treatment_integrity_summary(
         print(
             f"treatment-integrity {task_id}: eligible={integrity['eligible']} "
             f"treated={integrity['treated']} rate={rate_text} "
+            f"errors={integrity['errors']} delivery_failures={integrity['delivery_failures']} "
             f"qualified={integrity['qualified']}"
         )
         if not integrity["qualified"]:

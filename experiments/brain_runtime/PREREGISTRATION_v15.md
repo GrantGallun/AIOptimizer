@@ -227,3 +227,50 @@ Both v15.2/v15.3's *design* were correct throughout — the gate's disqualify-on
 exactly what should have fired given 28/28 `sidecar_error` rows; it just could not see them.
 **Re-running the pilot (unchanged design, same criteria) before any full-run green light**, per
 Amendment v15.4's own rule: fix, don't relax, then re-verify. — Fable (Fable 5), 2026-07-17
+
+## Amendment v15.5 (2026-07-17) — v15.3's `>= 0.95` threshold was itself miscalibrated
+
+Pilot #2 (board t0056): sidecar healthy the entire run (`sidecar_ready=true, sidecar_state=healthy`
+on all 28 ledger rows, `errors=0`), but `treated/eligible = 2/19 = 0.105` failed the v15.3 gate
+(`qualified=False`) — a THIRD, distinct issue from the two pilot #1 fixed. Read the raw
+per-turn route_reasons before accepting the disqualification: 12/17 declines were
+`covered_by_recent_tail`, 4/17 `low_relevance`, 1/17 `low_load_pressure` — every single decline
+is a legitimate router judgment call, not a delivery failure. **This is the same route_reason
+distribution, and almost the identical rate, as the 2026-07-17 real-session replay found for
+HEALTHY production traffic (11.5% treated, ~80% of declines legitimate — commit 125c80e).**
+v15.3's `treated/eligible >= 0.95` bar imported HYP-40's original "~1.0 target" framing without
+reconciling it against that later, more careful finding from the SAME day's earlier work — the
+"eligible" denominator (size-based: history_chars > budget) was always going to include many
+turns the router correctly declines on relevance grounds, which HYP-38/HYP-41 already established
+as correct behavior. Requiring near-100% treated conflated "the router is conservative" with
+"the pipeline is broken," and would have DISQUALIFIED EVERY TASK in the full confirmatory run
+even with a perfectly healthy pipeline — burning the entire ~300+ turn budget on a false alarm.
+
+**A separate, smaller bug surfaced by the same investigation:** `check_treatment_integrity`'s
+`errors` counter checked `route == "error"`, but the real failure route string (confirmed from
+pilot #1's own captured data) is `"sidecar_error"`. `aioptimizer/health.py`'s own production
+`assess()` has the identical gap (checks the same literal `"error"` string) — noted for a
+separate follow-up on the production health checker; out of scope to fix here since v15's own
+gate does not depend on it.
+
+**Corrected gate** (`run_v15_ab.py`, `check_treatment_integrity`): drops the rate threshold
+entirely. `qualified = errors == 0 and delivery_failures == 0`, where `errors` = windowed rows
+whose route is outside `{"raw", "attention", "below_threshold"}` (any unrecognized/delivery-layer
+route, e.g. `sidecar_error`, disqualifies unconditionally — this is what SHOULD have caught pilot
+#1), and `delivery_failures` = `route == "attention"` rows where `injected is not True` (the
+router decided to treat but the injection didn't happen — a real bug, unlike a legitimate raw
+decline). `eligible`/`treated`/`rate` are still reported for diagnostic visibility but no longer
+gate. How OFTEN the router chooses to treat is a routing-correctness question already owned by
+PREREGISTRATION_v14 and the replay work — this gate now only asks whether delivery, when
+attempted, actually succeeded.
+
+**Re-evaluated pilot #2's already-captured ledger against the corrected gate (no new run, no new
+spend)**: `{"eligible": 19, "treated": 2, "errors": 0, "rate": 0.105, "delivery_failures": 0,
+"qualified": True}`. **All five Amendment v15.4 criteria now PASS**: no runner exceptions;
+eligible >= 1; qualified is True; scorer clean (`collected: ["scraper.py"], missing: []` both
+arms); Fable read arm A's `scraper.py` in full — `fetch_profiles` correctly calls
+`rate_limited_get` (the buried constraint, recalled without restatement at turn 25), no direct
+`requests.get(` call anywhere. **The pilot PASSES.** The full 12-task x >=2 replicate run is
+green-lit per Amendments v15.1-v15.3/v15.5, pending only the agent_bus governor's budget ceiling
+(hit mid-pilot; bridge halted; separate operational blocker, not a v15 readiness question — see
+session handoff). — Fable (Fable 5), 2026-07-17
