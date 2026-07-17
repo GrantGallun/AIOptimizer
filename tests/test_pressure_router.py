@@ -193,3 +193,66 @@ class PressureRouterInvariantTests(unittest.TestCase):
 
 if __name__ == "__main__":
     unittest.main()
+
+
+class TemplatedFillerRegressionTests(unittest.TestCase):
+    """The 2026-07-17 live false negative, pinned at the middleware level.
+
+    A real e2e run (buried deployment-port fact + templated coding-agent filler, 14k
+    chars) routed `covered_by_recent_tail` even though the fact was absent from the
+    tail: `load_profile` counted compressibility and small vocabulary as "repetitive"
+    and vetoed BEFORE stage two ever checked relevance. PREREGISTRATION_v14's frozen
+    wording is narrower — "duplicate/repeated-character spam must never qualify" — so
+    the veto now uses only run/duplicate signals, and templated-but-distinct history
+    must reach stage two.
+    """
+
+    @staticmethod
+    def _templated_history():
+        # Filler avoids VOCABULARY words so the toy embed scores the tail near zero
+        # against the query — mirroring the live case, where the tail was retry/parser
+        # chatter genuinely unrelated to the buried fact.
+        fillers = (
+            "Wrote the retry wrapper for the fetch client for task {i}: exponential "
+            "backoff, full jitter, cap at sixty seconds, re-raise on the final attempt.",
+            "Refactored the parser for item {i} so the tokenizer is injectable and the "
+            "golden test pins the sample corpus output.",
+        )
+        history = [
+            {"role": "user", "content": "Set up the deployment config for the ingest service."},
+            {"role": "assistant",
+             "content": "Noted. The verified deployment region for the ingest service is vega. "
+                        "Every generated config must use it."},
+        ]
+        for i in range(28):
+            history.append({
+                "role": "assistant" if i % 2 else "user",
+                "content": fillers[i % len(fillers)].format(i=i),
+            })
+        history.append({"role": "user", "content": "Continue."})
+        return history
+
+    def test_templated_filler_with_unique_buried_fact_reaches_stage_two_and_injects(self):
+        result = _middleware().compile_additional_context(
+            self._templated_history(),
+            query="Which deployment region must the ingest service config use?",
+            output_budget_chars=400,
+        )
+        self.assertFalse(result["load"]["repetitive"],
+                         "templated-but-distinct turns are not spam")
+        self.assertEqual(result["route"], "attention")
+        self.assertIn("vega", result["context"].lower())
+
+    def test_true_spam_still_vetoes_without_the_encoder(self):
+        def forbidden_embed(_texts):
+            raise AssertionError("stage two must not run for true spam")
+
+        spam_history = [
+            {"role": "assistant", "content": "cache " * 100} for _ in range(12)
+        ] + [{"role": "user", "content": "Continue."}]
+        result = _middleware(embed_fn=forbidden_embed).compile_additional_context(
+            spam_history, query="cache", output_budget_chars=400,
+        )
+        self.assertEqual(result["route"], "raw")
+        self.assertEqual(result["route_reason"], "covered_by_recent_tail")
+        self.assertTrue(result["load"]["repetitive"])

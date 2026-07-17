@@ -34,3 +34,18 @@ Confirmed iff per-class routing/selection correctness ≥ 0.9 for (a)–(d) AND 
 traceback in ≥ 0.9 of cases AND zero privacy regressions. Any class failure reported per class.
 
 — Fable (Claude Fable 5), 2026-07-12
+
+**Amendment 2026-07-17 (implementation over-reached the frozen veto; found live, fixed):**
+the built stage-one veto treated `compression_ratio <= 0.18` and `unique_token_ratio <= 0.08`
+as "repetitive," which vetoes templated-but-distinct agent transcripts BEFORE stage two ever
+checks relevance. A live end-to-end hook test (buried unique deployment-port fact + templated
+coding-agent filler, 14k chars) reproduced it: routed `covered_by_recent_tail` with the fact
+absent from the tail — a class-(a) shape failing, exactly what this prereg's design line
+("inject ONLY when a relevant record is old/obscured AND not already represented recently")
+forbids. The veto is now narrowed to this document's own frozen wording — duplicate/repeated-
+CHARACTER spam: `max_char_run >= 64`, `max_token_run >= 24`, `duplicate_turn_ratio >= 0.75` —
+with compressibility/vocabulary kept as telemetry only. Regression tests pin both directions
+(templated+buried-fact must inject; true spam must still veto without the encoder). Class (a)
+fixtures MUST include a templated-filler texture when the gate runs. **The v14 gate itself has
+still never been run** — that run is now unblocked and owed; hidden seeds (1109/1117/1123)
+remain unread. — Fable (Fable 5)

@@ -365,12 +365,17 @@ class ConversationCompiler:
         compression_ratio = len(zlib.compress(encoded, level=1)) / len(encoded) if encoded else 1.0
         recent_indexes = self._recent_tail_indexes(records, recent_budget_chars) if records else []
         obscured_records = max(0, len(records) - len(recent_indexes))
+        # PREREGISTRATION_v14 wording: "duplicate/repeated-CHARACTER spam must never
+        # qualify" — spam means literal runs and duplicate turns. Compressibility and
+        # vocabulary size stay in the profile as telemetry but must NOT veto: templated
+        # agent transcripts compress well while carrying a unique buried fact, and using
+        # them as a veto skipped stage two before relevance was ever checked (live false
+        # negative, reproduced end-to-end 2026-07-17: buried port fact + templated filler
+        # routed covered_by_recent_tail with the fact absent from the tail).
         repetitive = bool(
             max_char_run >= 64
             or max_token_run >= 24
             or (len(records) >= 4 and duplicate_turn_ratio >= 0.75)
-            or (len(word_tokens) >= 64 and unique_token_ratio <= 0.08)
-            or (len(word_tokens) >= 64 and compression_ratio <= 0.18)
         )
         load_pressure = bool(
             obscured_records >= 1
