@@ -119,3 +119,27 @@ still disqualifies unconditionally (that is a hard delivery failure, not a thres
 This is implemented by reusing `aioptimizer.health.read_rows`/the `eligible`/`treated` logic
 directly rather than reimplementing ledger parsing — see the t00XX task spec for the exact
 function signature. — Fable (Fable 5), 2026-07-17
+
+## v15.1 fixture redesign landed (2026-07-17, board t0053/t0054, retired)
+
+All 12 tasks in `v15_build_tasks.json` now match the Amendment v15.1 shape: 24-28 turns, the
+constraint stated once in turn 0-1, `>=19` turns of coherent unrelated filler work (shared
+across tasks — 9 generic modules: notes/models/logging_setup/metrics/cache/report/storage/cli —
+which is deliberate and permitted, not a shortcut: the mechanism under test is whether a
+long-buried, never-restated instruction survives, and that does not require the filler itself to
+be task-unique), zero "reminder" text, `validate_tasks()` hardened to enforce the shape. The
+treatment-integrity gate (Amendment v15.3) is wired into `run_paired_tasks` for arm A.
+
+**Caveat for interpretation, not a defect:** across the 12 tasks, the turn that exercises the
+buried constraint is not equally "blind" everywhere. `robots_aware_crawler`,
+`sqlite_parameterized_store`, `scraper_structured_logging`, and `linkedin_scraper_ratelimit`
+defer the constrained code itself to a late turn (turn 21+), so the model must recall AND APPLY
+the constraint to code it has not written yet — a genuine test of buried recall. `env_token_config`,
+`stable_candidate_dedupe`, and `csv_fixed_columns` write the constrained code at turn 1 (the
+constrained function has to exist before anything can build on it) and the late turns mostly wrap
+or extend it — a test of retention-under-24-turns-of-noise rather than fresh recall-and-apply.
+Both are real, disclosable phenomena the product could plausibly help with, but they are not the
+same claim; if the A/B result splits along this line (strong effect on the 4 late-recall tasks,
+null on the 3 early-satisfied ones), that is not a contradiction — it is evidence about which
+mechanism the product actually helps with. Report per-task results, not only the pooled rate,
+when reading the eventual confirmatory run. — Fable (Fable 5), 2026-07-17
