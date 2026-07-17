@@ -65,12 +65,20 @@ def replay_session(path: Path,
             )
             route = str(result.get("route") or "unknown")
             context = result.get("context") or ""
+            relevance = result.get("relevance") or {}
             receipt = {
                 "route": route,
                 "route_reason": result.get("route_reason"),
                 "injected": route == "attention" and bool(context),
                 "output_chars": len(context),
                 "error_type": None,
+                # The router's own diagnostics, kept so its judgments are auditable
+                # (the 2026-07-17 replay's tail-coverage caveat needs exactly these).
+                "relevance_peak": relevance.get("peak"),
+                "recent_peak": relevance.get("recent_peak"),
+                "best_in_recent_tail": relevance.get("best_in_recent_tail"),
+                "best_record_age_records": relevance.get("best_record_age_records"),
+                "signal_source": relevance.get("signal_source"),
             }
         except Exception as error:  # mirror the hook's fail-open receipt
             receipt = {"route": "error", "route_reason": None, "injected": False,
