@@ -1,0 +1,250 @@
+{
+  "A": {
+    "rows": [
+      {
+        "ast_ok": false,
+        "constraints_passed": 1,
+        "constraints_total": 2,
+        "files_present": false,
+        "functional_ok": false,
+        "passed": false,
+        "task": "csv_reader_no_pandas"
+      },
+      {
+        "ast_ok": false,
+        "constraints_passed": 2,
+        "constraints_total": 2,
+        "files_present": false,
+        "functional_ok": false,
+        "passed": false,
+        "task": "cli_no_approval_messages"
+      },
+      {
+        "ast_ok": false,
+        "constraints_passed": 0,
+        "constraints_total": 1,
+        "files_present": false,
+        "functional_ok": false,
+        "passed": false,
+        "task": "sqlite_parameterized_store"
+      },
+      {
+        "ast_ok": false,
+        "constraints_passed": 1,
+        "constraints_total": 2,
+        "files_present": false,
+        "functional_ok": false,
+        "passed": false,
+        "task": "scraper_structured_logging"
+      }
+    ]
+  },
+  "B": {
+    "rows": [
+      {
+        "ast_ok": false,
+        "constraints_passed": 1,
+        "constraints_total": 2,
+        "files_present": false,
+        "functional_ok": false,
+        "passed": false,
+        "task": "csv_reader_no_pandas"
+      },
+      {
+        "ast_ok": false,
+        "constraints_passed": 2,
+        "constraints_total": 2,
+        "files_present": false,
+        "functional_ok": false,
+        "passed": false,
+        "task": "cli_no_approval_messages"
+      },
+      {
+        "ast_ok": false,
+        "constraints_passed": 0,
+        "constraints_total": 1,
+        "files_present": false,
+        "functional_ok": false,
+        "passed": false,
+        "task": "sqlite_parameterized_store"
+      },
+      {
+        "ast_ok": false,
+        "constraints_passed": 1,
+        "constraints_total": 2,
+        "files_present": false,
+        "functional_ok": false,
+        "passed": false,
+        "task": "scraper_structured_logging"
+      }
+    ]
+  },
+  "runner": {
+    "created_at": "2026-07-17T23:06:47.444394+00:00",
+    "model": "gpt-5.6-sol",
+    "run_root": "C:\\Code\\AIOptimizer\\results\\brain_runtime\\v15_ab_runs\\run_20260717T230201Z_b9cc20f7",
+    "task_fixture": "C:\\Code\\AIOptimizer\\experiments\\brain_runtime\\v15_wave1_negative_constraints.json",
+    "telemetry": {
+      "A": {
+        "cli_no_approval_messages": {
+          "collected": [],
+          "error": "RuntimeError: Codex turn 1 exited 1: 2026-07-17T23:03:16.126252Z ERROR codex_models_manager::manager: failed to refresh available models: stream disconnected before completion: error sending request for url (https://chatgpt.com/backend-api/codex/models?client_version=0.144.3)\n2026-07-17T23:03:16.126417Z ERROR codex_models_manager::manager: failed to refresh available models: stream disconnected before completion: error sending request for url (https://chatgpt.com/backend-api/codex/models?client_version=0.144.3)\n2026-07-17T23:03:16.295670Z ERROR rmcp::transport::worker: worker quit with fatal: Transport channel closed, when Client(HttpRequest(HttpRequest(\"http/request failed: error sending request for url (https://chatgpt.com/backend-api/ps/mcp)\")))\n2026-07-17T23:03:16.435547Z ERROR codex_api::endpoint::responses_websocket: failed to connect to websocket: IO error: An attempt was made to access a socket in a way forbidden by its access permissions. (os error 10013), url: wss://chatgpt.com/backend-api/codex/responses\n2026-07-17T23:03:16.553235Z ERROR rmcp::transport::worker: worker quit with fatal: Transport channel closed, when Client(HttpRequest(HttpRequest(\"http/request failed: error sending request for url (https://chatgpt.com/backend-api/ps/mcp)\")))\n2026-07-17T23:03:17.563061Z ERROR rmcp::transport::worker: worker quit with fatal: Transport channel closed, when Client(HttpRequest(HttpRequest(\"http/request failed: error sending request for url (https://chatgpt.com/backend-api/ps/mcp)\")))\n2026-07-17T23:03:17.564043Z ERROR rmcp::transport::worker: worker quit with fatal: Transport channel closed, when Client(HttpRequest(HttpRequest(\"http/request failed: error sending request for url (https://chatgpt.com/backend-api/ps/mcp)\")))\n2026-07-17T23:03:17.575296Z ERROR codex_api::endpoint::responses_websocket: failed to connect to websocket: IO error: An attempt was made to access a socket in a way forbidden by its access permissions. (os error 10013), url: wss://chatgpt.com/backend-api/codex/responses\n2026-07-17T23:03:17.815822Z ERROR rmcp::transport::worker: worker quit with fatal: Transport channel closed, when Client(HttpRequest(HttpRequest(\"http/request failed: error sending request for url (https://chatgpt.com/backend-api/ps/mcp)\")))\n2026-07-17T23:03:17.824397Z ERROR codex_api::endpoint::responses_websocket: failed to connect to websocket: IO error: An attempt was made to access a socket in a way forbidden by its access permissions. (os error 10013), url: wss://chatgpt.com/backend-api/codex/responses\n2026-07-17T23:03:18.040646Z ERROR codex_api::endpoint::responses_websocket: failed to connect to websocket: IO error: An attempt was made to access a socket in a way forbidden by its access permissions. (os error 10013), url: wss://chatgpt.com/backend-api/codex/responses\n2026-07-17T23:03:18.448267Z ERROR codex_api::endpoint::responses_websocket: failed to connect to websocket: IO error: An attempt was made to access a socket in a way forbidden by its access permissions. (os error 10013), url: wss://chatgpt.com/backend-api/codex/responses\n2026-07-17T23:03:18.842364Z ERROR rmcp::transport::worker: worker quit with fatal: Transport channel closed, when Client(HttpRequest(HttpRequest(\"http/request failed: error sending request for url (https://chatgpt.com/backend-api/ps/mcp)\")))\n2026-07-17T23:03:19.329839Z ERROR codex_api::endpoint::responses_websocket: failed to connect to websocket: IO error: An attempt was made to access a socket in a way forbidden by its access permissions. (os error 10013), url: wss://chatgpt.com/backend-api/codex/responses\n2026-07-17T23:03:20.813714Z ERROR codex_api::endpoint::responses_websocket: failed to connect to websocket: IO error: An attempt was made to access a socket in a way forbidden by its access permissions. (os error 10013), url: wss://chatgpt.com/backend-api/codex/responses\n2026-07-17T23:03:24.196268Z ERROR codex_api::endpoint::responses_websocket: failed to connect to websocket: IO error: An attempt was made to access a socket in a way forbidden by its access permissions. (os error 10013), url: wss://chatgpt.com/backend-api/codex/responses",
+          "execution": {},
+          "missing": [
+            "summarize.py"
+          ],
+          "treatment_integrity": {
+            "delivery_failures": 0,
+            "eligible": 0,
+            "errors": 0,
+            "qualified": true,
+            "rate": null,
+            "treated": 0
+          },
+          "turn_window_end": 1784329429.131971,
+          "turn_window_start": 1784329392.9702184
+        },
+        "csv_reader_no_pandas": {
+          "collected": [],
+          "error": "RuntimeError: Codex turn 1 exited 1: 2026-07-17T23:02:05.089604Z ERROR codex_models_manager::manager: failed to refresh available models: stream disconnected before completion: error sending request for url (https://chatgpt.com/backend-api/codex/models?client_version=0.144.3)\n2026-07-17T23:02:05.198709Z ERROR codex_models_manager::manager: failed to refresh available models: stream disconnected before completion: error sending request for url (https://chatgpt.com/backend-api/codex/models?client_version=0.144.3)\n2026-07-17T23:02:05.216614Z ERROR rmcp::transport::worker: worker quit with fatal: Transport channel closed, when Client(HttpRequest(HttpRequest(\"http/request failed: error sending request for url (https://chatgpt.com/backend-api/ps/mcp)\")))\n2026-07-17T23:02:05.354012Z ERROR codex_api::endpoint::responses_websocket: failed to connect to websocket: IO error: An attempt was made to access a socket in a way forbidden by its access permissions. (os error 10013), url: wss://chatgpt.com/backend-api/codex/responses\n2026-07-17T23:02:05.486595Z ERROR rmcp::transport::worker: worker quit with fatal: Transport channel closed, when Client(HttpRequest(HttpRequest(\"http/request failed: error sending request for url (https://chatgpt.com/backend-api/ps/mcp)\")))\n2026-07-17T23:02:06.502415Z ERROR rmcp::transport::worker: worker quit with fatal: Transport channel closed, when Client(HttpRequest(HttpRequest(\"http/request failed: error sending request for url (https://chatgpt.com/backend-api/ps/mcp)\")))\n2026-07-17T23:02:06.503401Z ERROR rmcp::transport::worker: worker quit with fatal: Transport channel closed, when Client(HttpRequest(HttpRequest(\"http/request failed: error sending request for url (https://chatgpt.com/backend-api/ps/mcp)\")))\n2026-07-17T23:02:06.515381Z ERROR codex_api::endpoint::responses_websocket: failed to connect to websocket: IO error: An attempt was made to access a socket in a way forbidden by its access permissions. (os error 10013), url: wss://chatgpt.com/backend-api/codex/responses\n2026-07-17T23:02:06.765335Z ERROR rmcp::transport::worker: worker quit with fatal: Transport channel closed, when Client(HttpRequest(HttpRequest(\"http/request failed: error sending request for url (https://chatgpt.com/backend-api/ps/mcp)\")))\n2026-07-17T23:02:06.825465Z ERROR codex_api::endpoint::responses_websocket: failed to connect to websocket: IO error: An attempt was made to access a socket in a way forbidden by its access permissions. (os error 10013), url: wss://chatgpt.com/backend-api/codex/responses\n2026-07-17T23:02:07.027347Z ERROR codex_api::endpoint::responses_websocket: failed to connect to websocket: IO error: An attempt was made to access a socket in a way forbidden by its access permissions. (os error 10013), url: wss://chatgpt.com/backend-api/codex/responses\n2026-07-17T23:02:07.443774Z ERROR codex_api::endpoint::responses_websocket: failed to connect to websocket: IO error: An attempt was made to access a socket in a way forbidden by its access permissions. (os error 10013), url: wss://chatgpt.com/backend-api/codex/responses\n2026-07-17T23:02:07.779761Z ERROR rmcp::transport::worker: worker quit with fatal: Transport channel closed, when Client(HttpRequest(HttpRequest(\"http/request failed: error sending request for url (https://chatgpt.com/backend-api/ps/mcp)\")))\n2026-07-17T23:02:08.242027Z ERROR codex_api::endpoint::responses_websocket: failed to connect to websocket: IO error: An attempt was made to access a socket in a way forbidden by its access permissions. (os error 10013), url: wss://chatgpt.com/backend-api/codex/responses\n2026-07-17T23:02:09.726345Z ERROR codex_api::endpoint::responses_websocket: failed to connect to websocket: IO error: An attempt was made to access a socket in a way forbidden by its access permissions. (os error 10013), url: wss://chatgpt.com/backend-api/codex/responses\n2026-07-17T23:02:12.999734Z ERROR codex_api::endpoint::responses_websocket: failed to connect to websocket: IO error: An attempt was made to access a socket in a way forbidden by its access permissions. (os error 10013), url: wss://chatgpt.com/backend-api/codex/responses",
+          "execution": {},
+          "missing": [
+            "reader.py"
+          ],
+          "treatment_integrity": {
+            "delivery_failures": 0,
+            "eligible": 0,
+            "errors": 0,
+            "qualified": true,
+            "rate": null,
+            "treated": 0
+          },
+          "turn_window_end": 1784329358.62924,
+          "turn_window_start": 1784329321.759169
+        },
+        "scraper_structured_logging": {
+          "collected": [],
+          "error": "RuntimeError: Codex turn 1 exited 1: 2026-07-17T23:05:39.168924Z ERROR codex_models_manager::manager: failed to refresh available models: stream disconnected before completion: error sending request for url (https://chatgpt.com/backend-api/codex/models?client_version=0.144.3)\n2026-07-17T23:05:39.262121Z ERROR codex_models_manager::manager: failed to refresh available models: stream disconnected before completion: error sending request for url (https://chatgpt.com/backend-api/codex/models?client_version=0.144.3)\n2026-07-17T23:05:39.433311Z ERROR rmcp::transport::worker: worker quit with fatal: Transport channel closed, when Client(HttpRequest(HttpRequest(\"http/request failed: error sending request for url (https://chatgpt.com/backend-api/ps/mcp)\")))\n2026-07-17T23:05:39.575037Z ERROR codex_api::endpoint::responses_websocket: failed to connect to websocket: IO error: An attempt was made to access a socket in a way forbidden by its access permissions. (os error 10013), url: wss://chatgpt.com/backend-api/codex/responses\n2026-07-17T23:05:39.705941Z ERROR rmcp::transport::worker: worker quit with fatal: Transport channel closed, when Client(HttpRequest(HttpRequest(\"http/request failed: error sending request for url (https://chatgpt.com/backend-api/ps/mcp)\")))\n2026-07-17T23:05:40.735025Z ERROR rmcp::transport::worker: worker quit with fatal: Transport channel closed, when Client(HttpRequest(HttpRequest(\"http/request failed: error sending request for url (https://chatgpt.com/backend-api/ps/mcp)\")))\n2026-07-17T23:05:40.735972Z ERROR rmcp::transport::worker: worker quit with fatal: Transport channel closed, when Client(HttpRequest(HttpRequest(\"http/request failed: error sending request for url (https://chatgpt.com/backend-api/ps/mcp)\")))\n2026-07-17T23:05:40.747134Z ERROR codex_api::endpoint::responses_websocket: failed to connect to websocket: IO error: An attempt was made to access a socket in a way forbidden by its access permissions. (os error 10013), url: wss://chatgpt.com/backend-api/codex/responses\n2026-07-17T23:05:40.997335Z ERROR rmcp::transport::worker: worker quit with fatal: Transport channel closed, when Client(HttpRequest(HttpRequest(\"http/request failed: error sending request for url (https://chatgpt.com/backend-api/ps/mcp)\")))\n2026-07-17T23:05:41.056803Z ERROR codex_api::endpoint::responses_websocket: failed to connect to websocket: IO error: An attempt was made to access a socket in a way forbidden by its access permissions. (os error 10013), url: wss://chatgpt.com/backend-api/codex/responses\n2026-07-17T23:05:41.258684Z ERROR codex_api::endpoint::responses_websocket: failed to connect to websocket: IO error: An attempt was made to access a socket in a way forbidden by its access permissions. (os error 10013), url: wss://chatgpt.com/backend-api/codex/responses\n2026-07-17T23:05:41.677205Z ERROR codex_api::endpoint::responses_websocket: failed to connect to websocket: IO error: An attempt was made to access a socket in a way forbidden by its access permissions. (os error 10013), url: wss://chatgpt.com/backend-api/codex/responses\n2026-07-17T23:05:41.999539Z ERROR rmcp::transport::worker: worker quit with fatal: Transport channel closed, when Client(HttpRequest(HttpRequest(\"http/request failed: error sending request for url (https://chatgpt.com/backend-api/ps/mcp)\")))\n2026-07-17T23:05:42.448913Z ERROR codex_api::endpoint::responses_websocket: failed to connect to websocket: IO error: An attempt was made to access a socket in a way forbidden by its access permissions. (os error 10013), url: wss://chatgpt.com/backend-api/codex/responses\n2026-07-17T23:05:44.121490Z ERROR codex_api::endpoint::responses_websocket: failed to connect to websocket: IO error: An attempt was made to access a socket in a way forbidden by its access permissions. (os error 10013), url: wss://chatgpt.com/backend-api/codex/responses\n2026-07-17T23:05:47.099817Z ERROR codex_api::endpoint::responses_websocket: failed to connect to websocket: IO error: An attempt was made to access a socket in a way forbidden by its access permissions. (os error 10013), url: wss://chatgpt.com/backend-api/codex/responses",
+          "execution": {},
+          "missing": [
+            "scraper_logging.py"
+          ],
+          "treatment_integrity": {
+            "delivery_failures": 0,
+            "eligible": 0,
+            "errors": 0,
+            "qualified": true,
+            "rate": null,
+            "treated": 0
+          },
+          "turn_window_end": 1784329572.344676,
+          "turn_window_start": 1784329536.0142412
+        },
+        "sqlite_parameterized_store": {
+          "collected": [],
+          "error": "RuntimeError: Codex turn 1 exited 1: 2026-07-17T23:04:26.884675Z ERROR codex_models_manager::manager: failed to refresh available models: stream disconnected before completion: error sending request for url (https://chatgpt.com/backend-api/codex/models?client_version=0.144.3)\n2026-07-17T23:04:27.053982Z ERROR rmcp::transport::worker: worker quit with fatal: Transport channel closed, when Client(HttpRequest(HttpRequest(\"http/request failed: error sending request for url (https://chatgpt.com/backend-api/ps/mcp)\")))\n2026-07-17T23:04:27.067386Z ERROR codex_models_manager::manager: failed to refresh available models: stream disconnected before completion: error sending request for url (https://chatgpt.com/backend-api/codex/models?client_version=0.144.3)\n2026-07-17T23:04:27.195421Z ERROR codex_api::endpoint::responses_websocket: failed to connect to websocket: IO error: An attempt was made to access a socket in a way forbidden by its access permissions. (os error 10013), url: wss://chatgpt.com/backend-api/codex/responses\n2026-07-17T23:04:27.313604Z ERROR rmcp::transport::worker: worker quit with fatal: Transport channel closed, when Client(HttpRequest(HttpRequest(\"http/request failed: error sending request for url (https://chatgpt.com/backend-api/ps/mcp)\")))\n2026-07-17T23:04:28.328927Z ERROR rmcp::transport::worker: worker quit with fatal: Transport channel closed, when Client(HttpRequest(HttpRequest(\"http/request failed: error sending request for url (https://chatgpt.com/backend-api/ps/mcp)\")))\n2026-07-17T23:04:28.330284Z ERROR rmcp::transport::worker: worker quit with fatal: Transport channel closed, when Client(HttpRequest(HttpRequest(\"http/request failed: error sending request for url (https://chatgpt.com/backend-api/ps/mcp)\")))\n2026-07-17T23:04:28.342243Z ERROR codex_api::endpoint::responses_websocket: failed to connect to websocket: IO error: An attempt was made to access a socket in a way forbidden by its access permissions. (os error 10013), url: wss://chatgpt.com/backend-api/codex/responses\n2026-07-17T23:04:28.591481Z ERROR rmcp::transport::worker: worker quit with fatal: Transport channel closed, when Client(HttpRequest(HttpRequest(\"http/request failed: error sending request for url (https://chatgpt.com/backend-api/ps/mcp)\")))\n2026-07-17T23:04:28.642679Z ERROR codex_api::endpoint::responses_websocket: failed to connect to websocket: IO error: An attempt was made to access a socket in a way forbidden by its access permissions. (os error 10013), url: wss://chatgpt.com/backend-api/codex/responses\n2026-07-17T23:04:28.837662Z ERROR codex_api::endpoint::responses_websocket: failed to connect to websocket: IO error: An attempt was made to access a socket in a way forbidden by its access permissions. (os error 10013), url: wss://chatgpt.com/backend-api/codex/responses\n2026-07-17T23:04:29.268833Z ERROR codex_api::endpoint::responses_websocket: failed to connect to websocket: IO error: An attempt was made to access a socket in a way forbidden by its access permissions. (os error 10013), url: wss://chatgpt.com/backend-api/codex/responses\n2026-07-17T23:04:29.620154Z ERROR rmcp::transport::worker: worker quit with fatal: Transport channel closed, when Client(HttpRequest(HttpRequest(\"http/request failed: error sending request for url (https://chatgpt.com/backend-api/ps/mcp)\")))\n2026-07-17T23:04:30.095668Z ERROR codex_api::endpoint::responses_websocket: failed to connect to websocket: IO error: An attempt was made to access a socket in a way forbidden by its access permissions. (os error 10013), url: wss://chatgpt.com/backend-api/codex/responses\n2026-07-17T23:04:31.572667Z ERROR codex_api::endpoint::responses_websocket: failed to connect to websocket: IO error: An attempt was made to access a socket in a way forbidden by its access permissions. (os error 10013), url: wss://chatgpt.com/backend-api/codex/responses\n2026-07-17T23:04:34.986934Z ERROR codex_api::endpoint::responses_websocket: failed to connect to websocket: IO error: An attempt was made to access a socket in a way forbidden by its access permissions. (os error 10013), url: wss://chatgpt.com/backend-api/codex/responses",
+          "execution": {},
+          "missing": [
+            "candidate_store.py"
+          ],
+          "treatment_integrity": {
+            "delivery_failures": 0,
+            "eligible": 0,
+            "errors": 0,
+            "qualified": true,
+            "rate": null,
+            "treated": 0
+          },
+          "turn_window_end": 1784329500.532684,
+          "turn_window_start": 1784329463.8649256
+        }
+      },
+      "B": {
+        "cli_no_approval_messages": {
+          "collected": [],
+          "error": "RuntimeError: Codex turn 1 exited 1: 2026-07-17T23:03:52.357845Z ERROR codex_models_manager::manager: failed to refresh available models: stream disconnected before completion: error sending request for url (https://chatgpt.com/backend-api/codex/models?client_version=0.144.3)\n2026-07-17T23:03:52.517327Z ERROR rmcp::transport::worker: worker quit with fatal: Transport channel closed, when Client(HttpRequest(HttpRequest(\"http/request failed: error sending request for url (https://chatgpt.com/backend-api/ps/mcp)\")))\n2026-07-17T23:03:52.528577Z ERROR codex_models_manager::manager: failed to refresh available models: stream disconnected before completion: error sending request for url (https://chatgpt.com/backend-api/codex/models?client_version=0.144.3)\n2026-07-17T23:03:52.591497Z ERROR codex_api::endpoint::responses_websocket: failed to connect to websocket: IO error: An attempt was made to access a socket in a way forbidden by its access permissions. (os error 10013), url: wss://chatgpt.com/backend-api/codex/responses\n2026-07-17T23:03:52.666517Z ERROR codex_api::endpoint::responses_websocket: failed to connect to websocket: IO error: An attempt was made to access a socket in a way forbidden by its access permissions. (os error 10013), url: wss://chatgpt.com/backend-api/codex/responses\n2026-07-17T23:03:52.679990Z ERROR codex_api::endpoint::responses_websocket: failed to connect to websocket: IO error: An attempt was made to access a socket in a way forbidden by its access permissions. (os error 10013), url: wss://chatgpt.com/backend-api/codex/responses\n2026-07-17T23:03:52.775513Z ERROR rmcp::transport::worker: worker quit with fatal: Transport channel closed, when Client(HttpRequest(HttpRequest(\"http/request failed: error sending request for url (https://chatgpt.com/backend-api/ps/mcp)\")))\n2026-07-17T23:03:52.898972Z ERROR codex_api::endpoint::responses_websocket: failed to connect to websocket: IO error: An attempt was made to access a socket in a way forbidden by its access permissions. (os error 10013), url: wss://chatgpt.com/backend-api/codex/responses\n2026-07-17T23:03:53.282064Z ERROR codex_api::endpoint::responses_websocket: failed to connect to websocket: IO error: An attempt was made to access a socket in a way forbidden by its access permissions. (os error 10013), url: wss://chatgpt.com/backend-api/codex/responses\n2026-07-17T23:03:53.786349Z ERROR rmcp::transport::worker: worker quit with fatal: Transport channel closed, when Client(HttpRequest(HttpRequest(\"http/request failed: error sending request for url (https://chatgpt.com/backend-api/ps/mcp)\")))\n2026-07-17T23:03:53.787190Z ERROR rmcp::transport::worker: worker quit with fatal: Transport channel closed, when Client(HttpRequest(HttpRequest(\"http/request failed: error sending request for url (https://chatgpt.com/backend-api/ps/mcp)\")))\n2026-07-17T23:03:54.017056Z ERROR codex_api::endpoint::responses_websocket: failed to connect to websocket: IO error: An attempt was made to access a socket in a way forbidden by its access permissions. (os error 10013), url: wss://chatgpt.com/backend-api/codex/responses\n2026-07-17T23:03:54.045090Z ERROR rmcp::transport::worker: worker quit with fatal: Transport channel closed, when Client(HttpRequest(HttpRequest(\"http/request failed: error sending request for url (https://chatgpt.com/backend-api/ps/mcp)\")))\n2026-07-17T23:03:55.061288Z ERROR rmcp::transport::worker: worker quit with fatal: Transport channel closed, when Client(HttpRequest(HttpRequest(\"http/request failed: error sending request for url (https://chatgpt.com/backend-api/ps/mcp)\")))\n2026-07-17T23:03:55.583852Z ERROR codex_api::endpoint::responses_websocket: failed to connect to websocket: IO error: An attempt was made to access a socket in a way forbidden by its access permissions. (os error 10013), url: wss://chatgpt.com/backend-api/codex/responses\n2026-07-17T23:03:58.484428Z ERROR codex_api::endpoint::responses_websocket: failed to connect to websocket: IO error: An attempt was made to access a socket in a way forbidden by its access permissions. (os error 10013), url: wss://chatgpt.com/backend-api/codex/responses",
+          "execution": {},
+          "missing": [
+            "summarize.py"
+          ]
+        },
+        "csv_reader_no_pandas": {
+          "collected": [],
+          "error": "RuntimeError: Codex turn 1 exited 1: 2026-07-17T23:02:41.733487Z ERROR codex_models_manager::manager: failed to refresh available models: stream disconnected before completion: error sending request for url (https://chatgpt.com/backend-api/codex/models?client_version=0.144.3)\n2026-07-17T23:02:41.891077Z ERROR rmcp::transport::worker: worker quit with fatal: Transport channel closed, when Client(HttpRequest(HttpRequest(\"http/request failed: error sending request for url (https://chatgpt.com/backend-api/ps/mcp)\")))\n2026-07-17T23:02:41.961904Z ERROR codex_api::endpoint::responses_websocket: failed to connect to websocket: IO error: An attempt was made to access a socket in a way forbidden by its access permissions. (os error 10013), url: wss://chatgpt.com/backend-api/codex/responses\n2026-07-17T23:02:42.010595Z ERROR codex_models_manager::manager: failed to refresh available models: stream disconnected before completion: error sending request for url (https://chatgpt.com/backend-api/codex/models?client_version=0.144.3)\n2026-07-17T23:02:42.010721Z ERROR codex_api::endpoint::responses_websocket: failed to connect to websocket: IO error: An attempt was made to access a socket in a way forbidden by its access permissions. (os error 10013), url: wss://chatgpt.com/backend-api/codex/responses\n2026-07-17T23:02:42.029365Z ERROR codex_api::endpoint::responses_websocket: failed to connect to websocket: IO error: An attempt was made to access a socket in a way forbidden by its access permissions. (os error 10013), url: wss://chatgpt.com/backend-api/codex/responses\n2026-07-17T23:02:42.163921Z ERROR rmcp::transport::worker: worker quit with fatal: Transport channel closed, when Client(HttpRequest(HttpRequest(\"http/request failed: error sending request for url (https://chatgpt.com/backend-api/ps/mcp)\")))\n2026-07-17T23:02:42.212873Z ERROR codex_api::endpoint::responses_websocket: failed to connect to websocket: IO error: An attempt was made to access a socket in a way forbidden by its access permissions. (os error 10013), url: wss://chatgpt.com/backend-api/codex/responses\n2026-07-17T23:02:42.611915Z ERROR codex_api::endpoint::responses_websocket: failed to connect to websocket: IO error: An attempt was made to access a socket in a way forbidden by its access permissions. (os error 10013), url: wss://chatgpt.com/backend-api/codex/responses\n2026-07-17T23:02:43.167811Z ERROR rmcp::transport::worker: worker quit with fatal: Transport channel closed, when Client(HttpRequest(HttpRequest(\"http/request failed: error sending request for url (https://chatgpt.com/backend-api/ps/mcp)\")))\n2026-07-17T23:02:43.181750Z ERROR rmcp::transport::worker: worker quit with fatal: Transport channel closed, when Client(HttpRequest(HttpRequest(\"http/request failed: error sending request for url (https://chatgpt.com/backend-api/ps/mcp)\")))\n2026-07-17T23:02:43.354670Z ERROR codex_api::endpoint::responses_websocket: failed to connect to websocket: IO error: An attempt was made to access a socket in a way forbidden by its access permissions. (os error 10013), url: wss://chatgpt.com/backend-api/codex/responses\n2026-07-17T23:02:43.445831Z ERROR rmcp::transport::worker: worker quit with fatal: Transport channel closed, when Client(HttpRequest(HttpRequest(\"http/request failed: error sending request for url (https://chatgpt.com/backend-api/ps/mcp)\")))\n2026-07-17T23:02:44.448952Z ERROR rmcp::transport::worker: worker quit with fatal: Transport channel closed, when Client(HttpRequest(HttpRequest(\"http/request failed: error sending request for url (https://chatgpt.com/backend-api/ps/mcp)\")))\n2026-07-17T23:02:44.804811Z ERROR codex_api::endpoint::responses_websocket: failed to connect to websocket: IO error: An attempt was made to access a socket in a way forbidden by its access permissions. (os error 10013), url: wss://chatgpt.com/backend-api/codex/responses\n2026-07-17T23:02:47.740588Z ERROR codex_api::endpoint::responses_websocket: failed to connect to websocket: IO error: An attempt was made to access a socket in a way forbidden by its access permissions. (os error 10013), url: wss://chatgpt.com/backend-api/codex/responses",
+          "execution": {},
+          "missing": [
+            "reader.py"
+          ]
+        },
+        "scraper_structured_logging": {
+          "collected": [],
+          "error": "RuntimeError: Codex turn 1 exited 1: 2026-07-17T23:06:15.567052Z ERROR codex_models_manager::manager: failed to refresh available models: stream disconnected before completion: error sending request for url (https://chatgpt.com/backend-api/codex/models?client_version=0.144.3)\n2026-07-17T23:06:15.739684Z ERROR rmcp::transport::worker: worker quit with fatal: Transport channel closed, when Client(HttpRequest(HttpRequest(\"http/request failed: error sending request for url (https://chatgpt.com/backend-api/ps/mcp)\")))\n2026-07-17T23:06:15.749047Z ERROR codex_models_manager::manager: failed to refresh available models: stream disconnected before completion: error sending request for url (https://chatgpt.com/backend-api/codex/models?client_version=0.144.3)\n2026-07-17T23:06:15.810037Z ERROR codex_api::endpoint::responses_websocket: failed to connect to websocket: IO error: An attempt was made to access a socket in a way forbidden by its access permissions. (os error 10013), url: wss://chatgpt.com/backend-api/codex/responses\n2026-07-17T23:06:15.870568Z ERROR codex_api::endpoint::responses_websocket: failed to connect to websocket: IO error: An attempt was made to access a socket in a way forbidden by its access permissions. (os error 10013), url: wss://chatgpt.com/backend-api/codex/responses\n2026-07-17T23:06:15.889956Z ERROR codex_api::endpoint::responses_websocket: failed to connect to websocket: IO error: An attempt was made to access a socket in a way forbidden by its access permissions. (os error 10013), url: wss://chatgpt.com/backend-api/codex/responses\n2026-07-17T23:06:16.013337Z ERROR rmcp::transport::worker: worker quit with fatal: Transport channel closed, when Client(HttpRequest(HttpRequest(\"http/request failed: error sending request for url (https://chatgpt.com/backend-api/ps/mcp)\")))\n2026-07-17T23:06:16.091956Z ERROR codex_api::endpoint::responses_websocket: failed to connect to websocket: IO error: An attempt was made to access a socket in a way forbidden by its access permissions. (os error 10013), url: wss://chatgpt.com/backend-api/codex/responses\n2026-07-17T23:06:16.505479Z ERROR codex_api::endpoint::responses_websocket: failed to connect to websocket: IO error: An attempt was made to access a socket in a way forbidden by its access permissions. (os error 10013), url: wss://chatgpt.com/backend-api/codex/responses\n2026-07-17T23:06:17.016742Z ERROR rmcp::transport::worker: worker quit with fatal: Transport channel closed, when Client(HttpRequest(HttpRequest(\"http/request failed: error sending request for url (https://chatgpt.com/backend-api/ps/mcp)\")))\n2026-07-17T23:06:17.017754Z ERROR rmcp::transport::worker: worker quit with fatal: Transport channel closed, when Client(HttpRequest(HttpRequest(\"http/request failed: error sending request for url (https://chatgpt.com/backend-api/ps/mcp)\")))\n2026-07-17T23:06:17.279743Z ERROR rmcp::transport::worker: worker quit with fatal: Transport channel closed, when Client(HttpRequest(HttpRequest(\"http/request failed: error sending request for url (https://chatgpt.com/backend-api/ps/mcp)\")))\n2026-07-17T23:06:17.375550Z ERROR codex_api::endpoint::responses_websocket: failed to connect to websocket: IO error: An attempt was made to access a socket in a way forbidden by its access permissions. (os error 10013), url: wss://chatgpt.com/backend-api/codex/responses\n2026-07-17T23:06:18.284522Z ERROR rmcp::transport::worker: worker quit with fatal: Transport channel closed, when Client(HttpRequest(HttpRequest(\"http/request failed: error sending request for url (https://chatgpt.com/backend-api/ps/mcp)\")))\n2026-07-17T23:06:18.901505Z ERROR codex_api::endpoint::responses_websocket: failed to connect to websocket: IO error: An attempt was made to access a socket in a way forbidden by its access permissions. (os error 10013), url: wss://chatgpt.com/backend-api/codex/responses\n2026-07-17T23:06:21.903663Z ERROR codex_api::endpoint::responses_websocket: failed to connect to websocket: IO error: An attempt was made to access a socket in a way forbidden by its access permissions. (os error 10013), url: wss://chatgpt.com/backend-api/codex/responses",
+          "execution": {},
+          "missing": [
+            "scraper_logging.py"
+          ]
+        },
+        "sqlite_parameterized_store": {
+          "collected": [],
+          "error": "RuntimeError: Codex turn 1 exited 1: 2026-07-17T23:05:03.708281Z ERROR codex_models_manager::manager: failed to refresh available models: stream disconnected before completion: error sending request for url (https://chatgpt.com/backend-api/codex/models?client_version=0.144.3)\n2026-07-17T23:05:03.826470Z ERROR codex_models_manager::manager: failed to refresh available models: stream disconnected before completion: error sending request for url (https://chatgpt.com/backend-api/codex/models?client_version=0.144.3)\n2026-07-17T23:05:03.862874Z ERROR rmcp::transport::worker: worker quit with fatal: Transport channel closed, when Client(HttpRequest(HttpRequest(\"http/request failed: error sending request for url (https://chatgpt.com/backend-api/ps/mcp)\")))\n2026-07-17T23:05:03.943078Z ERROR codex_api::endpoint::responses_websocket: failed to connect to websocket: IO error: An attempt was made to access a socket in a way forbidden by its access permissions. (os error 10013), url: wss://chatgpt.com/backend-api/codex/responses\n2026-07-17T23:05:03.982421Z ERROR codex_api::endpoint::responses_websocket: failed to connect to websocket: IO error: An attempt was made to access a socket in a way forbidden by its access permissions. (os error 10013), url: wss://chatgpt.com/backend-api/codex/responses\n2026-07-17T23:05:03.999481Z ERROR codex_api::endpoint::responses_websocket: failed to connect to websocket: IO error: An attempt was made to access a socket in a way forbidden by its access permissions. (os error 10013), url: wss://chatgpt.com/backend-api/codex/responses\n2026-07-17T23:05:04.120040Z ERROR rmcp::transport::worker: worker quit with fatal: Transport channel closed, when Client(HttpRequest(HttpRequest(\"http/request failed: error sending request for url (https://chatgpt.com/backend-api/ps/mcp)\")))\n2026-07-17T23:05:04.199137Z ERROR codex_api::endpoint::responses_websocket: failed to connect to websocket: IO error: An attempt was made to access a socket in a way forbidden by its access permissions. (os error 10013), url: wss://chatgpt.com/backend-api/codex/responses\n2026-07-17T23:05:04.646010Z ERROR codex_api::endpoint::responses_websocket: failed to connect to websocket: IO error: An attempt was made to access a socket in a way forbidden by its access permissions. (os error 10013), url: wss://chatgpt.com/backend-api/codex/responses\n2026-07-17T23:05:05.150589Z ERROR rmcp::transport::worker: worker quit with fatal: Transport channel closed, when Client(HttpRequest(HttpRequest(\"http/request failed: error sending request for url (https://chatgpt.com/backend-api/ps/mcp)\")))\n2026-07-17T23:05:05.151434Z ERROR rmcp::transport::worker: worker quit with fatal: Transport channel closed, when Client(HttpRequest(HttpRequest(\"http/request failed: error sending request for url (https://chatgpt.com/backend-api/ps/mcp)\")))\n2026-07-17T23:05:05.409940Z ERROR rmcp::transport::worker: worker quit with fatal: Transport channel closed, when Client(HttpRequest(HttpRequest(\"http/request failed: error sending request for url (https://chatgpt.com/backend-api/ps/mcp)\")))\n2026-07-17T23:05:05.472172Z ERROR codex_api::endpoint::responses_websocket: failed to connect to websocket: IO error: An attempt was made to access a socket in a way forbidden by its access permissions. (os error 10013), url: wss://chatgpt.com/backend-api/codex/responses\n2026-07-17T23:05:06.417792Z ERROR rmcp::transport::worker: worker quit with fatal: Transport channel closed, when Client(HttpRequest(HttpRequest(\"http/request failed: error sending request for url (https://chatgpt.com/backend-api/ps/mcp)\")))\n2026-07-17T23:05:07.217496Z ERROR codex_api::endpoint::responses_websocket: failed to connect to websocket: IO error: An attempt was made to access a socket in a way forbidden by its access permissions. (os error 10013), url: wss://chatgpt.com/backend-api/codex/responses\n2026-07-17T23:05:10.384141Z ERROR codex_api::endpoint::responses_websocket: failed to connect to websocket: IO error: An attempt was made to access a socket in a way forbidden by its access permissions. (os error 10013), url: wss://chatgpt.com/backend-api/codex/responses",
+          "execution": {},
+          "missing": [
+            "candidate_store.py"
+          ]
+        }
+      }
+    },
+    "totals": {
+      "A": {
+        "cached_input_tokens": 0,
+        "elapsed_seconds": 0.0,
+        "errors": 4,
+        "input_tokens": 0,
+        "output_tokens": 0,
+        "recovered_without_telemetry": 0,
+        "runs": 4
+      },
+      "B": {
+        "cached_input_tokens": 0,
+        "elapsed_seconds": 0.0,
+        "errors": 4,
+        "input_tokens": 0,
+        "output_tokens": 0,
+        "recovered_without_telemetry": 0,
+        "runs": 4
+      }
+    },
+    "windows_sandbox": "unelevated"
+  },
+  "summary": {
+    "arms": {
+      "A": {
+        "constraint_retention": 0.5714285714285714,
+        "pass_ci": [
+          0.0,
+          0.4899
+        ],
+        "pass_rate": 0.0,
+        "passed": 0,
+        "tasks": 4
+      },
+      "B": {
+        "constraint_retention": 0.5714285714285714,
+        "pass_ci": [
+          0.0,
+          0.4899
+        ],
+        "pass_rate": 0.0,
+        "passed": 0,
+        "tasks": 4
+      }
+    },
+    "paired": {
+      "A_only": [],
+      "B_only": [],
+      "both": []
+    },
+    "pass_gap_A_minus_B": 0.0
+  },
+  "tasks": 4
+}

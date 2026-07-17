@@ -17,6 +17,15 @@ if ([string]::IsNullOrWhiteSpace($CodexControlRoot)) {
     $CodexControlRoot = Join-Path $AIOptimizerHome ".aioptimizer\codex-controls\ab-v15-v4"
 }
 
+# IMPORTANT: after this script creates/points at a NEW $CodexControlRoot, run
+# bootstrap_codex_home_network.ps1 once before any bridge-driven run. A relocated
+# CODEX_HOME has no cached Windows network grant yet -- a nested child `codex exec`
+# spawned from the bridge's own sandboxed process will fail every turn with
+# "os error 10013" (socket access forbidden) reaching the OpenAI API, even though a
+# plain, unsandboxed `codex exec` against the same CODEX_HOME works fine. Reproduced
+# and confirmed 2026-07-17; the bootstrap script triggers the one-time interactive
+# elevation prompt that caches the grant, so later bridge runs stop failing.
+
 function Write-NewFile {
     param(
         [Parameter(Mandatory = $true)][string]$Path,
