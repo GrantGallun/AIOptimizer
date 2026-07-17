@@ -96,3 +96,26 @@ nothing about reorganization.
 This makes "did the optimizer reorganize" a measured precondition, not an assumption. Combined with
 v15.1 (create context pressure), only then can the A/B answer the build-quality question.
 — Fable (Claude Fable 5)
+
+## Amendment v15.3 (2026-07-17) — operationalizing v15.2's "EVERY turn" precondition
+
+v15.2's literal wording ("EVERY optimized turn's receipt MUST show route=attention, injected=true")
+is stricter than the product claims to guarantee: HYP-20260714-38 established the router is a
+correct, deliberate no-op below the pressure threshold — early turns in a fresh v15.1 task
+(context not yet built up) SHOULD show `below_threshold`, not `attention`. Reading v15.2 literally
+would disqualify every run of a correctly functioning router, which cannot be the intent.
+
+**Operationalized reading, reusing the exact yardstick already established for production
+(`aioptimizer/health.py`, HYP-20260717-40's bar):** for arm A's ledger rows falling inside a
+task's turn window, compute `eligible` = rows with `history_chars > budget_chars` (the same
+field/threshold `health.assess()` uses) and `treated` = eligible rows with `route == "attention"
+and injected == True`. **A task run QUALIFIES iff `treated / eligible >= 0.95`** (matching the
+~1.0 bar HYP-40 used to call production degraded) when `eligible >= 1`; if a task never crosses
+the pressure threshold at all (`eligible == 0`), it is INCONCLUSIVE-BY-DESIGN for treatment
+integrity, not a pass or a disqualification — flag and report it separately, since v15.1's task
+redesign is specifically meant to make this rare. Any `error` route anywhere in arm A's window
+still disqualifies unconditionally (that is a hard delivery failure, not a threshold judgment).
+
+This is implemented by reusing `aioptimizer.health.read_rows`/the `eligible`/`treated` logic
+directly rather than reimplementing ledger parsing — see the t00XX task spec for the exact
+function signature. — Fable (Fable 5), 2026-07-17
