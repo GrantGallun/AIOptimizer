@@ -1,0 +1,1012 @@
+{
+  "benchmark": "v14-pressure-router-gate",
+  "seeds": [
+    20260713
+  ],
+  "n_per_class": 20,
+  "threshold": 0.9,
+  "per_class": {
+    "a": {
+      "n": 20,
+      "correct": 20,
+      "rate": 1.0,
+      "passed": true
+    },
+    "a_templated": {
+      "n": 20,
+      "correct": 20,
+      "rate": 1.0,
+      "passed": true
+    },
+    "b": {
+      "n": 20,
+      "correct": 20,
+      "rate": 1.0,
+      "passed": true
+    },
+    "c": {
+      "n": 20,
+      "correct": 20,
+      "rate": 1.0,
+      "passed": true
+    },
+    "d": {
+      "n": 20,
+      "correct": 20,
+      "rate": 1.0,
+      "passed": true
+    },
+    "e": {
+      "n": 20,
+      "correct": 20,
+      "rate": 1.0,
+      "passed": true
+    }
+  },
+  "privacy_regressions": [],
+  "gate": {
+    "passed": true
+  },
+  "rows": [
+    {
+      "seed": 20260713,
+      "id": "v14-20260713-a-00",
+      "class": "a",
+      "route": "attention",
+      "route_reason": "buried_relevant_record",
+      "correct": true
+    },
+    {
+      "seed": 20260713,
+      "id": "v14-20260713-a-01",
+      "class": "a",
+      "route": "attention",
+      "route_reason": "buried_relevant_record",
+      "correct": true
+    },
+    {
+      "seed": 20260713,
+      "id": "v14-20260713-a-02",
+      "class": "a",
+      "route": "attention",
+      "route_reason": "buried_relevant_record",
+      "correct": true
+    },
+    {
+      "seed": 20260713,
+      "id": "v14-20260713-a-03",
+      "class": "a",
+      "route": "attention",
+      "route_reason": "buried_relevant_record",
+      "correct": true
+    },
+    {
+      "seed": 20260713,
+      "id": "v14-20260713-a-04",
+      "class": "a",
+      "route": "attention",
+      "route_reason": "buried_relevant_record",
+      "correct": true
+    },
+    {
+      "seed": 20260713,
+      "id": "v14-20260713-a-05",
+      "class": "a",
+      "route": "attention",
+      "route_reason": "buried_relevant_record",
+      "correct": true
+    },
+    {
+      "seed": 20260713,
+      "id": "v14-20260713-a-06",
+      "class": "a",
+      "route": "attention",
+      "route_reason": "buried_relevant_record",
+      "correct": true
+    },
+    {
+      "seed": 20260713,
+      "id": "v14-20260713-a-07",
+      "class": "a",
+      "route": "attention",
+      "route_reason": "buried_relevant_record",
+      "correct": true
+    },
+    {
+      "seed": 20260713,
+      "id": "v14-20260713-a-08",
+      "class": "a",
+      "route": "attention",
+      "route_reason": "buried_relevant_record",
+      "correct": true
+    },
+    {
+      "seed": 20260713,
+      "id": "v14-20260713-a-09",
+      "class": "a",
+      "route": "attention",
+      "route_reason": "buried_relevant_record",
+      "correct": true
+    },
+    {
+      "seed": 20260713,
+      "id": "v14-20260713-a-10",
+      "class": "a",
+      "route": "attention",
+      "route_reason": "buried_relevant_record",
+      "correct": true
+    },
+    {
+      "seed": 20260713,
+      "id": "v14-20260713-a-11",
+      "class": "a",
+      "route": "attention",
+      "route_reason": "buried_relevant_record",
+      "correct": true
+    },
+    {
+      "seed": 20260713,
+      "id": "v14-20260713-a-12",
+      "class": "a",
+      "route": "attention",
+      "route_reason": "buried_relevant_record",
+      "correct": true
+    },
+    {
+      "seed": 20260713,
+      "id": "v14-20260713-a-13",
+      "class": "a",
+      "route": "attention",
+      "route_reason": "buried_relevant_record",
+      "correct": true
+    },
+    {
+      "seed": 20260713,
+      "id": "v14-20260713-a-14",
+      "class": "a",
+      "route": "attention",
+      "route_reason": "buried_relevant_record",
+      "correct": true
+    },
+    {
+      "seed": 20260713,
+      "id": "v14-20260713-a-15",
+      "class": "a",
+      "route": "attention",
+      "route_reason": "buried_relevant_record",
+      "correct": true
+    },
+    {
+      "seed": 20260713,
+      "id": "v14-20260713-a-16",
+      "class": "a",
+      "route": "attention",
+      "route_reason": "buried_relevant_record",
+      "correct": true
+    },
+    {
+      "seed": 20260713,
+      "id": "v14-20260713-a-17",
+      "class": "a",
+      "route": "attention",
+      "route_reason": "buried_relevant_record",
+      "correct": true
+    },
+    {
+      "seed": 20260713,
+      "id": "v14-20260713-a-18",
+      "class": "a",
+      "route": "attention",
+      "route_reason": "buried_relevant_record",
+      "correct": true
+    },
+    {
+      "seed": 20260713,
+      "id": "v14-20260713-a-19",
+      "class": "a",
+      "route": "attention",
+      "route_reason": "buried_relevant_record",
+      "correct": true
+    },
+    {
+      "seed": 20260713,
+      "id": "v14-20260713-aT-00",
+      "class": "a_templated",
+      "route": "attention",
+      "route_reason": "buried_relevant_record",
+      "correct": true
+    },
+    {
+      "seed": 20260713,
+      "id": "v14-20260713-aT-01",
+      "class": "a_templated",
+      "route": "attention",
+      "route_reason": "buried_relevant_record",
+      "correct": true
+    },
+    {
+      "seed": 20260713,
+      "id": "v14-20260713-aT-02",
+      "class": "a_templated",
+      "route": "attention",
+      "route_reason": "buried_relevant_record",
+      "correct": true
+    },
+    {
+      "seed": 20260713,
+      "id": "v14-20260713-aT-03",
+      "class": "a_templated",
+      "route": "attention",
+      "route_reason": "buried_relevant_record",
+      "correct": true
+    },
+    {
+      "seed": 20260713,
+      "id": "v14-20260713-aT-04",
+      "class": "a_templated",
+      "route": "attention",
+      "route_reason": "buried_relevant_record",
+      "correct": true
+    },
+    {
+      "seed": 20260713,
+      "id": "v14-20260713-aT-05",
+      "class": "a_templated",
+      "route": "attention",
+      "route_reason": "buried_relevant_record",
+      "correct": true
+    },
+    {
+      "seed": 20260713,
+      "id": "v14-20260713-aT-06",
+      "class": "a_templated",
+      "route": "attention",
+      "route_reason": "buried_relevant_record",
+      "correct": true
+    },
+    {
+      "seed": 20260713,
+      "id": "v14-20260713-aT-07",
+      "class": "a_templated",
+      "route": "attention",
+      "route_reason": "buried_relevant_record",
+      "correct": true
+    },
+    {
+      "seed": 20260713,
+      "id": "v14-20260713-aT-08",
+      "class": "a_templated",
+      "route": "attention",
+      "route_reason": "buried_relevant_record",
+      "correct": true
+    },
+    {
+      "seed": 20260713,
+      "id": "v14-20260713-aT-09",
+      "class": "a_templated",
+      "route": "attention",
+      "route_reason": "buried_relevant_record",
+      "correct": true
+    },
+    {
+      "seed": 20260713,
+      "id": "v14-20260713-aT-10",
+      "class": "a_templated",
+      "route": "attention",
+      "route_reason": "buried_relevant_record",
+      "correct": true
+    },
+    {
+      "seed": 20260713,
+      "id": "v14-20260713-aT-11",
+      "class": "a_templated",
+      "route": "attention",
+      "route_reason": "buried_relevant_record",
+      "correct": true
+    },
+    {
+      "seed": 20260713,
+      "id": "v14-20260713-aT-12",
+      "class": "a_templated",
+      "route": "attention",
+      "route_reason": "buried_relevant_record",
+      "correct": true
+    },
+    {
+      "seed": 20260713,
+      "id": "v14-20260713-aT-13",
+      "class": "a_templated",
+      "route": "attention",
+      "route_reason": "buried_relevant_record",
+      "correct": true
+    },
+    {
+      "seed": 20260713,
+      "id": "v14-20260713-aT-14",
+      "class": "a_templated",
+      "route": "attention",
+      "route_reason": "buried_relevant_record",
+      "correct": true
+    },
+    {
+      "seed": 20260713,
+      "id": "v14-20260713-aT-15",
+      "class": "a_templated",
+      "route": "attention",
+      "route_reason": "buried_relevant_record",
+      "correct": true
+    },
+    {
+      "seed": 20260713,
+      "id": "v14-20260713-aT-16",
+      "class": "a_templated",
+      "route": "attention",
+      "route_reason": "buried_relevant_record",
+      "correct": true
+    },
+    {
+      "seed": 20260713,
+      "id": "v14-20260713-aT-17",
+      "class": "a_templated",
+      "route": "attention",
+      "route_reason": "buried_relevant_record",
+      "correct": true
+    },
+    {
+      "seed": 20260713,
+      "id": "v14-20260713-aT-18",
+      "class": "a_templated",
+      "route": "attention",
+      "route_reason": "buried_relevant_record",
+      "correct": true
+    },
+    {
+      "seed": 20260713,
+      "id": "v14-20260713-aT-19",
+      "class": "a_templated",
+      "route": "attention",
+      "route_reason": "buried_relevant_record",
+      "correct": true
+    },
+    {
+      "seed": 20260713,
+      "id": "v14-20260713-b-00",
+      "class": "b",
+      "route": "raw",
+      "route_reason": "covered_by_recent_tail",
+      "correct": true
+    },
+    {
+      "seed": 20260713,
+      "id": "v14-20260713-b-01",
+      "class": "b",
+      "route": "raw",
+      "route_reason": "covered_by_recent_tail",
+      "correct": true
+    },
+    {
+      "seed": 20260713,
+      "id": "v14-20260713-b-02",
+      "class": "b",
+      "route": "raw",
+      "route_reason": "covered_by_recent_tail",
+      "correct": true
+    },
+    {
+      "seed": 20260713,
+      "id": "v14-20260713-b-03",
+      "class": "b",
+      "route": "raw",
+      "route_reason": "covered_by_recent_tail",
+      "correct": true
+    },
+    {
+      "seed": 20260713,
+      "id": "v14-20260713-b-04",
+      "class": "b",
+      "route": "raw",
+      "route_reason": "covered_by_recent_tail",
+      "correct": true
+    },
+    {
+      "seed": 20260713,
+      "id": "v14-20260713-b-05",
+      "class": "b",
+      "route": "raw",
+      "route_reason": "covered_by_recent_tail",
+      "correct": true
+    },
+    {
+      "seed": 20260713,
+      "id": "v14-20260713-b-06",
+      "class": "b",
+      "route": "raw",
+      "route_reason": "covered_by_recent_tail",
+      "correct": true
+    },
+    {
+      "seed": 20260713,
+      "id": "v14-20260713-b-07",
+      "class": "b",
+      "route": "raw",
+      "route_reason": "covered_by_recent_tail",
+      "correct": true
+    },
+    {
+      "seed": 20260713,
+      "id": "v14-20260713-b-08",
+      "class": "b",
+      "route": "raw",
+      "route_reason": "covered_by_recent_tail",
+      "correct": true
+    },
+    {
+      "seed": 20260713,
+      "id": "v14-20260713-b-09",
+      "class": "b",
+      "route": "raw",
+      "route_reason": "covered_by_recent_tail",
+      "correct": true
+    },
+    {
+      "seed": 20260713,
+      "id": "v14-20260713-b-10",
+      "class": "b",
+      "route": "raw",
+      "route_reason": "covered_by_recent_tail",
+      "correct": true
+    },
+    {
+      "seed": 20260713,
+      "id": "v14-20260713-b-11",
+      "class": "b",
+      "route": "raw",
+      "route_reason": "covered_by_recent_tail",
+      "correct": true
+    },
+    {
+      "seed": 20260713,
+      "id": "v14-20260713-b-12",
+      "class": "b",
+      "route": "raw",
+      "route_reason": "covered_by_recent_tail",
+      "correct": true
+    },
+    {
+      "seed": 20260713,
+      "id": "v14-20260713-b-13",
+      "class": "b",
+      "route": "raw",
+      "route_reason": "covered_by_recent_tail",
+      "correct": true
+    },
+    {
+      "seed": 20260713,
+      "id": "v14-20260713-b-14",
+      "class": "b",
+      "route": "raw",
+      "route_reason": "covered_by_recent_tail",
+      "correct": true
+    },
+    {
+      "seed": 20260713,
+      "id": "v14-20260713-b-15",
+      "class": "b",
+      "route": "raw",
+      "route_reason": "covered_by_recent_tail",
+      "correct": true
+    },
+    {
+      "seed": 20260713,
+      "id": "v14-20260713-b-16",
+      "class": "b",
+      "route": "raw",
+      "route_reason": "covered_by_recent_tail",
+      "correct": true
+    },
+    {
+      "seed": 20260713,
+      "id": "v14-20260713-b-17",
+      "class": "b",
+      "route": "raw",
+      "route_reason": "covered_by_recent_tail",
+      "correct": true
+    },
+    {
+      "seed": 20260713,
+      "id": "v14-20260713-b-18",
+      "class": "b",
+      "route": "raw",
+      "route_reason": "covered_by_recent_tail",
+      "correct": true
+    },
+    {
+      "seed": 20260713,
+      "id": "v14-20260713-b-19",
+      "class": "b",
+      "route": "raw",
+      "route_reason": "covered_by_recent_tail",
+      "correct": true
+    },
+    {
+      "seed": 20260713,
+      "id": "v14-20260713-c-00",
+      "class": "c",
+      "route": "raw",
+      "route_reason": "covered_by_recent_tail",
+      "correct": true
+    },
+    {
+      "seed": 20260713,
+      "id": "v14-20260713-c-01",
+      "class": "c",
+      "route": "raw",
+      "route_reason": "covered_by_recent_tail",
+      "correct": true
+    },
+    {
+      "seed": 20260713,
+      "id": "v14-20260713-c-02",
+      "class": "c",
+      "route": "raw",
+      "route_reason": "covered_by_recent_tail",
+      "correct": true
+    },
+    {
+      "seed": 20260713,
+      "id": "v14-20260713-c-03",
+      "class": "c",
+      "route": "raw",
+      "route_reason": "covered_by_recent_tail",
+      "correct": true
+    },
+    {
+      "seed": 20260713,
+      "id": "v14-20260713-c-04",
+      "class": "c",
+      "route": "raw",
+      "route_reason": "covered_by_recent_tail",
+      "correct": true
+    },
+    {
+      "seed": 20260713,
+      "id": "v14-20260713-c-05",
+      "class": "c",
+      "route": "raw",
+      "route_reason": "covered_by_recent_tail",
+      "correct": true
+    },
+    {
+      "seed": 20260713,
+      "id": "v14-20260713-c-06",
+      "class": "c",
+      "route": "raw",
+      "route_reason": "covered_by_recent_tail",
+      "correct": true
+    },
+    {
+      "seed": 20260713,
+      "id": "v14-20260713-c-07",
+      "class": "c",
+      "route": "raw",
+      "route_reason": "covered_by_recent_tail",
+      "correct": true
+    },
+    {
+      "seed": 20260713,
+      "id": "v14-20260713-c-08",
+      "class": "c",
+      "route": "raw",
+      "route_reason": "covered_by_recent_tail",
+      "correct": true
+    },
+    {
+      "seed": 20260713,
+      "id": "v14-20260713-c-09",
+      "class": "c",
+      "route": "raw",
+      "route_reason": "covered_by_recent_tail",
+      "correct": true
+    },
+    {
+      "seed": 20260713,
+      "id": "v14-20260713-c-10",
+      "class": "c",
+      "route": "raw",
+      "route_reason": "covered_by_recent_tail",
+      "correct": true
+    },
+    {
+      "seed": 20260713,
+      "id": "v14-20260713-c-11",
+      "class": "c",
+      "route": "raw",
+      "route_reason": "covered_by_recent_tail",
+      "correct": true
+    },
+    {
+      "seed": 20260713,
+      "id": "v14-20260713-c-12",
+      "class": "c",
+      "route": "raw",
+      "route_reason": "covered_by_recent_tail",
+      "correct": true
+    },
+    {
+      "seed": 20260713,
+      "id": "v14-20260713-c-13",
+      "class": "c",
+      "route": "raw",
+      "route_reason": "covered_by_recent_tail",
+      "correct": true
+    },
+    {
+      "seed": 20260713,
+      "id": "v14-20260713-c-14",
+      "class": "c",
+      "route": "raw",
+      "route_reason": "covered_by_recent_tail",
+      "correct": true
+    },
+    {
+      "seed": 20260713,
+      "id": "v14-20260713-c-15",
+      "class": "c",
+      "route": "raw",
+      "route_reason": "covered_by_recent_tail",
+      "correct": true
+    },
+    {
+      "seed": 20260713,
+      "id": "v14-20260713-c-16",
+      "class": "c",
+      "route": "raw",
+      "route_reason": "covered_by_recent_tail",
+      "correct": true
+    },
+    {
+      "seed": 20260713,
+      "id": "v14-20260713-c-17",
+      "class": "c",
+      "route": "raw",
+      "route_reason": "covered_by_recent_tail",
+      "correct": true
+    },
+    {
+      "seed": 20260713,
+      "id": "v14-20260713-c-18",
+      "class": "c",
+      "route": "raw",
+      "route_reason": "covered_by_recent_tail",
+      "correct": true
+    },
+    {
+      "seed": 20260713,
+      "id": "v14-20260713-c-19",
+      "class": "c",
+      "route": "raw",
+      "route_reason": "covered_by_recent_tail",
+      "correct": true
+    },
+    {
+      "seed": 20260713,
+      "id": "v14-20260713-d-00",
+      "class": "d",
+      "route": "raw",
+      "route_reason": "low_relevance",
+      "correct": true
+    },
+    {
+      "seed": 20260713,
+      "id": "v14-20260713-d-01",
+      "class": "d",
+      "route": "raw",
+      "route_reason": "low_relevance",
+      "correct": true
+    },
+    {
+      "seed": 20260713,
+      "id": "v14-20260713-d-02",
+      "class": "d",
+      "route": "raw",
+      "route_reason": "low_relevance",
+      "correct": true
+    },
+    {
+      "seed": 20260713,
+      "id": "v14-20260713-d-03",
+      "class": "d",
+      "route": "raw",
+      "route_reason": "low_relevance",
+      "correct": true
+    },
+    {
+      "seed": 20260713,
+      "id": "v14-20260713-d-04",
+      "class": "d",
+      "route": "raw",
+      "route_reason": "low_relevance",
+      "correct": true
+    },
+    {
+      "seed": 20260713,
+      "id": "v14-20260713-d-05",
+      "class": "d",
+      "route": "raw",
+      "route_reason": "low_relevance",
+      "correct": true
+    },
+    {
+      "seed": 20260713,
+      "id": "v14-20260713-d-06",
+      "class": "d",
+      "route": "raw",
+      "route_reason": "low_relevance",
+      "correct": true
+    },
+    {
+      "seed": 20260713,
+      "id": "v14-20260713-d-07",
+      "class": "d",
+      "route": "raw",
+      "route_reason": "low_relevance",
+      "correct": true
+    },
+    {
+      "seed": 20260713,
+      "id": "v14-20260713-d-08",
+      "class": "d",
+      "route": "raw",
+      "route_reason": "low_relevance",
+      "correct": true
+    },
+    {
+      "seed": 20260713,
+      "id": "v14-20260713-d-09",
+      "class": "d",
+      "route": "raw",
+      "route_reason": "low_relevance",
+      "correct": true
+    },
+    {
+      "seed": 20260713,
+      "id": "v14-20260713-d-10",
+      "class": "d",
+      "route": "raw",
+      "route_reason": "low_relevance",
+      "correct": true
+    },
+    {
+      "seed": 20260713,
+      "id": "v14-20260713-d-11",
+      "class": "d",
+      "route": "raw",
+      "route_reason": "low_relevance",
+      "correct": true
+    },
+    {
+      "seed": 20260713,
+      "id": "v14-20260713-d-12",
+      "class": "d",
+      "route": "raw",
+      "route_reason": "low_relevance",
+      "correct": true
+    },
+    {
+      "seed": 20260713,
+      "id": "v14-20260713-d-13",
+      "class": "d",
+      "route": "raw",
+      "route_reason": "low_relevance",
+      "correct": true
+    },
+    {
+      "seed": 20260713,
+      "id": "v14-20260713-d-14",
+      "class": "d",
+      "route": "raw",
+      "route_reason": "low_relevance",
+      "correct": true
+    },
+    {
+      "seed": 20260713,
+      "id": "v14-20260713-d-15",
+      "class": "d",
+      "route": "raw",
+      "route_reason": "low_relevance",
+      "correct": true
+    },
+    {
+      "seed": 20260713,
+      "id": "v14-20260713-d-16",
+      "class": "d",
+      "route": "raw",
+      "route_reason": "low_relevance",
+      "correct": true
+    },
+    {
+      "seed": 20260713,
+      "id": "v14-20260713-d-17",
+      "class": "d",
+      "route": "raw",
+      "route_reason": "low_relevance",
+      "correct": true
+    },
+    {
+      "seed": 20260713,
+      "id": "v14-20260713-d-18",
+      "class": "d",
+      "route": "raw",
+      "route_reason": "low_relevance",
+      "correct": true
+    },
+    {
+      "seed": 20260713,
+      "id": "v14-20260713-d-19",
+      "class": "d",
+      "route": "raw",
+      "route_reason": "low_relevance",
+      "correct": true
+    },
+    {
+      "seed": 20260713,
+      "id": "v14-20260713-e-00",
+      "class": "e",
+      "route": "attention",
+      "route_reason": "buried_relevant_record",
+      "correct": true
+    },
+    {
+      "seed": 20260713,
+      "id": "v14-20260713-e-01",
+      "class": "e",
+      "route": "attention",
+      "route_reason": "buried_relevant_record",
+      "correct": true
+    },
+    {
+      "seed": 20260713,
+      "id": "v14-20260713-e-02",
+      "class": "e",
+      "route": "attention",
+      "route_reason": "buried_relevant_record",
+      "correct": true
+    },
+    {
+      "seed": 20260713,
+      "id": "v14-20260713-e-03",
+      "class": "e",
+      "route": "attention",
+      "route_reason": "buried_relevant_record",
+      "correct": true
+    },
+    {
+      "seed": 20260713,
+      "id": "v14-20260713-e-04",
+      "class": "e",
+      "route": "attention",
+      "route_reason": "buried_relevant_record",
+      "correct": true
+    },
+    {
+      "seed": 20260713,
+      "id": "v14-20260713-e-05",
+      "class": "e",
+      "route": "attention",
+      "route_reason": "buried_relevant_record",
+      "correct": true
+    },
+    {
+      "seed": 20260713,
+      "id": "v14-20260713-e-06",
+      "class": "e",
+      "route": "attention",
+      "route_reason": "buried_relevant_record",
+      "correct": true
+    },
+    {
+      "seed": 20260713,
+      "id": "v14-20260713-e-07",
+      "class": "e",
+      "route": "attention",
+      "route_reason": "buried_relevant_record",
+      "correct": true
+    },
+    {
+      "seed": 20260713,
+      "id": "v14-20260713-e-08",
+      "class": "e",
+      "route": "attention",
+      "route_reason": "buried_relevant_record",
+      "correct": true
+    },
+    {
+      "seed": 20260713,
+      "id": "v14-20260713-e-09",
+      "class": "e",
+      "route": "attention",
+      "route_reason": "buried_relevant_record",
+      "correct": true
+    },
+    {
+      "seed": 20260713,
+      "id": "v14-20260713-e-10",
+      "class": "e",
+      "route": "attention",
+      "route_reason": "buried_relevant_record",
+      "correct": true
+    },
+    {
+      "seed": 20260713,
+      "id": "v14-20260713-e-11",
+      "class": "e",
+      "route": "attention",
+      "route_reason": "buried_relevant_record",
+      "correct": true
+    },
+    {
+      "seed": 20260713,
+      "id": "v14-20260713-e-12",
+      "class": "e",
+      "route": "attention",
+      "route_reason": "buried_relevant_record",
+      "correct": true
+    },
+    {
+      "seed": 20260713,
+      "id": "v14-20260713-e-13",
+      "class": "e",
+      "route": "attention",
+      "route_reason": "buried_relevant_record",
+      "correct": true
+    },
+    {
+      "seed": 20260713,
+      "id": "v14-20260713-e-14",
+      "class": "e",
+      "route": "attention",
+      "route_reason": "buried_relevant_record",
+      "correct": true
+    },
+    {
+      "seed": 20260713,
+      "id": "v14-20260713-e-15",
+      "class": "e",
+      "route": "attention",
+      "route_reason": "buried_relevant_record",
+      "correct": true
+    },
+    {
+      "seed": 20260713,
+      "id": "v14-20260713-e-16",
+      "class": "e",
+      "route": "attention",
+      "route_reason": "buried_relevant_record",
+      "correct": true
+    },
+    {
+      "seed": 20260713,
+      "id": "v14-20260713-e-17",
+      "class": "e",
+      "route": "attention",
+      "route_reason": "buried_relevant_record",
+      "correct": true
+    },
+    {
+      "seed": 20260713,
+      "id": "v14-20260713-e-18",
+      "class": "e",
+      "route": "attention",
+      "route_reason": "buried_relevant_record",
+      "correct": true
+    },
+    {
+      "seed": 20260713,
+      "id": "v14-20260713-e-19",
+      "class": "e",
+      "route": "attention",
+      "route_reason": "buried_relevant_record",
+      "correct": true
+    }
+  ]
+}
