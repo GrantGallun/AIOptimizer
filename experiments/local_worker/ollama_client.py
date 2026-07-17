@@ -78,6 +78,7 @@ class OllamaClient:
         temperature: float = 0.0,
         max_tokens: int = 24,
         format: dict[str, Any] | str | None = None,
+        num_ctx: int | None = None,
     ) -> Generation:
         body: dict[str, Any] = {
             "model": model,
@@ -89,6 +90,10 @@ class OllamaClient:
             "keep_alive": "60m",
             "options": {"temperature": temperature, "num_predict": max_tokens},
         }
+        if num_ctx is not None:
+            # Ollama's default window (4096) silently truncates long prompts; experiments
+            # that feed full transcripts must set this explicitly (PREREGISTRATION_v18).
+            body["options"]["num_ctx"] = num_ctx
         if system:
             body["system"] = system
         if format is not None:
