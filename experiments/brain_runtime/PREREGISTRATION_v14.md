@@ -1,7 +1,12 @@
 # Pre-Registration v14: Two-stage pressure router for live context injection
 
 Registered: 2026-07-12 by Fable (Claude Fable 5)
-Status: Registered (no v14 run yet)
+Status: **CONFIRMED** (hidden 1109/1117/1123, read once 2026-07-17): every class 60/60 — (a) 1.000,
+a_templated 1.000, (b) 1.000 with zero encoder spend, (c) 1.000, (d) 1.000, (e) 1.000 with all
+exclusions absent — and zero privacy regressions across 360 planted-secret re-runs. Dev (20260713)
+was 120/120 first. Run on the PRODUCTION middleware construction (real encoder, default deny
+patterns) AFTER the 2026-07-17 veto fix; a_templated would have been 0/60 before it. Verdict and
+caveats: HYP-20260712-41 in the graveyard.
 Provenance: Codex's live-dogfood proposal (bus m0140) after the first real injection receipt showed
 the size-based eligibility flaw: the 12k-char early exit conflates SIZE with salience risk — it
 blocked injection for a 7.1k-char thread containing a buried prior decision, while the first
