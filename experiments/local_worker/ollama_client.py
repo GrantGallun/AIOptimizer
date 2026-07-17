@@ -39,6 +39,7 @@ class Generation:
     completion_tokens: int
     total_duration_ns: int
     load_duration_ns: int
+    prompt_eval_duration_ns: int = 0
 
 
 class OllamaClient:
@@ -108,6 +109,7 @@ class OllamaClient:
             completion_tokens=int(payload.get("eval_count", 0)),
             total_duration_ns=int(payload.get("total_duration", 0)),
             load_duration_ns=int(payload.get("load_duration", 0)),
+            prompt_eval_duration_ns=int(payload.get("prompt_eval_duration", 0)),
         )
 
     def _request(self, path: str, body: dict[str, Any] | None = None) -> dict[str, Any]:
