@@ -73,7 +73,7 @@ class RunV15ABTests(unittest.TestCase):
                 calls.append(kwargs)
                 marker = kwargs["codex_home"].name
                 if marker == "arm-a":
-                    ledger = root / ".aioptimizer" / "development_ledger.jsonl"
+                    ledger = kwargs["workspace"] / ".aioptimizer" / "codex_hook_ledger.jsonl"
                     ledger.parent.mkdir(parents=True, exist_ok=True)
                     ledger.write_text(
                         json.dumps({

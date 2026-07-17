@@ -22,6 +22,9 @@ from datetime import datetime, timezone
 from pathlib import Path
 from typing import Any, Callable, Mapping, Sequence
 
+if __package__ in {None, ""}:
+    sys.path.append(str(Path(__file__).resolve().parents[2]))
+
 from aioptimizer.health import read_rows
 
 
@@ -35,7 +38,7 @@ ALLOWED_AST_KINDS = {"defines", "imports", "forbid_bare_except"}
 
 AgentRunner = Callable[..., Mapping[str, Any]]
 CHECKPOINT_NAME = "runner_checkpoint.jsonl"
-DEVELOPMENT_LEDGER_RELATIVE = Path(".aioptimizer/development_ledger.jsonl")
+CODEX_HOOK_LEDGER_RELATIVE = Path(".aioptimizer/codex_hook_ledger.jsonl")
 
 
 def check_treatment_integrity(
@@ -511,8 +514,13 @@ def run_paired_tasks(
             treatment_integrity: dict[str, Any] | None = None
             if arm == "A":
                 assert turn_window_start is not None and turn_window_end is not None
+                # The plugin hook writes its own routing receipts workspace-locally
+                # (SidecarPaths.for_workspace(workspace)'s runtime dir), NOT to the
+                # gateway's own request ledger and NOT under the shared aioptimizer_home
+                # -- each task gets a fresh, disposable workspace, so this is the only
+                # ledger that reflects THIS task's actual hook invocations.
                 treatment_integrity = check_treatment_integrity(
-                    aioptimizer_home / DEVELOPMENT_LEDGER_RELATIVE,
+                    workspace / CODEX_HOOK_LEDGER_RELATIVE,
                     window_start=turn_window_start,
                     window_end=turn_window_end,
                 )

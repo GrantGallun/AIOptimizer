@@ -187,3 +187,43 @@ do not relax a criterion post-hoc to let a failing pilot pass. **On a clean pass
 changes triggered by pilot success. This pilot is plumbing validation, not a quality read — its
 outcome (arm A "winning" or "losing" on n=1) carries zero evidential weight for H-v15 either way.
 — Fable (Fable 5), 2026-07-17
+
+## v15.4 pilot run #1 (2026-07-17, board t0055): FAILED criterion 2 — root cause found and fixed
+
+First pilot run: 28 real turns/arm, no runner exceptions, scorer clean (criteria 1 and 4 passed).
+But `treatment_integrity` reported `eligible=0, qualified=True` (vacuously — v15.3's inconclusive-
+by-design branch) for a task burning ~38M input tokens / 777s of wall time, which cannot be a
+genuine "never crossed the pressure threshold" case. Criterion 2 FAILED per Amendment v15.4 —
+STOP triggered correctly, no full run attempted.
+
+**Root cause, verified by direct reproduction, two stacked bugs:**
+1. **The real bug, in production**: an ORPHANED sidecar process (no workspace-local pid record
+   anywhere, running code from before t0052's version-stamping — its `/health` returned
+   `{"status": "ok"}` with no `build` field at all) was squatting on port 8800. Every one of the
+   pilot's 28 arm-A hook invocations correctly fired (`codex_hook_ledger.jsonl` inside the task's
+   own workspace shows exactly 28/28 rows, all `route=sidecar_error, sidecar_state=stale_code`)
+   but `ensure_sidecar` cannot kill+replace a process it has no pid record for, so every turn
+   failed open with zero injection, all 28 turns, both criterion 2 and 3 were destined to fail
+   before the run even started. Fixed by killing the orphan (pid 20416); verified a fresh
+   `ensure_sidecar(tmp, source_root=REPO_ROOT)` call now returns `ready=True` in ~860ms with a
+   build-matched `/health`.
+2. **A real bug in t0054's own implementation** (mine to own — I wrote the spec): `check_treatment_integrity`
+   was pointed at `<aioptimizer_home>/.aioptimizer/development_ledger.jsonl` — the shared repo's
+   config-file-default ledger for ad-hoc manual runs. The plugin hook actually writes its routing
+   receipts to `<task's own ephemeral workspace>/.aioptimizer/codex_hook_ledger.jsonl` (confirmed
+   by direct inspection: 28/28 real rows sat there, `source: "codex_hook"`, matching the arm-A
+   window exactly). Wrong file meant bug #1 was invisible to the gate — it read `eligible=0` and
+   silently took the inconclusive-by-design branch instead of correctly reading 28 `sidecar_error`
+   rows and disqualifying. **This means the treatment-integrity gate, as it ran in pilot #1, could
+   not have caught a real delivery failure — it was validating nothing.** Fixed: ledger path is
+   now `workspace / ".aioptimizer" / "codex_hook_ledger.jsonl"` (workspace-scoped, matching where
+   the hook actually writes), with a regression test updated to match.
+3. Also fixed in passing (found because Codex's first exact-command attempt exited 1 before any
+   model calls): `run_v15_ab.py` was missing the `sys.path` bootstrap idiom every sibling runner
+   (`run_v18_untreated.py`, `run_v19_cache_tension.py`) already has, so `from aioptimizer.health
+   import read_rows` failed outside a repo-root cwd with `ModuleNotFoundError`.
+
+Both v15.2/v15.3's *design* were correct throughout — the gate's disqualify-on-error logic is
+exactly what should have fired given 28/28 `sidecar_error` rows; it just could not see them.
+**Re-running the pilot (unchanged design, same criteria) before any full-run green light**, per
+Amendment v15.4's own rule: fix, don't relax, then re-verify. — Fable (Fable 5), 2026-07-17

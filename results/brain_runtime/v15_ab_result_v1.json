@@ -1,0 +1,133 @@
+{
+  "A": {
+    "rows": [
+      {
+        "ast_ok": true,
+        "constraints_passed": 3,
+        "constraints_total": 3,
+        "files_present": true,
+        "functional_ok": true,
+        "passed": true,
+        "task": "linkedin_scraper_ratelimit"
+      }
+    ]
+  },
+  "B": {
+    "rows": [
+      {
+        "ast_ok": true,
+        "constraints_passed": 3,
+        "constraints_total": 3,
+        "files_present": true,
+        "functional_ok": true,
+        "passed": true,
+        "task": "linkedin_scraper_ratelimit"
+      }
+    ]
+  },
+  "runner": {
+    "created_at": "2026-07-17T20:08:55.491230+00:00",
+    "model": "gpt-5.6-sol",
+    "run_root": "C:\\Code\\AIOptimizer\\results\\brain_runtime\\v15_ab_runs\\run_20260717T194445Z_04c6cca6",
+    "task_fixture": "C:\\Code\\AIOptimizer\\experiments\\brain_runtime\\v15_pilot_task.json",
+    "telemetry": {
+      "A": {
+        "linkedin_scraper_ratelimit": {
+          "collected": [
+            "scraper.py"
+          ],
+          "error": null,
+          "execution": {
+            "cached_input_tokens": 35989760,
+            "elapsed_seconds": 777.138,
+            "input_tokens": 38040929,
+            "output_tokens": 388643,
+            "thread_id": "019f719c-2577-7d73-9f94-a96b81bec991",
+            "turns": 28
+          },
+          "missing": [],
+          "treatment_integrity": {
+            "eligible": 0,
+            "errors": 0,
+            "qualified": true,
+            "rate": null,
+            "treated": 0
+          },
+          "turn_window_end": 1784318263.100741,
+          "turn_window_start": 1784317485.946555
+        }
+      },
+      "B": {
+        "linkedin_scraper_ratelimit": {
+          "collected": [
+            "scraper.py"
+          ],
+          "error": null,
+          "execution": {
+            "cached_input_tokens": 37821184,
+            "elapsed_seconds": 672.258,
+            "input_tokens": 39871279,
+            "output_tokens": 361681,
+            "thread_id": "019f71a8-00f4-7620-ba9d-8fd2402bf200",
+            "turns": 28
+          },
+          "missing": []
+        }
+      }
+    },
+    "totals": {
+      "A": {
+        "cached_input_tokens": 35989760,
+        "elapsed_seconds": 777.138,
+        "errors": 0,
+        "input_tokens": 38040929,
+        "output_tokens": 388643,
+        "recovered_without_telemetry": 0,
+        "runs": 1
+      },
+      "B": {
+        "cached_input_tokens": 37821184,
+        "elapsed_seconds": 672.258,
+        "errors": 0,
+        "input_tokens": 39871279,
+        "output_tokens": 361681,
+        "recovered_without_telemetry": 0,
+        "runs": 1
+      }
+    },
+    "windows_sandbox": null
+  },
+  "summary": {
+    "arms": {
+      "A": {
+        "constraint_retention": 1.0,
+        "pass_ci": [
+          0.2065,
+          1.0
+        ],
+        "pass_rate": 1.0,
+        "passed": 1,
+        "tasks": 1
+      },
+      "B": {
+        "constraint_retention": 1.0,
+        "pass_ci": [
+          0.2065,
+          1.0
+        ],
+        "pass_rate": 1.0,
+        "passed": 1,
+        "tasks": 1
+      }
+    },
+    "paired": {
+      "A_only": [],
+      "B_only": [],
+      "both": [
+        "linkedin_scraper_ratelimit"
+      ]
+    },
+    "pass_gap_A_minus_B": 0.0
+  },
+  "tasks": 1
+}
