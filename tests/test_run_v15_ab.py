@@ -124,6 +124,53 @@ class RunV15ABTests(unittest.TestCase):
             self.assertIn("turn_window_end", records["A"]["stub_task"])
             self.assertNotIn("treatment_integrity", records["B"]["stub_task"])
 
+    def test_missing_ledger_disqualifies_without_crashing_the_run(self):
+        # 2026-07-17: a workspace whose hook never wrote a single ledger row crashed the
+        # entire multi-task run (FileNotFoundError propagating out of check_treatment_integrity)
+        # -- one task's plugin failure took down all the others. Must degrade to a clear
+        # disqualification instead.
+        with tempfile.TemporaryDirectory() as temporary:
+            root = Path(temporary)
+            pair_root = root / "pair"
+            control_root = root / "control"
+            for arm in ("arm-a-plugin-on", "arm-b-plugin-off"):
+                seed = pair_root / arm / "workspace"
+                seed.mkdir(parents=True)
+            for arm in ("arm-a", "arm-b"):
+                (control_root / arm).mkdir(parents=True)
+
+            task = {
+                "id": "stub_task",
+                "prompts": [f"prompt {index}" for index in range(6)],
+                "expected_files": ["built.py"],
+            }
+
+            def stub_agent(**kwargs):
+                # No ledger is ever written for either arm -- simulates the hook never
+                # firing at all (not even a sidecar_error row).
+                (kwargs["workspace"] / "built.py").write_text("def built():\n    return 1\n",
+                                                               encoding="utf-8")
+                return {"turns": len(kwargs["prompts"]), "elapsed_seconds": 0.1,
+                        "input_tokens": 5, "cached_input_tokens": 0, "output_tokens": 1}
+
+            arm_a, arm_b, records = run_paired_tasks(
+                [task],
+                pair_root=pair_root,
+                control_root=control_root,
+                run_root=root / "run",
+                agent_runner=stub_agent,
+                aioptimizer_home=root,
+            )
+
+            self.assertTrue((arm_a / "stub_task" / "built.py").is_file())
+            self.assertTrue((arm_b / "stub_task" / "built.py").is_file())
+            self.assertEqual(
+                records["A"]["stub_task"]["treatment_integrity"],
+                {"eligible": 0, "treated": 0, "errors": 0, "rate": None,
+                 "delivery_failures": 0, "qualified": False, "ledger_missing": True},
+            )
+            self.assertIn("codex_hook_ledger.jsonl never appeared", records["A"]["stub_task"]["error"])
+
     def _check_integrity(self, rows, **kwargs):
         with tempfile.TemporaryDirectory() as temporary:
             ledger = Path(temporary) / "ledger.jsonl"

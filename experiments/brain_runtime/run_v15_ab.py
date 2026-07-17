@@ -536,11 +536,28 @@ def run_paired_tasks(
                 # gateway's own request ledger and NOT under the shared aioptimizer_home
                 # -- each task gets a fresh, disposable workspace, so this is the only
                 # ledger that reflects THIS task's actual hook invocations.
-                treatment_integrity = check_treatment_integrity(
-                    workspace / CODEX_HOOK_LEDGER_RELATIVE,
-                    window_start=turn_window_start,
-                    window_end=turn_window_end,
-                )
+                try:
+                    treatment_integrity = check_treatment_integrity(
+                        workspace / CODEX_HOOK_LEDGER_RELATIVE,
+                        window_start=turn_window_start,
+                        window_end=turn_window_end,
+                    )
+                except FileNotFoundError:
+                    # A missing ledger is a STRONGER signal than eligible==0 (which means the
+                    # hook fired and correctly found nothing to do): it means the hook never
+                    # wrote a single row for this workspace's entire run. Record it as a clear
+                    # disqualification, not a crash that takes the whole multi-task run down
+                    # with it (2026-07-17: exactly this crash killed all 4 tasks of the v15.6
+                    # exploratory wave over one workspace's missing ledger).
+                    treatment_integrity = {
+                        "eligible": 0, "treated": 0, "errors": 0, "rate": None,
+                        "delivery_failures": 0, "qualified": False, "ledger_missing": True,
+                    }
+                    if error is None:
+                        error = (
+                            "treatment_integrity: codex_hook_ledger.jsonl never appeared "
+                            "for this workspace"
+                        )
             collection = collect_task_artifacts(workspace, artifact_dir, task)
             record = {
                 "execution": execution,
