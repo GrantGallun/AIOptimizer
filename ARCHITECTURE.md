@@ -107,6 +107,27 @@ no backoff, no ceiling. Two lessons, both now fixed in `codex_bridge.py`:
   `scheduler.py` while leaving the governor next to it untouched. Now wired (`BridgeGovernor`, on
   bridge-owned cache lines so two drivers don't contend).
 
+**Two dispatch paths, and the daily driver is not the pipeline (found 2026-07-17):**
+`run_loop.py` drives `Scheduler` — the machine described above, verified end-to-end with real
+processes in `tests/test_pipeline_integration.py` (4x1.0s tasks in 1.15s across 4 distinct PIDs;
+out-of-order execution retiring in `seq` order). `codex_bridge.py` — the process actually left
+running — contains **no reference to `Scheduler`**. It hand-rolls a sequential, blocking
+`for task_id in dispatchable: subprocess.run(...)`, so Codex work gets none of it: no parallelism
+(its own log line says "one process per task", but they are serialized), no capacity, no workspace
+leases, no dependency-aware issue, no reviewer≠owner cross-check. Until 2026-07-17 it also had no
+governor and no circuit breaker, which is *why* it hot-looped: it re-implemented dispatch badly
+instead of calling the dispatcher that was already there and already correct.
+
+Do not "just point the bridge at `Scheduler.tick()`" — that was proposed and rejected the same day:
+1. **Incompatible board ownership.** `AGENTS.md` tells Codex to pull its own task (`board.py next`)
+   and `submit` it; `Scheduler` calls `board.dispatch()`/`submit()` itself. Both would claim the
+   same task. Changing that rewrites the Fable⇄Codex contract, not just the bridge.
+2. **It would silently drop the sandbox.** The bridge passes `-a never -s workspace-write -C <repo>`
+   *before* `exec` (global flags); `CodexExecutor` builds `[codex, "exec", *extra_args, prompt]` and
+   cannot express them. The swap would lose the sandbox with no test failing.
+Unifying the paths is a real design decision (who owns board state: the scheduler, or Codex?), and
+it is Fable's to make deliberately.
+
 **The habit worth naming (three instances in one day, 2026-07-16/17):** we build the safety
 mechanism and don't wire it to the thing that needs it — the cache's sampling bypass treats an
 absent `temperature` as safe, `allow_legacy_shell` defaults `True`, the bridge had no ceiling
