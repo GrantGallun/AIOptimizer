@@ -31,7 +31,10 @@ class SemanticCacheMiddlewareTests(unittest.TestCase):
         self.assertEqual(_request_text({"prompt": "ollama"}), "ollama")
 
     def test_near_duplicate_hits_and_response_is_independent(self):
-        cache = SemanticCacheMiddleware(threshold=0.95, embed_fn=_embed)
+        # These bodies omit `temperature`, which now (correctly) means "assume the
+        # provider samples" and bypasses the cache. This suite tests cache mechanics,
+        # and its stub upstream really is deterministic, so declare that.
+        cache = SemanticCacheMiddleware(threshold=0.95, embed_fn=_embed, upstream_sampling_default=0)
         original = {"messages": [{"role": "user", "content": "alpha beta"}]}
         response = {"choices": [{"message": {"content": "cached"}}]}
         cache.after_response(original, response)
@@ -71,7 +74,7 @@ class SemanticCacheMiddlewareTests(unittest.TestCase):
 
     def test_evicts_least_recently_used_entry(self):
         cache = SemanticCacheMiddleware(
-            threshold=0.99, max_entries=2, embed_fn=_embed
+            threshold=0.99, max_entries=2, embed_fn=_embed, upstream_sampling_default=0
         )
         alpha = {"prompt": "alpha"}
         beta = {"prompt": "beta"}
@@ -88,7 +91,7 @@ class SemanticCacheMiddlewareTests(unittest.TestCase):
     def test_ttl_expiry_uses_injected_clock(self):
         clock = _FakeClock()
         cache = SemanticCacheMiddleware(
-            ttl_seconds=10, clock=clock, embed_fn=_embed
+            ttl_seconds=10, clock=clock, embed_fn=_embed, upstream_sampling_default=0
         )
         body = {"prompt": "alpha"}
         cache.after_response(body, {"response": "cached"})

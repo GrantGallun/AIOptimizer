@@ -286,7 +286,7 @@ class GatewayTests(unittest.TestCase):
         with tempfile.TemporaryDirectory() as directory:
             ledger_path = Path(directory) / "stream.jsonl"
             url = self._start_gateway(
-                middlewares=(ExactCacheMiddleware(),), ledger=JsonlLedger(ledger_path)
+                middlewares=(ExactCacheMiddleware(upstream_sampling_default=0),), ledger=JsonlLedger(ledger_path)
             )
             body = {
                 "model": "test",
@@ -329,7 +329,7 @@ class GatewayTests(unittest.TestCase):
         with tempfile.TemporaryDirectory() as directory:
             ledger_path = Path(directory) / "usage.jsonl"
             url = self._start_gateway(
-                middlewares=(ExactCacheMiddleware(),), ledger=JsonlLedger(ledger_path)
+                middlewares=(ExactCacheMiddleware(upstream_sampling_default=0),), ledger=JsonlLedger(ledger_path)
             )
             body = {"model": "test", "messages": [], "usage_test": True}
 
@@ -349,7 +349,7 @@ class GatewayTests(unittest.TestCase):
         with tempfile.TemporaryDirectory() as directory:
             ledger_path = Path(directory) / "requirements.jsonl"
             url = self._start_gateway(
-                middlewares=(ExactCacheMiddleware(),), ledger=JsonlLedger(ledger_path)
+                middlewares=(ExactCacheMiddleware(upstream_sampling_default=0),), ledger=JsonlLedger(ledger_path)
             )
             base = {"model": "test", "messages": [], "answer": "HELLO"}
             passing = {**base, "aioptimizer": {"requirements": [{
@@ -522,7 +522,7 @@ class GatewayTests(unittest.TestCase):
     def test_exact_cache_uses_its_original_input_when_later_middleware_rewrites(self):
         events = []
         url = self._start_gateway(
-            middlewares=(ExactCacheMiddleware(), _TagMiddleware("A", events))
+            middlewares=(ExactCacheMiddleware(upstream_sampling_default=0), _TagMiddleware("A", events))
         )
         body = {"messages": [{"role": "user", "content": "repeat"}]}
 

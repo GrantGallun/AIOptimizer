@@ -30,6 +30,7 @@ aioptimizer = "aioptimizer.__main__:main"
 aioptimizer-report = "aioptimizer.report:main"
 aioptimizer-evidence-audit = "aioptimizer.evidence:main"
 aioptimizer-episodes = "aioptimizer.episodes:main"
+aioptimizer-health = "aioptimizer.health:main"
 
 [project.urls]
 Repository = "https://github.com/GrantGallun/AIOptimizer"

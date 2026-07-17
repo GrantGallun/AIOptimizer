@@ -48,7 +48,7 @@ class AdaptiveGatewayEndToEndTests(unittest.TestCase):
         )
         self.gateway = GatewayServer(
             f"http://127.0.0.1:{self.upstream.server_port}",
-            middlewares=(ExactCacheMiddleware(), attention),
+            middlewares=(ExactCacheMiddleware(upstream_sampling_default=0), attention),
             ledger=JsonlLedger(self.ledger_path), port=0,
         )
         self.gateway_thread = threading.Thread(target=self.gateway.serve_forever, daemon=True)
