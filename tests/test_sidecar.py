@@ -14,6 +14,7 @@ from unittest import mock
 from aioptimizer.sidecar import (
     CREATE_NO_WINDOW,
     SidecarPaths,
+    compute_build_stamp,
     ensure_sidecar,
     launch_sidecar,
     process_is_alive,
@@ -129,6 +130,77 @@ class SidecarTests(unittest.TestCase):
         self.assertFalse(receipt["injected"])
         self.assertNotIn(prompt, json.dumps(receipt))
 
+    def test_matching_build_reuses_healthy_sidecar_without_launch(self):
+        launcher = mock.Mock()
+        result = ensure_sidecar(
+            tempfile.gettempdir(),
+            health_check=lambda: {"ready": True, "build": compute_build_stamp()},
+            launcher=launcher,
+        )
+
+        self.assertTrue(result.ready)
+        self.assertEqual(result.state, "healthy")
+        launcher.assert_not_called()
+
+    def test_mismatched_build_terminates_owned_process_and_relaunches(self):
+        local_build = compute_build_stamp()
+        stale = {"ready": True, "build": "stale-build"}
+        current = {"ready": True, "build": local_build}
+        health = iter((stale, stale, False, current))
+        terminator = mock.Mock()
+        launcher = mock.Mock(return_value=mock.Mock(pid=8642))
+        with tempfile.TemporaryDirectory() as directory:
+            paths = SidecarPaths.for_workspace(directory)
+            paths.runtime_dir.mkdir()
+            paths.pid.write_text("2468\n", encoding="ascii")
+
+            result = ensure_sidecar(
+                directory,
+                health_check=lambda: next(health),
+                launcher=launcher,
+                pid_is_alive=lambda pid: pid == 2468,
+                process_terminator=terminator,
+                startup_timeout_seconds=1,
+            )
+
+        self.assertTrue(result.ready)
+        self.assertEqual(result.state, "started")
+        terminator.assert_called_once_with(2468)
+        launcher.assert_called_once()
+
+    def test_mismatched_build_without_pid_fails_open_as_stale_code(self):
+        launcher = mock.Mock()
+        stale = {"ready": True, "build": "stale-build"}
+        with tempfile.TemporaryDirectory() as directory:
+            result = ensure_sidecar(
+                directory,
+                health_check=lambda: stale,
+                launcher=launcher,
+            )
+
+        self.assertFalse(result.ready)
+        self.assertEqual(result.state, "stale_code")
+        launcher.assert_not_called()
+
+    def test_old_health_without_build_counts_as_stale(self):
+        terminator = mock.Mock(side_effect=OSError("not owned"))
+        with tempfile.TemporaryDirectory() as directory:
+            paths = SidecarPaths.for_workspace(directory)
+            paths.runtime_dir.mkdir()
+            paths.pid.write_text("2468\n", encoding="ascii")
+
+            result = ensure_sidecar(
+                directory,
+                health_check=lambda: {"status": "ok"},
+                pid_is_alive=lambda pid: pid == 2468,
+                process_terminator=terminator,
+            )
+
+        self.assertFalse(result.ready)
+        self.assertEqual(result.state, "stale_code")
+        self.assertEqual(result.error_type, "OSError")
+        terminator.assert_called_once_with(2468)
+
     def test_live_pid_file_is_reused_without_launch(self):
         with tempfile.TemporaryDirectory() as directory:
             paths = SidecarPaths.for_workspace(directory)
@@ -203,16 +275,18 @@ class SidecarTests(unittest.TestCase):
             (package / "__main__.py").write_text(
                 "import argparse, json, threading\n"
                 "from http.server import BaseHTTPRequestHandler, ThreadingHTTPServer\n"
+                "from .sidecar import compute_build_stamp\n"
                 "parser = argparse.ArgumentParser(add_help=False)\n"
                 "parser.add_argument('--port', type=int, default=8800)\n"
                 "args, _ = parser.parse_known_args()\n"
+                "BUILD_STAMP = compute_build_stamp()\n"
                 "class Handler(BaseHTTPRequestHandler):\n"
                 "    def reply(self, body):\n"
                 "        payload = json.dumps(body).encode()\n"
                 "        self.send_response(200); self.send_header('Content-Type', 'application/json')\n"
                 "        self.send_header('Content-Length', str(len(payload))); self.end_headers()\n"
                 "        self.wfile.write(payload)\n"
-                "    def do_GET(self): self.reply({'status': 'ok'})\n"
+                "    def do_GET(self): self.reply({'ready': True, 'build': BUILD_STAMP})\n"
                 "    def do_POST(self):\n"
                 "        self.rfile.read(int(self.headers.get('Content-Length', '0')))\n"
                 "        self.reply({'route':'below_threshold','context':'','output_chars':0})\n"

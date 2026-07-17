@@ -33,6 +33,12 @@ version headers are forwarded upstream. JSON and streamed responses are supporte
 streamed requests bypass the exact-response cache and are recorded with
 `"streamed": true` in the ledger.
 
+The local `/health` response includes `ready` and a build stamp derived once at
+server start from Python-file paths, sizes, and modification times. The lazy sidecar
+launcher reuses only a matching build. It restarts a stale process only when the
+workspace PID file identifies a live process; otherwise it fails open and records
+`sidecar_state: "stale_code"` rather than terminating an unknown listener.
+
 When the provider reports usage, receipts normalize OpenAI (`prompt_tokens` /
 `completion_tokens`), Anthropic (`input_tokens` / `output_tokens`), and Ollama
 (`prompt_eval_count` / `eval_count`) into input, output, and total token counts.

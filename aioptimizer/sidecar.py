@@ -3,13 +3,15 @@
 from __future__ import annotations
 
 from dataclasses import dataclass
+import hashlib
 import json
 import os
 from pathlib import Path
+import signal
 import subprocess
 import sys
 import time
-from typing import Callable
+from typing import Callable, Mapping
 import urllib.request
 
 
@@ -18,6 +20,28 @@ DEFAULT_PORT = 8800
 DEFAULT_STARTUP_TIMEOUT_SECONDS = 10.0
 DEFAULT_POLL_INTERVAL_SECONDS = 0.05
 CREATE_NO_WINDOW = getattr(subprocess, "CREATE_NO_WINDOW", 0x08000000)
+
+
+def compute_build_stamp(package_dir: str | Path | None = None) -> str:
+    """Return a cheap, deterministic stamp for the Python package tree."""
+    root = (
+        Path(package_dir).resolve()
+        if package_dir is not None
+        else Path(__file__).resolve().parent
+    )
+    records: list[tuple[str, int, int]] = []
+    for path in root.rglob("*.py"):
+        stat = path.stat()
+        records.append((path.relative_to(root).as_posix(), stat.st_size, stat.st_mtime_ns))
+    digest = hashlib.sha256()
+    for relative_path, size, mtime_ns in sorted(records):
+        digest.update(relative_path.encode("utf-8"))
+        digest.update(b"\0")
+        digest.update(str(size).encode("ascii"))
+        digest.update(b"\0")
+        digest.update(str(mtime_ns).encode("ascii"))
+        digest.update(b"\n")
+    return digest.hexdigest()
 
 
 @dataclass(frozen=True)
@@ -73,14 +97,22 @@ def health_ready(
     timeout_seconds: float = 0.25,
 ) -> bool:
     """Return whether the local health endpoint reports ready, without raising."""
+    return _health_is_ready(_health_payload(url, timeout_seconds=timeout_seconds))
+
+
+def _health_payload(
+    url: str,
+    *,
+    timeout_seconds: float,
+) -> dict[str, object] | None:
     try:
         with urllib.request.urlopen(url, timeout=timeout_seconds) as response:
             if getattr(response, "status", 200) != 200:
-                return False
+                return None
             payload = json.loads(response.read())
-        return isinstance(payload, dict) and payload.get("status") == "ok"
+        return payload if isinstance(payload, dict) else None
     except Exception:
-        return False
+        return None
 
 
 def process_is_alive(pid: int) -> bool:
@@ -92,6 +124,11 @@ def process_is_alive(pid: int) -> bool:
     except (OSError, ValueError):
         return False
     return True
+
+
+def terminate_process(pid: int) -> None:
+    """Request termination of the process recorded in the workspace PID file."""
+    os.kill(pid, signal.SIGTERM)
 
 
 def launch_sidecar(
@@ -144,15 +181,19 @@ def ensure_sidecar(
     source_root: str | Path | None = None,
     startup_timeout_seconds: float = DEFAULT_STARTUP_TIMEOUT_SECONDS,
     poll_interval_seconds: float = DEFAULT_POLL_INTERVAL_SECONDS,
-    health_check: Callable[[], bool] | None = None,
+    health_check: Callable[[], object] | None = None,
     launcher: Callable[[SidecarPaths], object] | None = None,
     pid_is_alive: Callable[[int], bool] = process_is_alive,
+    process_terminator: Callable[[int], None] = terminate_process,
     monotonic: Callable[[], float] = time.monotonic,
     sleep: Callable[[float], None] = time.sleep,
 ) -> SidecarResult:
     """Ensure one local sidecar is healthy; return failure instead of raising."""
     started = monotonic()
-    check = health_check or (lambda: health_ready(health_url))
+    local_build_stamp = compute_build_stamp()
+    check: Callable[[], object] = health_check or (
+        lambda: _health_payload(health_url, timeout_seconds=0.25)
+    )
     start = launcher or (
         lambda paths: launch_sidecar(paths, port=port, source_root=source_root)
     )
@@ -172,7 +213,8 @@ def ensure_sidecar(
             latency_ms=round((monotonic() - started) * 1000, 3),
         )
 
-    if _safe_health_check(check):
+    observation = _safe_health_check(check)
+    if _health_matches_build(observation, local_build_stamp):
         return result(True, "healthy")
     if startup_timeout_seconds < 0 or poll_interval_seconds <= 0:
         return result(False, "invalid_configuration", error_type="ValueError")
@@ -187,13 +229,34 @@ def ensure_sidecar(
                 check,
                 startup_timeout_seconds,
                 poll_interval_seconds,
+                expected_build=local_build_stamp,
                 monotonic=monotonic,
                 sleep=sleep,
             )
             return result(ready, "joined_start" if ready else "startup_timeout")
 
-        if _safe_health_check(check):
+        observation = _safe_health_check(check)
+        if _health_matches_build(observation, local_build_stamp):
             return result(True, "healthy_after_lock")
+
+        if _health_is_ready(observation):
+            existing_pid = _read_pid(paths.pid)
+            if existing_pid is None or not pid_is_alive(existing_pid):
+                return result(False, "stale_code")
+            try:
+                process_terminator(existing_pid)
+            except Exception as error:
+                return result(False, "stale_code", error_type=type(error).__name__)
+            port_freed = _wait_for_port_free(
+                check,
+                startup_timeout_seconds,
+                poll_interval_seconds,
+                monotonic=monotonic,
+                sleep=sleep,
+            )
+            if not port_freed:
+                return result(False, "stale_code", error_type="TimeoutError")
+            paths.pid.unlink(missing_ok=True)
 
         existing_pid = _read_pid(paths.pid)
         if existing_pid is not None and pid_is_alive(existing_pid):
@@ -201,6 +264,7 @@ def ensure_sidecar(
                 check,
                 startup_timeout_seconds,
                 poll_interval_seconds,
+                expected_build=local_build_stamp,
                 monotonic=monotonic,
                 sleep=sleep,
             )
@@ -221,6 +285,7 @@ def ensure_sidecar(
             check,
             startup_timeout_seconds,
             poll_interval_seconds,
+            expected_build=local_build_stamp,
             monotonic=monotonic,
             sleep=sleep,
         )
@@ -231,15 +296,49 @@ def ensure_sidecar(
         lock.release()
 
 
-def _safe_health_check(check: Callable[[], bool]) -> bool:
+def _safe_health_check(check: Callable[[], object]) -> object:
     try:
-        return bool(check())
+        return check()
     except Exception:
         return False
 
 
+def _health_is_ready(observation: object) -> bool:
+    if isinstance(observation, Mapping):
+        return observation.get("ready") is True or observation.get("status") == "ok"
+    return bool(observation)
+
+
+def _health_matches_build(observation: object, expected_build: str) -> bool:
+    if not _health_is_ready(observation):
+        return False
+    if isinstance(observation, Mapping):
+        return observation.get("build") == expected_build
+    # Boolean fakes predate stamped health payloads and remain useful for lifecycle tests.
+    return True
+
+
 def _wait_for_health(
-    check: Callable[[], bool],
+    check: Callable[[], object],
+    timeout_seconds: float,
+    poll_interval_seconds: float,
+    *,
+    expected_build: str,
+    monotonic: Callable[[], float],
+    sleep: Callable[[float], None],
+) -> bool:
+    deadline = monotonic() + timeout_seconds
+    while True:
+        if _health_matches_build(_safe_health_check(check), expected_build):
+            return True
+        remaining = deadline - monotonic()
+        if remaining <= 0:
+            return False
+        sleep(min(poll_interval_seconds, remaining))
+
+
+def _wait_for_port_free(
+    check: Callable[[], object],
     timeout_seconds: float,
     poll_interval_seconds: float,
     *,
@@ -248,7 +347,7 @@ def _wait_for_health(
 ) -> bool:
     deadline = monotonic() + timeout_seconds
     while True:
-        if _safe_health_check(check):
+        if not _health_is_ready(_safe_health_check(check)):
             return True
         remaining = deadline - monotonic()
         if remaining <= 0:

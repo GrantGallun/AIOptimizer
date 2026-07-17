@@ -18,6 +18,7 @@ from .episodes import (
 from .middleware import ShortCircuit
 from .receipts import response_text
 from .requirements import evaluate_requirements, extract_requirements
+from .sidecar import compute_build_stamp
 from .usage import StreamUsageAccumulator, extract_usage
 
 
@@ -34,6 +35,7 @@ class GatewayServer(ThreadingHTTPServer):
     def __init__(self, upstream_url, middlewares=(), ledger=None, port=8000, shadow=None,
                  upstream_timeout=300.0):
         self.upstream_url = str(upstream_url).rstrip("/")
+        self.build_stamp = compute_build_stamp()
         self.middlewares = tuple(middlewares)
         self.ledger = ledger
         # Optional gateway.receipts.ShadowJudge: when middlewares changed the body and the
@@ -382,7 +384,11 @@ class _GatewayHandler(BaseHTTPRequestHandler):
 
     def do_GET(self):
         if self.path in {"/health", "/status"}:
-            body = {"status": "ok"} if self.path == "/health" else self.server.status_payload()
+            body = (
+                {"ready": True, "build": self.server.build_stamp}
+                if self.path == "/health"
+                else self.server.status_payload()
+            )
             self._write_json(200, body)
             return
         # Transparent passthrough for Ollama utility endpoints (/api/tags, /api/ps, ...).
