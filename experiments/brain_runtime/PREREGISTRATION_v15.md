@@ -143,3 +143,47 @@ same claim; if the A/B result splits along this line (strong effect on the 4 lat
 null on the 3 early-satisfied ones), that is not a contradiction — it is evidence about which
 mechanism the product actually helps with. Report per-task results, not only the pooled rate,
 when reading the eventual confirmatory run. — Fable (Fable 5), 2026-07-17
+
+## Amendment v15.4 (2026-07-17) — dev-sanity pilot BEFORE the confirmatory spend (user's call)
+
+The v15 runner has never executed end-to-end against the redesigned 24-28-turn fixtures or the
+v15.3 treatment-integrity gate — 134/348/94 lines changed across the runner, fixtures, and tests
+(t0053/t0054) is real surface area for a wiring bug, and this project has been bitten by exactly
+that before (HYP-24's dev run caught `task_completion_accuracy` silently degenerate at 0.000 in
+every cell; without a dev stage that would have burned the full hidden budget on a broken
+metric). The confirmatory design (12 tasks x >=2 replicates x 2 arms, ~300+ real Codex turns) does
+not get a free pass on this just because it is expensive — frozen BEFORE any pilot run:
+
+**Design**: 1 task (`linkedin_scraper_ratelimit`, the template task, frozen in
+`experiments/brain_runtime/v15_pilot_task.json` — byte-identical to its entry in
+`v15_build_tasks.json`), 1 replicate, both arms. Run via:
+    python experiments/brain_runtime/run_v15_ab.py --tasks experiments/brain_runtime/v15_pilot_task.json --expected-count 1
+~56 real Codex turns (28 x 2 arms) against the existing TalentTrader `v15-ab-v4` workspaces —
+genuine subscription spend, but a small, bounded slice of the full run, spent specifically to
+de-risk the other ~250+ turns.
+
+**Pre-committed pass criteria (ALL required to green-light the full 12-task run):**
+1. Runner completes without exception for both arms: `records["A"]["linkedin_scraper_ratelimit"]["error"]`
+   and the arm-B equivalent are both `None`.
+2. Ledger capture is confirmed alive, not merely non-crashing:
+   `treatment_integrity["eligible"] >= 1`. A 28-turn task that legitimately crosses the 6,000-char
+   budget (it does, by design — v15.1's whole point) showing `eligible == 0` means the ledger
+   window/path/capture is broken, not that the router correctly declined; that must be treated as
+   a FAIL and investigated, not read as the eligible==0 inconclusive-by-design case v15.3 defined
+   for the confirmatory run's edge tasks.
+3. `treatment_integrity["qualified"] is True` — the real gateway, on this exact new task shape, is
+   actually achieving `route=attention, injected=true` on eligible turns end to end (hook ->
+   sidecar -> `attention_context: true` -> ledger write), not just in unit-test fixtures.
+4. The frozen scorer runs to completion for both arms with no exception, and
+   `collect_task_artifacts` shows zero `missing` entries for `scraper.py` in both arm directories
+   (the artifact-collection plumbing works against the new longer prompt script).
+5. Fable manually reads both arms' resulting `scraper.py` (not just the scorer's boolean) to
+   confirm the checks are discriminating something real — matching the HYP-24 lesson of looking
+   at the artifact, not only trusting the metric.
+
+**On failure of any criterion**: STOP. Diagnose and fix before spending the other ~250+ turns;
+do not relax a criterion post-hoc to let a failing pilot pass. **On a clean pass**: the full
+12-task x >=2 replicate run is green-lit exactly as designed in Amendments v15.1-v15.3, no design
+changes triggered by pilot success. This pilot is plumbing validation, not a quality read — its
+outcome (arm A "winning" or "losing" on n=1) carries zero evidential weight for H-v15 either way.
+— Fable (Fable 5), 2026-07-17

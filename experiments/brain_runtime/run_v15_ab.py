@@ -631,6 +631,12 @@ def print_treatment_integrity_summary(
 def main() -> None:
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--tasks", type=Path, default=DEFAULT_TASKS)
+    parser.add_argument(
+        "--expected-count", type=int, default=12,
+        help="Task count validate_tasks() requires. Lower this only for a dev-sanity pilot "
+             "against a deliberately smaller --tasks fixture; the frozen confirmatory run must "
+             "use the default 12.",
+    )
     parser.add_argument("--scorer", type=Path, default=DEFAULT_SCORER)
     parser.add_argument("--pair-root", type=Path, default=DEFAULT_PAIR_ROOT)
     parser.add_argument("--control-root", type=Path, default=DEFAULT_CONTROL_ROOT)
@@ -644,7 +650,7 @@ def main() -> None:
     args = parser.parse_args()
 
     tasks_path = args.tasks.resolve()
-    tasks = load_tasks(tasks_path)
+    tasks = load_tasks(tasks_path, expected_count=args.expected_count)
     stamp = datetime.now(timezone.utc).strftime("%Y%m%dT%H%M%SZ")
     run_root = args.run_root or (args.results_root / "v15_ab_runs" / f"run_{stamp}_{uuid.uuid4().hex[:8]}")
     out = args.out or next_versioned_result(args.results_root)

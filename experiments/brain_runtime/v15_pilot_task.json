@@ -1,0 +1,85 @@
+[
+  {
+    "id": "linkedin_scraper_ratelimit",
+    "domain": "talenttrader",
+    "prompts": [
+      "We are building a LinkedIn talent-flow reader. Constraint for this whole task: every network call MUST go through a function named rate_limited_get and MUST NOT use requests.get directly. The output schema for a parsed profile is exactly: {name, headline, company, tenure_months}. No other keys.",
+      "Start scraper.py with rate_limited_get(url) that sleeps 2 seconds between calls using time.sleep, and parse_profile(html) that returns the schema dict from the four fields.",
+      "Now a separate concern: create notes.py with attach_note(profile, note) that appends a note string to a profile's '_notes' list, creating the list if absent.",
+      "Add list_notes(profile) to notes.py returning the '_notes' list, or an empty list if the profile has none.",
+      "Create models.py with a Candidate dataclass: name, email, company, years_experience.",
+      "Add from_dict(data) and to_dict(candidate) helpers to models.py for Candidate.",
+      "Create logging_setup.py with configure_logging(level='INFO') that installs a StreamHandler with a timestamp+level+message formatter and returns the root logger.",
+      "Add an override to configure_logging so it reads the TALENTTRADER_LOG_LEVEL environment variable when set, taking precedence over the level argument.",
+      "Create metrics.py with a Counter class: increment(key), get(key) defaulting to 0, and reset().",
+      "Add a snapshot() method to Counter in metrics.py returning a plain dict copy of all current counts.",
+      "Create cache.py with a memoize(fn) decorator that caches results by its positional args in a dict.",
+      "Add cache_clear() to the object memoize returns, matching functools.lru_cache's convention.",
+      "Create report.py with summarize_profiles(profiles) returning a dict of company -> count.",
+      "Change summarize_profiles in report.py to return a list of (company, count) tuples sorted by count descending.",
+      "Create storage.py with save_profiles_json(profiles, path) using json.dump with indent=2, creating parent directories as needed.",
+      "Add load_profiles_json(path) to storage.py as the inverse of save_profiles_json, returning [] if the file does not exist.",
+      "Create cli.py with a function read_url_list(path) that reads one URL per line, skipping blank lines and lines starting with '#'.",
+      "Add build_parser() to cli.py with argparse accepting --urls (path) and --output (path, default 'profiles.json').",
+      "Back in scraper.py: add a ScraperError(Exception) class for malformed input.",
+      "Change parse_profile in scraper.py to raise ScraperError instead of letting a raw KeyError propagate when a required field is missing from html.",
+      "Refine parse_profile in scraper.py so the company field is title-cased before being returned.",
+      "Add a module-level docstring to scraper.py summarizing what it does, one sentence.",
+      "In notes.py, make attach_note return the updated notes list instead of None, so callers can chain it.",
+      "In models.py, add a __post_init__ validation to Candidate that raises ValueError if years_experience is negative.",
+      "Now extend scraper.py: add fetch_profiles(urls) that retrieves and parses each URL in the list, returning a list of parsed profiles.",
+      "Add a singular convenience wrapper fetch_profile(url) to scraper.py that calls fetch_profiles([url]) and returns the one result.",
+      "Wire cli.py's main() to call read_url_list, then scraper.fetch_profiles on the result, then storage.save_profiles_json to --output, printing the count retrieved.",
+      "Finalize scraper.py. Do not print anything at import time."
+    ],
+    "expected_files": [
+      "scraper.py"
+    ],
+    "requirements": [
+      {
+        "id": "uses_rate_limited_get",
+        "must_include": [
+          "rate_limited_get"
+        ],
+        "is_constraint": true
+      },
+      {
+        "id": "no_direct_requests_get",
+        "must_exclude": [
+          "requests.get("
+        ],
+        "is_constraint": true
+      },
+      {
+        "id": "schema_keys",
+        "must_include": [
+          "name",
+          "headline",
+          "company",
+          "tenure_months"
+        ],
+        "is_constraint": true
+      },
+      {
+        "id": "sleeps",
+        "must_include": [
+          "time.sleep"
+        ]
+      }
+    ],
+    "ast_checks": [
+      {
+        "kind": "defines",
+        "name": "rate_limited_get"
+      },
+      {
+        "kind": "defines",
+        "name": "parse_profile"
+      },
+      {
+        "kind": "defines",
+        "name": "fetch_profiles"
+      }
+    ]
+  }
+]
