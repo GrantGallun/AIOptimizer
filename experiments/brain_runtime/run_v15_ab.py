@@ -22,6 +22,8 @@ from datetime import datetime, timezone
 from pathlib import Path
 from typing import Any, Callable, Mapping, Sequence
 
+from aioptimizer.health import read_rows
+
 
 REPO_ROOT = Path(__file__).resolve().parents[2]
 DEFAULT_TASKS = Path(__file__).with_name("v15_build_tasks.json")
@@ -33,6 +35,48 @@ ALLOWED_AST_KINDS = {"defines", "imports", "forbid_bare_except"}
 
 AgentRunner = Callable[..., Mapping[str, Any]]
 CHECKPOINT_NAME = "runner_checkpoint.jsonl"
+DEVELOPMENT_LEDGER_RELATIVE = Path(".aioptimizer/development_ledger.jsonl")
+
+
+def check_treatment_integrity(
+    ledger_path: Path,
+    *,
+    window_start: float,
+    window_end: float,
+    budget_chars: int = 6000,
+    min_treated_rate: float = 0.95,
+) -> dict[str, Any]:
+    """Evaluate one arm-A task window per Amendment v15.3."""
+    windowed: list[dict[str, Any]] = []
+    for row in read_rows(ledger_path):
+        timestamp = row.get("ts")
+        if (
+            isinstance(timestamp, (int, float))
+            and not isinstance(timestamp, bool)
+            and window_start <= timestamp <= window_end
+        ):
+            windowed.append(row)
+
+    errors = sum(row.get("route") == "error" for row in windowed)
+    eligible_rows = [
+        row
+        for row in windowed
+        if isinstance(row.get("history_chars"), int)
+        and row["history_chars"] > budget_chars
+    ]
+    treated = sum(
+        row.get("route") == "attention" and row.get("injected") is True
+        for row in eligible_rows
+    )
+    eligible = len(eligible_rows)
+    rate = treated / eligible if eligible else None
+    return {
+        "eligible": eligible,
+        "treated": treated,
+        "errors": errors,
+        "rate": rate,
+        "qualified": errors == 0 and (rate is None or rate >= min_treated_rate),
+    }
 
 
 def _safe_relative_path(raw: str) -> Path:
@@ -63,10 +107,19 @@ def validate_tasks(tasks: Any, *, expected_count: int | None = 12) -> list[Mappi
             raise ValueError(f"{task_id}: domain must be a non-empty string")
 
         prompts = task["prompts"]
-        if not isinstance(prompts, list) or len(prompts) < 6 or not all(
-            isinstance(prompt, str) and prompt.strip() for prompt in prompts
-        ):
-            raise ValueError(f"{task_id}: prompts must contain at least six non-empty strings")
+        if not isinstance(prompts, list):
+            raise ValueError(f"{task_id}: prompts must be a list")
+        if not 24 <= len(prompts) <= 40:
+            raise ValueError(
+                f"{task_id}: prompts must contain between 24 and 40 turns, found {len(prompts)}"
+            )
+        if not all(isinstance(prompt, str) and prompt.strip() for prompt in prompts):
+            raise ValueError(f"{task_id}: prompts must contain non-empty strings")
+        for prompt_index, prompt in enumerate(prompts):
+            if "reminder" in prompt.casefold():
+                raise ValueError(
+                    f"{task_id}: prompt {prompt_index} contains disallowed reminder text"
+                )
 
         expected_files = task["expected_files"]
         if not isinstance(expected_files, list) or not expected_files:
@@ -432,26 +485,49 @@ def run_paired_tasks(
                 continue
             workspace = prepare_fresh_workspace(seed, _opaque_workspace(workspace_root), task)
             execution: dict[str, Any]
+            turn_window_start: float | None = None
+            turn_window_end: float | None = None
             try:
-                execution = dict(agent_runner(
-                    workspace=workspace,
-                    codex_home=codex_home,
-                    prompts=tuple(task["prompts"]),
-                    model=model,
-                    codex=codex,
-                    aioptimizer_home=aioptimizer_home,
-                    windows_sandbox=windows_sandbox,
-                ))
+                if arm == "A":
+                    turn_window_start = time.time()
+                try:
+                    runner_result = agent_runner(
+                        workspace=workspace,
+                        codex_home=codex_home,
+                        prompts=tuple(task["prompts"]),
+                        model=model,
+                        codex=codex,
+                        aioptimizer_home=aioptimizer_home,
+                        windows_sandbox=windows_sandbox,
+                    )
+                finally:
+                    if arm == "A":
+                        turn_window_end = time.time()
+                execution = dict(runner_result)
                 error = None
             except Exception as exc:  # keep the paired run scoreable; missing artifacts fail closed
                 execution = {}
                 error = f"{type(exc).__name__}: {exc}"
+            treatment_integrity: dict[str, Any] | None = None
+            if arm == "A":
+                assert turn_window_start is not None and turn_window_end is not None
+                treatment_integrity = check_treatment_integrity(
+                    aioptimizer_home / DEVELOPMENT_LEDGER_RELATIVE,
+                    window_start=turn_window_start,
+                    window_end=turn_window_end,
+                )
             collection = collect_task_artifacts(workspace, artifact_dir, task)
             record = {
                 "execution": execution,
                 "error": error,
                 **collection,
             }
+            if arm == "A":
+                record.update({
+                    "turn_window_start": turn_window_start,
+                    "turn_window_end": turn_window_end,
+                    "treatment_integrity": treatment_integrity,
+                })
             records[arm][task["id"]] = record
             _append_checkpoint(checkpoint, {
                 "type": "task_complete",
@@ -521,6 +597,37 @@ def _telemetry_totals(records: Mapping[str, Any]) -> dict[str, Any]:
     return totals
 
 
+def print_treatment_integrity_summary(
+    records: Mapping[str, Any], *, expected_count: int
+) -> None:
+    """Print arm-A treatment integrity without altering frozen scorer input."""
+    qualified: list[str] = []
+    inconclusive: list[str] = []
+    disqualified: list[str] = []
+    for task_id, record in records["A"].items():
+        integrity = record["treatment_integrity"]
+        rate = integrity["rate"]
+        rate_text = "n/a" if rate is None else f"{rate:.3f}"
+        print(
+            f"treatment-integrity {task_id}: eligible={integrity['eligible']} "
+            f"treated={integrity['treated']} rate={rate_text} "
+            f"qualified={integrity['qualified']}"
+        )
+        if not integrity["qualified"]:
+            disqualified.append(task_id)
+        elif integrity["eligible"] == 0:
+            inconclusive.append(task_id)
+        else:
+            qualified.append(task_id)
+    print(
+        f"{len(qualified)}/{expected_count} arm-A tasks qualified, "
+        f"{len(inconclusive)}/{expected_count} inconclusive-by-design (eligible==0), "
+        f"{len(disqualified)}/{expected_count} DISQUALIFIED"
+    )
+    if disqualified:
+        print(f"STOP: disqualified arm-A task ids: {', '.join(disqualified)}")
+
+
 def main() -> None:
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--tasks", type=Path, default=DEFAULT_TASKS)
@@ -554,6 +661,7 @@ def main() -> None:
         windows_sandbox=args.windows_sandbox,
         resume=args.resume,
     )
+    print_treatment_integrity_summary(records, expected_count=len(tasks))
     scorer_out = run_root / "frozen_score.json"
     scored, scorer_summary = run_frozen_scorer(
         scorer=args.scorer,

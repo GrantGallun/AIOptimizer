@@ -1,9 +1,11 @@
 import json
 import tempfile
+import time
 import unittest
 from pathlib import Path
 
 from experiments.brain_runtime.run_v15_ab import (
+    check_treatment_integrity,
     collect_task_artifacts,
     load_tasks,
     next_versioned_result,
@@ -21,7 +23,8 @@ class RunV15ABTests(unittest.TestCase):
         self.assertEqual(len(tasks), 12)
         self.assertEqual(len({task["id"] for task in tasks}), 12)
         for task in tasks:
-            self.assertGreaterEqual(len(task["prompts"]), 6)
+            self.assertTrue(24 <= len(task["prompts"]) <= 40)
+            self.assertFalse(any("reminder" in prompt.casefold() for prompt in task["prompts"]))
             self.assertTrue(any(row.get("is_constraint") for row in task["requirements"]))
             self.assertTrue(task["ast_checks"])
 
@@ -69,6 +72,18 @@ class RunV15ABTests(unittest.TestCase):
             def stub_agent(**kwargs):
                 calls.append(kwargs)
                 marker = kwargs["codex_home"].name
+                if marker == "arm-a":
+                    ledger = root / ".aioptimizer" / "development_ledger.jsonl"
+                    ledger.parent.mkdir(parents=True, exist_ok=True)
+                    ledger.write_text(
+                        json.dumps({
+                            "ts": time.time(),
+                            "history_chars": 6001,
+                            "route": "attention",
+                            "injected": True,
+                        }) + "\n",
+                        encoding="utf-8",
+                    )
                 (kwargs["workspace"] / "built.py").write_text(
                     f"def built():\n    return {marker!r}\n", encoding="utf-8"
                 )
@@ -86,6 +101,7 @@ class RunV15ABTests(unittest.TestCase):
                 control_root=control_root,
                 run_root=root / "run",
                 agent_runner=stub_agent,
+                aioptimizer_home=root,
                 windows_sandbox="unelevated",
             )
 
@@ -99,6 +115,82 @@ class RunV15ABTests(unittest.TestCase):
             self.assertTrue((arm_b / "stub_task" / "built.py").is_file())
             self.assertIsNone(records["A"]["stub_task"]["error"])
             self.assertIsNone(records["B"]["stub_task"]["error"])
+            self.assertEqual(
+                records["A"]["stub_task"]["treatment_integrity"],
+                {"eligible": 1, "treated": 1, "errors": 0, "rate": 1.0, "qualified": True},
+            )
+            self.assertIn("turn_window_start", records["A"]["stub_task"])
+            self.assertIn("turn_window_end", records["A"]["stub_task"])
+            self.assertNotIn("treatment_integrity", records["B"]["stub_task"])
+
+    def _check_integrity(self, rows, **kwargs):
+        with tempfile.TemporaryDirectory() as temporary:
+            ledger = Path(temporary) / "ledger.jsonl"
+            ledger.write_text(
+                "".join(json.dumps(row) + "\n" for row in rows),
+                encoding="utf-8",
+            )
+            return check_treatment_integrity(
+                ledger,
+                window_start=100.0,
+                window_end=200.0,
+                **kwargs,
+            )
+
+    def test_treatment_integrity_all_eligible_rows_treated(self):
+        result = self._check_integrity([
+            {"ts": 100.0, "history_chars": 6001, "route": "attention", "injected": True},
+            {"ts": 200.0, "history_chars": 9000, "route": "attention", "injected": True},
+        ])
+
+        self.assertEqual(
+            result,
+            {"eligible": 2, "treated": 2, "errors": 0, "rate": 1.0, "qualified": True},
+        )
+
+    def test_treatment_integrity_below_minimum_rate_is_disqualified(self):
+        result = self._check_integrity([
+            {"ts": 120.0, "history_chars": 7000, "route": "attention", "injected": True},
+            {"ts": 130.0, "history_chars": 7000, "route": "raw", "injected": False},
+        ])
+
+        self.assertEqual(result["eligible"], 2)
+        self.assertEqual(result["treated"], 1)
+        self.assertEqual(result["rate"], 0.5)
+        self.assertFalse(result["qualified"])
+
+    def test_treatment_integrity_error_overrides_perfect_rate(self):
+        result = self._check_integrity([
+            {"ts": 120.0, "history_chars": 7000, "route": "attention", "injected": True},
+            {"ts": 130.0, "history_chars": 100, "route": "error", "injected": False},
+        ])
+
+        self.assertEqual(result["rate"], 1.0)
+        self.assertEqual(result["errors"], 1)
+        self.assertFalse(result["qualified"])
+
+    def test_treatment_integrity_zero_eligible_is_inconclusive_not_disqualified(self):
+        result = self._check_integrity([
+            {"ts": 120.0, "history_chars": 6000, "route": "below_threshold", "injected": False},
+            {"ts": 130.0, "route": "below_threshold", "injected": False},
+        ])
+
+        self.assertEqual(result["eligible"], 0)
+        self.assertIsNone(result["rate"])
+        self.assertTrue(result["qualified"])
+
+    def test_treatment_integrity_excludes_rows_outside_inclusive_window(self):
+        result = self._check_integrity([
+            {"ts": 99.9, "history_chars": 7000, "route": "error", "injected": False},
+            {"ts": 150.0, "history_chars": 7000, "route": "attention", "injected": True},
+            {"ts": 200.1, "history_chars": 7000, "route": "raw", "injected": False},
+            {"ts": "150", "history_chars": 7000, "route": "error", "injected": False},
+        ])
+
+        self.assertEqual(
+            result,
+            {"eligible": 1, "treated": 1, "errors": 0, "rate": 1.0, "qualified": True},
+        )
 
     def test_resume_reuses_legacy_collected_artifacts_without_rerunning(self):
         with tempfile.TemporaryDirectory() as temporary:
