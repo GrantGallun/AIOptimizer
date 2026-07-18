@@ -11,6 +11,54 @@ Created: 2026-07-09
 
 ## Tested Hypotheses
 
+### HYP-20260718-44: On real, tool-using, frontier-model agent builds, injected context measurably improves buried-constraint retention over the plugin-off arm. — INCONCLUSIVE, leaning null; full confirmatory run not recommended.
+- Status: **Inconclusive** (exploratory design, pre-registered as non-confirmatory before any run —
+  `PREREGISTRATION_v15.md` Amendment v15.6, n=4 tasks x 1 replicate, explicitly below the
+  pre-registered n=12 x >=2 replicate confirmatory design and carrying no Wilson gate).
+- Test: v15's redesigned pressure-burial task fixture (24-28 turns, constraint stated once,
+  never restated, buried past easy recall — Amendments v15.1-v15.5), 4 of the 12 tasks chosen
+  specifically because their constraint is NEGATIVE ("never import pandas", "no bare except",
+  "never print()", "never emit approval prompts") — a shape predicted, before the run, to be
+  where the optimizer's advantage is MOST likely to survive against a real coding agent, since a
+  positive constraint ("call rate_limited_get") is recoverable by an agent re-reading its own
+  file, but a negative constraint leaves no artifact to discover that way. gpt-5.6-sol via Codex,
+  real TalentTrader paired A/B workspaces, arm A plugin-on / arm B plugin-off, $ real subscription
+  spend (~208 turns). Treatment-integrity (Amendment v15.5's corrected gate) confirms the plugin
+  genuinely engaged on arm A, not another silent failure: 17-19 eligible turns/task, 3-5 treated
+  (18-28%, matching the same-day replay's healthy-production baseline), 0 delivery failures, 0
+  errors, all 4 tasks `qualified=True`.
+- Evidence: **A pass 4/4 (1.00), B pass 4/4 (1.00), gap +0.00. Constraint retention A 1.00, B
+  1.00.** Not noisy-but-close: `A_only=[]`, `B_only=[]` (zero tasks flipped either direction),
+  and per-task constraint counts are byte-identical between arms on all 4 tasks (2/2, 2/2, 1/1,
+  2/2 both sides). A clean ceiling effect — gpt-5.6-sol correctly retained and applied every
+  buried negative constraint whether or not the optimizer ever injected anything.
+- Decision: **Full 12-task x >=2 replicate confirmatory run NOT recommended.** This was not an
+  underpowered-but-trending result where more n might resolve it — it is flat at every
+  granularity, on the 4 tasks specifically selected as the best case for showing an effect.
+  Widening n on a genuinely centered-at-zero result mostly narrows a CI already centered on zero,
+  not change the qualitative conclusion. Consistent with, and extends, v18's "no quality win when
+  the window fits" (HYP-20260717-42): on a ~15-18k char / 24-28 turn real coding-agent task, a
+  frontier model with file-read tool access does not need the optimizer's context injection to
+  retain instructions across the conversation — it can and does re-derive what it needs from the
+  code it already wrote, and negative constraints (predicted to be the hard case) were retained
+  perfectly by both arms anyway. This closes the "does it help real work" question this project
+  had left open since HYP-37 (v15's original null, later explained as a treatment-integrity
+  failure, not a quality failure) — the honest answer, now measured rather than assumed, is: not
+  detectably, at this task shape and model class.
+- Infrastructure note (not part of the scientific result): getting a clean run required finding
+  and fixing 3 real harness/production bugs (orphaned stale-code sidecar process; wrong ledger
+  path in the treatment-integrity check; a miscalibrated `>=0.95` treated-rate threshold that
+  would have disqualified every task even on a healthy pipeline) plus isolating a persistent
+  bridge-specific `os error 10013` network failure (nested `codex exec` spawned from inside
+  `codex_bridge.py`'s sandboxed outer process loses network access on this machine, regardless of
+  CODEX_HOME, sandbox flags, or elevation — worked around by running the harness directly instead
+  of through the bridge). None of that changes the result; it is why the result took a full
+  session of debugging to obtain honestly instead of trusting an early false pass.
+- Linked ideas: PREREGISTRATION_v15 (Amendments v15.1-v15.6); HYP-20260717-42 (v18, the "window
+  fits" parity finding this extends); HYP-37 (the original v15 null, now resolved as a delivery
+  failure separate from this quality question).
+- — Fable (Fable 5), 2026-07-18
+
 ### HYP-20260717-43: Reorganizing context every turn breaks the provider's prefix-cache benefit badly enough to erase or invert the token-savings claim from HYP-39/HYP-42. — REFUTED as an inversion; CONFIRMED as a large, real erosion (~84% of the theoretical time-savings dividend disappears).
 - Status: **Refuted** (binary gate: attention still cheaper in wall-clock compute time than raw in 14/15 hidden cases) **but the deferred concern was directionally correct and large** — see the secondary metric below. Pre-registered in `PREREGISTRATION_v19.md` before any run; amended once at dev (Amendment v19.1, dev-sanity diagnostic only, not the gate) before any hidden read.
 - Origin: v17 and v18 both explicitly deferred this ("that tension needs its own pre-registration"). A same-session $0 curl probe on this box first confirmed the mechanism exists: a llama.cpp/Ollama prompt extending the previous request's exact prefix costs 17x less `prompt_eval_duration` than a same-length prompt with a different prefix, and Ollama's `prompt_eval_count` does not reflect the cache hit — only `prompt_eval_duration` does. That licensed a purely mechanical (no answer-quality scoring needed) measurement.

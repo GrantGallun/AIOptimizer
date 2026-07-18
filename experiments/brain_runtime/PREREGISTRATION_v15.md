@@ -311,3 +311,46 @@ report v15 Inconclusive rather than spend the other ~1,000 turns chasing it — 
 reportable outcome per the original prereg's own framing ("Null (equally reportable): the
 optimizer does not measurably change real build quality at this n").
 — Fable (Fable 5), 2026-07-17
+
+## Amendment v15.6 result (2026-07-18): clean, flat tie — Inconclusive, full run NOT recommended
+
+Run directly (bypassing the bridge's nested-sandbox network bug, see the incident note below),
+after a real permission and infrastructure saga: 4 tasks x 1 replicate x 2 arms, all 8 arm-runs
+completed with zero errors. Treatment-integrity confirms the plugin genuinely engaged on arm A
+(not another silent failure): eligible 17-19/task, treated 3-5/task (18-28%, matching the
+replay's healthy-production baseline), 0 delivery failures, all 4 tasks `qualified=True`.
+
+**Result: A pass 4/4 (1.00), B pass 4/4 (1.00), gap +0.00. Constraint retention: A 1.00, B 1.00.**
+Not close-but-noisy — identical at every level of granularity: `A_only=[]`, `B_only=[]` (zero
+tasks flipped either direction), and the per-task constraint counts are byte-identical between
+arms (2/2, 2/2, 1/1, 2/2 on both sides). A genuine ceiling effect: gpt-5.6-sol correctly retained
+and applied every buried negative constraint whether or not the optimizer injected anything.
+
+**Interpretation (Fable):** per Amendment v15.6's pre-committed rule, 0/4 tasks showing any
+directional pattern is grounds to stop here and report Inconclusive rather than fund the
+remaining ~1,000-turn confirmatory run. This is not merely "underpowered, need more n" — the
+tasks were specifically chosen (Amendment v15.6's own reasoning) because negative constraints
+were predicted to be the case MOST likely to show an effect, since a coding agent can recover a
+positive constraint by re-reading its own file but cannot discover a negative one that way. Even
+that best-case slice produced zero signal. Widening n on a genuinely flat, ceiling-effect result
+is unlikely to change the qualitative conclusion — it would mostly narrow a CI that is already
+centered on zero. **Recommendation: do not fund the full 12-task x >=2 replicate confirmatory
+run.** The honest read of the whole v15 line: on real, tool-using, frontier-model agent work at
+this task shape (~15-18k chars, 24-28 turns), the optimizer neither helps nor hurts measurably —
+consistent with v18's "no quality win when the window fits" finding (HYP-20260717-42) extended to
+a regime this project had not yet tested directly. See HYP-20260718-44 in the graveyard.
+
+**Infrastructure note, for any future bridge-dispatched real Codex work:** this run only
+succeeded because it was invoked DIRECTLY (a plain Python process, not nested under a sandboxed
+codex parent) rather than through `agent_bus/codex_bridge.py`. Every bridge-dispatched attempt
+(t0057-t0060) failed -- t0057/t0058 on separate harness/permission bugs (both fixed), t0059/t0060
+on a persistent `os error 10013` (socket access forbidden reaching the OpenAI API) that survived
+three different fix attempts (dropping `--windows-sandbox unelevated`, relocating CODEX_HOME with
+a one-time elevated network bootstrap, and running the bridge itself elevated) before the actual
+cause was isolated: `codex_bridge.py`'s `build_codex_command` always wraps its outer process in
+`-s workspace-write`, and ANY `codex exec` spawned as a child of that sandboxed parent gets
+network-blocked on this machine, regardless of the child's own flags, CODEX_HOME, or the parent's
+elevation status. Confirmed by direct, controlled reproduction: identical nested calls succeed
+every time run as a direct child of an unsandboxed process and fail every time run as a nested
+child of a `--sandbox workspace-write` codex process. Unresolved as a bridge fix -- the workaround
+is running the harness directly instead of through the bridge for now. — Fable (Fable 5), 2026-07-18

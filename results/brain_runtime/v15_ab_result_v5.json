@@ -1,0 +1,311 @@
+{
+  "A": {
+    "rows": [
+      {
+        "ast_ok": true,
+        "constraints_passed": 2,
+        "constraints_total": 2,
+        "files_present": true,
+        "functional_ok": true,
+        "passed": true,
+        "task": "csv_reader_no_pandas"
+      },
+      {
+        "ast_ok": true,
+        "constraints_passed": 2,
+        "constraints_total": 2,
+        "files_present": true,
+        "functional_ok": true,
+        "passed": true,
+        "task": "cli_no_approval_messages"
+      },
+      {
+        "ast_ok": true,
+        "constraints_passed": 1,
+        "constraints_total": 1,
+        "files_present": true,
+        "functional_ok": true,
+        "passed": true,
+        "task": "sqlite_parameterized_store"
+      },
+      {
+        "ast_ok": true,
+        "constraints_passed": 2,
+        "constraints_total": 2,
+        "files_present": true,
+        "functional_ok": true,
+        "passed": true,
+        "task": "scraper_structured_logging"
+      }
+    ]
+  },
+  "B": {
+    "rows": [
+      {
+        "ast_ok": true,
+        "constraints_passed": 2,
+        "constraints_total": 2,
+        "files_present": true,
+        "functional_ok": true,
+        "passed": true,
+        "task": "csv_reader_no_pandas"
+      },
+      {
+        "ast_ok": true,
+        "constraints_passed": 2,
+        "constraints_total": 2,
+        "files_present": true,
+        "functional_ok": true,
+        "passed": true,
+        "task": "cli_no_approval_messages"
+      },
+      {
+        "ast_ok": true,
+        "constraints_passed": 1,
+        "constraints_total": 1,
+        "files_present": true,
+        "functional_ok": true,
+        "passed": true,
+        "task": "sqlite_parameterized_store"
+      },
+      {
+        "ast_ok": true,
+        "constraints_passed": 2,
+        "constraints_total": 2,
+        "files_present": true,
+        "functional_ok": true,
+        "passed": true,
+        "task": "scraper_structured_logging"
+      }
+    ]
+  },
+  "runner": {
+    "created_at": "2026-07-18T02:29:45.471995+00:00",
+    "model": "gpt-5.6-sol",
+    "run_root": "C:\\Code\\AIOptimizer\\results\\brain_runtime\\v15_ab_runs\\run_20260718T002137Z_cc5a4b7c",
+    "task_fixture": "C:\\Code\\AIOptimizer\\experiments\\brain_runtime\\v15_wave1_negative_constraints.json",
+    "telemetry": {
+      "A": {
+        "cli_no_approval_messages": {
+          "collected": [
+            "summarize.py"
+          ],
+          "error": null,
+          "execution": {
+            "cached_input_tokens": 31724288,
+            "elapsed_seconds": 753.554,
+            "input_tokens": 33108846,
+            "output_tokens": 388640,
+            "thread_id": "019f72b2-b584-7283-8758-2feb645b6f06",
+            "turns": 24
+          },
+          "missing": [],
+          "treatment_integrity": {
+            "delivery_failures": 0,
+            "eligible": 17,
+            "errors": 0,
+            "qualified": true,
+            "rate": 0.17647058823529413,
+            "treated": 3
+          },
+          "turn_window_end": 1784336495.334398,
+          "turn_window_start": 1784335741.7627366
+        },
+        "csv_reader_no_pandas": {
+          "collected": [
+            "reader.py"
+          ],
+          "error": null,
+          "execution": {
+            "cached_input_tokens": 39188480,
+            "elapsed_seconds": 881.466,
+            "input_tokens": 40880300,
+            "output_tokens": 426470,
+            "thread_id": "019f7299-9e55-7db3-b110-17cc2670e2ed",
+            "turns": 24
+          },
+          "missing": [],
+          "treatment_integrity": {
+            "delivery_failures": 0,
+            "eligible": 19,
+            "errors": 0,
+            "qualified": true,
+            "rate": 0.2631578947368421,
+            "treated": 5
+          },
+          "turn_window_end": 1784334979.343277,
+          "turn_window_start": 1784334097.8586624
+        },
+        "scraper_structured_logging": {
+          "collected": [
+            "scraper_logging.py"
+          ],
+          "error": null,
+          "execution": {
+            "cached_input_tokens": 58277632,
+            "elapsed_seconds": 1704.483,
+            "input_tokens": 61173325,
+            "output_tokens": 626336,
+            "thread_id": "019f72e2-a6ae-7e41-a6fd-a146a37f0a89",
+            "turns": 24
+          },
+          "missing": [],
+          "treatment_integrity": {
+            "delivery_failures": 0,
+            "eligible": 19,
+            "errors": 0,
+            "qualified": true,
+            "rate": 0.2631578947368421,
+            "treated": 5
+          },
+          "turn_window_end": 1784340588.1736102,
+          "turn_window_start": 1784338883.671087
+        },
+        "sqlite_parameterized_store": {
+          "collected": [
+            "candidate_store.py"
+          ],
+          "error": null,
+          "execution": {
+            "cached_input_tokens": 39356416,
+            "elapsed_seconds": 729.639,
+            "input_tokens": 41628972,
+            "output_tokens": 325033,
+            "thread_id": "019f72cb-6dba-76b0-b79d-fd0941f4a7ff",
+            "turns": 24
+          },
+          "missing": [],
+          "treatment_integrity": {
+            "delivery_failures": 0,
+            "eligible": 18,
+            "errors": 0,
+            "qualified": true,
+            "rate": 0.2777777777777778,
+            "treated": 5
+          },
+          "turn_window_end": 1784338091.5487857,
+          "turn_window_start": 1784337361.8912292
+        }
+      },
+      "B": {
+        "cli_no_approval_messages": {
+          "collected": [
+            "summarize.py"
+          ],
+          "error": null,
+          "execution": {
+            "cached_input_tokens": 40301568,
+            "elapsed_seconds": 866.523,
+            "input_tokens": 41992874,
+            "output_tokens": 450267,
+            "thread_id": "019f72be-3510-7660-992f-a171f020ebbe",
+            "turns": 24
+          },
+          "missing": []
+        },
+        "csv_reader_no_pandas": {
+          "collected": [
+            "reader.py"
+          ],
+          "error": null,
+          "execution": {
+            "cached_input_tokens": 36526592,
+            "elapsed_seconds": 762.386,
+            "input_tokens": 37959077,
+            "output_tokens": 394466,
+            "thread_id": "019f72a7-1372-7b53-b245-f68f6c4a7d6b",
+            "turns": 24
+          },
+          "missing": []
+        },
+        "scraper_structured_logging": {
+          "collected": [
+            "scraper_logging.py"
+          ],
+          "error": null,
+          "execution": {
+            "cached_input_tokens": 53354240,
+            "elapsed_seconds": 1197.15,
+            "input_tokens": 55434203,
+            "output_tokens": 467776,
+            "thread_id": "019f72fc-a867-7fa3-b5cc-a9e366415f59",
+            "turns": 24
+          },
+          "missing": []
+        },
+        "sqlite_parameterized_store": {
+          "collected": [
+            "candidate_store.py"
+          ],
+          "error": null,
+          "execution": {
+            "cached_input_tokens": 54104064,
+            "elapsed_seconds": 792.09,
+            "input_tokens": 56108174,
+            "output_tokens": 350516,
+            "thread_id": "019f72d6-8fd7-7b43-9a26-9647c2df9dd6",
+            "turns": 24
+          },
+          "missing": []
+        }
+      }
+    },
+    "totals": {
+      "A": {
+        "cached_input_tokens": 168546816,
+        "elapsed_seconds": 4069.142,
+        "errors": 0,
+        "input_tokens": 176791443,
+        "output_tokens": 1766479,
+        "recovered_without_telemetry": 0,
+        "runs": 4
+      },
+      "B": {
+        "cached_input_tokens": 184286464,
+        "elapsed_seconds": 3618.149,
+        "errors": 0,
+        "input_tokens": 191494328,
+        "output_tokens": 1663025,
+        "recovered_without_telemetry": 0,
+        "runs": 4
+      }
+    },
+    "windows_sandbox": null
+  },
+  "summary": {
+    "arms": {
+      "A": {
+        "constraint_retention": 1.0,
+        "pass_ci": [
+          0.5101,
+          1.0
+        ],
+        "pass_rate": 1.0,
+        "passed": 4,
+        "tasks": 4
+      },
+      "B": {
+        "constraint_retention": 1.0,
+        "pass_ci": [
+          0.5101,
+          1.0
+        ],
+        "pass_rate": 1.0,
+        "passed": 4,
+        "tasks": 4
+      }
+    },
+    "paired": {
+      "A_only": [],
+      "B_only": [],
+      "both": [
+        "cli_no_approval_messages",
+        "csv_reader_no_pandas",
+        "scraper_structured_logging",
+        "sqlite_parameterized_store"
+      ]
+    },
+    "pass_gap_A_minus_B": 0.0
+  },
+  "tasks": 4
+}
