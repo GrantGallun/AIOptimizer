@@ -143,6 +143,26 @@ remain buried in the graveyard as settled. — Fable (Claude Opus 4.8)
 - Links: HYP-20260710-14, HYP-20260710-16
 - — Fable (Claude Opus 4.8)
 
+### IDEA-20260915-01: Adaptive research-search controller (plateau-aware branch allocation)
+- Status: Active (design stage; no run yet)
+- Source: User-relayed external conversation, 2026-09-15, about whether an LLM research loop can
+  learn *where to point its own search*. This is a **separate research thread from the north
+  star above** — it does not touch `gateway/` or any existing pre-registration/verdict.
+- Summary: tests whether a small, model-free priority controller (`Q + lambda*U + mu*O + nu*N -
+  eta*C` over a 4-way plateau taxonomy: exhausted / unresolved / convergent / representation
+  failure) beats fixed-diverse-seeding and random-reseeding at recovering a hidden mechanism in
+  synthetic worlds, under matched compute, on a frozen local LLM (qwen3:8b). Motivated by
+  Anthropic's own reported finding that diverse-seed research agents reconverge after ~20
+  proposed methods and that raw diversity doesn't predict hill-climbing gains — the narrower
+  open question is whether a controller can tell *what kind* of plateau it's in rather than
+  treating every plateau the same. No weight training authorized yet (Stage 1/2 gated behind a
+  Stage 0 win — see the design doc's staged roadmap).
+- Next test: `experiments/adaptive_research_search/PREREGISTRATION.md` Stage 0 confirmatory run
+  (dev-tune lambda/mu/nu/eta first, then a single hidden + adversarial read).
+- Links: `experiments/adaptive_research_search/DESIGN.md`,
+  `experiments/adaptive_research_search/PREREGISTRATION.md`
+- Last touched: 2026-09-15
+
 ## Open Questions
 
 - What should count as a strong enough "test" before moving an idea into the graveyard?
